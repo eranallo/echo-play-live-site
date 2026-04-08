@@ -1,0 +1,384 @@
+'use client'
+import { useEffect, useRef } from 'react'
+import Nav from '@/components/Nav'
+import Footer from '@/components/Footer'
+import Link from 'next/link'
+import { bandsList } from '@/lib/bands'
+
+function useScrollReveal() {
+  const ref = useRef(null)
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed') }),
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    )
+    const els = ref.current?.querySelectorAll('.reveal, .reveal-left, .reveal-right')
+    els?.forEach(el => observer.observe(el))
+    return () => observer.disconnect()
+  }, [])
+  return ref
+}
+
+const values = [
+  {
+    number: '01',
+    title: 'Quality',
+    description: 'Every show is a production. We hold ourselves to the standard of the bands we tribute — anything less is unacceptable.',
+  },
+  {
+    number: '02',
+    title: 'Hustle',
+    description: 'We work hard because we love it. The shows, the rehearsals, the coordination — we go all in, every time.',
+  },
+  {
+    number: '03',
+    title: 'Love for the Show',
+    description: 'This isn't a side gig. This is a calling. We exist to give audiences the live music experience they deserve.',
+  },
+]
+
+export default function AboutPage() {
+  const pageRef = useScrollReveal()
+
+  return (
+    <>
+      <Nav />
+      <main ref={pageRef} style={{ background: '#080808', minHeight: '100vh' }}>
+
+        {/* Hero */}
+        <section style={{
+          padding: 'clamp(120px, 16vw, 200px) 32px clamp(60px, 8vw, 100px)',
+          position: 'relative',
+          overflow: 'hidden',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+        }}>
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'radial-gradient(ellipse 80% 60% at 80% 40%, rgba(245,197,24,0.04) 0%, transparent 60%)',
+          }} />
+          {/* Big text watermark */}
+          <div style={{
+            position: 'absolute',
+            fontFamily: 'Bebas Neue, cursive',
+            fontSize: 'clamp(120px, 30vw, 400px)',
+            right: '-0.05em', bottom: '-0.1em',
+            lineHeight: 0.8,
+            color: 'rgba(245,197,24,0.03)',
+            pointerEvents: 'none',
+            letterSpacing: '-0.02em',
+            userSelect: 'none',
+          }}>EPL</div>
+
+          <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative' }}>
+            <div className="section-label reveal" style={{ marginBottom: '16px' }}>Our Story</div>
+            <h1 className="reveal delay-100" style={{
+              fontFamily: 'Bebas Neue, cursive',
+              fontSize: 'clamp(64px, 14vw, 160px)',
+              letterSpacing: '0.01em',
+              lineHeight: 0.85,
+              maxWidth: '800px',
+            }}>
+              About<br />
+              <span style={{ color: '#F5C518' }}>Echo Play</span><br />
+              Live
+            </h1>
+          </div>
+        </section>
+
+        {/* Origin Story */}
+        <section style={{
+          padding: 'clamp(60px, 10vw, 120px) 32px',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+        }}>
+          <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 'clamp(40px, 8vw, 120px)',
+              alignItems: 'start',
+            }}>
+              <div>
+                <div className="section-label reveal" style={{ marginBottom: '24px' }}>How It Started</div>
+                <p className="reveal delay-100" style={{
+                  fontFamily: 'Barlow, sans-serif',
+                  fontSize: 'clamp(17px, 2vw, 21px)',
+                  lineHeight: 1.8,
+                  fontWeight: 300,
+                  color: 'rgba(255,255,255,0.65)',
+                  marginBottom: '24px',
+                }}>
+                  Echo Play Live was founded by Evan Ranallo in 2023 out of a need for band management
+                  amongst friends and all of the projects we share.
+                </p>
+                <p className="reveal delay-200" style={{
+                  fontFamily: 'Barlow, sans-serif',
+                  fontSize: 'clamp(15px, 1.8vw, 18px)',
+                  lineHeight: 1.8,
+                  fontWeight: 300,
+                  color: 'rgba(255,255,255,0.45)',
+                  marginBottom: '24px',
+                }}>
+                  Though our backgrounds vary greatly, we are unified in our vision of quality, hustle,
+                  and love for the show. What started as managing a band among friends grew into a
+                  full management company representing four of the most exciting tribute acts in the DFW Metroplex.
+                </p>
+                <p className="reveal delay-300" style={{
+                  fontFamily: 'Barlow, sans-serif',
+                  fontSize: 'clamp(15px, 1.8vw, 18px)',
+                  lineHeight: 1.8,
+                  fontWeight: 300,
+                  color: 'rgba(255,255,255,0.45)',
+                }}>
+                  Every band under the Echo Play Live umbrella shares a commitment to the live experience.
+                  No Spotify DJs. No backing tracks. No shortcuts. Just musicians who love music,
+                  playing for audiences who love it just as much.
+                </p>
+              </div>
+
+              <div className="reveal reveal-right delay-200">
+                <div style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  padding: '40px',
+                  position: 'relative',
+                }}>
+                  {/* Quote mark */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '-0.1em', left: '32px',
+                    fontFamily: 'Bebas Neue, cursive',
+                    fontSize: '120px',
+                    lineHeight: 1,
+                    color: '#F5C518',
+                    opacity: 0.15,
+                    pointerEvents: 'none',
+                  }}>"</div>
+
+                  <blockquote style={{
+                    fontFamily: 'Barlow, sans-serif',
+                    fontSize: 'clamp(20px, 3vw, 32px)',
+                    fontStyle: 'italic',
+                    fontWeight: 300,
+                    lineHeight: 1.5,
+                    color: 'rgba(255,255,255,0.8)',
+                    marginBottom: '32px',
+                    position: 'relative',
+                  }}>
+                    "Though our backgrounds vary greatly, we are unified in our vision of quality, hustle, and love for the show."
+                  </blockquote>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: '12px',
+                  }}>
+                    <div style={{
+                      width: '36px', height: '36px',
+                      background: '#F5C518',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontFamily: 'Bebas Neue, cursive',
+                      fontSize: '16px',
+                      color: '#080808',
+                      letterSpacing: '0.05em',
+                    }}>ER</div>
+                    <div>
+                      <div style={{
+                        fontFamily: 'Barlow Condensed, Barlow, sans-serif',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        letterSpacing: '0.1em',
+                        color: '#fff',
+                      }}>Evan Ranallo</div>
+                      <div style={{
+                        fontFamily: 'Barlow, sans-serif',
+                        fontSize: '11px',
+                        color: 'rgba(255,255,255,0.35)',
+                      }}>Founder, Echo Play Live</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{
+                  display: 'grid', gridTemplateColumns: '1fr 1fr',
+                  gap: '1px', background: 'rgba(255,255,255,0.06)',
+                  marginTop: '1px',
+                }}>
+                  {[
+                    { label: 'Founded', value: '2023' },
+                    { label: 'Based In', value: 'Fort Worth, TX' },
+                    { label: 'Bands', value: '4 Active' },
+                    { label: 'Region', value: 'DFW Metroplex' },
+                  ].map(({ label, value }) => (
+                    <div key={label} style={{
+                      background: '#080808',
+                      padding: '20px 24px',
+                    }}>
+                      <div style={{
+                        fontFamily: 'Barlow Condensed, Barlow, sans-serif',
+                        fontSize: '9px',
+                        fontWeight: 600,
+                        letterSpacing: '0.25em',
+                        textTransform: 'uppercase',
+                        color: 'rgba(255,255,255,0.2)',
+                        marginBottom: '4px',
+                      }}>{label}</div>
+                      <div style={{
+                        fontFamily: 'Bebas Neue, cursive',
+                        fontSize: '24px',
+                        letterSpacing: '0.04em',
+                        color: '#F5C518',
+                      }}>{value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Values */}
+        <section style={{
+          padding: 'clamp(60px, 10vw, 120px) 32px',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+        }}>
+          <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+            <div className="section-label reveal" style={{ marginBottom: '48px' }}>What We Stand For</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1px', background: 'rgba(255,255,255,0.06)' }}>
+              {values.map((v, i) => (
+                <div
+                  key={v.number}
+                  className={`reveal delay-${i * 150}`}
+                  style={{
+                    background: '#080808',
+                    padding: '48px 40px',
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div style={{
+                    position: 'absolute', top: '-0.1em', right: '-0.05em',
+                    fontFamily: 'Bebas Neue, cursive',
+                    fontSize: '120px',
+                    lineHeight: 0.8,
+                    color: '#F5C518',
+                    opacity: 0.04,
+                    pointerEvents: 'none',
+                  }}>{v.number}</div>
+                  <div style={{
+                    fontFamily: 'Barlow Condensed, Barlow, sans-serif',
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    letterSpacing: '0.25em',
+                    textTransform: 'uppercase',
+                    color: '#F5C518',
+                    marginBottom: '16px',
+                    opacity: 0.7,
+                  }}>{v.number}</div>
+                  <h3 style={{
+                    fontFamily: 'Bebas Neue, cursive',
+                    fontSize: '48px',
+                    letterSpacing: '0.04em',
+                    color: '#fff',
+                    marginBottom: '16px',
+                    lineHeight: 0.9,
+                  }}>{v.title}</h3>
+                  <p style={{
+                    fontFamily: 'Barlow, sans-serif',
+                    fontSize: '14px',
+                    lineHeight: 1.7,
+                    color: 'rgba(255,255,255,0.45)',
+                  }}>{v.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* The Roster */}
+        <section style={{ padding: 'clamp(60px, 10vw, 120px) 32px' }}>
+          <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px', marginBottom: '48px' }}>
+              <div className="reveal">
+                <div className="section-label" style={{ marginBottom: '8px' }}>The Bands</div>
+                <h2 style={{
+                  fontFamily: 'Bebas Neue, cursive',
+                  fontSize: 'clamp(40px, 7vw, 88px)',
+                  letterSpacing: '0.02em',
+                  lineHeight: 0.9,
+                }}>Our Roster</h2>
+              </div>
+              <Link href="/#bands" className="reveal" style={{
+                fontFamily: 'Barlow Condensed, Barlow, sans-serif',
+                fontSize: '12px',
+                fontWeight: 600,
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.35)',
+                textDecoration: 'none',
+                transition: 'color 0.2s ease',
+              }}
+                onMouseEnter={e => e.currentTarget.style.color = '#F5C518'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.35)'}
+              >View Full Roster →</Link>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+              {bandsList.map((band, i) => (
+                <Link
+                  key={band.slug}
+                  href={`/bands/${band.slug}`}
+                  className={`reveal delay-${i * 100}`}
+                  style={{
+                    display: 'block',
+                    textDecoration: 'none',
+                    border: '1px solid rgba(255,255,255,0.06)',
+                    padding: '32px',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    transition: 'border-color 0.3s ease, transform 0.3s ease',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = `${band.color}50`
+                    e.currentTarget.style.transform = 'translateY(-4px)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                  }}
+                >
+                  <div style={{ width: '32px', height: '3px', background: band.color, marginBottom: '20px' }} />
+                  <div style={{
+                    fontFamily: 'Bebas Neue, cursive',
+                    fontSize: '32px',
+                    letterSpacing: '0.04em',
+                    color: '#fff',
+                    marginBottom: '6px',
+                  }}>{band.name}</div>
+                  <div style={{
+                    fontFamily: 'Barlow, sans-serif',
+                    fontSize: '12px',
+                    color: 'rgba(255,255,255,0.35)',
+                    marginBottom: '16px',
+                  }}>{band.tagline}</div>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                    {band.genre.map(g => (
+                      <span key={g} style={{
+                        fontFamily: 'Barlow Condensed, Barlow, sans-serif',
+                        fontSize: '9px',
+                        fontWeight: 600,
+                        letterSpacing: '0.15em',
+                        textTransform: 'uppercase',
+                        color: band.color,
+                        background: `${band.color}10`,
+                        padding: '4px 8px',
+                      }}>{g}</span>
+                    ))}
+                  </div>
+                  <div style={{ position: 'absolute', bottom: '24px', right: '24px', color: band.color, opacity: 0.5, fontSize: '18px' }}>→</div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+      </main>
+      <Footer />
+    </>
+  )
+}
