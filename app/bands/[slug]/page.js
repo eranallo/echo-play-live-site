@@ -185,16 +185,6 @@ export default function BandPage({ params }) {
             }} />
           )}
 
-          {/* Large watermark number */}
-          <div style={{
-            position: 'absolute', right: '-0.04em', top: '50%',
-            transform: 'translateY(-50%)',
-            fontFamily: 'Bebas Neue, cursive',
-            fontSize: 'clamp(180px, 38vw, 480px)',
-            lineHeight: 0.8, color: band.color, opacity: heroImg ? 0.06 : 0.04,
-            pointerEvents: 'none', userSelect: 'none', zIndex: 1,
-          }}>{band.number}</div>
-
           {/* Content */}
           <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 40px', position: 'relative', zIndex: 2, width: '100%' }}>
             {/* Breadcrumb */}
@@ -512,6 +502,76 @@ export default function BandPage({ params }) {
                     ))}
                   </div>
                 </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── BAND HISTORY (if available) ───────────────────── */}
+        {band.history && band.history.length > 0 && (
+          <section style={{
+            padding: 'clamp(60px, 8vw, 100px) 40px',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+          }}>
+            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+              <div style={{ width: '32px', height: '3px', background: band.color, marginBottom: '24px' }} />
+              <div className="section-label reveal" style={{ color: band.color, marginBottom: '12px' }}>The Story</div>
+              <h2 className="reveal delay-100" style={{
+                fontFamily: 'Bebas Neue, cursive',
+                fontSize: 'clamp(32px, 5vw, 60px)',
+                letterSpacing: '0.02em', lineHeight: 0.9,
+                marginBottom: '48px',
+              }}>How It All Started</h2>
+
+              <div style={{ position: 'relative' }}>
+                {/* Vertical line */}
+                <div style={{
+                  position: 'absolute', left: '80px', top: 0, bottom: 0,
+                  width: '1px', background: 'rgba(255,255,255,0.06)',
+                }} />
+
+                {band.history.map((entry, i) => (
+                  <div key={i} className={`reveal delay-${Math.min(i * 100, 400)}`} style={{
+                    display: 'grid',
+                    gridTemplateColumns: '80px 1fr',
+                    gap: '40px',
+                    marginBottom: '48px',
+                    position: 'relative',
+                  }}>
+                    {/* Year */}
+                    <div style={{ textAlign: 'right', paddingTop: '4px' }}>
+                      <div style={{
+                        fontFamily: 'Bebas Neue, cursive',
+                        fontSize: '16px', letterSpacing: '0.08em',
+                        color: band.color,
+                      }}>{entry.year}</div>
+                    </div>
+
+                    {/* Dot on line */}
+                    <div style={{
+                      position: 'absolute', left: '75px', top: '8px',
+                      width: '11px', height: '11px', borderRadius: '50%',
+                      background: band.color, border: '2px solid #080808',
+                    }} />
+
+                    {/* Content */}
+                    <div style={{ paddingLeft: '24px' }}>
+                      <div style={{
+                        fontFamily: 'Barlow Condensed, sans-serif',
+                        fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em',
+                        textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)',
+                        marginBottom: '8px',
+                      }}>{entry.label}</div>
+                      <p style={{
+                        fontFamily: 'Barlow, sans-serif',
+                        fontSize: 'clamp(15px, 1.6vw, 17px)',
+                        lineHeight: 1.8, fontWeight: 300,
+                        color: 'rgba(255,255,255,0.65)',
+                        margin: 0,
+                      }}>{entry.text}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </section>

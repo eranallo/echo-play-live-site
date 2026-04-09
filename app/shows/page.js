@@ -313,13 +313,9 @@ export default function ShowsPage() {
                     onMouseLeave={e => e.currentTarget.style.background = '#080808'}
                   >
                     <div style={{
-                      width: '40px', height: '40px',
-                      border: `1px solid ${band.color}40`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontFamily: 'Barlow Condensed, sans-serif',
-                      fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em',
-                      color: band.color, flexShrink: 0,
-                    }}>{band.number}</div>
+                      width: '4px', height: '40px',
+                      background: band.color, flexShrink: 0,
+                    }} />
                     <div>
                       <div style={{
                         fontFamily: 'Bebas Neue, cursive',

@@ -208,33 +208,13 @@ export default function Home() {
                     style={{ background: band.color }}
                   />
 
-                  {/* Big number */}
-                  <div
-                    className="band-card-number"
-                    style={{ color: band.color }}
-                  >
-                    {band.number}
-                  </div>
-
                   <div style={{
                     maxWidth: '1400px', margin: '0 auto', padding: '52px 32px',
                     display: 'grid',
-                    gridTemplateColumns: '80px 1fr auto',
+                    gridTemplateColumns: '1fr auto',
                     alignItems: 'center',
                     gap: '40px',
                   }}>
-                    {/* Number */}
-                    <div style={{
-                      fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-                      fontSize: '11px',
-                      fontWeight: 600,
-                      letterSpacing: '0.2em',
-                      color: band.color,
-                      opacity: 0.7,
-                    }}>
-                      {band.number}
-                    </div>
-
                     {/* Content */}
                     <div>
                       <div style={{
