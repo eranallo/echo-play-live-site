@@ -122,11 +122,13 @@ export default function BandPage({ params }) {
   const otherBands = bandsList.filter(b => b.slug !== band.slug)
   const stats = bandStats[band.slug] || []
 
-  // Strategic photo assignments
-  const heroImg = images[0] || null
-  const featureImg = images[1] || null   // second strongest — wide band shot
-  const crowdImg = images[4] || null     // audience/crowd proof
-  const galleryImages = images.slice(2)  // remaining for gallery
+  // Use art-directed curated photos from bands.js if defined, otherwise fall back to API results
+  const curatedUrls = new Set([band.heroPhoto, band.featurePhoto, band.crowdPhoto].filter(Boolean))
+  const heroImg = band.heroPhoto ? { url: band.heroPhoto } : (images[0] || null)
+  const featureImg = band.featurePhoto ? { url: band.featurePhoto } : (images[1] || null)
+  const crowdImg = band.crowdPhoto ? { url: band.crowdPhoto } : (images[4] || null)
+  // Gallery = all API images except the ones already used as curated hero/feature/crowd
+  const galleryImages = images.filter(img => !curatedUrls.has(img.url))
 
   const openLightbox = (img, idx) => {
     setLightboxImg(img)
@@ -157,8 +159,8 @@ export default function BandPage({ params }) {
                 fill
                 style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
                 priority
+                unoptimized
                 sizes="100vw"
-                quality={90}
               />
               {/* Gradient overlay — clear at top, dark at bottom for text legibility */}
               <div style={{
