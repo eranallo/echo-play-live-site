@@ -21,21 +21,45 @@ function useScrollReveal() {
 export default function ContactPage() {
   const pageRef = useScrollReveal()
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [bookingEmail, setBookingEmail] = useState('eranallo@echoplay.live')
   const [form, setForm] = useState({
     name: '', email: '', band: '', eventType: '', date: '', venue: '', message: ''
   })
 
   const handleChange = e => setForm(p => ({ ...p, [e.target.name]: e.target.value }))
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault()
-    // In production, wire this to your preferred form handler (Formspree, Resend, etc.)
-    const subject = encodeURIComponent(`Booking Inquiry${form.band ? ` - ${form.band}` : ''}`)
-    const body = encodeURIComponent(
-      `Name: ${form.name}\nEmail: ${form.email}\nBand: ${form.band}\nEvent Type: ${form.eventType}\nDate: ${form.date}\nVenue: ${form.venue}\n\nMessage:\n${form.message}`
-    )
-    window.location.href = `mailto:eranallo@echoplay.live?subject=${subject}&body=${body}`
-    setSubmitted(true)
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setBookingEmail(data.bookingEmail || 'eranallo@echoplay.live')
+        setSubmitted(true)
+      } else {
+        // Fallback to mailto if API fails
+        const subject = encodeURIComponent(`Booking Inquiry${form.band ? ` - ${form.band}` : ''}`)
+        const body = encodeURIComponent(
+          `Name: ${form.name}\nEmail: ${form.email}\nBand: ${form.band}\nEvent Type: ${form.eventType}\nDate: ${form.date}\nVenue: ${form.venue}\n\nMessage:\n${form.message}`
+        )
+        window.location.href = `mailto:eranallo@echoplay.live?subject=${subject}&body=${body}`
+        setSubmitted(true)
+      }
+    } catch {
+      // Fallback to mailto
+      const subject = encodeURIComponent(`Booking Inquiry${form.band ? ` - ${form.band}` : ''}`)
+      const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\nBand: ${form.band}\nEvent Type: ${form.eventType}\nDate: ${form.date}\nVenue: ${form.venue}\n\nMessage:\n${form.message}`)
+      window.location.href = `mailto:eranallo@echoplay.live?subject=${subject}&body=${body}`
+      setSubmitted(true)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -112,7 +136,7 @@ export default function ContactPage() {
                       fontSize: '15px',
                       color: 'rgba(255,255,255,0.5)',
                     }}>
-                      We'll be in touch shortly at {form.email}
+                      Your inquiry has been saved and sent to <strong style={{ color: '#F5C518' }}>{bookingEmail}</strong>. We'll be in touch shortly!
                     </p>
                   </div>
                 ) : (
@@ -283,24 +307,19 @@ export default function ContactPage() {
 
                     <button
                       type="submit"
+                      disabled={submitting}
                       style={{
                         fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-                        fontSize: '13px',
-                        fontWeight: 600,
-                        letterSpacing: '0.15em',
-                        textTransform: 'uppercase',
-                        color: '#080808',
-                        background: '#F5C518',
-                        padding: '16px 36px',
-                        border: 'none',
-                        cursor: 'pointer',
+                        fontSize: '13px', fontWeight: 600, letterSpacing: '0.15em',
+                        textTransform: 'uppercase', color: '#080808',
+                        background: submitting ? 'rgba(245,197,24,0.6)' : '#F5C518',
+                        padding: '16px 36px', border: 'none',
+                        cursor: submitting ? 'not-allowed' : 'pointer',
                         transition: 'opacity 0.2s ease, transform 0.2s ease',
                         display: 'inline-flex', alignItems: 'center', gap: '10px',
                       }}
-                      onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                      onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)' }}
                     >
-                      Send Inquiry →
+                      {submitting ? 'Sending...' : 'Send Inquiry →'}
                     </button>
                   </form>
                 )}
