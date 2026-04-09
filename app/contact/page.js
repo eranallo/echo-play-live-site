@@ -82,7 +82,7 @@ export default function ContactPage() {
         {/* Form + Info */}
         <section style={{ padding: 'clamp(60px, 10vw, 120px) 32px' }}>
           <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-            <div style={{
+            <div className="contact-layout" style={{
               display: 'grid',
               gridTemplateColumns: '1fr 380px',
               gap: 'clamp(40px, 6vw, 100px)',
@@ -117,7 +117,7 @@ export default function ContactPage() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="reveal delay-100">
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                    <div className="form-row-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
                       <div>
                         <label style={{
                           display: 'block',
@@ -162,7 +162,7 @@ export default function ContactPage() {
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                    <div className="form-row-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
                       <div>
                         <label style={{
                           display: 'block',
@@ -215,7 +215,7 @@ export default function ContactPage() {
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                    <div className="form-row-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
                       <div>
                         <label style={{
                           display: 'block',

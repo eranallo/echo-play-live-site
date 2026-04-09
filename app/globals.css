@@ -394,3 +394,66 @@ body {
     font-size: clamp(80px, 30vw, 160px);
   }
 }
+
+/* ─── COMPREHENSIVE MOBILE FIXES ─────────────────────── */
+@media (max-width: 768px) {
+
+  /* ── Stats bar: 4 cols → 2x2 grid ── */
+  .stats-bar-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .stats-bar-grid > div {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* ── About grid: side-by-side → stacked ── */
+  .about-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Social proof: photo left, text right → stacked ── */
+  .proof-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Gallery: 3-col → 2-col, no spanning ── */
+  .gallery-grid {
+    grid-template-columns: 1fr 1fr !important;
+    grid-auto-rows: 160px !important;
+  }
+  .gallery-grid > div {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+  }
+
+  /* ── Roster at bottom: multi-col → single ── */
+  .roster-grid {
+    grid-template-columns: 1fr !important;
+    background: transparent !important;
+    gap: 1px !important;
+  }
+
+  /* ── Contact: two-col → single ── */
+  .contact-layout {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+
+  /* ── Form field pairs: side-by-side → stacked ── */
+  .form-row-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Section padding ── */
+  .mobile-pad {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* ── Band hero content padding ── */
+  .hero-content {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+}

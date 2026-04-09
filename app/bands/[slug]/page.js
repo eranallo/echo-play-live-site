@@ -295,7 +295,7 @@ export default function BandPage({ params }) {
             borderBottom: '1px solid rgba(255,255,255,0.06)',
             background: `${band.color}06`,
           }}>
-            <div style={{
+            <div className="stats-bar-grid" style={{
               maxWidth: '1400px', margin: '0 auto', padding: '0 40px',
               display: 'grid', gridTemplateColumns: `repeat(${stats.length}, 1fr)`,
             }}>
@@ -329,7 +329,7 @@ export default function BandPage({ params }) {
           padding: 'clamp(60px, 8vw, 100px) 40px',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
         }}>
-          <div style={{
+          <div className="about-grid" style={{
             maxWidth: '1400px', margin: '0 auto',
             display: 'grid',
             gridTemplateColumns: featureImg ? '1fr 1fr' : '1fr',
@@ -427,7 +427,7 @@ export default function BandPage({ params }) {
             background: 'rgba(255,255,255,0.01)',
           }}>
             <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-              <div style={{
+              <div className="proof-grid" style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
                 gap: 'clamp(40px, 6vw, 96px)',
@@ -546,7 +546,7 @@ export default function BandPage({ params }) {
               </div>
 
               {/* Masonry-style gallery grid */}
-              <div style={{
+              <div className="gallery-grid" style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(3, 1fr)',
                 gridAutoRows: '240px',
@@ -668,7 +668,7 @@ export default function BandPage({ params }) {
             <div className="section-label reveal" style={{ marginBottom: '32px' }}>
               Also on Our Roster
             </div>
-            <div style={{
+            <div className="roster-grid" style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
               gap: '1px', background: 'rgba(255,255,255,0.05)',
