@@ -26,7 +26,6 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        <div className="grain-overlay" aria-hidden="true" />
         {children}
       </body>
     </html>
