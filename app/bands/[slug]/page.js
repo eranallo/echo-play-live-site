@@ -55,10 +55,10 @@ const SocialIcon = ({ platform }) => {
 // EPK-specific stats per band
 const bandStats = {
   'jambi': [
-    { value: 'Legacy Hall', label: 'Featured Venue' },
-    { value: 'Granada Theater', label: 'Featured Venue' },
+    { value: '50+', label: 'Shows Performed' },
+    { value: '2019', label: 'First Show' },
+    { value: 'Granada', label: 'Headline Venue' },
     { value: 'Full LED', label: 'Live Visuals' },
-    { value: 'DFW #1', label: 'TOOL Tribute' },
   ],
   'so-long-goodnight': [
     { value: '3+ Hours', label: 'Per Performance' },
