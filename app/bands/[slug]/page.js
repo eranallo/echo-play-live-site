@@ -61,10 +61,10 @@ const bandStats = {
     { value: 'Full LED', label: 'Live Visuals' },
   ],
   'so-long-goodnight': [
-    { value: '3+ Hours', label: 'Per Performance' },
+    { value: '3+ Hours', label: 'Per Show' },
+    { value: 'Full Band', label: 'Always Live' },
     { value: 'DFW Most', label: 'Requested' },
-    { value: 'Full Band', label: 'Live Performance' },
-    { value: 'Warped Tour', label: 'Era Specialists' },
+    { value: 'Warped Tour', label: 'Era' },
   ],
   'the-dick-beldings': [
     { value: '90s', label: 'Era Specialists' },
@@ -73,10 +73,10 @@ const bandStats = {
     { value: 'DFW Premier', label: '90s Tribute' },
   ],
   'elite': [
-    { value: '100%', label: 'Deftones Catalog' },
-    { value: 'Full Band', label: 'Live Performance' },
-    { value: 'Texas', label: 'Premier Tribute' },
-    { value: 'Pro', label: 'Production' },
+    { value: '2017', label: 'Year Founded' },
+    { value: 'Fort Worth', label: 'Based' },
+    { value: 'Granada', label: 'Headline Venue' },
+    { value: '8 Years', label: 'On Stage' },
   ],
 }
 
