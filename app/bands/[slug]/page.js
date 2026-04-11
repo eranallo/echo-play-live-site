@@ -56,27 +56,27 @@ const SocialIcon = ({ platform }) => {
 const bandStats = {
   'jambi': [
     { value: '50+', label: 'Shows Performed' },
-    { value: '2019', label: 'First Show' },
-    { value: 'Granada', label: 'Headline Venue' },
-    { value: 'Full LED', label: 'Live Visuals' },
+    { value: '2019', label: 'Est.' },
+    { value: '6 Years', label: 'On Stage' },
+    { value: 'TX & OK', label: 'Territory' },
   ],
   'so-long-goodnight': [
     { value: '3+ Hours', label: 'Per Show' },
-    { value: 'Full Band', label: 'Always Live' },
-    { value: 'DFW Most', label: 'Requested' },
+    { value: '100+', label: 'Songs' },
+    { value: 'Live Band', label: 'No DJs' },
     { value: 'Warped Tour', label: 'Era' },
   ],
   'the-dick-beldings': [
-    { value: '90s', label: 'Era Specialists' },
-    { value: 'Full Band', label: 'Live Performance' },
+    { value: '10+', label: 'Years Together' },
     { value: 'Fort Worth', label: 'Based' },
-    { value: 'DFW Premier', label: '90s Tribute' },
+    { value: '90s', label: 'Era' },
+    { value: 'Texas Live', label: 'Marquee Venue' },
   ],
   'elite': [
-    { value: '2017', label: 'Year Founded' },
-    { value: 'Fort Worth', label: 'Based' },
-    { value: 'Granada', label: 'Headline Venue' },
+    { value: '2017', label: 'Est.' },
     { value: '8 Years', label: 'On Stage' },
+    { value: 'Fort Worth', label: 'Based' },
+    { value: 'TX & Beyond', label: 'Territory' },
   ],
 }
 
@@ -228,12 +228,14 @@ export default function BandPage({ params }) {
               textShadow: heroImg ? '0 2px 40px rgba(0,0,0,0.7)' : 'none',
             }}>{band.name}</h1>
 
-            <p style={{
-              fontFamily: 'Barlow, sans-serif',
-              fontSize: 'clamp(15px, 2.2vw, 20px)',
-              fontStyle: 'italic', fontWeight: 300,
-              color: band.color, letterSpacing: '0.02em', marginBottom: '28px',
-            }}>{band.tagline}</p>
+            {!band.hideTagline && (
+              <p style={{
+                fontFamily: 'Barlow, sans-serif',
+                fontSize: 'clamp(15px, 2.2vw, 20px)',
+                fontStyle: 'italic', fontWeight: 300,
+                color: band.color, letterSpacing: '0.02em', marginBottom: '28px',
+              }}>{band.tagline}</p>
+            )}
 
             {/* Social links + booking CTA */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
@@ -352,7 +354,7 @@ export default function BandPage({ params }) {
                   { label: 'Type', value: 'Tribute / Cover Band' },
                   { label: 'Genre', value: band.era },
                   { label: 'Based', value: 'Fort Worth / DFW, TX' },
-                  { label: 'Booking', value: 'eranallo@echoplay.live' },
+                  { label: 'Booking', value: band.bookingEmail },
                 ].map(({ label, value }) => (
                   <div key={label} style={{ background: '#0a0a0a', padding: '16px 20px' }}>
                     <div style={{
@@ -471,8 +473,7 @@ export default function BandPage({ params }) {
                     letterSpacing: '0.02em', lineHeight: 0.9,
                     color: '#fff', marginBottom: '20px',
                   }}>
-                    Every Show Is<br />
-                    <span style={{ color: band.color }}>A Full Event</span>
+                    {band.experienceHeadline || <>Every Show Is<br /><span style={{ color: band.color }}>A Full Event</span></>}
                   </h2>
                   <p className="reveal delay-200" style={{
                     fontFamily: 'Barlow, sans-serif',
@@ -481,12 +482,12 @@ export default function BandPage({ params }) {
                     color: 'rgba(255,255,255,0.55)',
                     marginBottom: '28px',
                   }}>
-                    We don't just play songs — we deliver a complete, professional live production. Full lighting rigs, professional-grade sound, and the dedication to get every detail right. When you book {band.name}, your audience gets an experience worth coming back for.
+                    {band.experienceBody || `When you book ${band.name}, your audience gets a show worth coming back for.`}
                   </p>
                   <div className="reveal delay-300" style={{
                     display: 'flex', gap: '20px', flexWrap: 'wrap',
                   }}>
-                    {['Professional Sound', 'Full Lighting Rig', 'Live Band Only'].map(item => (
+                    {(band.experiencePoints || ['Faithful to the Catalog', 'Always Live', 'All Original Members']).map(item => (
                       <div key={item} style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
                         fontFamily: 'Barlow Condensed, sans-serif',
@@ -700,7 +701,7 @@ export default function BandPage({ params }) {
                 onMouseEnter={e => { e.currentTarget.style.opacity = '0.88'; e.currentTarget.style.transform = 'translateY(-2px)' }}
                 onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)' }}
               >Submit Booking Inquiry →</Link>
-              <a href="mailto:eranallo@echoplay.live" style={{
+              <a href={`mailto:${band.bookingEmail}`} style={{
                 display: 'inline-flex', alignItems: 'center',
                 fontFamily: 'Barlow Condensed, sans-serif',
                 fontSize: '12px', fontWeight: 600, letterSpacing: '0.18em',

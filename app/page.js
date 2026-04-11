@@ -114,10 +114,6 @@ export default function Home() {
               maxWidth: '520px',
               margin: '0 auto 48px',
               lineHeight: 1.6,
-            }}>
-              Four bands. One management company.<br />Infinite energy on every stage in DFW.
-            </p>
-
             <div className="hero-cta-wrap" style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link href="#bands" className="btn-primary" style={{
                 textDecoration: 'none',
@@ -160,32 +156,6 @@ export default function Home() {
 
         {/* ── BAND SHOWCASE ─────────────────────────────── */}
         <section id="bands" style={{ padding: '0' }}>
-          <div style={{
-            maxWidth: '1400px', margin: '0 auto', padding: '80px 32px 40px',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            flexWrap: 'wrap', gap: '16px',
-          }}>
-            <div className="reveal">
-              <div className="section-label" style={{ marginBottom: '8px' }}>Our Roster</div>
-              <h2 style={{
-                fontFamily: 'Bebas Neue, cursive',
-                fontSize: 'clamp(36px, 6vw, 72px)',
-                letterSpacing: '0.03em',
-                lineHeight: 0.9,
-                color: '#fff',
-              }}>Four Bands.<br />One Vision.</h2>
-            </div>
-            <p className="reveal delay-200" style={{
-              fontFamily: 'Barlow, sans-serif',
-              fontSize: '15px',
-              lineHeight: 1.7,
-              color: 'rgba(255,255,255,0.4)',
-              maxWidth: '360px',
-            }}>
-              Every band we manage is a live, full-production tribute experience. No backing tracks. No shortcuts. Just the real thing.
-            </p>
-          </div>
-
           {/* Band cards */}
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             {bandsList.map((band, index) => (
