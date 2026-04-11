@@ -104,16 +104,6 @@ export default function Home() {
               ))}
             </h1>
 
-            <p className="hero-sub" style={{
-              fontFamily: 'Barlow, sans-serif',
-              fontSize: 'clamp(15px, 2.5vw, 19px)',
-              fontWeight: 300,
-              letterSpacing: '0.04em',
-              color: 'rgba(255,255,255,0.5)',
-              marginBottom: '48px',
-              maxWidth: '520px',
-              margin: '0 auto 48px',
-              lineHeight: 1.6,
             <div className="hero-cta-wrap" style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link href="#bands" className="btn-primary" style={{
                 textDecoration: 'none',
