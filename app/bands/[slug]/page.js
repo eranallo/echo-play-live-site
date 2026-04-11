@@ -473,7 +473,14 @@ export default function BandPage({ params }) {
                     letterSpacing: '0.02em', lineHeight: 0.9,
                     color: '#fff', marginBottom: '20px',
                   }}>
-                    {band.experienceHeadline || <>Every Show Is<br /><span style={{ color: band.color }}>A Full Event</span></>}
+                    {band.experienceHeadline ? (
+                      <>
+                        {band.experienceHeadline.line1}<br />
+                        <span style={{ color: band.color }}>{band.experienceHeadline.line2}</span>
+                      </>
+                    ) : (
+                      <>Every Show Is<br /><span style={{ color: band.color }}>A Full Event</span></>
+                    )}
                   </h2>
                   <p className="reveal delay-200" style={{
                     fontFamily: 'Barlow, sans-serif',
