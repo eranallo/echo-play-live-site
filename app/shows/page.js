@@ -19,36 +19,31 @@ function useScrollReveal() {
   return ref
 }
 
-// Only bands with Bandsintown URLs
-const bandsintownBands = bandsList.filter(b => b.social?.bandsintown)
-
-// Extract artist name from Bandsintown profile URL or use band name
+// Exact artist names as registered on Bandsintown
+// These must match the artist's profile name on Bandsintown exactly
 const artistNames = {
+  'so-long-goodnight': 'So Long, Goodnight',
+  'the-dick-beldings': 'The Dick Beldings',
   'jambi': 'Jambi - A Tool Experience',
   'elite': 'Elite - A Texas Tribute to Deftones',
-  'so-long-goodnight': 'So Long Goodnight',
-  'the-dick-beldings': 'The Dick Beldings',
 }
 
 export default function ShowsPage() {
   const pageRef = useScrollReveal()
   const [filter, setFilter] = useState('all')
-  const [scriptLoaded, setScriptLoaded] = useState(false)
 
   // Load Bandsintown widget script once
   useEffect(() => {
-    if (document.querySelector('script[src*="bandsintown"]')) {
-      setScriptLoaded(true)
-      return
-    }
+    if (document.querySelector('script[src*="bandsintown"]')) return
     const script = document.createElement('script')
     script.src = 'https://widget.bandsintown.com/main.min.js'
     script.async = true
-    script.onload = () => setScriptLoaded(true)
     document.head.appendChild(script)
   }, [])
 
-  const filteredBands = filter === 'all' ? bandsintownBands : bandsintownBands.filter(b => b.slug === filter)
+  const filteredBands = filter === 'all'
+    ? bandsList
+    : bandsList.filter(b => b.slug === filter)
 
   return (
     <>
@@ -134,17 +129,17 @@ export default function ShowsPage() {
               }}>Upcoming Shows</div>
             </div>
 
-            {/* One widget per band */}
-            {filteredBands.length > 0 ? filteredBands.map(band => (
-              <div key={band.slug} style={{ marginBottom: '60px' }}>
-                {/* Band label */}
+            {/* One widget per filtered band */}
+            {filteredBands.map(band => (
+              <div key={band.slug} style={{ marginBottom: '48px' }}>
+                {/* Band label — only show when viewing All Shows */}
                 {filter === 'all' && (
                   <div style={{
-                    display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px',
-                    paddingBottom: '12px',
+                    display: 'flex', alignItems: 'center', gap: '12px',
+                    marginBottom: '16px', paddingBottom: '12px',
                     borderBottom: `1px solid ${band.color}30`,
                   }}>
-                    <div style={{ width: '3px', height: '20px', background: band.color }} />
+                    <div style={{ width: '3px', height: '20px', background: band.color, flexShrink: 0 }} />
                     <Link href={`/bands/${band.slug}`} style={{
                       fontFamily: 'Bebas Neue, cursive',
                       fontSize: '22px', letterSpacing: '0.04em',
@@ -158,76 +153,54 @@ export default function ShowsPage() {
                 )}
 
                 {/* Bandsintown widget */}
-                <div className="bit-widget-wrapper" style={{ position: 'relative' }}>
-                  <a
-                    className="bit-widget-initializer"
-                    data-artist-name={artistNames[band.slug] || band.name}
-                    data-display-local-dates="false"
-                    data-display-past-dates="false"
-                    data-auto-style="false"
-                    data-font-color="#ffffff"
-                    data-text-color="#ffffff"
-                    data-link-color={band.color}
-                    data-popup-background-color="#0a0a0a"
-                    data-background-color="transparent"
-                    data-display-limit="15"
-                    data-separator-color="rgba(255,255,255,0.06)"
-                    data-play-my-city="false"
-                  />
-                </div>
+                <a
+                  className="bit-widget-initializer"
+                  data-artist-name={artistNames[band.slug] || band.name}
+                  data-display-local-dates="false"
+                  data-display-past-dates="false"
+                  data-auto-style="false"
+                  data-font-color="#ffffff"
+                  data-text-color="#ffffff"
+                  data-link-color={band.color}
+                  data-popup-background-color="#0a0a0a"
+                  data-background-color="transparent"
+                  data-display-limit="15"
+                  data-separator-color="rgba(255,255,255,0.06)"
+                  data-play-my-city="false"
+                />
               </div>
-            )) : (
-              /* No Bandsintown shows for this filter */
-              <div style={{
-                border: '1px solid rgba(255,255,255,0.06)',
-                padding: '60px 40px', textAlign: 'center',
-              }}>
-                <div style={{
-                  fontFamily: 'Bebas Neue, cursive',
-                  fontSize: '40px', letterSpacing: '0.04em',
-                  color: 'rgba(255,255,255,0.15)', marginBottom: '12px',
-                }}>New Dates Coming Soon</div>
-                <p style={{
-                  fontFamily: 'Barlow, sans-serif', fontSize: '14px',
-                  color: 'rgba(255,255,255,0.25)', marginBottom: '32px',
-                }}>
-                  Follow each band on Bandsintown to get notified the moment new shows are announced.
-                </p>
-              </div>
-            )}
+            ))}
 
             {/* Follow on Bandsintown */}
-            {bandsintownBands.length > 0 && (
+            <div style={{
+              marginTop: '40px', paddingTop: '40px',
+              borderTop: '1px solid rgba(255,255,255,0.06)',
+            }}>
               <div style={{
-                marginTop: '40px', paddingTop: '40px',
-                borderTop: '1px solid rgba(255,255,255,0.06)',
-              }}>
-                <div style={{
-                  fontFamily: 'Barlow Condensed, sans-serif',
-                  fontSize: '10px', fontWeight: 600, letterSpacing: '0.25em',
-                  textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)',
-                  marginBottom: '16px',
-                }}>Follow on Bandsintown</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                  {bandsintownBands.map(band => (
-                    <a key={band.slug} href={band.social.bandsintown} target="_blank" rel="noopener noreferrer" style={{
-                      display: 'inline-flex', alignItems: 'center', gap: '6px',
-                      fontFamily: 'Barlow Condensed, sans-serif',
-                      fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em',
-                      textTransform: 'uppercase', color: band.color,
-                      border: `1px solid ${band.color}40`,
-                      padding: '8px 16px', textDecoration: 'none',
-                      transition: 'background 0.2s ease',
-                    }}
-                      onMouseEnter={e => e.currentTarget.style.background = `${band.color}15`}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                    >
-                      {band.shortName} →
-                    </a>
-                  ))}
-                </div>
+                fontFamily: 'Barlow Condensed, sans-serif',
+                fontSize: '10px', fontWeight: 600, letterSpacing: '0.25em',
+                textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)',
+                marginBottom: '16px',
+              }}>Follow on Bandsintown</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                {bandsList.filter(b => b.social?.bandsintown).map(band => (
+                  <a key={band.slug} href={band.social.bandsintown} target="_blank" rel="noopener noreferrer" style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '6px',
+                    fontFamily: 'Barlow Condensed, sans-serif',
+                    fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em',
+                    textTransform: 'uppercase', color: band.color,
+                    border: `1px solid ${band.color}40`,
+                    padding: '8px 16px', textDecoration: 'none',
+                    transition: 'background 0.2s ease',
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.background = `${band.color}15`}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >
+                    {band.shortName} →
+                  </a>
+                ))}
               </div>
-            )}
+            </div>
 
             {/* Band Roster Quick Links */}
             <div className="reveal" style={{ marginTop: '80px' }}>
@@ -271,63 +244,15 @@ export default function ShowsPage() {
 
         {/* Bandsintown widget style overrides */}
         <style>{`
-          .bit-widget {
-            background: transparent !important;
-            font-family: 'Barlow', sans-serif !important;
-          }
-          .bit-event {
-            background: rgba(255,255,255,0.015) !important;
-            border: none !important;
-            border-bottom: 1px solid rgba(255,255,255,0.06) !important;
-            padding: 16px 0 !important;
-            margin: 0 !important;
-          }
-          .bit-event:hover {
-            background: rgba(255,255,255,0.03) !important;
-          }
-          .bit-date, .bit-date * {
-            font-family: 'Bebas Neue', cursive !important;
-            font-size: 18px !important;
-            letter-spacing: 0.06em !important;
-            color: #fff !important;
-          }
-          .bit-venue, .bit-venue * {
-            font-family: 'Barlow', sans-serif !important;
-            color: rgba(255,255,255,0.85) !important;
-          }
-          .bit-location, .bit-location * {
-            font-family: 'Barlow', sans-serif !important;
-            color: rgba(255,255,255,0.4) !important;
-            font-size: 12px !important;
-          }
-          .bit-offers-container {
-            display: flex !important;
-            gap: 8px !important;
-          }
-          .bit-offers a, .bit-rsvp a {
-            font-family: 'Barlow Condensed', sans-serif !important;
-            font-size: 10px !important;
-            font-weight: 700 !important;
-            letter-spacing: 0.15em !important;
-            text-transform: uppercase !important;
-            padding: 7px 14px !important;
-            border-radius: 0 !important;
-          }
-          .bit-no-dates-title {
-            font-family: 'Bebas Neue', cursive !important;
-            color: rgba(255,255,255,0.2) !important;
-            font-size: 24px !important;
-          }
-          .bit-no-dates-container {
-            background: transparent !important;
-            padding: 20px 0 !important;
-          }
-          .bit-widget .bit-view-all-events {
-            font-family: 'Barlow Condensed', sans-serif !important;
-            font-size: 10px !important;
-            letter-spacing: 0.15em !important;
-            text-transform: uppercase !important;
-          }
+          .bit-widget { background: transparent !important; font-family: 'Barlow', sans-serif !important; }
+          .bit-event { background: rgba(255,255,255,0.015) !important; border: none !important; border-bottom: 1px solid rgba(255,255,255,0.06) !important; padding: 16px 0 !important; margin: 0 !important; }
+          .bit-event:hover { background: rgba(255,255,255,0.03) !important; }
+          .bit-date * { font-family: 'Bebas Neue', cursive !important; font-size: 18px !important; letter-spacing: 0.06em !important; color: #fff !important; }
+          .bit-venue * { font-family: 'Barlow', sans-serif !important; color: rgba(255,255,255,0.85) !important; }
+          .bit-location * { font-family: 'Barlow', sans-serif !important; color: rgba(255,255,255,0.4) !important; font-size: 12px !important; }
+          .bit-offers a, .bit-rsvp a { font-family: 'Barlow Condensed', sans-serif !important; font-size: 10px !important; font-weight: 700 !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; padding: 7px 14px !important; border-radius: 0 !important; }
+          .bit-no-dates-title { font-family: 'Barlow', sans-serif !important; color: rgba(255,255,255,0.15) !important; font-size: 13px !important; }
+          .bit-no-dates-container { background: transparent !important; padding: 8px 0 !important; }
         `}</style>
 
         {/* Book a show CTA */}
