@@ -70,7 +70,7 @@ const bandStats = {
     { value: '10+', label: 'Years Together' },
     { value: 'Fort Worth', label: 'Based' },
     { value: '90s', label: 'Era' },
-    { value: 'Texas Live', label: 'Marquee Venue' },
+    { value: '100+', label: 'Song Library' },
   ],
   'elite': [
     { value: '2017', label: 'Est.' },
