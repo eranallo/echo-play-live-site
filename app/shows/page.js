@@ -19,20 +19,63 @@ function useScrollReveal() {
   return ref
 }
 
+// Merge and deduplicate shows from Airtable + Bandsintown
+// Prefer Airtable records; use Bandsintown to fill gaps and add ticket links
+function mergeShows(airtableShows, bandsintownShows) {
+  const merged = [...airtableShows]
+  const airtableDates = new Set(
+    airtableShows.map(s => `${s.bandSlug}_${s.date}`)
+  )
+
+  for (const btShow of bandsintownShows) {
+    const key = `${btShow.bandSlug}_${btShow.date}`
+    if (!airtableDates.has(key)) {
+      merged.push(btShow)
+    } else {
+      // Enrich matching Airtable show with Bandsintown ticket URL
+      const match = merged.find(s => `${s.bandSlug}_${s.date}` === key)
+      if (match && !match.bandsintownUrl) {
+        match.bandsintownUrl = btShow.bandsintownUrl
+        match.ticketUrl = btShow.ticketUrl
+      }
+    }
+  }
+
+  return merged.sort((a, b) => {
+    if (!a.date) return 1
+    if (!b.date) return -1
+    return a.date.localeCompare(b.date)
+  })
+}
+
 export default function ShowsPage() {
   const pageRef = useScrollReveal()
   const [filter, setFilter] = useState('all')
   const [shows, setShows] = useState([])
   const [loading, setLoading] = useState(true)
+  const [source, setSource] = useState(null) // 'bandsintown' | 'airtable' | 'merged'
 
   useEffect(() => {
-    fetch('/api/shows')
-      .then(r => r.json())
-      .then(data => {
-        setShows(data.shows || [])
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
+    async function loadShows() {
+      const [airtableRes, btRes] = await Promise.allSettled([
+        fetch('/api/shows').then(r => r.json()),
+        fetch('/api/bandsintown').then(r => r.json()),
+      ])
+
+      const airtableShows = airtableRes.status === 'fulfilled' ? (airtableRes.value.shows || []) : []
+      const btShows = btRes.status === 'fulfilled' ? (btRes.value.shows || []) : []
+
+      const merged = mergeShows(airtableShows, btShows)
+      setShows(merged)
+
+      if (airtableShows.length > 0 && btShows.length > 0) setSource('merged')
+      else if (btShows.length > 0) setSource('bandsintown')
+      else setSource('airtable')
+
+      setLoading(false)
+    }
+
+    loadShows().catch(() => setLoading(false))
   }, [])
 
   const filteredShows = filter === 'all'
@@ -117,7 +160,6 @@ export default function ShowsPage() {
               </div>
             ) : filteredShows.length > 0 ? (
               <div className="reveal">
-                {/* Live show rows */}
                 <div style={{ marginBottom: '64px' }}>
                   <div style={{
                     display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px',
@@ -132,6 +174,13 @@ export default function ShowsPage() {
                       fontSize: '11px', fontWeight: 600, letterSpacing: '0.25em',
                       textTransform: 'uppercase', color: '#F5C518',
                     }}>Upcoming Shows</div>
+                    {source === 'bandsintown' || source === 'merged' ? (
+                      <div style={{
+                        fontFamily: 'Barlow Condensed, sans-serif',
+                        fontSize: '10px', letterSpacing: '0.12em',
+                        textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)',
+                      }}>via Bandsintown</div>
+                    ) : null}
                   </div>
 
                   {filteredShows.map((show, i) => (
@@ -141,7 +190,6 @@ export default function ShowsPage() {
                       gridTemplateColumns: '160px 1fr 180px 140px auto',
                       alignItems: 'center', gap: '24px',
                       borderBottom: '1px solid rgba(255,255,255,0.06)',
-                      transition: 'background 0.2s ease',
                     }}>
                       {/* Date */}
                       <div>
@@ -156,12 +204,21 @@ export default function ShowsPage() {
                         }}>{show.dateFormatted?.split(',').slice(1).join(',').trim()}</div>
                       </div>
 
-                      {/* Venue */}
-                      <div style={{
-                        fontFamily: 'Barlow, sans-serif',
-                        fontSize: '15px', fontWeight: 500,
-                        color: 'rgba(255,255,255,0.85)',
-                      }}>{show.venue}</div>
+                      {/* Venue + city */}
+                      <div>
+                        <div style={{
+                          fontFamily: 'Barlow, sans-serif',
+                          fontSize: '15px', fontWeight: 500,
+                          color: 'rgba(255,255,255,0.85)',
+                        }}>{show.venue}</div>
+                        {show.venueCity && (
+                          <div style={{
+                            fontFamily: 'Barlow, sans-serif',
+                            fontSize: '12px', color: 'rgba(255,255,255,0.3)',
+                            marginTop: '2px',
+                          }}>{show.venueCity}{show.venueRegion ? `, ${show.venueRegion}` : ''}</div>
+                        )}
+                      </div>
 
                       {/* Band */}
                       {show.bandSlug ? (
@@ -169,8 +226,7 @@ export default function ShowsPage() {
                           fontFamily: 'Barlow Condensed, sans-serif',
                           fontSize: '12px', fontWeight: 600, letterSpacing: '0.1em',
                           textTransform: 'uppercase', color: show.bandColor,
-                          textDecoration: 'none',
-                          transition: 'opacity 0.2s ease',
+                          textDecoration: 'none', transition: 'opacity 0.2s ease',
                         }}
                           onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
                           onMouseLeave={e => e.currentTarget.style.opacity = '1'}
@@ -190,21 +246,25 @@ export default function ShowsPage() {
                         color: 'rgba(255,255,255,0.3)',
                       }}>{show.setTime ? `Showtime ${show.setTime}` : ''}</div>
 
-                      {/* Bandsintown CTA */}
-                      {show.bandsintownUrl ? (
-                        <a href={show.bandsintownUrl} target="_blank" rel="noopener noreferrer" style={{
-                          display: 'inline-flex', alignItems: 'center', gap: '6px',
-                          fontFamily: 'Barlow Condensed, sans-serif',
-                          fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em',
-                          textTransform: 'uppercase', color: '#080808',
-                          background: show.bandColor, padding: '7px 14px',
-                          textDecoration: 'none', whiteSpace: 'nowrap',
-                          transition: 'opacity 0.2s ease',
-                        }}
+                      {/* CTA — prefer ticketUrl, fall back to bandsintownUrl */}
+                      {(show.ticketUrl || show.bandsintownUrl) ? (
+                        <a
+                          href={show.ticketUrl || show.bandsintownUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: 'inline-flex', alignItems: 'center', gap: '6px',
+                            fontFamily: 'Barlow Condensed, sans-serif',
+                            fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em',
+                            textTransform: 'uppercase', color: '#080808',
+                            background: show.bandColor, padding: '7px 14px',
+                            textDecoration: 'none', whiteSpace: 'nowrap',
+                            transition: 'opacity 0.2s ease',
+                          }}
                           onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
                           onMouseLeave={e => e.currentTarget.style.opacity = '1'}
                         >
-                          Tickets / Info →
+                          {show.ticketUrl ? 'Get Tickets →' : 'Info →'}
                         </a>
                       ) : (
                         <div style={{ width: '100px' }} />
@@ -214,7 +274,7 @@ export default function ShowsPage() {
                 </div>
               </div>
             ) : (
-              /* No shows — placeholder + Bandsintown follow links */
+              /* No shows state */
               <div className="reveal" style={{ marginBottom: '64px' }}>
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px',
@@ -246,45 +306,24 @@ export default function ShowsPage() {
                   }}>
                     Follow each band on Bandsintown to get notified the moment new shows are announced.
                   </p>
-
-                  {/* Bandsintown follow buttons per band */}
                   <div style={{
                     display: 'flex', justifyContent: 'center',
                     flexWrap: 'wrap', gap: '12px',
                   }}>
-                    {bandsList.map(band => (
-                      <div key={band.slug} style={{
-                        border: `1px solid ${band.color}30`,
-                        background: `${band.color}08`,
-                        padding: '16px 24px', minWidth: '200px',
-                        textAlign: 'left',
-                      }}>
-                        <div style={{
-                          fontFamily: 'Bebas Neue, cursive',
-                          fontSize: '18px', letterSpacing: '0.04em',
-                          color: band.color, marginBottom: '8px',
-                        }}>{band.name}</div>
-                        {band.bandsintownUrl ? (
-                          <a href={band.bandsintownUrl} target="_blank" rel="noopener noreferrer" style={{
-                            display: 'inline-flex', alignItems: 'center', gap: '6px',
-                            fontFamily: 'Barlow Condensed, sans-serif',
-                            fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em',
-                            textTransform: 'uppercase', color: '#080808',
-                            background: band.color, padding: '6px 14px',
-                            textDecoration: 'none', transition: 'opacity 0.2s ease',
-                          }}>Follow on Bandsintown →</a>
-                        ) : (
-                          <a href={band.social.facebook} target="_blank" rel="noopener noreferrer" style={{
-                            display: 'inline-flex', alignItems: 'center', gap: '6px',
-                            fontFamily: 'Barlow Condensed, sans-serif',
-                            fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em',
-                            textTransform: 'uppercase', color: band.color,
-                            border: `1px solid ${band.color}40`,
-                            padding: '6px 14px', textDecoration: 'none',
-                            transition: 'opacity 0.2s ease',
-                          }}>Follow on Facebook →</a>
-                        )}
-                      </div>
+                    {bandsList.filter(b => b.social?.bandsintown).map(band => (
+                      <a key={band.slug} href={band.social.bandsintown} target="_blank" rel="noopener noreferrer" style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '8px',
+                        fontFamily: 'Barlow Condensed, sans-serif',
+                        fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em',
+                        textTransform: 'uppercase', color: '#080808',
+                        background: band.color, padding: '8px 16px',
+                        textDecoration: 'none', transition: 'opacity 0.2s ease',
+                      }}
+                        onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
+                        onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                      >
+                        Follow {band.shortName} on Bandsintown →
+                      </a>
                     ))}
                   </div>
                 </div>
