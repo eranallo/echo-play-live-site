@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server'
 import { bandNameToSlug, bands } from '@/lib/bands'
 
 const AIRTABLE_BASE = 'appYUOoJgvRyZ7fLB'
-const AIRTABLE_TABLE = 'tblSFV8wY62hD7kCW'
+const AIRTABLE_SHOWS = 'tblSFV8wY62hD7kCW'
+const AIRTABLE_VENUES = 'tbleV69KlU8tygF5B'
+const AIRTABLE_BANDS = 'tble6HQKSixIUdGcH'
 
 export async function GET() {
   try {
@@ -12,51 +14,52 @@ export async function GET() {
     }
 
     const today = new Date().toISOString().split('T')[0]
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    }
 
-    // Fetch upcoming confirmed/booked shows from Airtable
-    const params = new URLSearchParams({
-      'filterByFormula': `AND({Date} >= '${today}', OR({Status} = 'Confirmed', {Status} = 'Booked', {Status} = 'Announced'))`,
-      'sort[0][field]': 'Date',
-      'sort[0][direction]': 'asc',
-      'fields[]': ['Date', 'Status', 'Band', 'Venue', 'Set Time', 'Load-In Time'],
-      'maxRecords': '20',
-    })
+    // ── Fetch upcoming shows ──────────────────────────────
+    // Use append() for each array param — URLSearchParams constructor
+    // joins arrays with commas which breaks Airtable's API
+    const params = new URLSearchParams()
+    params.append('filterByFormula', `AND({Date} >= '${today}', OR({Status} = 'Confirmed', {Status} = 'Booked', {Status} = 'Announced'))`)
+    params.append('sort[0][field]', 'Date')
+    params.append('sort[0][direction]', 'asc')
+    params.append('fields[]', 'Date')
+    params.append('fields[]', 'Status')
+    params.append('fields[]', 'Band')
+    params.append('fields[]', 'Venue')
+    params.append('fields[]', 'Start Time')
+    params.append('fields[]', 'Load-In Time')
+    params.append('maxRecords', '30')
 
     const res = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}?${params}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        next: { revalidate: 3600 }, // Cache for 1 hour
-      }
+      `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_SHOWS}?${params}`,
+      { headers, next: { revalidate: 1800 } }
     )
 
     if (!res.ok) {
-      console.error('Airtable shows fetch failed:', res.status)
+      const err = await res.text()
+      console.error('Airtable shows fetch failed:', res.status, err)
       return NextResponse.json({ shows: [] }, { status: 200 })
     }
 
     const data = await res.json()
 
-    // Also fetch venue details for any linked venues
+    // ── Fetch venue names ─────────────────────────────────
     const venueIds = [...new Set(
-      data.records
-        .flatMap(r => r.fields['Venue'] || [])
-        .filter(Boolean)
+      data.records.flatMap(r => r.fields['Venue'] || []).filter(Boolean)
     )]
-
     let venueMap = {}
     if (venueIds.length > 0) {
-      const venueParams = new URLSearchParams()
-      venueIds.forEach(id => venueParams.append('records[]', id))
+      const vParams = new URLSearchParams()
+      venueIds.forEach(id => vParams.append('records[]', id))
+      vParams.append('fields[]', 'Venue Name')
+      vParams.append('fields[]', 'Address')
       const venueRes = await fetch(
-        `https://api.airtable.com/v0/${AIRTABLE_BASE}/tbleV69KlU8tygF5B?${venueParams}&fields[]=Venue Name&fields[]=Address`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          next: { revalidate: 3600 },
-        }
+        `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_VENUES}?${vParams}`,
+        { headers, next: { revalidate: 3600 } }
       )
       if (venueRes.ok) {
         const venueData = await venueRes.json()
@@ -66,23 +69,19 @@ export async function GET() {
       }
     }
 
-    // Also fetch band names for linked bands
+    // ── Fetch band names + Bandsintown URLs ───────────────
     const bandIds = [...new Set(
-      data.records
-        .flatMap(r => r.fields['Band'] || [])
-        .filter(Boolean)
+      data.records.flatMap(r => r.fields['Band'] || []).filter(Boolean)
     )]
-
     let bandMap = {}
     if (bandIds.length > 0) {
-      const bandParams = new URLSearchParams()
-      bandIds.forEach(id => bandParams.append('records[]', id))
+      const bParams = new URLSearchParams()
+      bandIds.forEach(id => bParams.append('records[]', id))
+      bParams.append('fields[]', 'Band Name')
+      bParams.append('fields[]', 'Bandsintown URL')
       const bandRes = await fetch(
-        `https://api.airtable.com/v0/${AIRTABLE_BASE}/tble6HQKSixIUdGcH?${bandParams}&fields[]=Band Name&fields[]=Bandsintown URL`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          next: { revalidate: 3600 },
-        }
+        `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_BANDS}?${bParams}`,
+        { headers, next: { revalidate: 3600 } }
       )
       if (bandRes.ok) {
         const bandData = await bandRes.json()
@@ -95,31 +94,45 @@ export async function GET() {
       }
     }
 
-    // Shape the shows
+    // ── Shape the shows ───────────────────────────────────
     const shows = data.records.map(record => {
       const f = record.fields
-      const bandIds = f['Band'] || []
-      const bandInfo = bandIds.map(id => bandMap[id]).filter(Boolean)
+      const bandInfo = (f['Band'] || []).map(id => bandMap[id]).filter(Boolean)
       const primaryBand = bandInfo[0]
       const bandName = primaryBand?.name || 'Echo Play Live'
       const slug = bandNameToSlug[bandName] || null
       const bandData = slug ? bands[slug] : null
 
       const venueId = (f['Venue'] || [])[0]
-      const venueName = venueId ? venueMap[venueId] : 'TBA'
+      const venueName = venueId ? (venueMap[venueId] || 'TBA') : 'TBA'
 
-      // Format date nicely
       const dateObj = f['Date'] ? new Date(f['Date'] + 'T00:00:00') : null
       const dateFormatted = dateObj
-        ? dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
+        ? dateObj.toLocaleDateString('en-US', {
+            weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
+          })
         : 'TBA'
+
+      // Parse set time from Start Time field (ISO datetime)
+      let setTime = null
+      if (f['Start Time']) {
+        const d = new Date(f['Start Time'])
+        if (!isNaN(d)) {
+          let h = d.getHours(), min = d.getMinutes()
+          const ap = h >= 12 ? 'PM' : 'AM'
+          if (h > 12) h -= 12
+          if (h === 0) h = 12
+          setTime = min === 0 ? `${h} ${ap}` : `${h}:${String(min).padStart(2, '0')} ${ap}`
+        }
+      }
 
       return {
         id: record.id,
+        source: 'airtable',
         date: f['Date'] || null,
         dateFormatted,
         venue: venueName,
-        setTime: f['Set Time'] || null,
+        setTime,
         status: f['Status'] || 'Confirmed',
         bandName,
         bandSlug: slug,
