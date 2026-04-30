@@ -24,8 +24,8 @@ function useScrollReveal() {
 const artistNames = {
   'so-long-goodnight': 'So Long, Goodnight',
   'the-dick-beldings': 'The Dick Beldings',
-  'jambi': 'Jambi - A Tool Experience',
-  'elite': 'Elite - A Texas Tribute to Deftones',
+  'jambi': 'Jambi - Tribute To Tool',
+  'elite': 'Elite - Tribute To Deftones',
 }
 
 export default function ShowsPage() {
