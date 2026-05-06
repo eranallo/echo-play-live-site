@@ -63,7 +63,7 @@ const bandStats = {
   'so-long-goodnight': [
     { value: '3+ Hours', label: 'Per Show' },
     { value: '100+', label: 'Songs' },
-    { value: 'Live Band', label: 'No DJs' },
+    { value: 'Sing-Along', label: 'Show' },
     { value: 'Warped Tour', label: 'Era' },
   ],
   'the-dick-beldings': [
