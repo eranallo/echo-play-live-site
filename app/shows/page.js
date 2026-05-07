@@ -52,7 +52,7 @@ export default function ShowsPage() {
 
         {/* Hero */}
         <section style={{
-          padding: 'clamp(120px, 16vw, 180px) 40px clamp(60px, 8vw, 100px)',
+          padding: 'clamp(120px, 16vw, 180px) var(--gutter-fluid) clamp(60px, 8vw, 100px)',
           position: 'relative', overflow: 'hidden',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
         }}>
@@ -90,7 +90,7 @@ export default function ShowsPage() {
             margin: '0 auto',
           }}>
             <div className="filter-bar-scroll" style={{
-              padding: '0 40px',
+              padding: '0 var(--gutter-fluid)',
               display: 'flex',
               gap: '0',
               overflowX: 'auto',
@@ -138,7 +138,7 @@ export default function ShowsPage() {
         `}</style>
 
         {/* Shows: Bandsintown Widgets */}
-        <section style={{ padding: 'clamp(60px, 8vw, 100px) 40px' }}>
+        <section style={{ padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)' }}>
           <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
 
             {/* Live indicator */}
@@ -285,7 +285,7 @@ export default function ShowsPage() {
 
         {/* Book a show CTA */}
         <section style={{
-          padding: 'clamp(60px, 8vw, 100px) 40px',
+          padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
           borderTop: '1px solid rgba(255,255,255,0.06)',
           textAlign: 'center',
         }}>

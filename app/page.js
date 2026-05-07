@@ -367,7 +367,7 @@ export default function Home() {
 
         {/* ── MANIFESTO ─────────────────────────────────── */}
         <section style={{
-          padding: 'clamp(80px, 12vw, 160px) 32px',
+          padding: 'clamp(80px, 12vw, 160px) var(--gutter-fluid)',
           position: 'relative',
           overflow: 'hidden',
           borderTop: '1px solid rgba(255,255,255,0.06)',
@@ -425,7 +425,7 @@ export default function Home() {
 
         {/* ── SHOWS TEASER ──────────────────────────────── */}
         <section style={{
-          padding: 'clamp(60px, 8vw, 100px) 32px',
+          padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
           borderTop: '1px solid rgba(255,255,255,0.06)',
           background: 'rgba(255,255,255,0.01)',
         }}>
@@ -529,7 +529,7 @@ export default function Home() {
 
         {/* ── BOOKING CTA ───────────────────────────────── */}
         <section style={{
-          padding: 'clamp(80px, 12vw, 140px) 32px',
+          padding: 'clamp(80px, 12vw, 140px) var(--gutter-fluid)',
           borderTop: '1px solid rgba(255,255,255,0.06)',
           position: 'relative',
           overflow: 'hidden',

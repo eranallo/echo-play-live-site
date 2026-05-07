@@ -96,7 +96,7 @@ export default function ContactPage() {
 
         {/* Hero */}
         <section style={{
-          padding: 'clamp(120px, 16vw, 200px) 32px clamp(60px, 8vw, 100px)',
+          padding: 'clamp(120px, 16vw, 200px) var(--gutter-fluid) clamp(60px, 8vw, 100px)',
           position: 'relative',
           overflow: 'hidden',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
@@ -131,7 +131,7 @@ export default function ContactPage() {
         </section>
 
         {/* Form + Info */}
-        <section style={{ padding: 'clamp(60px, 10vw, 120px) 32px' }}>
+        <section style={{ padding: 'clamp(60px, 10vw, 120px) var(--gutter-fluid)' }}>
           <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
             <div className="contact-layout" style={{
               display: 'grid',

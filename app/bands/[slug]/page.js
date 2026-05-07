@@ -113,7 +113,7 @@ export default function BandPage({ params }) {
   return (
     <>
       <Nav />
-      <main ref={pageRef} style={{ background: '#080808' }}>
+      <main ref={pageRef} className="band-page-main" style={{ background: '#080808' }}>
 
         {/* ── HERO ─────────────────────────────────────────── */}
         <section style={{
@@ -137,7 +137,7 @@ export default function BandPage({ params }) {
                 unoptimized
                 sizes="100vw"
               />
-              {/* Gradient overlay — clear at top, dark at bottom for text legibility */}
+              {/* Gradient overlay: clear at top, dark at bottom for text legibility */}
               <div style={{
                 position: 'absolute', inset: 0,
                 background: `linear-gradient(to bottom,
@@ -161,7 +161,7 @@ export default function BandPage({ params }) {
           )}
 
           {/* Content */}
-          <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 40px', position: 'relative', zIndex: 2, width: '100%' }}>
+          <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 var(--gutter-fluid)', position: 'relative', zIndex: 2, width: '100%' }}>
             {/* Breadcrumb */}
             <div style={{
               fontFamily: 'Barlow Condensed, sans-serif',
@@ -222,7 +222,8 @@ export default function BandPage({ params }) {
                     fontSize: '11px', fontWeight: 600, letterSpacing: '0.14em',
                     textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)',
                     background: 'rgba(0,0,0,0.45)', border: '1px solid rgba(255,255,255,0.12)',
-                    padding: '9px 16px', textDecoration: 'none', backdropFilter: 'blur(8px)',
+                    padding: '13px 16px', textDecoration: 'none', backdropFilter: 'blur(8px)',
+                    minHeight: '44px',
                     transition: 'all 0.2s ease',
                   }}
                   onMouseEnter={e => {
@@ -263,7 +264,7 @@ export default function BandPage({ params }) {
             background: `${band.color}06`,
           }}>
             <div className="stats-bar-grid" style={{
-              maxWidth: '1400px', margin: '0 auto', padding: '0 40px',
+              maxWidth: '1400px', margin: '0 auto', padding: '0 var(--gutter-fluid)',
               display: 'grid', gridTemplateColumns: `repeat(${stats.length}, 1fr)`,
             }}>
               {stats.map((stat, i) => (
@@ -293,7 +294,7 @@ export default function BandPage({ params }) {
 
         {/* ── ABOUT + FEATURE PHOTO ────────────────────────── */}
         <section style={{
-          padding: 'clamp(60px, 8vw, 100px) 40px',
+          padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
         }}>
           <div className="about-grid" style={{
@@ -347,7 +348,7 @@ export default function BandPage({ params }) {
               </div>
             </div>
 
-            {/* Feature photo — second best shot */}
+            {/* Feature photo: second best shot */}
             {featureImg && (
               <div
                 className="reveal reveal-right delay-150"
@@ -389,7 +390,7 @@ export default function BandPage({ params }) {
         {/* ── SOCIAL PROOF: CROWD SHOT ─────────────────────── */}
         {crowdImg && (
           <section style={{
-            padding: 'clamp(60px, 8vw, 100px) 40px',
+            padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
             borderBottom: '1px solid rgba(255,255,255,0.06)',
             background: 'rgba(255,255,255,0.01)',
           }}>
@@ -493,7 +494,7 @@ export default function BandPage({ params }) {
         {/* ── BAND HISTORY (if available) ───────────────────── */}
         {band.history && band.history.length > 0 && (
           <section style={{
-            padding: 'clamp(60px, 8vw, 100px) 40px',
+            padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
             borderBottom: '1px solid rgba(255,255,255,0.06)',
           }}>
             <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
@@ -508,9 +509,7 @@ export default function BandPage({ params }) {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 {band.history.map((entry, i) => (
-                  <div key={i} className={`reveal delay-${Math.min(i * 100, 400)}`} style={{
-                    display: 'grid',
-                    gridTemplateColumns: '100px 1fr',
+                  <div key={i} className={`history-row reveal delay-${Math.min(i * 100, 400)}`} style={{
                     borderLeft: `3px solid ${band.color}`,
                     background: 'rgba(255,255,255,0.015)',
                     transition: 'background 0.2s ease',
@@ -518,8 +517,8 @@ export default function BandPage({ params }) {
                     onMouseEnter={e => e.currentTarget.style.background = `${band.color}08`}
                     onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.015)'}
                   >
-                    {/* Year column */}
-                    <div style={{
+                    {/* Year column (stacks above content on mobile via .history-row) */}
+                    <div className="history-year" style={{
                       padding: '28px 20px',
                       borderRight: '1px solid rgba(255,255,255,0.06)',
                       display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
@@ -535,7 +534,7 @@ export default function BandPage({ params }) {
                     </div>
 
                     {/* Content column */}
-                    <div style={{ padding: '28px 32px' }}>
+                    <div className="history-body" style={{ padding: '28px 32px' }}>
                       <div style={{
                         fontFamily: 'Barlow Condensed, sans-serif',
                         fontSize: '10px', fontWeight: 700, letterSpacing: '0.25em',
@@ -560,7 +559,7 @@ export default function BandPage({ params }) {
         {/* ── GALLERY ──────────────────────────────────────── */}
         {mediaLoaded && galleryImages.length > 0 && (
           <section style={{
-            padding: 'clamp(60px, 8vw, 100px) 40px',
+            padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
             borderBottom: '1px solid rgba(255,255,255,0.06)',
           }}>
             <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
@@ -641,7 +640,7 @@ export default function BandPage({ params }) {
 
         {/* ── BOOKING CTA ──────────────────────────────────── */}
         <section style={{
-          padding: 'clamp(80px, 10vw, 120px) 40px',
+          padding: 'clamp(80px, 10vw, 120px) var(--gutter-fluid)',
           background: `radial-gradient(ellipse 60% 80% at 50% 100%, ${band.color}0a 0%, transparent 70%)`,
         }}>
           <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
@@ -701,7 +700,7 @@ export default function BandPage({ params }) {
 
         {/* ── OTHER BANDS ──────────────────────────────────── */}
         <section style={{
-          padding: 'clamp(60px, 8vw, 100px) 40px',
+          padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
           borderTop: '1px solid rgba(255,255,255,0.06)',
         }}>
           <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
@@ -747,6 +746,16 @@ export default function BandPage({ params }) {
         </section>
 
       </main>
+
+      {/* Sticky bottom Book CTA: mobile only, hidden on desktop via globals.css */}
+      <Link
+        href="/contact"
+        className="mobile-book-cta"
+        aria-label={`Book ${band.name}`}
+      >
+        <span>Book {band.shortName}</span>
+        <span style={{ opacity: 0.7 }}>→</span>
+      </Link>
 
       {/* ── LIGHTBOX ─────────────────────────────────────── */}
       {lightboxImg && (

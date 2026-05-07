@@ -44,7 +44,7 @@ export default function AboutPage() {
 
         {/* Hero */}
         <section style={{
-          padding: 'clamp(120px, 16vw, 200px) 32px clamp(60px, 8vw, 100px)',
+          padding: 'clamp(120px, 16vw, 200px) var(--gutter-fluid) clamp(60px, 8vw, 100px)',
           position: 'relative',
           overflow: 'hidden',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
@@ -84,7 +84,7 @@ export default function AboutPage() {
 
         {/* Origin Story */}
         <section style={{
-          padding: 'clamp(60px, 10vw, 120px) 32px',
+          padding: 'clamp(60px, 10vw, 120px) var(--gutter-fluid)',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
         }}>
           <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
@@ -232,7 +232,7 @@ export default function AboutPage() {
 
         {/* Values */}
         <section style={{
-          padding: 'clamp(60px, 10vw, 120px) 32px',
+          padding: 'clamp(60px, 10vw, 120px) var(--gutter-fluid)',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
         }}>
           <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
@@ -275,7 +275,7 @@ export default function AboutPage() {
         </section>
 
         {/* The Roster */}
-        <section style={{ padding: 'clamp(60px, 10vw, 120px) 32px' }}>
+        <section style={{ padding: 'clamp(60px, 10vw, 120px) var(--gutter-fluid)' }}>
           <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
             <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px', marginBottom: '48px' }}>
               <div className="reveal">
