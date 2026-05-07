@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { bandsList } from '@/lib/bands'
@@ -93,7 +94,7 @@ export default function Home() {
               gap: 'var(--s-4)',
             }}>
               <span style={{ width: 'var(--s-6)', height: '1px', background: 'var(--c-epl)', opacity: 0.5 }} />
-              Est. 2023 · Fort Worth, TX
+              Tribute & Cover Band Management · DFW · Est. 2023
               <span style={{ width: 'var(--s-6)', height: '1px', background: 'var(--c-epl)', opacity: 0.5 }} />
             </div>
 
@@ -162,6 +163,72 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── VENUE STRIP ────────────────────────────────── */}
+        {/* Curated list of venues EPL bands have played. Hardcoded for Phase 2A; later phases
+            may pull dynamically from Airtable VENUES table or render real logo files. */}
+        <section style={{
+          borderTop: '1px solid var(--c-border)',
+          borderBottom: '1px solid var(--c-border)',
+          background: 'var(--c-surface-2)',
+          padding: 'var(--s-7) var(--gutter-d)',
+        }}>
+          <div className="reveal" style={{
+            maxWidth: 'var(--layout-max)',
+            margin: '0 auto',
+            textAlign: 'center',
+          }}>
+            <div className="section-label" style={{
+              marginBottom: 'var(--s-5)',
+              opacity: 0.7,
+            }}>
+              As Played At
+            </div>
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 'var(--s-3) var(--s-5)',
+              fontFamily: 'var(--ff-label)',
+              fontSize: 'var(--t-body-s)',
+              fontWeight: 500,
+              letterSpacing: 'var(--ls-label-tight)',
+              textTransform: 'uppercase',
+              color: 'var(--c-text-dim)',
+            }}>
+              {[
+                'Granada Theatre',
+                'Texas Live',
+                "O'Sheas",
+                'Pour Shack',
+                'Haltom Theater',
+                'Magnolia Motor Lounge',
+                'Station 330',
+                'The Revel',
+                'Hurricane Alley',
+                'Panther Island Pavilion',
+              ].map((venue, i, arr) => (
+                <span key={venue} style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 'var(--s-3)',
+                  whiteSpace: 'nowrap',
+                }}>
+                  {venue}
+                  {i < arr.length - 1 && (
+                    <span style={{
+                      color: 'var(--c-epl)',
+                      opacity: 0.4,
+                      fontSize: '12px',
+                      lineHeight: 1,
+                    }}>·</span>
+                  )}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ── BAND SHOWCASE ─────────────────────────────── */}
         <section id="bands" style={{ padding: '0' }}>
           {/* Band cards */}
@@ -175,36 +242,60 @@ export default function Home() {
                 <div
                   className={`band-card reveal ${index % 2 === 0 ? 'reveal-left' : 'reveal-right'}`}
                   style={{
-                    borderBottom: '1px solid rgba(255,255,255,0.06)',
+                    borderBottom: '1px solid var(--c-border)',
                     position: 'relative',
                     overflow: 'hidden',
                   }}
                 >
-                  {/* Band color background */}
+                  {/* Band color tint (subtle, was already here) */}
                   <div
                     className="band-card-bg"
                     style={{ background: band.color }}
                   />
 
+                  {/* Band hero image bleed on hover (when available) */}
+                  {band.heroPhoto && (
+                    <div className="band-card-image">
+                      <Image
+                        src={band.heroPhoto}
+                        alt=""
+                        fill
+                        style={{ objectFit: 'cover', objectPosition: 'center 30%' }}
+                        sizes="100vw"
+                        quality={75}
+                        unoptimized
+                      />
+                    </div>
+                  )}
+
+                  {/* Big band-color shortname behind content */}
+                  <div className="band-card-ghost" style={{ color: band.color }}>
+                    {band.shortName}
+                  </div>
+
                   <div style={{
-                    maxWidth: '1400px', margin: '0 auto', padding: '52px 32px',
+                    maxWidth: 'var(--layout-max)',
+                    margin: '0 auto',
+                    padding: '52px var(--gutter-d)',
                     display: 'grid',
                     gridTemplateColumns: '1fr auto',
                     alignItems: 'center',
                     gap: '40px',
+                    position: 'relative',
+                    zIndex: 2,
                   }}>
                     {/* Content */}
                     <div>
                       <div style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '16px',
-                        marginBottom: '8px',
+                        gap: 'var(--s-4)',
+                        marginBottom: 'var(--s-2)',
                         flexWrap: 'wrap',
                       }}>
                         <span style={{
-                          fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-                          fontSize: '10px',
+                          fontFamily: 'var(--ff-label)',
+                          fontSize: 'var(--t-label-s)',
                           fontWeight: 600,
                           letterSpacing: '0.25em',
                           textTransform: 'uppercase',
@@ -215,11 +306,11 @@ export default function Home() {
                         </span>
                         {band.genre.map(g => (
                           <span key={g} style={{
-                            fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-                            fontSize: '10px',
-                            letterSpacing: '0.15em',
+                            fontFamily: 'var(--ff-label)',
+                            fontSize: 'var(--t-label-s)',
+                            letterSpacing: 'var(--ls-label-tight)',
                             textTransform: 'uppercase',
-                            color: 'rgba(255,255,255,0.2)',
+                            color: 'rgba(255,255,255,0.25)',
                           }}>
                             {g}
                           </span>
@@ -227,21 +318,21 @@ export default function Home() {
                       </div>
 
                       <h3 style={{
-                        fontFamily: 'Bebas Neue, cursive',
-                        fontSize: 'clamp(40px, 7vw, 96px)',
-                        letterSpacing: '0.02em',
+                        fontFamily: 'var(--ff-display)',
+                        fontSize: 'var(--t-h1)',
+                        letterSpacing: 'var(--ls-display)',
                         lineHeight: 0.9,
-                        color: '#fff',
-                        marginBottom: '12px',
+                        color: 'var(--c-text)',
+                        marginBottom: 'var(--s-3)',
                       }}>
                         {band.name}
                       </h3>
 
                       <p style={{
-                        fontFamily: 'Barlow, sans-serif',
+                        fontFamily: 'var(--ff-body)',
                         fontSize: '14px',
                         lineHeight: 1.65,
-                        color: 'rgba(255,255,255,0.4)',
+                        color: 'rgba(255,255,255,0.55)',
                         maxWidth: '500px',
                       }}>
                         {band.tagline}
@@ -261,7 +352,7 @@ export default function Home() {
                       color: band.color,
                       fontSize: '20px',
                       flexShrink: 0,
-                      transition: 'background 0.3s ease, color 0.3s ease',
+                      transition: 'background var(--d-base) var(--ease-in-out), color var(--d-base) var(--ease-in-out)',
                     }}
                       className="band-arrow"
                     >

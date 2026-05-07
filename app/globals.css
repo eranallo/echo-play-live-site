@@ -266,23 +266,56 @@ body {
   opacity: 0.08;
 }
 
-.band-card-number {
+/* Big band-color initials ghost behind card content. Reads as decorative
+   architecture, not as ranking. Gets slightly more visible on hover. */
+.band-card-ghost {
   font-family: var(--ff-display);
-  font-size: clamp(120px, 20vw, 280px);
+  font-size: clamp(120px, 22vw, 320px);
   line-height: 0.8;
-  opacity: 0.04;
+  opacity: 0.05;
   position: absolute;
-  right: -0.02em;
+  right: -0.04em;
   top: 50%;
-  transform: translateY(-50%);
-  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(-50%) scale(0.96);
+  transition: opacity var(--d-slow) var(--ease-in-out), transform var(--d-slow) var(--ease-out);
   pointer-events: none;
-  letter-spacing: -0.02em;
+  user-select: none;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  text-transform: uppercase;
+  z-index: 1;
 }
 
-.band-card:hover .band-card-number {
-  opacity: 0.07;
-  transform: translateY(-50%) scale(1.04);
+.band-card:hover .band-card-ghost {
+  opacity: 0.10;
+  transform: translateY(-50%) scale(1);
+}
+
+/* Band hero image bleed-in on hover. Lazy-loaded; only visible on hover. */
+.band-card-image {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--d-slow) var(--ease-in-out);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.band-card-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(8, 8, 8, 0.92) 0%,
+    rgba(8, 8, 8, 0.55) 45%,
+    rgba(8, 8, 8, 0.85) 100%
+  );
+  pointer-events: none;
+}
+
+.band-card:hover .band-card-image {
+  opacity: 0.55;
 }
 
 .band-card-line {
@@ -474,8 +507,8 @@ body {
 
 /* ─── MOBILE ─────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .band-card-number {
-    font-size: clamp(80px, 30vw, 160px);
+  .band-card-ghost {
+    font-size: clamp(80px, 32vw, 200px);
   }
 }
 
