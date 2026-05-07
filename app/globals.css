@@ -35,7 +35,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* grain overlay removed — clean, high-res aesthetic */
+/* grain overlay removed. clean, high-res aesthetic */
 
 /* ─── SCROLL REVEAL ──────────────────────────────────── */
 .reveal {
@@ -455,5 +455,37 @@ body {
   .hero-content {
     padding-left: 20px !important;
     padding-right: 20px !important;
+  }
+}
+
+/* ─── REDUCED MOTION ─────────────────────────────────── */
+/* Honor user OS-level reduce-motion preference. Disables animations and
+   transitions for vestibular safety; reveals snap to visible. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal,
+  .reveal-left,
+  .reveal-right {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .hero-word-inner,
+  .hero-label,
+  .hero-cta-wrap,
+  .hero-sub,
+  .scroll-cue,
+  .hero-bg {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

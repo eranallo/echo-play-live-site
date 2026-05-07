@@ -23,8 +23,25 @@ function useScrollReveal() {
   return ref
 }
 
+// Exact artist names as registered on Bandsintown
+const artistNames = {
+  'so-long-goodnight': 'So Long, Goodnight',
+  'the-dick-beldings': 'The Dick Beldings',
+  'jambi': 'Jambi - Tribute To Tool',
+  'elite': 'Elite - Tribute To Deftones',
+}
+
 export default function Home() {
   const pageRef = useScrollReveal()
+
+  // Load Bandsintown widget script once
+  useEffect(() => {
+    if (document.querySelector('script[src*="bandsintown"]')) return
+    const script = document.createElement('script')
+    script.src = 'https://widget.bandsintown.com/main.min.js'
+    script.async = true
+    document.head.appendChild(script)
+  }, [])
 
   return (
     <>
@@ -297,8 +314,8 @@ export default function Home() {
             }}>
               Echo Play Live was founded by Evan Ranallo in 2023 out of a need for band management
               amongst friends and all the projects we share. Though our backgrounds vary greatly,
-              we are unified in our vision — every show is a live, full-band performance.
-              No Spotify DJs. No backing tracks. Just the music, the energy, and the crowd.
+              we are unified in our vision. Every show is a live, full-band performance.
+              The music, the energy, the crowd.
             </p>
 
             <div className="reveal delay-300">
@@ -353,62 +370,57 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* Show rows placeholder */}
-            {[
-              { band: bandsList[0], venue: 'TBA — Check Back Soon', date: 'Coming Up', location: 'DFW Metroplex' },
-              { band: bandsList[1], venue: 'TBA — Check Back Soon', date: 'Coming Up', location: 'DFW Metroplex' },
-              { band: bandsList[2], venue: 'TBA — Check Back Soon', date: 'Coming Up', location: 'DFW Metroplex' },
-            ].map((show, i) => (
-              <div
-                key={i}
-                className={`show-row reveal delay-${(i + 1) * 100}`}
-                style={{
-                  padding: '20px 0',
-                  display: 'grid',
-                  gridTemplateColumns: '120px 1fr 1fr auto',
-                  alignItems: 'center',
-                  gap: '24px',
-                }}
-              >
-                <span style={{
-                  fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  color: show.band.color,
-                }}>
-                  {show.date}
-                </span>
-                <span style={{
-                  fontFamily: 'Barlow, sans-serif',
-                  fontSize: '15px',
-                  fontWeight: 500,
-                  color: 'rgba(255,255,255,0.8)',
-                }}>
-                  {show.venue}
-                </span>
-                <span style={{
-                  fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-                  fontSize: '13px',
-                  letterSpacing: '0.08em',
-                  color: 'rgba(255,255,255,0.3)',
-                }}>
-                  {show.band.name}
-                </span>
-                <span style={{
-                  fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  letterSpacing: '0.15em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.2)',
-                  textAlign: 'right',
-                }}>
-                  {show.location}
-                </span>
-              </div>
-            ))}
+            {/* Per-band Bandsintown widgets, next 1 show each */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+              {bandsList.map(band => (
+                <div key={band.slug} className="reveal">
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: '12px',
+                    marginBottom: '8px', paddingBottom: '8px',
+                    borderBottom: `1px solid ${band.color}30`,
+                  }}>
+                    <div style={{ width: '3px', height: '18px', background: band.color, flexShrink: 0 }} />
+                    <Link href={`/bands/${band.slug}`} style={{
+                      fontFamily: 'Bebas Neue, cursive',
+                      fontSize: '20px', letterSpacing: '0.04em',
+                      color: band.color, textDecoration: 'none',
+                      transition: 'opacity 0.2s ease',
+                    }}
+                      onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
+                      onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                    >{band.name}</Link>
+                  </div>
+                  <a
+                    className="bit-widget-initializer"
+                    data-artist-name={artistNames[band.slug] || band.name}
+                    data-display-local-dates="false"
+                    data-display-past-dates="false"
+                    data-auto-style="false"
+                    data-font-color="#ffffff"
+                    data-text-color="#ffffff"
+                    data-link-color={band.color}
+                    data-popup-background-color="#0a0a0a"
+                    data-background-color="transparent"
+                    data-display-limit="1"
+                    data-separator-color="rgba(255,255,255,0.06)"
+                    data-play-my-city="false"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Bandsintown widget style overrides */}
+            <style>{`
+              .bit-widget { background: transparent !important; font-family: 'Barlow', sans-serif !important; }
+              .bit-event { background: rgba(255,255,255,0.015) !important; border: none !important; border-bottom: 1px solid rgba(255,255,255,0.06) !important; padding: 14px 0 !important; margin: 0 !important; }
+              .bit-event:hover { background: rgba(255,255,255,0.03) !important; }
+              .bit-date * { font-family: 'Bebas Neue', cursive !important; font-size: 16px !important; letter-spacing: 0.06em !important; color: #fff !important; }
+              .bit-venue * { font-family: 'Barlow', sans-serif !important; color: rgba(255,255,255,0.85) !important; font-size: 13px !important; }
+              .bit-location * { font-family: 'Barlow', sans-serif !important; color: rgba(255,255,255,0.4) !important; font-size: 11px !important; }
+              .bit-offers a, .bit-rsvp a { font-family: 'Barlow Condensed', sans-serif !important; font-size: 9px !important; font-weight: 700 !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; padding: 5px 10px !important; border-radius: 0 !important; }
+              .bit-no-dates-title { font-family: 'Barlow', sans-serif !important; color: rgba(255,255,255,0.18) !important; font-size: 12px !important; font-style: italic; }
+              .bit-no-dates-container { background: transparent !important; padding: 6px 0 !important; }
+            `}</style>
 
             <div className="reveal" style={{ textAlign: 'center', marginTop: '40px' }}>
               <Link href="/shows" className="btn-primary" style={{
@@ -453,7 +465,7 @@ export default function Home() {
               color: 'rgba(255,255,255,0.4)',
               marginBottom: '40px',
             }}>
-              Venues, festivals, private events — we bring the full live experience wherever you need it.
+              Venues, festivals, private events. We bring the full live experience wherever you need it.
               Reach out and let's make something unforgettable.
             </p>
             <div className="reveal delay-300" style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
@@ -475,13 +487,13 @@ export default function Home() {
               >
                 Book Now →
               </Link>
-              <a href="mailto:eranallo@echoplay.live" className="btn-primary" style={{
+              <Link href="/shows" className="btn-primary" style={{
                 textDecoration: 'none',
                 color: 'rgba(255,255,255,0.5)',
                 borderColor: 'rgba(255,255,255,0.15)',
               }}>
-                <span>Email Us</span>
-              </a>
+                <span>View Upcoming Shows</span>
+              </Link>
             </div>
           </div>
         </section>

@@ -21,17 +21,14 @@ function useScrollReveal() {
 
 const values = [
   {
-    number: '01',
     title: 'Quality',
-    description: 'Every show is a production. We hold ourselves to the standard of the bands we tribute — anything less is unacceptable.',
+    description: 'Every show is a production. We hold ourselves to the standard of the bands we tribute. Anything less is unacceptable.',
   },
   {
-    number: '02',
     title: 'Hustle',
-    description: 'We work hard because we love it. The shows, the rehearsals, the coordination — we go all in, every time.',
+    description: 'We work hard because we love it. The shows, the rehearsals, the coordination. We go all in, every time.',
   },
   {
-    number: '03',
     title: 'Love for the Show',
     description: "This isn't a side gig. This is a calling. We exist to give audiences the live music experience they deserve.",
   },
@@ -130,8 +127,8 @@ export default function AboutPage() {
                   color: 'rgba(255,255,255,0.45)',
                 }}>
                   Every band under the Echo Play Live umbrella shares a commitment to the live experience.
-                  No Spotify DJs. No backing tracks. No shortcuts. Just musicians who love music,
-                  playing for audiences who love it just as much.
+                  Real instruments, full sets, every show. Musicians who love music, playing for audiences
+                  who love it just as much.
                 </p>
               </div>
 
@@ -243,7 +240,7 @@ export default function AboutPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1px', background: 'rgba(255,255,255,0.06)' }}>
               {values.map((v, i) => (
                 <div
-                  key={v.number}
+                  key={v.title}
                   className={`reveal delay-${i * 150}`}
                   style={{
                     background: '#080808',
@@ -253,24 +250,10 @@ export default function AboutPage() {
                   }}
                 >
                   <div style={{
-                    position: 'absolute', top: '-0.1em', right: '-0.05em',
-                    fontFamily: 'Bebas Neue, cursive',
-                    fontSize: '120px',
-                    lineHeight: 0.8,
-                    color: '#F5C518',
-                    opacity: 0.04,
-                    pointerEvents: 'none',
-                  }}>{v.number}</div>
-                  <div style={{
-                    fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-                    fontSize: '10px',
-                    fontWeight: 600,
-                    letterSpacing: '0.25em',
-                    textTransform: 'uppercase',
-                    color: '#F5C518',
-                    marginBottom: '16px',
-                    opacity: 0.7,
-                  }}>{v.number}</div>
+                    width: '32px', height: '3px',
+                    background: '#F5C518',
+                    marginBottom: '24px',
+                  }} />
                   <h3 style={{
                     fontFamily: 'Bebas Neue, cursive',
                     fontSize: '48px',

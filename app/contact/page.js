@@ -22,12 +22,22 @@ export default function ContactPage() {
   const pageRef = useScrollReveal()
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [bookingEmail, setBookingEmail] = useState('eranallo@echoplay.live')
+  const [bookingEmail, setBookingEmail] = useState('')
   const [form, setForm] = useState({
     name: '', email: '', band: '', eventType: '', date: '', venue: '', message: ''
   })
 
   const handleChange = e => setForm(p => ({ ...p, [e.target.name]: e.target.value }))
+
+  // Resolve mailto fallback: band-specific email when a band is selected,
+  // else CC all four band emails so the right team sees it.
+  const getMailtoFallback = (bandName) => {
+    if (bandName) {
+      const band = bandsList.find(b => b.name === bandName)
+      if (band?.bookingEmail) return band.bookingEmail
+    }
+    return bandsList.map(b => b.bookingEmail).filter(Boolean).join(',')
+  }
 
   const handleSubmit = async e => {
     e.preventDefault()
@@ -40,7 +50,7 @@ export default function ContactPage() {
       })
       const data = await res.json()
       if (data.success) {
-        setBookingEmail(data.bookingEmail || 'eranallo@echoplay.live')
+        setBookingEmail(data.bookingEmail || '')
         setSubmitted(true)
       } else {
         // Fallback to mailto if API fails
@@ -48,14 +58,14 @@ export default function ContactPage() {
         const body = encodeURIComponent(
           `Name: ${form.name}\nEmail: ${form.email}\nBand: ${form.band}\nEvent Type: ${form.eventType}\nDate: ${form.date}\nVenue: ${form.venue}\n\nMessage:\n${form.message}`
         )
-        window.location.href = `mailto:eranallo@echoplay.live?subject=${subject}&body=${body}`
+        window.location.href = `mailto:${getMailtoFallback(form.band)}?subject=${subject}&body=${body}`
         setSubmitted(true)
       }
     } catch {
       // Fallback to mailto
       const subject = encodeURIComponent(`Booking Inquiry${form.band ? ` - ${form.band}` : ''}`)
       const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\nBand: ${form.band}\nEvent Type: ${form.eventType}\nDate: ${form.date}\nVenue: ${form.venue}\n\nMessage:\n${form.message}`)
-      window.location.href = `mailto:eranallo@echoplay.live?subject=${subject}&body=${body}`
+      window.location.href = `mailto:${getMailtoFallback(form.band)}?subject=${subject}&body=${body}`
       setSubmitted(true)
     } finally {
       setSubmitting(false)
@@ -136,7 +146,11 @@ export default function ContactPage() {
                       fontSize: '15px',
                       color: 'rgba(255,255,255,0.5)',
                     }}>
-                      Your inquiry has been saved and sent to <strong style={{ color: '#F5C518' }}>{bookingEmail}</strong>. We'll be in touch shortly!
+                      {bookingEmail ? (
+                        <>Your inquiry has been saved and sent to <strong style={{ color: '#F5C518' }}>{bookingEmail}</strong>. We&apos;ll be in touch shortly!</>
+                      ) : (
+                        <>Your inquiry has been saved. The right band&apos;s booking team will be in touch shortly.</>
+                      )}
                     </p>
                   </div>
                 ) : (
@@ -341,28 +355,57 @@ export default function ContactPage() {
                     textTransform: 'uppercase',
                     color: '#F5C518',
                     marginBottom: '20px',
-                  }}>Direct Contact</div>
-                  <a
-                    href="mailto:eranallo@echoplay.live"
-                    style={{
-                      display: 'block',
-                      fontFamily: 'Barlow, sans-serif',
-                      fontSize: '15px',
-                      fontWeight: 500,
-                      color: 'rgba(255,255,255,0.8)',
-                      textDecoration: 'none',
-                      marginBottom: '6px',
-                      transition: 'color 0.2s ease',
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.color = '#F5C518'}
-                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.8)'}
-                  >
-                    eranallo@echoplay.live
-                  </a>
+                  }}>Booking Direct</div>
+                  <p style={{
+                    fontFamily: 'Barlow, sans-serif',
+                    fontSize: '13px',
+                    color: 'rgba(255,255,255,0.5)',
+                    lineHeight: 1.6,
+                    marginBottom: '20px',
+                  }}>
+                    Email a band directly, or use the form for general inquiries.
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {bandsList.map(band => (
+                      <a
+                        key={band.slug}
+                        href={`mailto:${band.bookingEmail}`}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '2px',
+                          padding: '10px 0',
+                          textDecoration: 'none',
+                          borderBottom: '1px solid rgba(255,255,255,0.05)',
+                          transition: 'opacity 0.2s ease',
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.opacity = '0.75'}
+                        onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                      >
+                        <div style={{
+                          display: 'flex', alignItems: 'center', gap: '8px',
+                          fontFamily: 'Barlow Condensed, Barlow, sans-serif',
+                          fontSize: '11px', fontWeight: 600, letterSpacing: '0.15em',
+                          textTransform: 'uppercase', color: band.color,
+                        }}>
+                          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: band.color }} />
+                          {band.name}
+                        </div>
+                        <span style={{
+                          fontFamily: 'Barlow, sans-serif',
+                          fontSize: '13px',
+                          color: 'rgba(255,255,255,0.7)',
+                        }}>
+                          {band.bookingEmail}
+                        </span>
+                      </a>
+                    ))}
+                  </div>
                   <p style={{
                     fontFamily: 'Barlow, sans-serif',
                     fontSize: '12px',
                     color: 'rgba(255,255,255,0.25)',
+                    marginTop: '20px',
                   }}>Fort Worth / DFW, Texas</p>
                 </div>
 

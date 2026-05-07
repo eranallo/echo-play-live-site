@@ -122,8 +122,8 @@ export default function Footer() {
               color: '#F5C518',
               marginBottom: '20px',
             }}>Get In Touch</div>
-            <a
-              href="mailto:eranallo@echoplay.live"
+            <Link
+              href="/contact"
               style={{
                 display: 'block',
                 fontFamily: 'Barlow, sans-serif',
@@ -136,8 +136,8 @@ export default function Footer() {
               onMouseEnter={e => e.currentTarget.style.color = '#F5C518'}
               onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
             >
-              eranallo@echoplay.live
-            </a>
+              For booking inquiries, contact us →
+            </Link>
             <Link
               href="/contact"
               style={{
