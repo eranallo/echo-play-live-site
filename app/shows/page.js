@@ -22,7 +22,7 @@ function useScrollReveal() {
 // Exact artist names as registered on Bandsintown
 // These must match the artist's profile name on Bandsintown exactly
 const artistNames = {
-  'so-long-goodnight': 'So Long, Goodnight',
+  'so-long-goodnight': 'So Long Goodnight',
   'the-dick-beldings': 'The Dick Beldings',
   'jambi': 'Jambi - Tribute To Tool',
   'elite': 'Elite - Tribute To Deftones',

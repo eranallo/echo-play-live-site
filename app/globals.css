@@ -4,16 +4,100 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap');
 
+/* ─────────────────────────────────────────────────────────────────────
+   DESIGN TOKENS — Echo Play Live
+   See site-audit/design-system.md for naming conventions and usage rules.
+   Naming: --c-* color, --s-* spacing, --t-* type, --ls-* letter-spacing,
+           --lh-* line-height, --d-* duration, --ease-* easing, --ff-* font
+   ───────────────────────────────────────────────────────────────────── */
 :root {
-  --font-bebas: 'Bebas Neue', cursive;
-  --font-barlow: 'Barlow', sans-serif;
-  --font-barlow-condensed: 'Barlow Condensed', sans-serif;
-  --color-dark: #080808;
-  --color-epl: #F5C518;
-  --color-slgn: #00B4D8;
-  --color-beldings: #FF6B35;
-  --color-jambi: #9D4EDD;
-  --color-elite: #E63946;
+  /* ── Fonts ──────────────────────────────────────────── */
+  --ff-display: 'Bebas Neue', cursive;
+  --ff-body: 'Barlow', sans-serif;
+  --ff-label: 'Barlow Condensed', sans-serif;
+
+  /* ── Colors: surfaces ───────────────────────────────── */
+  --c-bg: #080808;
+  --c-surface: #0a0a0a;
+  --c-surface-2: rgba(255, 255, 255, 0.02);
+  --c-surface-3: rgba(255, 255, 255, 0.04);
+
+  /* ── Colors: borders ────────────────────────────────── */
+  --c-border-subtle: rgba(255, 255, 255, 0.04);
+  --c-border: rgba(255, 255, 255, 0.06);
+  --c-border-strong: rgba(255, 255, 255, 0.12);
+
+  /* ── Colors: text (descending opacity for hierarchy) ── */
+  --c-text: #ffffff;
+  --c-text-muted: rgba(255, 255, 255, 0.65);
+  --c-text-dim: rgba(255, 255, 255, 0.45);
+  --c-text-faint: rgba(255, 255, 255, 0.25);
+
+  /* ── Colors: accent (EPL gold) ──────────────────────── */
+  --c-epl: #F5C518;
+  --c-epl-soft: rgba(245, 197, 24, 0.08);
+  --c-epl-line: rgba(245, 197, 24, 0.4);
+
+  /* ── Colors: bands ──────────────────────────────────── */
+  --c-slgn: #00B4D8;
+  --c-tdb: #FF6B35;
+  --c-jambi: #9D4EDD;
+  --c-elite: #E63946;
+
+  /* ── Spacing scale (4-based) ────────────────────────── */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+  --s-10: 128px;
+  --s-11: 160px;
+
+  /* ── Type scale (responsive via clamp) ──────────────── */
+  --t-display-xl: clamp(80px, 18vw, 220px);
+  --t-display-l:  clamp(60px, 13vw, 172px);
+  --t-display:    clamp(48px, 9vw, 120px);
+  --t-h1:         clamp(40px, 7vw, 96px);
+  --t-h2:         clamp(32px, 5vw, 60px);
+  --t-h3:         clamp(24px, 3vw, 36px);
+  --t-body-l:     clamp(16px, 1.8vw, 19px);
+  --t-body:       15px;
+  --t-body-s:     13px;
+  --t-label:      11px;
+  --t-label-s:    10px;
+  --t-label-xs:   9px;
+
+  /* ── Letter-spacing ─────────────────────────────────── */
+  --ls-display:       0.02em;
+  --ls-display-tight: -0.01em;
+  --ls-tag:           0.18em;
+  --ls-label:         0.22em;
+  --ls-label-tight:   0.15em;
+
+  /* ── Line-height ────────────────────────────────────── */
+  --lh-display:  0.85;
+  --lh-tight:    1.1;
+  --lh-snug:     1.5;
+  --lh-base:     1.7;
+  --lh-relaxed:  1.85;
+
+  /* ── Motion ─────────────────────────────────────────── */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --d-instant:   100ms;
+  --d-fast:      200ms;
+  --d-base:      400ms;
+  --d-slow:      800ms;
+
+  /* ── Layout ─────────────────────────────────────────── */
+  --layout-max:    1400px;
+  --layout-narrow: 900px;
+  --gutter-d:      32px;
+  --gutter-m:      20px;
 }
 
 * {
@@ -28,9 +112,9 @@ html {
 }
 
 body {
-  background: var(--color-dark);
+  background: var(--c-bg);
   color: #ffffff;
-  font-family: var(--font-barlow);
+  font-family: var(--ff-body);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
@@ -183,7 +267,7 @@ body {
 }
 
 .band-card-number {
-  font-family: var(--font-bebas);
+  font-family: var(--ff-display);
   font-size: clamp(120px, 20vw, 280px);
   line-height: 0.8;
   opacity: 0.04;
@@ -216,7 +300,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--font-barlow);
+  font-family: var(--ff-body);
   font-weight: 600;
   font-size: 13px;
   letter-spacing: 0.12em;
@@ -252,7 +336,7 @@ body {
 
 /* ─── NAVIGATION ─────────────────────────────────────── */
 .nav-link {
-  font-family: var(--font-barlow-condensed), var(--font-barlow);
+  font-family: var(--ff-label), var(--ff-body);
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.12em;
@@ -269,7 +353,7 @@ body {
   left: 0;
   width: 0;
   height: 1px;
-  background: var(--color-epl);
+  background: var(--c-epl);
   transition: width 0.3s ease;
 }
 
@@ -283,12 +367,12 @@ body {
 
 /* ─── SECTION HEADING ────────────────────────────────── */
 .section-label {
-  font-family: var(--font-barlow-condensed), var(--font-barlow);
+  font-family: var(--ff-label), var(--ff-body);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--color-epl);
+  color: var(--c-epl);
 }
 
 /* ─── SHOWS TABLE ────────────────────────────────────── */
@@ -308,7 +392,7 @@ body {
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.1);
   color: #fff;
-  font-family: var(--font-barlow);
+  font-family: var(--ff-body);
   font-size: 15px;
   padding: 14px 16px;
   width: 100%;
@@ -318,7 +402,7 @@ body {
 }
 
 .form-input:focus {
-  border-color: var(--color-epl);
+  border-color: var(--c-epl);
   background: rgba(245, 197, 24, 0.03);
 }
 
@@ -367,7 +451,7 @@ body {
 }
 
 .footer-link:hover {
-  color: var(--color-epl);
+  color: var(--c-epl);
 }
 
 /* ─── SCROLLBAR ───────────────────────────────────────── */
@@ -384,7 +468,7 @@ body {
 
 /* ─── SELECTION ──────────────────────────────────────── */
 ::selection {
-  background: var(--color-epl);
+  background: var(--c-epl);
   color: #080808;
 }
 
