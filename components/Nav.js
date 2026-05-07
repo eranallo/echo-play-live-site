@@ -4,6 +4,9 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { bandsList } from '@/lib/bands'
 
+// Phase 1: refactored to use design tokens (see app/globals.css and site-audit/design-system.md).
+// Visual output is identical to the previous version.
+
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
@@ -35,26 +38,26 @@ export default function Nav() {
           left: 0,
           right: 0,
           zIndex: 1000,
-          transition: 'background 0.4s ease, padding 0.4s ease, border-color 0.4s ease',
+          transition: 'background var(--d-base) var(--ease-in-out), padding var(--d-base) var(--ease-in-out), border-color var(--d-base) var(--ease-in-out)',
           background: scrolled ? 'rgba(8,8,8,0.95)' : 'transparent',
           backdropFilter: scrolled ? 'blur(12px)' : 'none',
-          borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
+          borderBottom: scrolled ? '1px solid var(--c-border)' : '1px solid transparent',
           padding: scrolled ? '14px 0' : '22px 0',
         }}
       >
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ maxWidth: 'var(--layout-max)', margin: '0 auto', padding: '0 var(--gutter-d)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Logo */}
           <Link href="/" style={{ textDecoration: 'none' }}>
             <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
               <span style={{
-                fontFamily: 'Bebas Neue, cursive',
+                fontFamily: 'var(--ff-display)',
                 fontSize: '22px',
                 letterSpacing: '0.08em',
-                color: '#F5C518',
+                color: 'var(--c-epl)',
               }}>ECHO PLAY LIVE</span>
               <span style={{
-                fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-                fontSize: '9px',
+                fontFamily: 'var(--ff-label)',
+                fontSize: 'var(--t-label-xs)',
                 letterSpacing: '0.3em',
                 textTransform: 'uppercase',
                 color: 'rgba(255,255,255,0.35)',
@@ -69,9 +72,9 @@ export default function Nav() {
 
             {/* Bands Dropdown */}
             <div style={{ position: 'relative' }} onMouseEnter={() => setBandsOpen(true)} onMouseLeave={() => setBandsOpen(false)}>
-              <span className="nav-link" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span className="nav-link" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 'var(--s-1)' }}>
                 Bands
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ opacity: 0.5, transition: 'transform 0.2s', transform: bandsOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ opacity: 0.5, transition: 'transform var(--d-fast) var(--ease-in-out)', transform: bandsOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
                   <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                 </svg>
               </span>
@@ -79,11 +82,11 @@ export default function Nav() {
                 position: 'absolute',
                 top: '100%',
                 left: '-20px',
-                paddingTop: '12px',
+                paddingTop: 'var(--s-3)',
                 opacity: bandsOpen ? 1 : 0,
                 pointerEvents: bandsOpen ? 'all' : 'none',
                 transform: bandsOpen ? 'translateY(0)' : 'translateY(-8px)',
-                transition: 'opacity 0.2s ease, transform 0.2s ease',
+                transition: 'opacity var(--d-fast) var(--ease-in-out), transform var(--d-fast) var(--ease-in-out)',
                 zIndex: 100,
               }}>
                 <div style={{
@@ -91,7 +94,7 @@ export default function Nav() {
                   border: '1px solid rgba(255,255,255,0.08)',
                   backdropFilter: 'blur(20px)',
                   minWidth: '200px',
-                  padding: '8px 0',
+                  padding: 'var(--s-2) 0',
                 }}>
                   {bandsList.map(band => (
                     <Link
@@ -103,10 +106,10 @@ export default function Nav() {
                         gap: '10px',
                         padding: '10px 20px',
                         textDecoration: 'none',
-                        transition: 'background 0.15s ease',
+                        transition: 'background 150ms var(--ease-in-out)',
                       }}
                       className="dropdown-item"
-                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
+                      onMouseEnter={e => e.currentTarget.style.background = 'var(--c-surface-3)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
                       <span style={{
@@ -117,8 +120,8 @@ export default function Nav() {
                         flexShrink: 0,
                       }} />
                       <span style={{
-                        fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-                        fontSize: '13px',
+                        fontFamily: 'var(--ff-label)',
+                        fontSize: 'var(--t-body-s)',
                         fontWeight: 500,
                         letterSpacing: '0.08em',
                         textTransform: 'uppercase',
@@ -134,15 +137,15 @@ export default function Nav() {
             <Link href="/about" className="nav-link" style={{ textDecoration: 'none' }}>About</Link>
             <Link href="/contact" style={{
               textDecoration: 'none',
-              fontFamily: 'Barlow Condensed, Barlow, sans-serif',
+              fontFamily: 'var(--ff-label)',
               fontSize: '12px',
               fontWeight: 600,
-              letterSpacing: '0.15em',
+              letterSpacing: 'var(--ls-label-tight)',
               textTransform: 'uppercase',
-              color: '#080808',
-              background: '#F5C518',
+              color: 'var(--c-bg)',
+              background: 'var(--c-epl)',
               padding: '9px 20px',
-              transition: 'opacity 0.2s ease',
+              transition: 'opacity var(--d-fast) var(--ease-in-out)',
             }}
               onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
               onMouseLeave={e => e.currentTarget.style.opacity = '1'}
@@ -160,18 +163,18 @@ export default function Nav() {
           >
             <div style={{ width: '24px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
               <span style={{
-                display: 'block', height: '1.5px', background: '#fff',
-                transition: 'transform 0.3s ease, opacity 0.3s ease',
+                display: 'block', height: '1.5px', background: 'var(--c-text)',
+                transition: 'transform 300ms var(--ease-in-out), opacity 300ms var(--ease-in-out)',
                 transform: open ? 'rotate(45deg) translate(4px, 5px)' : 'none',
               }} />
               <span style={{
-                display: 'block', height: '1.5px', background: '#fff',
+                display: 'block', height: '1.5px', background: 'var(--c-text)',
                 opacity: open ? 0 : 1,
-                transition: 'opacity 0.3s ease',
+                transition: 'opacity 300ms var(--ease-in-out)',
               }} />
               <span style={{
-                display: 'block', height: '1.5px', background: '#fff',
-                transition: 'transform 0.3s ease',
+                display: 'block', height: '1.5px', background: 'var(--c-text)',
+                transition: 'transform 300ms var(--ease-in-out)',
                 transform: open ? 'rotate(-45deg) translate(4px, -5px)' : 'none',
               }} />
             </div>
@@ -184,16 +187,16 @@ export default function Nav() {
         position: 'fixed',
         inset: 0,
         zIndex: 999,
-        background: '#080808',
+        background: 'var(--c-bg)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         padding: '40px',
         opacity: open ? 1 : 0,
         pointerEvents: open ? 'all' : 'none',
-        transition: 'opacity 0.3s ease',
+        transition: 'opacity 300ms var(--ease-in-out)',
       }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s-1)' }}>
           {[
             { href: '/', label: 'Home' },
             { href: '/shows', label: 'Shows' },
@@ -204,21 +207,21 @@ export default function Nav() {
               key={href}
               href={href}
               style={{
-                fontFamily: 'Bebas Neue, cursive',
+                fontFamily: 'var(--ff-display)',
                 fontSize: 'clamp(40px, 10vw, 72px)',
                 letterSpacing: '0.04em',
-                color: '#fff',
+                color: 'var(--c-text)',
                 textDecoration: 'none',
-                lineHeight: 1.1,
-                transition: 'color 0.2s ease',
+                lineHeight: 'var(--lh-tight)',
+                transition: 'color var(--d-fast) var(--ease-in-out)',
               }}
-              onMouseEnter={e => e.currentTarget.style.color = '#F5C518'}
-              onMouseLeave={e => e.currentTarget.style.color = '#fff'}
+              onMouseEnter={e => e.currentTarget.style.color = 'var(--c-epl)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'var(--c-text)'}
             >
               {label}
             </Link>
           ))}
-          <div style={{ marginTop: '16px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '20px' }}>
+          <div style={{ marginTop: 'var(--s-4)', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '20px' }}>
             {bandsList.map(band => (
               <Link
                 key={band.slug}
@@ -227,15 +230,15 @@ export default function Nav() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '10px',
-                  fontFamily: 'Barlow Condensed, Barlow, sans-serif',
+                  fontFamily: 'var(--ff-label)',
                   fontSize: '16px',
                   fontWeight: 500,
                   letterSpacing: '0.1em',
                   textTransform: 'uppercase',
                   color: 'rgba(255,255,255,0.5)',
                   textDecoration: 'none',
-                  padding: '8px 0',
-                  transition: 'color 0.2s ease',
+                  padding: 'var(--s-2) 0',
+                  transition: 'color var(--d-fast) var(--ease-in-out)',
                 }}
                 onMouseEnter={e => e.currentTarget.style.color = band.color}
                 onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}

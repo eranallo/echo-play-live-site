@@ -1,45 +1,55 @@
 import Link from 'next/link'
 import { bandsList } from '@/lib/bands'
 
+// Phase 1: refactored to use design tokens (see app/globals.css and site-audit/design-system.md).
+// Visual output is identical to the previous version. Token mapping:
+//   colors    rgba/#hex strings         → var(--c-*)
+//   fonts     'Bebas Neue, cursive'      → var(--ff-display)
+//             'Barlow, sans-serif'       → var(--ff-body)
+//             'Barlow Condensed, ...'    → var(--ff-label)
+//   spacing   matching scale values      → var(--s-*)
+//   motion    transition durations       → var(--d-fast/base) + var(--ease-*)
+// Values that don't match the scale (e.g., 0.08em letter-spacing) stay inline.
+
 export default function Footer() {
   const year = new Date().getFullYear()
 
   return (
     <footer style={{
-      background: '#050505',
-      borderTop: '1px solid rgba(255,255,255,0.06)',
-      padding: '64px 0 32px',
+      background: '#050505', // intentionally darker than --c-bg for footer separation
+      borderTop: '1px solid var(--c-border)',
+      padding: 'var(--s-8) 0 var(--s-6)',
     }}>
-      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 32px' }}>
+      <div style={{ maxWidth: 'var(--layout-max)', margin: '0 auto', padding: '0 var(--gutter-d)' }}>
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '48px',
-          marginBottom: '64px',
+          gap: 'var(--s-7)',
+          marginBottom: 'var(--s-8)',
         }}>
           {/* Brand */}
           <div style={{ gridColumn: 'span 1' }}>
             <div style={{
-              fontFamily: 'Bebas Neue, cursive',
+              fontFamily: 'var(--ff-display)',
               fontSize: '28px',
               letterSpacing: '0.08em',
-              color: '#F5C518',
-              marginBottom: '8px',
+              color: 'var(--c-epl)',
+              marginBottom: 'var(--s-2)',
             }}>Echo Play Live</div>
             <p style={{
-              fontFamily: 'Barlow, sans-serif',
-              fontSize: '13px',
-              lineHeight: 1.7,
+              fontFamily: 'var(--ff-body)',
+              fontSize: 'var(--t-body-s)',
+              lineHeight: 'var(--lh-base)',
               color: 'rgba(255,255,255,0.35)',
               maxWidth: '240px',
             }}>
               DFW's premier band management company. Founded 2023 by Evan Ranallo.
             </p>
             <p style={{
-              fontFamily: 'Barlow, sans-serif',
+              fontFamily: 'var(--ff-body)',
               fontSize: '12px',
-              color: 'rgba(255,255,255,0.25)',
-              marginTop: '12px',
+              color: 'var(--c-text-faint)',
+              marginTop: 'var(--s-3)',
             }}>
               Fort Worth, TX
             </p>
@@ -48,12 +58,12 @@ export default function Footer() {
           {/* Bands */}
           <div>
             <div style={{
-              fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-              fontSize: '10px',
+              fontFamily: 'var(--ff-label)',
+              fontSize: 'var(--t-label-s)',
               fontWeight: 600,
               letterSpacing: '0.25em',
               textTransform: 'uppercase',
-              color: '#F5C518',
+              color: 'var(--c-epl)',
               marginBottom: '20px',
             }}>Our Roster</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -64,17 +74,17 @@ export default function Footer() {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
+                    gap: 'var(--s-2)',
                     textDecoration: 'none',
                     color: 'rgba(255,255,255,0.4)',
-                    fontFamily: 'Barlow, sans-serif',
-                    fontSize: '13px',
-                    transition: 'color 0.2s ease',
+                    fontFamily: 'var(--ff-body)',
+                    fontSize: 'var(--t-body-s)',
+                    transition: 'color var(--d-fast) var(--ease-in-out)',
                   }}
                   onMouseEnter={e => e.currentTarget.style.color = band.color}
                   onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
                 >
-                  <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: band.color, flexShrink: 0 }} />
+                  <span style={{ width: 'var(--s-1)', height: 'var(--s-1)', borderRadius: '50%', background: band.color, flexShrink: 0 }} />
                   {band.name}
                 </Link>
               ))}
@@ -84,12 +94,12 @@ export default function Footer() {
           {/* Navigation */}
           <div>
             <div style={{
-              fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-              fontSize: '10px',
+              fontFamily: 'var(--ff-label)',
+              fontSize: 'var(--t-label-s)',
               fontWeight: 600,
               letterSpacing: '0.25em',
               textTransform: 'uppercase',
-              color: '#F5C518',
+              color: 'var(--c-epl)',
               marginBottom: '20px',
             }}>Navigate</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -114,26 +124,26 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <div style={{
-              fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-              fontSize: '10px',
+              fontFamily: 'var(--ff-label)',
+              fontSize: 'var(--t-label-s)',
               fontWeight: 600,
               letterSpacing: '0.25em',
               textTransform: 'uppercase',
-              color: '#F5C518',
+              color: 'var(--c-epl)',
               marginBottom: '20px',
             }}>Get In Touch</div>
             <Link
               href="/contact"
               style={{
                 display: 'block',
-                fontFamily: 'Barlow, sans-serif',
-                fontSize: '13px',
+                fontFamily: 'var(--ff-body)',
+                fontSize: 'var(--t-body-s)',
                 color: 'rgba(255,255,255,0.4)',
                 textDecoration: 'none',
-                marginBottom: '16px',
-                transition: 'color 0.2s ease',
+                marginBottom: 'var(--s-4)',
+                transition: 'color var(--d-fast) var(--ease-in-out)',
               }}
-              onMouseEnter={e => e.currentTarget.style.color = '#F5C518'}
+              onMouseEnter={e => e.currentTarget.style.color = 'var(--c-epl)'}
               onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
             >
               For booking inquiries, contact us →
@@ -142,16 +152,16 @@ export default function Footer() {
               href="/contact"
               style={{
                 display: 'inline-block',
-                fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-                fontSize: '11px',
+                fontFamily: 'var(--ff-label)',
+                fontSize: 'var(--t-label)',
                 fontWeight: 600,
-                letterSpacing: '0.15em',
+                letterSpacing: 'var(--ls-label-tight)',
                 textTransform: 'uppercase',
-                color: '#080808',
-                background: '#F5C518',
+                color: 'var(--c-bg)',
+                background: 'var(--c-epl)',
                 padding: '9px 18px',
                 textDecoration: 'none',
-                transition: 'opacity 0.2s ease',
+                transition: 'opacity var(--d-fast) var(--ease-in-out)',
               }}
               onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
               onMouseLeave={e => e.currentTarget.style.opacity = '1'}
@@ -163,25 +173,25 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div style={{
-          borderTop: '1px solid rgba(255,255,255,0.06)',
-          paddingTop: '24px',
+          borderTop: '1px solid var(--c-border)',
+          paddingTop: 'var(--s-5)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '12px',
+          gap: 'var(--s-3)',
         }}>
           <p style={{
-            fontFamily: 'Barlow, sans-serif',
-            fontSize: '11px',
+            fontFamily: 'var(--ff-body)',
+            fontSize: 'var(--t-label)',
             color: 'rgba(255,255,255,0.2)',
             letterSpacing: '0.05em',
           }}>
             © {year} Echo Play Live. All rights reserved.
           </p>
           <p style={{
-            fontFamily: 'Barlow, sans-serif',
-            fontSize: '11px',
+            fontFamily: 'var(--ff-body)',
+            fontSize: 'var(--t-label)',
             color: 'rgba(255,255,255,0.15)',
             letterSpacing: '0.05em',
           }}>

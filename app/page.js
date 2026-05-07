@@ -46,7 +46,8 @@ export default function Home() {
   return (
     <>
       <Nav />
-      <main ref={pageRef} style={{ background: '#080808' }}>
+      {/* Phase 1: hero section refactored to use design tokens. Rest of page still inline-styled (Phase 2). */}
+      <main ref={pageRef} style={{ background: 'var(--c-bg)' }}>
 
         {/* ── HERO ─────────────────────────────────────────── */}
         <section style={{
@@ -58,7 +59,7 @@ export default function Home() {
           position: 'relative',
           overflow: 'hidden',
           textAlign: 'center',
-          padding: '120px 32px 80px',
+          padding: '120px var(--gutter-d) var(--s-8)',
         }}>
           {/* Animated background */}
           <div className="hero-bg" style={{
@@ -79,32 +80,32 @@ export default function Home() {
 
           <div style={{ position: 'relative', zIndex: 2, maxWidth: '1000px', width: '100%' }}>
             <div className="hero-label" style={{
-              fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-              fontSize: '11px',
+              fontFamily: 'var(--ff-label)',
+              fontSize: 'var(--t-label)',
               fontWeight: 600,
               letterSpacing: '0.3em',
               textTransform: 'uppercase',
-              color: '#F5C518',
-              marginBottom: '32px',
+              color: 'var(--c-epl)',
+              marginBottom: 'var(--s-6)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '16px',
+              gap: 'var(--s-4)',
             }}>
-              <span style={{ width: '32px', height: '1px', background: '#F5C518', opacity: 0.5 }} />
+              <span style={{ width: 'var(--s-6)', height: '1px', background: 'var(--c-epl)', opacity: 0.5 }} />
               Est. 2023 · Fort Worth, TX
-              <span style={{ width: '32px', height: '1px', background: '#F5C518', opacity: 0.5 }} />
+              <span style={{ width: 'var(--s-6)', height: '1px', background: 'var(--c-epl)', opacity: 0.5 }} />
             </div>
 
             <h1 style={{
-              fontFamily: 'Bebas Neue, cursive',
-              fontSize: 'clamp(80px, 18vw, 220px)',
-              lineHeight: 0.85,
-              letterSpacing: '-0.01em',
+              fontFamily: 'var(--ff-display)',
+              fontSize: 'var(--t-display-xl)',
+              lineHeight: 'var(--lh-display)',
+              letterSpacing: 'var(--ls-display-tight)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              marginBottom: '32px',
+              marginBottom: 'var(--s-6)',
               userSelect: 'none',
             }}>
               {['ECHO', 'PLAY', 'LIVE'].map((word, i) => (
@@ -112,7 +113,7 @@ export default function Home() {
                   <span
                     className="hero-word-inner"
                     style={{
-                      color: i === 0 ? '#ffffff' : i === 1 ? '#F5C518' : '#ffffff',
+                      color: i === 1 ? 'var(--c-epl)' : 'var(--c-text)',
                     }}
                   >
                     {word}
@@ -121,11 +122,11 @@ export default function Home() {
               ))}
             </h1>
 
-            <div className="hero-cta-wrap" style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <div className="hero-cta-wrap" style={{ display: 'flex', gap: 'var(--s-4)', justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link href="#bands" className="btn-primary" style={{
                 textDecoration: 'none',
-                color: '#F5C518',
-                borderColor: '#F5C518',
+                color: 'var(--c-epl)',
+                borderColor: 'var(--c-epl)',
               }}>
                 <span>Explore Our Roster</span>
                 <span>↓</span>
@@ -142,17 +143,17 @@ export default function Home() {
 
           {/* Scroll cue */}
           <div className="scroll-cue" style={{
-            position: 'absolute', bottom: '32px', left: '50%',
+            position: 'absolute', bottom: 'var(--s-6)', left: '50%',
             transform: 'translateX(-50%)',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--s-2)',
             zIndex: 2,
           }}>
             <span style={{
-              fontFamily: 'Barlow Condensed, Barlow, sans-serif',
-              fontSize: '10px',
+              fontFamily: 'var(--ff-label)',
+              fontSize: 'var(--t-label-s)',
               letterSpacing: '0.25em',
               textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.25)',
+              color: 'var(--c-text-faint)',
             }}>Scroll</span>
             <div style={{
               width: '1px', height: '40px',
