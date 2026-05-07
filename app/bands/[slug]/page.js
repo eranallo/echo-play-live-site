@@ -52,33 +52,8 @@ const SocialIcon = ({ platform }) => {
   return icons[platform] || null
 }
 
-// EPK-specific stats per band
-const bandStats = {
-  'jambi': [
-    { value: '50+', label: 'Shows Performed' },
-    { value: '2019', label: 'Est.' },
-    { value: '6 Years', label: 'On Stage' },
-    { value: 'TX & OK', label: 'Territory' },
-  ],
-  'so-long-goodnight': [
-    { value: '3+ Hours', label: 'Per Show' },
-    { value: '100+', label: 'Songs' },
-    { value: 'Sing-Along', label: 'Show' },
-    { value: 'Warped Tour', label: 'Era' },
-  ],
-  'the-dick-beldings': [
-    { value: '10+', label: 'Years Together' },
-    { value: 'Fort Worth', label: 'Based' },
-    { value: '90s', label: 'Era' },
-    { value: '100+', label: 'Song Library' },
-  ],
-  'elite': [
-    { value: '2017', label: 'Est.' },
-    { value: '8 Years', label: 'On Stage' },
-    { value: 'Fort Worth', label: 'Based' },
-    { value: 'TX & Beyond', label: 'Territory' },
-  ],
-}
+// Phase 3A: stats now live in lib/bands.js per band as `stats: [...]`.
+// heroObjectPosition also lives in bands.js per band.
 
 export default function BandPage({ params }) {
   const band = getBand(params.slug)
@@ -120,7 +95,7 @@ export default function BandPage({ params }) {
   if (!band) notFound()
 
   const otherBands = bandsList.filter(b => b.slug !== band.slug)
-  const stats = bandStats[band.slug] || []
+  const stats = band.stats || []
 
   // Use art-directed curated photos from bands.js if defined, otherwise fall back to API results
   const curatedUrls = new Set([band.heroPhoto, band.featurePhoto, band.crowdPhoto].filter(Boolean))
@@ -157,7 +132,7 @@ export default function BandPage({ params }) {
                 src={heroImg.url}
                 alt={`${band.name} live`}
                 fill
-                style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
+                style={{ objectFit: 'cover', objectPosition: band.heroObjectPosition || 'center 20%' }}
                 priority
                 unoptimized
                 sizes="100vw"
