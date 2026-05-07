@@ -85,31 +85,59 @@ export default function ShowsPage() {
           background: 'rgba(8,8,8,0.96)', backdropFilter: 'blur(12px)',
         }}>
           <div style={{
-            maxWidth: '1400px', margin: '0 auto', padding: '0 40px',
-            display: 'flex', gap: '0', overflowX: 'auto',
+            position: 'relative',
+            maxWidth: '1400px',
+            margin: '0 auto',
           }}>
-            {['all', ...bandsList.map(b => b.slug)].map(slug => {
-              const band = slug === 'all' ? null : bandsList.find(b => b.slug === slug)
-              const isActive = filter === slug
-              return (
-                <button key={slug} onClick={() => setFilter(slug)} style={{
-                  fontFamily: 'Barlow Condensed, sans-serif',
-                  fontSize: '11px', fontWeight: 600, letterSpacing: '0.18em',
-                  textTransform: 'uppercase', padding: '16px 20px',
-                  background: 'none', border: 'none',
-                  borderBottom: `2px solid ${isActive ? (band ? band.color : '#F5C518') : 'transparent'}`,
-                  color: isActive ? (band ? band.color : '#F5C518') : 'rgba(255,255,255,0.35)',
-                  cursor: 'pointer', transition: 'color 0.2s ease, border-color 0.2s ease',
-                  whiteSpace: 'nowrap', marginBottom: '-1px',
-                }}>
-                  {slug === 'all' ? 'All Shows' : band.name}
-                </button>
-              )
-            })}
+            <div className="filter-bar-scroll" style={{
+              padding: '0 40px',
+              display: 'flex',
+              gap: '0',
+              overflowX: 'auto',
+              scrollbarWidth: 'none', // Firefox: hide scrollbar
+              msOverflowStyle: 'none', // IE/Edge legacy
+            }}>
+              {['all', ...bandsList.map(b => b.slug)].map(slug => {
+                const band = slug === 'all' ? null : bandsList.find(b => b.slug === slug)
+                const isActive = filter === slug
+                return (
+                  <button key={slug} onClick={() => setFilter(slug)} style={{
+                    fontFamily: 'Barlow Condensed, sans-serif',
+                    fontSize: '11px', fontWeight: 600, letterSpacing: '0.18em',
+                    textTransform: 'uppercase', padding: '16px 20px',
+                    background: 'none', border: 'none',
+                    borderBottom: `2px solid ${isActive ? (band ? band.color : '#F5C518') : 'transparent'}`,
+                    color: isActive ? (band ? band.color : '#F5C518') : 'rgba(255,255,255,0.35)',
+                    cursor: 'pointer', transition: 'color 0.2s ease, border-color 0.2s ease',
+                    whiteSpace: 'nowrap', marginBottom: '-1px',
+                  }}>
+                    {slug === 'all' ? 'All Shows' : band.name}
+                  </button>
+                )
+              })}
+            </div>
+            {/* Right-edge fade affordance signaling horizontal scroll on narrow viewports */}
+            <div className="filter-bar-fade" style={{
+              position: 'absolute',
+              right: 0,
+              top: 0,
+              bottom: 0,
+              width: '40px',
+              background: 'linear-gradient(to right, rgba(8,8,8,0) 0%, rgba(8,8,8,0.96) 100%)',
+              pointerEvents: 'none',
+            }} />
           </div>
         </div>
+        <style jsx global>{`
+          /* Hide native scrollbar on the filter row across browsers */
+          .filter-bar-scroll::-webkit-scrollbar { display: none; }
+          /* On wide viewports the fade is unnecessary (no overflow) */
+          @media (min-width: 769px) {
+            .filter-bar-fade { display: none; }
+          }
+        `}</style>
 
-        {/* Shows — Bandsintown Widgets */}
+        {/* Shows: Bandsintown Widgets */}
         <section style={{ padding: 'clamp(60px, 8vw, 100px) 40px' }}>
           <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
 
@@ -132,7 +160,7 @@ export default function ShowsPage() {
             {/* One widget per filtered band */}
             {filteredBands.map(band => (
               <div key={band.slug} style={{ marginBottom: '48px' }}>
-                {/* Band label — only show when viewing All Shows */}
+                {/* Band label, only shown when viewing All Shows */}
                 {filter === 'all' && (
                   <div style={{
                     display: 'flex', alignItems: 'center', gap: '12px',

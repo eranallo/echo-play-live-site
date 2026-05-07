@@ -7,7 +7,13 @@ const AIRTABLE_TABLE = 'tbliRPed3vD70R476'
 export async function POST(request) {
   try {
     const body = await request.json()
-    const { name, email, band, eventType, date, venue, message } = body
+    const { name, email, band, eventType, date, venue, message, website } = body
+
+    // Honeypot: if a bot filled the hidden `website` field, return success
+    // without writing to Airtable. Silent rejection so bots don't retry.
+    if (website && typeof website === 'string' && website.trim() !== '') {
+      return NextResponse.json({ success: true, recordId: null, bookingEmail: '' })
+    }
 
     const token = process.env.AIRTABLE_API_TOKEN
     if (!token) {

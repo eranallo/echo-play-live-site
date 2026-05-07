@@ -24,7 +24,8 @@ export default function ContactPage() {
   const [submitting, setSubmitting] = useState(false)
   const [bookingEmail, setBookingEmail] = useState('')
   const [form, setForm] = useState({
-    name: '', email: '', band: '', eventType: '', date: '', venue: '', message: ''
+    name: '', email: '', band: '', eventType: '', date: '', venue: '', message: '',
+    website: '', // honeypot. humans never fill this; bots usually do
   })
 
   const handleChange = e => setForm(p => ({ ...p, [e.target.name]: e.target.value }))
@@ -39,9 +40,25 @@ export default function ContactPage() {
     return bandsList.map(b => b.bookingEmail).filter(Boolean).join(',')
   }
 
+  // Resolve the band-specific email for display in success state.
+  const getBandEmail = (bandName) => {
+    if (!bandName) return ''
+    return bandsList.find(b => b.name === bandName)?.bookingEmail || ''
+  }
+
   const handleSubmit = async e => {
     e.preventDefault()
     setSubmitting(true)
+
+    // Honeypot trap: if `website` field has any value, silently treat as success
+    // without saving. Bots get nothing; humans never see this happen.
+    if (form.website && form.website.trim() !== '') {
+      setBookingEmail('')
+      setSubmitted(true)
+      setSubmitting(false)
+      return
+    }
+
     try {
       const res = await fetch('/api/inquiry', {
         method: 'POST',
@@ -140,18 +157,33 @@ export default function ContactPage() {
                       letterSpacing: '0.04em',
                       color: '#F5C518',
                       marginBottom: '12px',
-                    }}>Message Sent!</div>
+                    }}>Inquiry Received</div>
                     <p style={{
                       fontFamily: 'Barlow, sans-serif',
                       fontSize: '15px',
-                      color: 'rgba(255,255,255,0.5)',
+                      color: 'rgba(255,255,255,0.6)',
+                      lineHeight: 1.7,
+                      marginBottom: '20px',
                     }}>
                       {bookingEmail ? (
-                        <>Your inquiry has been saved and sent to <strong style={{ color: '#F5C518' }}>{bookingEmail}</strong>. We&apos;ll be in touch shortly!</>
+                        <>Routed to <strong style={{ color: '#F5C518' }}>{bookingEmail}</strong>. Most bookers hear back within 24 hours.</>
                       ) : (
-                        <>Your inquiry has been saved. The right band&apos;s booking team will be in touch shortly.</>
+                        <>Routed to the right band&apos;s booking team. Most bookers hear back within 24 hours.</>
                       )}
                     </p>
+                    {/* If a band was selected, offer a direct mailto for urgent cases */}
+                    {form.band && getBandEmail(form.band) && (
+                      <p style={{
+                        fontFamily: 'Barlow, sans-serif',
+                        fontSize: '13px',
+                        color: 'rgba(255,255,255,0.35)',
+                      }}>
+                        Need a faster reply? Email <a
+                          href={`mailto:${getBandEmail(form.band)}`}
+                          style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'underline' }}
+                        >{getBandEmail(form.band)}</a> directly.
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="reveal delay-100">
@@ -319,6 +351,34 @@ export default function ContactPage() {
                       />
                     </div>
 
+                    {/* Honeypot: humans skip this; bots typically auto-fill any field
+                        with a name like "website". If filled on submit, we silently bail
+                        without saving. Hidden visually + from keyboard + from screen readers. */}
+                    <div
+                      aria-hidden="true"
+                      style={{
+                        position: 'absolute',
+                        left: '-9999px',
+                        top: '-9999px',
+                        width: '1px',
+                        height: '1px',
+                        overflow: 'hidden',
+                        opacity: 0,
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      <label htmlFor="hp-website">Website (leave blank)</label>
+                      <input
+                        id="hp-website"
+                        type="text"
+                        name="website"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        value={form.website}
+                        onChange={handleChange}
+                      />
+                    </div>
+
                     <button
                       type="submit"
                       disabled={submitting}
@@ -333,8 +393,34 @@ export default function ContactPage() {
                         display: 'inline-flex', alignItems: 'center', gap: '10px',
                       }}
                     >
-                      {submitting ? 'Sending...' : 'Send Inquiry →'}
+                      {submitting ? (
+                        <>
+                          <svg
+                            width="14" height="14" viewBox="0 0 24 24"
+                            fill="none" xmlns="http://www.w3.org/2000/svg"
+                            className="form-spinner"
+                            aria-hidden="true"
+                          >
+                            <circle cx="12" cy="12" r="10" stroke="#080808" strokeOpacity="0.25" strokeWidth="3" />
+                            <path d="M22 12a10 10 0 0 1-10 10" stroke="#080808" strokeWidth="3" strokeLinecap="round" />
+                          </svg>
+                          Sending
+                        </>
+                      ) : 'Send Inquiry →'}
                     </button>
+                    <style jsx global>{`
+                      .form-spinner {
+                        animation: form-spin 0.8s linear infinite;
+                        transform-origin: center;
+                      }
+                      @keyframes form-spin {
+                        from { transform: rotate(0deg); }
+                        to { transform: rotate(360deg); }
+                      }
+                      @media (prefers-reduced-motion: reduce) {
+                        .form-spinner { animation: none; }
+                      }
+                    `}</style>
                   </form>
                 )}
               </div>
