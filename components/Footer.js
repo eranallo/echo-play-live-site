@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { bandsList } from '@/lib/bands'
 
 // Phase 1: refactored to use design tokens (see app/globals.css and site-audit/design-system.md).
@@ -29,6 +30,13 @@ export default function Footer() {
         }}>
           {/* Brand */}
           <div style={{ gridColumn: 'span 1' }}>
+            <Image
+              src="/logo.svg"
+              alt=""
+              width={64}
+              height={64}
+              style={{ display: 'block', marginBottom: 'var(--s-3)' }}
+            />
             <div style={{
               fontFamily: 'var(--ff-display)',
               fontSize: '28px',

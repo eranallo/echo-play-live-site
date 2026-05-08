@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { bandsList } from '@/lib/bands'
 
@@ -46,24 +47,23 @@ export default function Nav() {
         }}
       >
         <div style={{ maxWidth: 'var(--layout-max)', margin: '0 auto', padding: '0 var(--gutter-d)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          {/* Logo */}
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
-              <span style={{
-                fontFamily: 'var(--ff-display)',
-                fontSize: '22px',
-                letterSpacing: '0.08em',
-                color: 'var(--c-epl)',
-              }}>ECHO PLAY LIVE</span>
-              <span style={{
-                fontFamily: 'var(--ff-label)',
-                fontSize: 'var(--t-label-xs)',
-                letterSpacing: '0.3em',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.35)',
-                marginTop: '1px',
-              }}>Band Management · Est. 2023</span>
-            </div>
+          {/* Logo: badge mark + Bebas wordmark */}
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 'var(--s-3)', minHeight: '44px' }} aria-label="Echo Play Live home">
+            <Image
+              src="/logo.svg"
+              alt=""
+              width={40}
+              height={40}
+              priority
+              style={{ display: 'block', flexShrink: 0 }}
+            />
+            <span style={{
+              fontFamily: 'var(--ff-display)',
+              fontSize: '22px',
+              letterSpacing: '0.08em',
+              color: 'var(--c-epl)',
+              lineHeight: 1,
+            }}>ECHO PLAY LIVE</span>
           </Link>
 
           {/* Desktop Nav */}
