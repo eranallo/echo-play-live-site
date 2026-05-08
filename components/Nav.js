@@ -50,7 +50,7 @@ export default function Nav() {
           {/* Logo: badge mark + Bebas wordmark */}
           <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 'var(--s-3)', minHeight: '44px' }} aria-label="Echo Play Live home">
             <Image
-              src="/logo.svg"
+              src="/logo.png"
               alt=""
               width={40}
               height={40}
