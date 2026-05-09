@@ -134,6 +134,7 @@ export default function Nav() {
             </div>
 
             <Link href="/shows" className="nav-link" style={{ textDecoration: 'none' }}>Shows</Link>
+            <Link href="/musicians" className="nav-link" style={{ textDecoration: 'none' }}>Roster</Link>
             <Link href="/about" className="nav-link" style={{ textDecoration: 'none' }}>About</Link>
             <Link href="/contact" style={{
               textDecoration: 'none',
@@ -200,6 +201,7 @@ export default function Nav() {
           {[
             { href: '/', label: 'Home' },
             { href: '/shows', label: 'Shows' },
+            { href: '/musicians', label: 'Roster' },
             { href: '/about', label: 'About' },
             { href: '/contact', label: 'Book Now' },
           ].map(({ href, label }) => (

@@ -1,0 +1,395 @@
+// /musicians/[slug] — individual musician detail page.
+//
+// Server Component. Fetches the member by slug from Airtable.
+//
+// Phase 10A foundation: photo, name, instruments, bands, sub-bands, plus a
+// bio area that reads `bioLong` if present and falls back to a quiet
+// placeholder. As Evan adds Bio Long values in Airtable, the placeholder
+// disappears automatically.
+
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import Image from 'next/image'
+import Nav from '@/components/Nav'
+import Footer from '@/components/Footer'
+import { getMusician, getMusicians } from '@/lib/musicians'
+
+export const revalidate = 1800
+
+export default async function MusicianPage({ params }) {
+  const m = await getMusician(params.slug)
+  if (!m) notFound()
+
+  // Other roster members (for the "Also on the Roster" rail)
+  const allMusicians = await getMusicians()
+  const otherMembers = allMusicians
+    .filter(x => x.slug !== m.slug)
+    // Prefer members who share at least one band
+    .sort((a, b) => {
+      const aShares = a.bands.some(x => m.bands.find(y => y.slug === x.slug))
+      const bShares = b.bands.some(x => m.bands.find(y => y.slug === x.slug))
+      if (aShares && !bShares) return -1
+      if (!aShares && bShares) return 1
+      return a.name.localeCompare(b.name)
+    })
+    .slice(0, 4)
+
+  const accent = m.bands[0]?.color || 'var(--c-epl)'
+  const initials = m.name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map(w => w[0])
+    .join('')
+    .toUpperCase()
+
+  return (
+    <>
+      <Nav />
+      <main style={{ background: 'var(--c-bg)', minHeight: '100vh' }}>
+
+        {/* ── HERO ─────────────────────────────────────────── */}
+        <section style={{
+          padding: 'clamp(120px, 16vw, 180px) var(--gutter-fluid) clamp(48px, 7vw, 80px)',
+          borderBottom: '1px solid var(--c-border)',
+          background: `radial-gradient(ellipse 60% 70% at 80% 30%, ${accent}10 0%, transparent 60%), var(--c-bg)`,
+        }}>
+          <div style={{ maxWidth: 'var(--layout-max)', margin: '0 auto' }}>
+            {/* Breadcrumb */}
+            <div style={{
+              fontFamily: 'var(--ff-label)',
+              fontSize: 'var(--t-label)',
+              fontWeight: 500,
+              letterSpacing: 'var(--ls-label)',
+              textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.3)',
+              marginBottom: 'var(--s-5)',
+              display: 'flex', alignItems: 'center', gap: 'var(--s-2)',
+            }}>
+              <Link href="/musicians" style={{ color: 'inherit', textDecoration: 'none' }}>Roster</Link>
+              <span style={{ opacity: 0.4 }}>→</span>
+              <span style={{ color: accent }}>{m.name}</span>
+            </div>
+
+            <div className="musician-hero-grid" style={{
+              display: 'grid',
+              gridTemplateColumns: m.photo ? 'minmax(0, 1fr) minmax(0, 1.2fr)' : '1fr',
+              gap: 'clamp(32px, 5vw, 72px)',
+              alignItems: 'center',
+            }}>
+
+              {/* Photo */}
+              {m.photo ? (
+                <div style={{
+                  position: 'relative',
+                  aspectRatio: '4 / 5',
+                  background: 'var(--c-surface)',
+                  border: '1px solid var(--c-border)',
+                  overflow: 'hidden',
+                }}>
+                  <Image
+                    src={m.photo.thumb}
+                    alt={m.name}
+                    fill
+                    unoptimized
+                    priority
+                    sizes="(max-width: 900px) 100vw, 40vw"
+                    style={{ objectFit: 'cover', objectPosition: 'center 25%' }}
+                  />
+                  <div style={{
+                    position: 'absolute',
+                    left: 0, right: 0, bottom: 0, height: '4px',
+                    background: accent,
+                  }} />
+                </div>
+              ) : null}
+
+              {/* Identity block */}
+              <div>
+                {/* Instruments */}
+                {m.instruments.length > 0 && (
+                  <div style={{
+                    fontFamily: 'var(--ff-label)',
+                    fontSize: 'var(--t-label-s)',
+                    fontWeight: 700,
+                    letterSpacing: 'var(--ls-label)',
+                    textTransform: 'uppercase',
+                    color: accent,
+                    marginBottom: 'var(--s-4)',
+                  }}>
+                    {m.instruments.join(' · ')}
+                  </div>
+                )}
+
+                {/* Name */}
+                <h1 style={{
+                  fontFamily: 'var(--ff-display)',
+                  fontSize: 'clamp(48px, 9vw, 124px)',
+                  letterSpacing: '0.01em',
+                  lineHeight: 0.9,
+                  color: 'var(--c-text)',
+                  marginBottom: 'var(--s-5)',
+                }}>
+                  {m.name}
+                </h1>
+
+                {/* Bio short (one-liner under name) */}
+                {m.bioShort && (
+                  <p style={{
+                    fontFamily: 'var(--ff-body)',
+                    fontSize: 'clamp(17px, 1.9vw, 21px)',
+                    lineHeight: 1.55,
+                    fontWeight: 300,
+                    color: 'rgba(255,255,255,0.78)',
+                    marginBottom: 'var(--s-5)',
+                    maxWidth: '560px',
+                  }}>
+                    {m.bioShort}
+                  </p>
+                )}
+
+                {/* Bands chips */}
+                {m.bands.length > 0 && (
+                  <div style={{ marginBottom: 'var(--s-3)' }}>
+                    <div style={{
+                      fontFamily: 'var(--ff-label)',
+                      fontSize: '10px', fontWeight: 600, letterSpacing: '0.22em',
+                      textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)',
+                      marginBottom: 'var(--s-2)',
+                    }}>
+                      Plays with
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--s-2)' }}>
+                      {m.bands.map(b => (
+                        <Link
+                          key={b.slug}
+                          href={`/bands/${b.slug}`}
+                          style={{
+                            fontFamily: 'var(--ff-label)',
+                            fontSize: '11px', fontWeight: 700, letterSpacing: '0.18em',
+                            textTransform: 'uppercase', color: b.color,
+                            background: `${b.color}14`,
+                            border: `1px solid ${b.color}40`,
+                            padding: '7px 14px',
+                            textDecoration: 'none',
+                            transition: 'all var(--d-fast) var(--ease-in-out)',
+                          }}
+                        >
+                          {b.name} →
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Sub bands */}
+                {m.subBands.length > 0 && (
+                  <div>
+                    <div style={{
+                      fontFamily: 'var(--ff-label)',
+                      fontSize: '10px', fontWeight: 600, letterSpacing: '0.22em',
+                      textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)',
+                      marginBottom: 'var(--s-2)',
+                      marginTop: 'var(--s-4)',
+                    }}>
+                      Subs for
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--s-2)' }}>
+                      {m.subBands.map(b => (
+                        <Link
+                          key={b.slug}
+                          href={`/bands/${b.slug}`}
+                          style={{
+                            fontFamily: 'var(--ff-label)',
+                            fontSize: '11px', fontWeight: 600, letterSpacing: '0.18em',
+                            textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)',
+                            background: 'rgba(255,255,255,0.04)',
+                            border: '1px dashed rgba(255,255,255,0.18)',
+                            padding: '7px 14px',
+                            textDecoration: 'none',
+                          }}
+                        >
+                          {b.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── BIO ──────────────────────────────────────────── */}
+        <section style={{
+          padding: 'clamp(60px, 9vw, 120px) var(--gutter-fluid)',
+          borderBottom: '1px solid var(--c-border)',
+        }}>
+          <div style={{ maxWidth: '760px', margin: '0 auto' }}>
+            <div style={{
+              width: '32px', height: '3px',
+              background: accent,
+              marginBottom: 'var(--s-5)',
+            }} />
+            <div style={{
+              fontFamily: 'var(--ff-label)',
+              fontSize: 'var(--t-label-s)',
+              fontWeight: 600,
+              letterSpacing: 'var(--ls-label)',
+              textTransform: 'uppercase',
+              color: accent,
+              marginBottom: 'var(--s-4)',
+            }}>
+              About {m.name.split(' ')[0]}
+            </div>
+
+            {m.bioLong ? (
+              <div style={{
+                fontFamily: 'var(--ff-body)',
+                fontSize: 'clamp(16px, 1.7vw, 18px)',
+                lineHeight: 1.85,
+                fontWeight: 300,
+                color: 'rgba(255,255,255,0.78)',
+              }}>
+                {m.bioLong.split(/\n\s*\n/).map((para, i) => (
+                  <p key={i} style={{ marginBottom: 'var(--s-5)' }}>{para}</p>
+                ))}
+              </div>
+            ) : (
+              <p style={{
+                fontFamily: 'var(--ff-body)',
+                fontSize: 'clamp(16px, 1.7vw, 18px)',
+                lineHeight: 1.85,
+                fontWeight: 300,
+                color: 'rgba(255,255,255,0.45)',
+                fontStyle: 'italic',
+              }}>
+                Bio coming soon. Echo Play Live is in the middle of interviewing every player on the roster — full story for {m.name.split(' ')[0]} drops here when the conversation is in.
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* ── ALSO ON THE ROSTER ───────────────────────────── */}
+        {otherMembers.length > 0 && (
+          <section style={{
+            padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
+            borderBottom: '1px solid var(--c-border)',
+          }}>
+            <div style={{ maxWidth: 'var(--layout-max)', margin: '0 auto' }}>
+              <div style={{
+                fontFamily: 'var(--ff-label)',
+                fontSize: 'var(--t-label-s)',
+                fontWeight: 600,
+                letterSpacing: 'var(--ls-label)',
+                textTransform: 'uppercase',
+                color: 'var(--c-epl)',
+                marginBottom: 'var(--s-5)',
+              }}>
+                Also on the Roster
+              </div>
+
+              <div className="other-members-grid" style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                gap: 'clamp(16px, 2vw, 24px)',
+              }}>
+                {otherMembers.map(om => {
+                  const omAccent = om.bands[0]?.color || 'var(--c-epl)'
+                  return (
+                    <Link
+                      key={om.id}
+                      href={`/musicians/${om.slug}`}
+                      style={{
+                        display: 'block',
+                        textDecoration: 'none',
+                        background: 'var(--c-surface)',
+                        border: '1px solid var(--c-border)',
+                        padding: 'var(--s-4)',
+                        transition: 'border-color var(--d-fast) var(--ease-in-out)',
+                      }}
+                    >
+                      <div style={{
+                        fontFamily: 'var(--ff-display)',
+                        fontSize: '20px',
+                        letterSpacing: '0.02em',
+                        color: 'var(--c-text)',
+                        marginBottom: 'var(--s-1)',
+                      }}>{om.name}</div>
+                      <div style={{
+                        fontFamily: 'var(--ff-label)',
+                        fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em',
+                        textTransform: 'uppercase', color: omAccent,
+                      }}>
+                        {(om.instruments[0] || 'Musician')}
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+
+              <div style={{ marginTop: 'var(--s-6)', textAlign: 'center' }}>
+                <Link href="/musicians" style={{
+                  fontFamily: 'var(--ff-label)',
+                  fontSize: 'var(--t-label)',
+                  fontWeight: 600,
+                  letterSpacing: 'var(--ls-label-tight)',
+                  textTransform: 'uppercase',
+                  color: 'var(--c-epl)',
+                  textDecoration: 'none',
+                  borderBottom: '1px solid var(--c-epl)',
+                  paddingBottom: '2px',
+                }}>
+                  See full roster →
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── BOOKING CTA ──────────────────────────────────── */}
+        <section style={{
+          padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
+          textAlign: 'center',
+        }}>
+          <div style={{ maxWidth: '720px', margin: '0 auto' }}>
+            <h2 style={{
+              fontFamily: 'var(--ff-display)',
+              fontSize: 'clamp(32px, 5vw, 56px)',
+              letterSpacing: '0.01em',
+              lineHeight: 0.95,
+              color: 'var(--c-text)',
+              marginBottom: 'var(--s-5)',
+            }}>
+              Book a band {m.name.split(' ')[0]} plays in
+            </h2>
+            <Link href="/contact" style={{
+              display: 'inline-block',
+              fontFamily: 'var(--ff-label)',
+              fontSize: 'var(--t-label)',
+              fontWeight: 700,
+              letterSpacing: 'var(--ls-label-tight)',
+              textTransform: 'uppercase',
+              color: 'var(--c-bg)',
+              background: accent,
+              padding: '16px 36px',
+              textDecoration: 'none',
+            }}>
+              Start a booking inquiry →
+            </Link>
+          </div>
+        </section>
+
+      </main>
+      <Footer />
+
+      {/* Mobile: stack hero photo above identity */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media (max-width: 900px) {
+          .musician-hero-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}} />
+    </>
+  )
+}
