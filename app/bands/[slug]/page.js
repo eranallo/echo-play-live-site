@@ -62,6 +62,7 @@ export default function BandPage({ params }) {
   const [lightboxImg, setLightboxImg] = useState(null)
   const [lightboxIdx, setLightboxIdx] = useState(0)
   const [mediaLoaded, setMediaLoaded] = useState(false)
+  const [lineup, setLineup] = useState([])
 
   useEffect(() => {
     if (!band) return
@@ -72,6 +73,17 @@ export default function BandPage({ params }) {
         setMediaLoaded(true)
       })
       .catch(() => setMediaLoaded(true))
+  }, [band?.slug])
+
+  // Phase 10C: fetch this band's lineup from /api/musicians and render in a
+  // dedicated Lineup section. Sub-band relationships are intentionally not
+  // shown — only members who list this band as a Primary Band.
+  useEffect(() => {
+    if (!band) return
+    fetch(`/api/musicians?band=${band.slug}`)
+      .then(r => r.json())
+      .then(data => setLineup(Array.isArray(data.members) ? data.members : []))
+      .catch(() => setLineup([]))
   }, [band?.slug])
 
   useEffect(() => {
@@ -551,6 +563,126 @@ export default function BandPage({ params }) {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── LINEUP (Phase 10C) ──────────────────────────── */}
+        {lineup.length > 0 && (
+          <section style={{
+            padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+          }}>
+            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+              <div style={{ width: '32px', height: '3px', background: band.color, marginBottom: '24px' }} />
+              <div className="section-label reveal" style={{ color: band.color, marginBottom: '12px' }}>
+                The Lineup
+              </div>
+              <h2 className="reveal delay-100" style={{
+                fontFamily: 'Bebas Neue, cursive',
+                fontSize: 'clamp(32px, 5vw, 60px)',
+                letterSpacing: '0.02em', lineHeight: 0.9,
+                marginBottom: '12px',
+              }}>Who's On Stage</h2>
+              <p className="reveal delay-200" style={{
+                fontFamily: 'Barlow, sans-serif',
+                fontSize: 'clamp(15px, 1.6vw, 17px)',
+                lineHeight: 1.7, fontWeight: 300,
+                color: 'rgba(255,255,255,0.5)',
+                maxWidth: '600px',
+                marginBottom: '40px',
+              }}>
+                The musicians who play {band.name}. Every show, the same standard.
+              </p>
+
+              <div className="lineup-grid" style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                gap: 'clamp(16px, 2vw, 24px)',
+              }}>
+                {lineup.map((m, i) => {
+                  const initials = m.name
+                    .split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase()
+                  return (
+                    <Link
+                      key={m.slug}
+                      href={`/musicians/${m.slug}`}
+                      className="roster-card reveal"
+                      style={{
+                        display: 'block',
+                        textDecoration: 'none',
+                        background: 'var(--c-surface)',
+                        border: '1px solid var(--c-border)',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        transitionDelay: `${Math.min(i * 70, 500)}ms`,
+                        '--accent': band.color,
+                      }}
+                    >
+                      <div className="roster-card-photo-wrap" style={{
+                        aspectRatio: '4 / 5',
+                        background: `linear-gradient(180deg, ${band.color}1A 0%, var(--c-surface) 100%)`,
+                      }}>
+                        {m.photo?.thumb ? (
+                          <Image
+                            src={m.photo.thumb}
+                            alt={m.name}
+                            fill
+                            unoptimized
+                            style={{ objectFit: 'cover', objectPosition: 'center 30%' }}
+                            sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                          />
+                        ) : (
+                          <span style={{
+                            position: 'absolute', inset: 0,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontFamily: 'Bebas Neue, cursive',
+                            fontSize: 'clamp(64px, 10vw, 100px)',
+                            letterSpacing: '0.02em',
+                            color: `${band.color}55`,
+                            lineHeight: 1,
+                          }}>{initials}</span>
+                        )}
+                        <div className="roster-card-accent" />
+                      </div>
+                      <div style={{ padding: 'var(--s-4)' }}>
+                        <div className="roster-card-name" style={{
+                          fontFamily: 'Bebas Neue, cursive',
+                          fontSize: 'clamp(20px, 2vw, 24px)',
+                          letterSpacing: '0.02em',
+                          color: '#fff',
+                          lineHeight: 1.05,
+                          marginBottom: '6px',
+                        }}>{m.name}</div>
+                        {m.instruments.length > 0 && (
+                          <div style={{
+                            fontFamily: 'Barlow Condensed, sans-serif',
+                            fontSize: '10px', fontWeight: 700, letterSpacing: '0.18em',
+                            textTransform: 'uppercase', color: band.color,
+                          }}>
+                            {m.instruments.join(' · ')}
+                          </div>
+                        )}
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+
+              <div className="reveal delay-300" style={{ marginTop: 'clamp(32px, 4vw, 48px)', textAlign: 'center' }}>
+                <Link href="/musicians" style={{
+                  fontFamily: 'Barlow Condensed, sans-serif',
+                  fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em',
+                  textTransform: 'uppercase', color: band.color,
+                  textDecoration: 'none',
+                  borderBottom: `1px solid ${band.color}`,
+                  paddingBottom: '3px',
+                  transition: 'opacity 0.2s ease',
+                }}
+                  onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
+                  onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                >See the full Echo Play Live roster →</Link>
               </div>
             </div>
           </section>

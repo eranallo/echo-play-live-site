@@ -10,6 +10,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import RevealOnView from '@/components/RevealOnView'
 import { getMusicians } from '@/lib/musicians'
 
 export const revalidate = 1800
@@ -20,6 +21,7 @@ export default async function MusiciansPage() {
   return (
     <>
       <Nav />
+      <RevealOnView>
       <main style={{ background: 'var(--c-bg)', minHeight: '100vh' }}>
 
         {/* ── HERO ─────────────────────────────────────────── */}
@@ -29,7 +31,7 @@ export default async function MusiciansPage() {
           position: 'relative',
         }}>
           <div style={{ maxWidth: 'var(--layout-max)', margin: '0 auto' }}>
-            <div style={{
+            <div className="reveal-up" style={{
               fontFamily: 'var(--ff-label)',
               fontSize: 'var(--t-label-s)',
               fontWeight: 600,
@@ -40,7 +42,7 @@ export default async function MusiciansPage() {
             }}>
               The Musicians of Echo Play Live
             </div>
-            <h1 style={{
+            <h1 className="reveal delay-100" style={{
               fontFamily: 'var(--ff-display)',
               fontSize: 'clamp(56px, 11vw, 148px)',
               letterSpacing: '0.01em',
@@ -50,7 +52,7 @@ export default async function MusiciansPage() {
             }}>
               ROSTER
             </h1>
-            <p style={{
+            <p className="reveal-up delay-300" style={{
               fontFamily: 'var(--ff-body)',
               fontSize: 'clamp(16px, 1.8vw, 19px)',
               lineHeight: 1.7,
@@ -76,8 +78,8 @@ export default async function MusiciansPage() {
                 gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
                 gap: 'clamp(20px, 2.5vw, 32px)',
               }}>
-                {musicians.map(m => (
-                  <MusicianCard key={m.id} musician={m} />
+                {musicians.map((m, i) => (
+                  <MusicianCard key={m.id} musician={m} stagger={i} />
                 ))}
               </div>
             )}
@@ -91,7 +93,7 @@ export default async function MusiciansPage() {
           textAlign: 'center',
         }}>
           <div style={{ maxWidth: '720px', margin: '0 auto' }}>
-            <h2 style={{
+            <h2 className="reveal" style={{
               fontFamily: 'var(--ff-display)',
               fontSize: 'clamp(36px, 6vw, 64px)',
               letterSpacing: '0.01em',
@@ -101,7 +103,7 @@ export default async function MusiciansPage() {
             }}>
               Want to book one of these bands?
             </h2>
-            <Link href="/contact" style={{
+            <Link href="/contact" className="reveal-up delay-200" style={{
               display: 'inline-block',
               fontFamily: 'var(--ff-label)',
               fontSize: 'var(--t-label)',
@@ -112,6 +114,7 @@ export default async function MusiciansPage() {
               background: 'var(--c-epl)',
               padding: '16px 36px',
               textDecoration: 'none',
+              transition: 'transform 0.3s var(--ease-out), box-shadow 0.3s ease',
             }}>
               Start a booking inquiry →
             </Link>
@@ -119,6 +122,7 @@ export default async function MusiciansPage() {
         </section>
 
       </main>
+      </RevealOnView>
       <Footer />
     </>
   )
@@ -127,7 +131,7 @@ export default async function MusiciansPage() {
 // ────────────────────────────────────────────────────────────
 // Card
 
-function MusicianCard({ musician }) {
+function MusicianCard({ musician, stagger = 0 }) {
   const initials = musician.name
     .split(/\s+/)
     .slice(0, 2)
@@ -138,10 +142,14 @@ function MusicianCard({ musician }) {
   // Pick the primary band's color as the card accent. Fallback to EPL gold.
   const accent = musician.bands[0]?.color || 'var(--c-epl)'
 
+  // Cap stagger so very late cards don't wait too long. After ~600ms the
+  // user has already started scrolling; cap at 700ms.
+  const delayMs = Math.min(stagger * 60, 700)
+
   return (
     <Link
       href={`/musicians/${musician.slug}`}
-      className="roster-card"
+      className="roster-card reveal"
       style={{
         display: 'block',
         textDecoration: 'none',
@@ -149,14 +157,15 @@ function MusicianCard({ musician }) {
         border: '1px solid var(--c-border)',
         position: 'relative',
         overflow: 'hidden',
+        transitionDelay: `${delayMs}ms`,
+        // expose accent to globals.css :hover styles
+        '--accent': accent,
       }}
     >
       {/* Photo / placeholder */}
-      <div style={{
-        position: 'relative',
+      <div className="roster-card-photo-wrap" style={{
         aspectRatio: '4 / 5',
         background: `linear-gradient(180deg, ${accent}1A 0%, var(--c-surface) 100%)`,
-        overflow: 'hidden',
       }}>
         {musician.photo?.thumb ? (
           <Image
@@ -168,7 +177,7 @@ function MusicianCard({ musician }) {
             sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw"
           />
         ) : (
-          <div style={{
+          <span style={{
             position: 'absolute',
             inset: 0,
             display: 'flex',
@@ -181,19 +190,15 @@ function MusicianCard({ musician }) {
             lineHeight: 1,
           }}>
             {initials}
-          </div>
+          </span>
         )}
-        {/* Bottom-edge accent */}
-        <div style={{
-          position: 'absolute',
-          left: 0, right: 0, bottom: 0, height: '3px',
-          background: accent,
-        }} />
+        {/* Bottom-edge accent line — grows on hover via globals.css */}
+        <div className="roster-card-accent" />
       </div>
 
       {/* Body */}
       <div style={{ padding: 'var(--s-5)' }}>
-        <div style={{
+        <div className="roster-card-name" style={{
           fontFamily: 'var(--ff-display)',
           fontSize: 'clamp(22px, 2.4vw, 28px)',
           letterSpacing: '0.02em',
@@ -219,7 +224,8 @@ function MusicianCard({ musician }) {
           </div>
         )}
 
-        {/* Band chips */}
+        {/* Band chips — primary bands only. Sub-band relationships are kept in
+            the data model but not shown publicly per Evan 2026-05-09. */}
         {musician.bands.length > 0 && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--s-1)' }}>
             {musician.bands.map(b => (
@@ -239,26 +245,6 @@ function MusicianCard({ musician }) {
                 }}
               >
                 {b.shortName}
-              </span>
-            ))}
-            {musician.subBands.map(b => (
-              <span
-                key={`sub-${b.slug}`}
-                title={`Subs for ${b.name}`}
-                style={{
-                  fontFamily: 'var(--ff-label)',
-                  fontSize: '10px',
-                  fontWeight: 600,
-                  letterSpacing: '0.18em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.45)',
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px dashed rgba(255,255,255,0.15)',
-                  padding: '4px 10px',
-                  lineHeight: 1.2,
-                }}
-              >
-                {b.shortName} sub
               </span>
             ))}
           </div>

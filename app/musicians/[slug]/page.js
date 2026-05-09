@@ -12,6 +12,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import RevealOnView from '@/components/RevealOnView'
 import { getMusician, getMusicians } from '@/lib/musicians'
 
 export const revalidate = 1800
@@ -45,6 +46,7 @@ export default async function MusicianPage({ params }) {
   return (
     <>
       <Nav />
+      <RevealOnView>
       <main style={{ background: 'var(--c-bg)', minHeight: '100vh' }}>
 
         {/* ── HERO ─────────────────────────────────────────── */}
@@ -55,7 +57,7 @@ export default async function MusicianPage({ params }) {
         }}>
           <div style={{ maxWidth: 'var(--layout-max)', margin: '0 auto' }}>
             {/* Breadcrumb */}
-            <div style={{
+            <div className="reveal-up" style={{
               fontFamily: 'var(--ff-label)',
               fontSize: 'var(--t-label)',
               fontWeight: 500,
@@ -79,7 +81,7 @@ export default async function MusicianPage({ params }) {
 
               {/* Photo */}
               {m.photo ? (
-                <div style={{
+                <div className="reveal-zoom" style={{
                   position: 'relative',
                   aspectRatio: '4 / 5',
                   background: 'var(--c-surface)',
@@ -107,7 +109,7 @@ export default async function MusicianPage({ params }) {
               <div>
                 {/* Instruments */}
                 {m.instruments.length > 0 && (
-                  <div style={{
+                  <div className="reveal-up delay-100" style={{
                     fontFamily: 'var(--ff-label)',
                     fontSize: 'var(--t-label-s)',
                     fontWeight: 700,
@@ -121,7 +123,7 @@ export default async function MusicianPage({ params }) {
                 )}
 
                 {/* Name */}
-                <h1 style={{
+                <h1 className="reveal delay-200" style={{
                   fontFamily: 'var(--ff-display)',
                   fontSize: 'clamp(48px, 9vw, 124px)',
                   letterSpacing: '0.01em',
@@ -134,7 +136,7 @@ export default async function MusicianPage({ params }) {
 
                 {/* Bio short (one-liner under name) */}
                 {m.bioShort && (
-                  <p style={{
+                  <p className="reveal-up delay-300" style={{
                     fontFamily: 'var(--ff-body)',
                     fontSize: 'clamp(17px, 1.9vw, 21px)',
                     lineHeight: 1.55,
@@ -149,7 +151,7 @@ export default async function MusicianPage({ params }) {
 
                 {/* Bands chips */}
                 {m.bands.length > 0 && (
-                  <div style={{ marginBottom: 'var(--s-3)' }}>
+                  <div className="reveal-up delay-400" style={{ marginBottom: 'var(--s-3)' }}>
                     <div style={{
                       fontFamily: 'var(--ff-label)',
                       fontSize: '10px', fontWeight: 600, letterSpacing: '0.22em',
@@ -163,6 +165,7 @@ export default async function MusicianPage({ params }) {
                         <Link
                           key={b.slug}
                           href={`/bands/${b.slug}`}
+                          className="member-band-chip"
                           style={{
                             fontFamily: 'var(--ff-label)',
                             fontSize: '11px', fontWeight: 700, letterSpacing: '0.18em',
@@ -171,7 +174,7 @@ export default async function MusicianPage({ params }) {
                             border: `1px solid ${b.color}40`,
                             padding: '7px 14px',
                             textDecoration: 'none',
-                            transition: 'all var(--d-fast) var(--ease-in-out)',
+                            '--accent': b.color,
                           }}
                         >
                           {b.name} →
@@ -181,39 +184,9 @@ export default async function MusicianPage({ params }) {
                   </div>
                 )}
 
-                {/* Sub bands */}
-                {m.subBands.length > 0 && (
-                  <div>
-                    <div style={{
-                      fontFamily: 'var(--ff-label)',
-                      fontSize: '10px', fontWeight: 600, letterSpacing: '0.22em',
-                      textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)',
-                      marginBottom: 'var(--s-2)',
-                      marginTop: 'var(--s-4)',
-                    }}>
-                      Subs for
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--s-2)' }}>
-                      {m.subBands.map(b => (
-                        <Link
-                          key={b.slug}
-                          href={`/bands/${b.slug}`}
-                          style={{
-                            fontFamily: 'var(--ff-label)',
-                            fontSize: '11px', fontWeight: 600, letterSpacing: '0.18em',
-                            textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)',
-                            background: 'rgba(255,255,255,0.04)',
-                            border: '1px dashed rgba(255,255,255,0.18)',
-                            padding: '7px 14px',
-                            textDecoration: 'none',
-                          }}
-                        >
-                          {b.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {/* "Subs for" intentionally not shown publicly per Evan 2026-05-09.
+                    The data is still on the musician object (m.subBands) for any
+                    future internal/admin use. */}
               </div>
             </div>
           </div>
@@ -225,12 +198,12 @@ export default async function MusicianPage({ params }) {
           borderBottom: '1px solid var(--c-border)',
         }}>
           <div style={{ maxWidth: '760px', margin: '0 auto' }}>
-            <div style={{
+            <div className="reveal-up" style={{
               width: '32px', height: '3px',
               background: accent,
               marginBottom: 'var(--s-5)',
             }} />
-            <div style={{
+            <div className="reveal-up delay-100" style={{
               fontFamily: 'var(--ff-label)',
               fontSize: 'var(--t-label-s)',
               fontWeight: 600,
@@ -243,7 +216,7 @@ export default async function MusicianPage({ params }) {
             </div>
 
             {m.bioLong ? (
-              <div style={{
+              <div className="reveal delay-200" style={{
                 fontFamily: 'var(--ff-body)',
                 fontSize: 'clamp(16px, 1.7vw, 18px)',
                 lineHeight: 1.85,
@@ -255,7 +228,7 @@ export default async function MusicianPage({ params }) {
                 ))}
               </div>
             ) : (
-              <p style={{
+              <p className="reveal delay-200" style={{
                 fontFamily: 'var(--ff-body)',
                 fontSize: 'clamp(16px, 1.7vw, 18px)',
                 lineHeight: 1.85,
@@ -276,7 +249,7 @@ export default async function MusicianPage({ params }) {
             borderBottom: '1px solid var(--c-border)',
           }}>
             <div style={{ maxWidth: 'var(--layout-max)', margin: '0 auto' }}>
-              <div style={{
+              <div className="reveal-up" style={{
                 fontFamily: 'var(--ff-label)',
                 fontSize: 'var(--t-label-s)',
                 fontWeight: 600,
@@ -293,19 +266,21 @@ export default async function MusicianPage({ params }) {
                 gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
                 gap: 'clamp(16px, 2vw, 24px)',
               }}>
-                {otherMembers.map(om => {
+                {otherMembers.map((om, i) => {
                   const omAccent = om.bands[0]?.color || 'var(--c-epl)'
                   return (
                     <Link
                       key={om.id}
                       href={`/musicians/${om.slug}`}
+                      className="roster-mini-card reveal"
                       style={{
                         display: 'block',
                         textDecoration: 'none',
                         background: 'var(--c-surface)',
                         border: '1px solid var(--c-border)',
                         padding: 'var(--s-4)',
-                        transition: 'border-color var(--d-fast) var(--ease-in-out)',
+                        transitionDelay: `${i * 80}ms`,
+                        '--accent': omAccent,
                       }}
                     >
                       <div style={{
@@ -327,7 +302,7 @@ export default async function MusicianPage({ params }) {
                 })}
               </div>
 
-              <div style={{ marginTop: 'var(--s-6)', textAlign: 'center' }}>
+              <div className="reveal-up delay-300" style={{ marginTop: 'var(--s-6)', textAlign: 'center' }}>
                 <Link href="/musicians" style={{
                   fontFamily: 'var(--ff-label)',
                   fontSize: 'var(--t-label)',
@@ -352,7 +327,7 @@ export default async function MusicianPage({ params }) {
           textAlign: 'center',
         }}>
           <div style={{ maxWidth: '720px', margin: '0 auto' }}>
-            <h2 style={{
+            <h2 className="reveal" style={{
               fontFamily: 'var(--ff-display)',
               fontSize: 'clamp(32px, 5vw, 56px)',
               letterSpacing: '0.01em',
@@ -362,7 +337,7 @@ export default async function MusicianPage({ params }) {
             }}>
               Book a band {m.name.split(' ')[0]} plays in
             </h2>
-            <Link href="/contact" style={{
+            <Link href="/contact" className="reveal-up delay-200" style={{
               display: 'inline-block',
               fontFamily: 'var(--ff-label)',
               fontSize: 'var(--t-label)',
@@ -380,6 +355,7 @@ export default async function MusicianPage({ params }) {
         </section>
 
       </main>
+      </RevealOnView>
       <Footer />
 
       {/* Mobile: stack hero photo above identity */}

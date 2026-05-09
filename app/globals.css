@@ -166,6 +166,32 @@ body {
 .delay-400 { transition-delay: 0.4s; }
 .delay-500 { transition-delay: 0.5s; }
 
+/* Zoom reveal — used for hero photos. Slight scale-down on entry so the
+   image feels like it settles into place. */
+.reveal-zoom {
+  opacity: 0;
+  transform: scale(1.04);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-zoom.revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Up reveal — same as .reveal but with a smaller travel distance, useful
+   for inline elements (chips, labels) where 40px feels too far. */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-up.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ─── HERO ANIMATIONS ────────────────────────────────── */
 @keyframes heroWord {
   0% { opacity: 0; transform: translateY(80px) skewY(4deg); }
@@ -574,6 +600,92 @@ body {
   }
 }
 
+/* ─── ROSTER (musicians) ─────────────────────────────── */
+/* Card uses CSS-var --accent so we can color the hover treatment per band
+   without inline styles. The page sets `--accent` on each card via inline
+   style to the member's primary band color. */
+.roster-card {
+  --accent: var(--c-epl);
+  position: relative;
+  isolation: isolate;
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.roster-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent) !important;
+  box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.7),
+              0 4px 18px -8px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.roster-card-photo-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Photo zoom on card hover */
+.roster-card-photo-wrap > :is(img, span) {
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.roster-card:hover .roster-card-photo-wrap > :is(img, span) {
+  transform: scale(1.05);
+}
+
+/* Bottom accent line: starts thin, grows on hover */
+.roster-card-accent {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 3px;
+  background: var(--accent);
+  transform-origin: left;
+  transform: scaleX(1);
+  transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.roster-card:hover .roster-card-accent {
+  height: 5px;
+}
+
+/* Member name color shift on hover */
+.roster-card-name {
+  transition: color 0.3s ease;
+}
+.roster-card:hover .roster-card-name {
+  color: var(--accent);
+}
+
+/* "Also on the Roster" rail card */
+.roster-mini-card {
+  --accent: var(--c-epl);
+  position: relative;
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease,
+    background 0.3s ease;
+}
+.roster-mini-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent) 6%, var(--c-surface)) !important;
+}
+
+/* Detail page: "plays with" band chip fills with band color on hover */
+.member-band-chip {
+  --accent: var(--c-epl);
+  transition:
+    background 0.3s ease,
+    color 0.3s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.member-band-chip:hover {
+  background: var(--accent) !important;
+  color: var(--c-bg) !important;
+  transform: translateY(-2px);
+}
+
 /* ─── COMPREHENSIVE MOBILE FIXES ─────────────────────── */
 @media (max-width: 768px) {
 
@@ -652,8 +764,20 @@ body {
 
   .reveal,
   .reveal-left,
-  .reveal-right {
+  .reveal-right,
+  .reveal-up,
+  .reveal-zoom {
     opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .roster-card:hover,
+  .roster-mini-card:hover,
+  .member-band-chip:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  .roster-card:hover .roster-card-photo-wrap > :is(img, span) {
     transform: none !important;
   }
 
