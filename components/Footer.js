@@ -1,3 +1,4 @@
+'use client'
 import Link from 'next/link'
 import Image from 'next/image'
 import { bandsList } from '@/lib/bands'
@@ -11,6 +12,11 @@ import { bandsList } from '@/lib/bands'
 //   spacing   matching scale values      → var(--s-*)
 //   motion    transition durations       → var(--d-fast/base) + var(--ease-*)
 // Values that don't match the scale (e.g., 0.08em letter-spacing) stay inline.
+//
+// Phase 10A: marked 'use client' explicitly. Footer uses onMouseEnter/onMouseLeave
+// for hover effects, which are client-only. Previously this worked because every
+// page that imported Footer had 'use client' at the top, making Footer client by
+// inheritance. The new server-component /musicians pages broke that chain.
 
 export default function Footer() {
   const year = new Date().getFullYear()
