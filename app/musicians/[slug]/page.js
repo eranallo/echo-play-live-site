@@ -151,7 +151,10 @@ export default async function MusicianPage({ params }) {
                   </p>
                 )}
 
-                {/* Bands chips */}
+                {/* Bands chips — each chip shows what the member plays in
+                    that specific band (from `Role - {Band Name}` fields in
+                    Airtable MEMBERS). Falls back to band name only when no
+                    per-band role is set yet. */}
                 {m.bands.length > 0 && (
                   <div className="reveal-up delay-400" style={{ marginBottom: 'var(--s-3)' }}>
                     <div style={{
@@ -163,25 +166,39 @@ export default async function MusicianPage({ params }) {
                       Plays with
                     </div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--s-2)' }}>
-                      {m.bands.map(b => (
-                        <Link
-                          key={b.slug}
-                          href={`/bands/${b.slug}`}
-                          className="member-band-chip"
-                          style={{
-                            fontFamily: 'var(--ff-label)',
-                            fontSize: '11px', fontWeight: 700, letterSpacing: '0.18em',
-                            textTransform: 'uppercase', color: b.color,
-                            background: `${b.color}14`,
-                            border: `1px solid ${b.color}40`,
-                            padding: '7px 14px',
-                            textDecoration: 'none',
-                            '--accent': b.color,
-                          }}
-                        >
-                          {b.name} →
-                        </Link>
-                      ))}
+                      {m.bands.map(b => {
+                        const role = m.roleByBand?.[b.slug]
+                        return (
+                          <Link
+                            key={b.slug}
+                            href={`/bands/${b.slug}`}
+                            className="member-band-chip"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 'var(--s-2)',
+                              fontFamily: 'var(--ff-label)',
+                              fontSize: '11px', fontWeight: 700, letterSpacing: '0.18em',
+                              textTransform: 'uppercase', color: b.color,
+                              background: `${b.color}14`,
+                              border: `1px solid ${b.color}40`,
+                              padding: '7px 14px',
+                              textDecoration: 'none',
+                              '--accent': b.color,
+                            }}
+                          >
+                            <span>{b.name}</span>
+                            {role && (
+                              <span style={{
+                                opacity: 0.7,
+                                fontWeight: 500,
+                                letterSpacing: '0.14em',
+                              }}>· {role}</span>
+                            )}
+                            <span aria-hidden="true">→</span>
+                          </Link>
+                        )
+                      })}
                     </div>
                   </div>
                 )}
