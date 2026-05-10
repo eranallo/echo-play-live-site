@@ -11,6 +11,7 @@ import Image from 'next/image'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import RevealOnView from '@/components/RevealOnView'
+import ScrollToTopOnMount from '@/components/ScrollToTopOnMount'
 import { getMusicians } from '@/lib/musicians'
 
 export const revalidate = 1800
@@ -20,6 +21,7 @@ export default async function MusiciansPage() {
 
   return (
     <>
+      <ScrollToTopOnMount />
       <Nav />
       <RevealOnView>
       <main style={{ background: 'var(--c-bg)', minHeight: '100vh' }}>

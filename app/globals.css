@@ -192,6 +192,19 @@ body {
   transform: translateY(0);
 }
 
+/* Mount-time fade-up — for elements that mount after the page has already
+   loaded (e.g. async-fetched lineup cards on band pages). The IntersectionObserver
+   in useScrollReveal only sees elements that exist at mount, so .reveal classes
+   on async-rendered content stay invisible. This class animates immediately on
+   mount instead. Stagger via inline `style={{ animationDelay }}`. */
+@keyframes fadeUpIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up-in {
+  animation: fadeUpIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 /* ─── HERO ANIMATIONS ────────────────────────────────── */
 @keyframes heroWord {
   0% { opacity: 0; transform: translateY(80px) skewY(4deg); }
@@ -767,6 +780,12 @@ body {
   .reveal-right,
   .reveal-up,
   .reveal-zoom {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .fade-up-in {
+    animation: none !important;
     opacity: 1 !important;
     transform: none !important;
   }

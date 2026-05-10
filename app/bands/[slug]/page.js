@@ -575,23 +575,25 @@ export default function BandPage({ params }) {
             borderBottom: '1px solid rgba(255,255,255,0.06)',
           }}>
             <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-              <div style={{ width: '32px', height: '3px', background: band.color, marginBottom: '24px' }} />
-              <div className="section-label reveal" style={{ color: band.color, marginBottom: '12px' }}>
+              <div className="fade-up-in" style={{ width: '32px', height: '3px', background: band.color, marginBottom: '24px' }} />
+              <div className="section-label fade-up-in" style={{ color: band.color, marginBottom: '12px', animationDelay: '60ms' }}>
                 The Lineup
               </div>
-              <h2 className="reveal delay-100" style={{
+              <h2 className="fade-up-in" style={{
                 fontFamily: 'Bebas Neue, cursive',
                 fontSize: 'clamp(32px, 5vw, 60px)',
                 letterSpacing: '0.02em', lineHeight: 0.9,
                 marginBottom: '12px',
+                animationDelay: '120ms',
               }}>Who's On Stage</h2>
-              <p className="reveal delay-200" style={{
+              <p className="fade-up-in" style={{
                 fontFamily: 'Barlow, sans-serif',
                 fontSize: 'clamp(15px, 1.6vw, 17px)',
                 lineHeight: 1.7, fontWeight: 300,
                 color: 'rgba(255,255,255,0.5)',
                 maxWidth: '600px',
                 marginBottom: '40px',
+                animationDelay: '200ms',
               }}>
                 The musicians who play {band.name}. Every show, the same standard.
               </p>
@@ -608,7 +610,7 @@ export default function BandPage({ params }) {
                     <Link
                       key={m.slug}
                       href={`/musicians/${m.slug}`}
-                      className="roster-card reveal"
+                      className="roster-card fade-up-in"
                       style={{
                         display: 'block',
                         textDecoration: 'none',
@@ -616,7 +618,7 @@ export default function BandPage({ params }) {
                         border: '1px solid var(--c-border)',
                         position: 'relative',
                         overflow: 'hidden',
-                        transitionDelay: `${Math.min(i * 70, 500)}ms`,
+                        animationDelay: `${280 + Math.min(i * 70, 500)}ms`,
                         '--accent': band.color,
                       }}
                     >
@@ -670,7 +672,11 @@ export default function BandPage({ params }) {
                 })}
               </div>
 
-              <div className="reveal delay-300" style={{ marginTop: 'clamp(32px, 4vw, 48px)', textAlign: 'center' }}>
+              <div className="fade-up-in" style={{
+                marginTop: 'clamp(32px, 4vw, 48px)',
+                textAlign: 'center',
+                animationDelay: '700ms',
+              }}>
                 <Link href="/musicians" style={{
                   fontFamily: 'Barlow Condensed, sans-serif',
                   fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em',
