@@ -598,7 +598,7 @@ export default function BandPage({ params }) {
                 The musicians who play {band.name}. Every show, the same standard.
               </p>
 
-              <div className="lineup-grid" style={{
+              <div className="band-lineup-grid" style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
                 gap: 'clamp(16px, 2vw, 24px)',
@@ -648,7 +648,7 @@ export default function BandPage({ params }) {
                         )}
                         <div className="roster-card-accent" />
                       </div>
-                      <div style={{ padding: 'var(--s-4)' }}>
+                      <div className="roster-card-body" style={{ padding: 'var(--s-4)' }}>
                         <div className="roster-card-name" style={{
                           fontFamily: 'Bebas Neue, cursive',
                           fontSize: 'clamp(20px, 2vw, 24px)',

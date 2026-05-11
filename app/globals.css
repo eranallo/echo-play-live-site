@@ -685,6 +685,18 @@ body {
   background: color-mix(in srgb, var(--accent) 6%, var(--c-surface)) !important;
 }
 
+/* Tap-feedback (replaces hover lift on touch devices). On hover-capable
+   pointers the regular hover state still wins because it's more specific
+   in practice — but :active fires on tap to give immediate feedback. */
+.roster-card:active {
+  transform: scale(0.985);
+  transition-duration: 80ms;
+}
+.roster-mini-card:active {
+  transform: scale(0.98);
+  transition-duration: 80ms;
+}
+
 /* Detail page: "plays with" band chip fills with band color on hover */
 .member-band-chip {
   --accent: var(--c-epl);
@@ -731,11 +743,52 @@ body {
     grid-row: span 1 !important;
   }
 
-  /* ── Roster at bottom: multi-col → single ── */
+  /* ── Roster at bottom of band pages (Other Bands rail): multi-col → single ── */
   .roster-grid {
     grid-template-columns: 1fr !important;
     background: transparent !important;
     gap: 1px !important;
+  }
+
+  /* ── /musicians roster page: 2-col on mobile (was 1) ──
+     Card images are 4:5 portrait, so 2-col at 375px viewport gives ~160px
+     wide cards × 200px tall photos — visually rich without eating the
+     whole screen. */
+  .musicians-roster-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+  .musicians-roster-grid .roster-card-body {
+    padding: 12px !important;
+  }
+  .musicians-roster-grid .roster-card-name {
+    font-size: 15px !important;
+    margin-bottom: 4px !important;
+  }
+
+  /* ── Band page Lineup: 2-col on mobile (was 1) ── */
+  .band-lineup-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+  .band-lineup-grid .roster-card-body {
+    padding: 12px !important;
+  }
+  .band-lineup-grid .roster-card-name {
+    font-size: 15px !important;
+    margin-bottom: 4px !important;
+  }
+
+  /* ── /musicians/{slug} "Also on the Roster" rail: 2-col ── */
+  .other-members-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+  .other-members-grid > a {
+    padding: 12px !important;
+  }
+  .other-members-grid > a > div:first-child {
+    font-size: 16px !important;
   }
 
   /* ── Contact: two-col → single ── */

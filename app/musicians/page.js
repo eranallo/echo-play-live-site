@@ -75,7 +75,7 @@ export default async function MusiciansPage() {
             {musicians.length === 0 ? (
               <EmptyState />
             ) : (
-              <div className="roster-grid" style={{
+              <div className="musicians-roster-grid" style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
                 gap: 'clamp(20px, 2.5vw, 32px)',
@@ -199,7 +199,7 @@ function MusicianCard({ musician, stagger = 0 }) {
       </div>
 
       {/* Body */}
-      <div style={{ padding: 'var(--s-5)' }}>
+      <div className="roster-card-body" style={{ padding: 'var(--s-5)' }}>
         <div className="roster-card-name" style={{
           fontFamily: 'var(--ff-display)',
           fontSize: 'clamp(22px, 2.4vw, 28px)',
