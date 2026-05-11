@@ -1,4 +1,6 @@
 import './globals.css'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { bands } from '@/lib/bands'
 
 const SITE_URL = 'https://echoplay.live'
@@ -119,6 +121,10 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         {children}
+        {/* Phase 13: Vercel Web Analytics (page views + referrers) +
+            Speed Insights (real-user Core Web Vitals). Cookieless. */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
