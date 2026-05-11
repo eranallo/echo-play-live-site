@@ -66,6 +66,23 @@ export default function BandPage({ params }) {
 
   useEffect(() => {
     if (!band) return
+
+    // Phase 11A: if the band has a curated `galleryPhotos` array in bands.js
+    // (SLGN, Elite, future ones), use it directly — skip the Vercel Blob fetch.
+    // For bands that still rely on Blob storage (TDB, Jambi), fall back to the
+    // existing /api/media flow.
+    if (Array.isArray(band.galleryPhotos) && band.galleryPhotos.length > 0) {
+      const synthetic = [
+        band.heroPhoto && { url: band.heroPhoto },
+        band.featurePhoto && { url: band.featurePhoto },
+        band.crowdPhoto && { url: band.crowdPhoto },
+        ...band.galleryPhotos.map(url => ({ url })),
+      ].filter(Boolean)
+      setImages(synthetic)
+      setMediaLoaded(true)
+      return
+    }
+
     fetch(`/api/media?band=${band.slug}`)
       .then(r => r.json())
       .then(data => {
