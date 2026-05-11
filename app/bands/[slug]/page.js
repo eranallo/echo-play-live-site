@@ -724,18 +724,25 @@ export default function BandPage({ params }) {
                 gap: '16px', marginBottom: '32px',
               }}>
                 <div>
-                  <div className="section-label reveal" style={{ color: band.color, marginBottom: '8px' }}>
+                  {/* Gallery section appears AFTER the page's IntersectionObserver
+                      has already set up (mediaLoaded flips true post-fetch), so
+                      .reveal classes would never get observed. Use the mount-time
+                      .fade-up-in keyframe animation instead. Same pattern as the
+                      band Lineup section. */}
+                  <div className="section-label fade-up-in" style={{ color: band.color, marginBottom: '8px' }}>
                     Live Photography
                   </div>
-                  <h2 className="reveal delay-100" style={{
+                  <h2 className="fade-up-in" style={{
                     fontFamily: 'Bebas Neue, cursive',
                     fontSize: 'clamp(32px, 5vw, 60px)',
                     letterSpacing: '0.02em', lineHeight: 0.9,
+                    animationDelay: '100ms',
                   }}>On Stage</h2>
                 </div>
-                <p className="reveal" style={{
+                <p className="fade-up-in" style={{
                   fontFamily: 'Barlow, sans-serif', fontSize: '13px',
                   color: 'rgba(255,255,255,0.3)', fontStyle: 'italic',
+                  animationDelay: '160ms',
                 }}>Click any photo to expand</p>
               </div>
 
@@ -753,7 +760,7 @@ export default function BandPage({ params }) {
                   return (
                     <div
                       key={img.url}
-                      className={`reveal delay-${Math.min(i * 80, 400)}`}
+                      className="fade-up-in"
                       onClick={() => openLightbox(img, i + 2)}
                       style={{
                         position: 'relative',
@@ -761,6 +768,7 @@ export default function BandPage({ params }) {
                         cursor: 'zoom-in',
                         gridColumn: isWide ? 'span 2' : 'span 1',
                         gridRow: isTall ? 'span 2' : 'span 1',
+                        animationDelay: `${220 + Math.min(i * 60, 600)}ms`,
                       }}
                     >
                       <Image
