@@ -18,9 +18,31 @@ import { getMusician, getMusicians } from '@/lib/musicians'
 
 export const revalidate = 1800
 
+const SITE_URL = 'https://echoplay.live'
+
 export default async function MusicianPage({ params }) {
   const m = await getMusician(params.slug)
   if (!m) notFound()
+
+  // Phase 10D: Person JSON-LD for rich Google snippets when someone searches
+  // a musician by name. Image points to the auto-generated OG image (stable
+  // URL, doesn't expire like Airtable signed URLs).
+  const personLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: m.name,
+    url: `${SITE_URL}/musicians/${m.slug}`,
+    image: `${SITE_URL}/musicians/${m.slug}/opengraph-image`,
+    ...(m.instruments.length > 0 && { knowsAbout: m.instruments }),
+    ...(m.bioShort && { description: m.bioShort }),
+    ...(m.bands.length > 0 && {
+      memberOf: m.bands.map(b => ({
+        '@type': 'MusicGroup',
+        name: b.name,
+        url: `${SITE_URL}/bands/${b.slug}`,
+      })),
+    }),
+  }
 
   // Other roster members (for the "Also on the Roster" rail)
   const allMusicians = await getMusicians()
@@ -46,6 +68,10 @@ export default async function MusicianPage({ params }) {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }}
+      />
       <ScrollToTopOnMount />
       <Nav />
       <RevealOnView>

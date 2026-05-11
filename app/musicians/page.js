@@ -176,6 +176,7 @@ function MusicianCard({ musician, stagger = 0 }) {
             src={musician.photo.thumb}
             alt={musician.name}
             fill
+            unoptimized
             style={{ objectFit: 'cover', objectPosition: 'center 30%' }}
             sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw"
           />
