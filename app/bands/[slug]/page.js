@@ -614,7 +614,7 @@ export default function BandPage({ params }) {
                 letterSpacing: '0.02em', lineHeight: 0.9,
                 marginBottom: '12px',
                 animationDelay: '120ms',
-              }}>Who's On Stage</h2>
+              }}>Meet The Band</h2>
               <p className="fade-up-in" style={{
                 fontFamily: 'Barlow, sans-serif',
                 fontSize: 'clamp(15px, 1.6vw, 17px)',
