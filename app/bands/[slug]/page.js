@@ -758,31 +758,70 @@ export default function BandPage({ params }) {
                 }}>Click any photo to expand</p>
               </div>
 
-              {/* Pinterest-style masonry via CSS columns. Each photo keeps
-                  its natural aspect ratio (portraits stay tall, landscapes
-                  short) and items pack into columns with no gaps. Works
-                  with any photo count — add or remove from galleryPhotos
-                  and the layout adjusts automatically. */}
-              <div className="gallery-masonry">
-                {galleryImages.map((img, i) => (
-                  <div
-                    key={img.url}
-                    className="gallery-tile fade-up-in"
-                    onClick={() => openLightbox(img, i + 2)}
-                    style={{
-                      animationDelay: `${220 + Math.min(i * 60, 600)}ms`,
-                      '--tint': `${band.color}25`,
-                    }}
-                  >
-                    <img
-                      src={img.url}
-                      alt={`${band.name} live`}
-                      loading="lazy"
-                    />
-                    <div className="gallery-tile-overlay" />
+              {/* Mosaic gallery — 3-col grid with strategic wide spans.
+                  Span count is computed from photo count so the grid always
+                  tiles cleanly with no trailing gaps, regardless of how many
+                  photos are in galleryPhotos. `grid-auto-flow: dense` packs
+                  any remaining holes if a future edit breaks the math. */}
+              {(() => {
+                const count = galleryImages.length
+                const remainder = count % 3
+                const needWides = remainder === 0 ? 0 : (3 - remainder)
+                const wideSet = new Set()
+                if (count >= 4 && needWides >= 1) wideSet.add(0)
+                if (needWides >= 2) wideSet.add(count - 1)
+                if (needWides >= 3) wideSet.add(Math.floor(count / 2))
+                return (
+                  <div className="gallery-grid" style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gridAutoRows: '240px',
+                    gridAutoFlow: 'dense',
+                    gap: '6px',
+                  }}>
+                    {galleryImages.map((img, i) => {
+                      const isWide = wideSet.has(i)
+                      return (
+                        <div
+                          key={img.url}
+                          className="fade-up-in"
+                          onClick={() => openLightbox(img, i + 2)}
+                          style={{
+                            position: 'relative',
+                            overflow: 'hidden',
+                            cursor: 'zoom-in',
+                            gridColumn: isWide ? 'span 2' : 'span 1',
+                            animationDelay: `${220 + Math.min(i * 60, 600)}ms`,
+                          }}
+                        >
+                          <Image
+                            src={img.url}
+                            alt={`${band.name} live`}
+                            fill
+                            style={{ objectFit: 'cover', transition: 'transform 0.5s ease' }}
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                            quality={80}
+                          />
+                          <div style={{
+                            position: 'absolute', inset: 0,
+                            background: `${band.color}25`,
+                            opacity: 0, transition: 'opacity 0.3s ease',
+                          }}
+                            onMouseEnter={e => {
+                              e.currentTarget.style.opacity = '1'
+                              e.currentTarget.previousElementSibling.style.transform = 'scale(1.04)'
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.style.opacity = '0'
+                              e.currentTarget.previousElementSibling.style.transform = 'scale(1)'
+                            }}
+                          />
+                        </div>
+                      )
+                    })}
                   </div>
-                ))}
-              </div>
+                )
+              })()}
             </div>
           </section>
         )}
