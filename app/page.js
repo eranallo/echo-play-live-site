@@ -147,25 +147,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Scroll cue */}
-          <div className="scroll-cue" style={{
-            position: 'absolute', bottom: 'var(--s-6)', left: '50%',
-            transform: 'translateX(-50%)',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--s-2)',
-            zIndex: 2,
-          }}>
-            <span style={{
-              fontFamily: 'var(--ff-label)',
-              fontSize: 'var(--t-label-s)',
-              letterSpacing: '0.25em',
-              textTransform: 'uppercase',
-              color: 'var(--c-text-faint)',
-            }}>Scroll</span>
-            <div style={{
-              width: '1px', height: '40px',
-              background: 'linear-gradient(to bottom, rgba(255,255,255,0.3), transparent)',
-            }} />
-          </div>
+          {/* Scroll cue removed 2026-05-10: was visually colliding with the
+              hero CTA row on certain viewports. The venue strip peeking up
+              below the hero is enough of a "more below" signal on its own. */}
         </section>
 
         {/* ── VENUE STRIP ────────────────────────────────── */}
