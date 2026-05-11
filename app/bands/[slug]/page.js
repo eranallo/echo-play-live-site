@@ -416,58 +416,65 @@ export default function BandPage({ params }) {
           </div>
         </section>
 
-        {/* ── SOCIAL PROOF: CROWD SHOT ─────────────────────── */}
-        {crowdImg && (
+        {/* ── EXPERIENCE / SOCIAL PROOF ─────────────────────
+            Renders if the band has experience copy in bands.js (or a crowd
+            photo). The crowd photo is optional — when present, the section
+            is a 2-col grid (photo + copy). When absent, it falls back to a
+            centered text-only layout so the copy still gets its moment. */}
+        {(crowdImg || band.experienceHeadline || band.experienceBody) && (
           <section style={{
             padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
             borderBottom: '1px solid rgba(255,255,255,0.06)',
             background: 'rgba(255,255,255,0.01)',
           }}>
-            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-              <div className="proof-grid" style={{
+            <div style={{ maxWidth: crowdImg ? '1400px' : '820px', margin: '0 auto' }}>
+              <div className={crowdImg ? 'proof-grid' : ''} style={crowdImg ? {
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
                 gap: 'clamp(40px, 6vw, 96px)',
                 alignItems: 'center',
-              }}>
-                {/* Crowd photo */}
-                <div
-                  className="reveal reveal-left"
-                  onClick={() => openLightbox(crowdImg, 4)}
-                  style={{
-                    position: 'relative', aspectRatio: '3/2',
-                    overflow: 'hidden', cursor: 'zoom-in',
-                  }}
-                >
-                  <Image
-                    src={crowdImg.url}
-                    alt="Crowd at show"
-                    fill
-                    style={{ objectFit: 'cover', objectPosition: 'center 30%', transition: 'transform 0.6s ease' }}
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    quality={85}
-                  />
-                  <div style={{
-                    position: 'absolute', inset: 0,
-                    background: `linear-gradient(135deg, ${band.color}15, transparent 50%)`,
-                    opacity: 0, transition: 'opacity 0.3s ease',
-                  }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.opacity = '1'
-                      e.currentTarget.previousElementSibling.style.transform = 'scale(1.03)'
+              } : { textAlign: 'center' }}>
+                {/* Crowd photo (only when set) */}
+                {crowdImg && (
+                  <div
+                    className="reveal reveal-left"
+                    onClick={() => openLightbox(crowdImg, 4)}
+                    style={{
+                      position: 'relative', aspectRatio: '3/2',
+                      overflow: 'hidden', cursor: 'zoom-in',
                     }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.opacity = '0'
-                      e.currentTarget.previousElementSibling.style.transform = 'scale(1)'
+                  >
+                    <Image
+                      src={crowdImg.url}
+                      alt="Crowd at show"
+                      fill
+                      style={{ objectFit: 'cover', objectPosition: 'center 30%', transition: 'transform 0.6s ease' }}
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      quality={85}
+                    />
+                    <div style={{
+                      position: 'absolute', inset: 0,
+                      background: `linear-gradient(135deg, ${band.color}15, transparent 50%)`,
+                      opacity: 0, transition: 'opacity 0.3s ease',
                     }}
-                  />
-                </div>
+                      onMouseEnter={e => {
+                        e.currentTarget.style.opacity = '1'
+                        e.currentTarget.previousElementSibling.style.transform = 'scale(1.03)'
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.opacity = '0'
+                        e.currentTarget.previousElementSibling.style.transform = 'scale(1)'
+                      }}
+                    />
+                  </div>
+                )}
 
-                {/* Social proof copy */}
+                {/* Experience copy */}
                 <div>
                   <div style={{
                     width: '32px', height: '3px',
                     background: band.color, marginBottom: '24px',
+                    margin: crowdImg ? '0 0 24px 0' : '0 auto 24px',
                   }} />
                   <div className="section-label reveal" style={{ color: band.color, marginBottom: '20px' }}>
                     The Experience
@@ -493,11 +500,16 @@ export default function BandPage({ params }) {
                     lineHeight: 1.8, fontWeight: 300,
                     color: 'rgba(255,255,255,0.55)',
                     marginBottom: '28px',
+                    maxWidth: crowdImg ? 'none' : '640px',
+                    margin: crowdImg ? '0 0 28px 0' : '0 auto 28px',
                   }}>
                     {band.experienceBody || `When you book ${band.name}, your audience gets a show worth coming back for.`}
                   </p>
                   <div className="reveal delay-300" style={{
-                    display: 'flex', gap: '20px', flexWrap: 'wrap',
+                    display: 'flex',
+                    gap: '20px',
+                    flexWrap: 'wrap',
+                    justifyContent: crowdImg ? 'flex-start' : 'center',
                   }}>
                     {(band.experiencePoints || ['Faithful to the Catalog', 'Always Live', 'All Original Members']).map(item => (
                       <div key={item} style={{
@@ -746,56 +758,30 @@ export default function BandPage({ params }) {
                 }}>Click any photo to expand</p>
               </div>
 
-              {/* Masonry-style gallery grid */}
-              <div className="gallery-grid" style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gridAutoRows: '240px',
-                gap: '6px',
-              }}>
-                {galleryImages.map((img, i) => {
-                  // Every 5th image spans 2 columns for visual variety
-                  const isWide = i % 5 === 0
-                  const isTall = i % 7 === 3
-                  return (
-                    <div
-                      key={img.url}
-                      className="fade-up-in"
-                      onClick={() => openLightbox(img, i + 2)}
-                      style={{
-                        position: 'relative',
-                        overflow: 'hidden',
-                        cursor: 'zoom-in',
-                        gridColumn: isWide ? 'span 2' : 'span 1',
-                        gridRow: isTall ? 'span 2' : 'span 1',
-                        animationDelay: `${220 + Math.min(i * 60, 600)}ms`,
-                      }}
-                    >
-                      <Image
-                        src={img.url}
-                        alt={`${band.name} live`}
-                        fill
-                        style={{ objectFit: 'cover', transition: 'transform 0.5s ease' }}
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        quality={80}
-                      />
-                      <div style={{
-                        position: 'absolute', inset: 0,
-                        background: `${band.color}25`,
-                        opacity: 0, transition: 'opacity 0.3s ease',
-                      }}
-                        onMouseEnter={e => {
-                          e.currentTarget.style.opacity = '1'
-                          e.currentTarget.previousElementSibling.style.transform = 'scale(1.04)'
-                        }}
-                        onMouseLeave={e => {
-                          e.currentTarget.style.opacity = '0'
-                          e.currentTarget.previousElementSibling.style.transform = 'scale(1)'
-                        }}
-                      />
-                    </div>
-                  )
-                })}
+              {/* Pinterest-style masonry via CSS columns. Each photo keeps
+                  its natural aspect ratio (portraits stay tall, landscapes
+                  short) and items pack into columns with no gaps. Works
+                  with any photo count — add or remove from galleryPhotos
+                  and the layout adjusts automatically. */}
+              <div className="gallery-masonry">
+                {galleryImages.map((img, i) => (
+                  <div
+                    key={img.url}
+                    className="gallery-tile fade-up-in"
+                    onClick={() => openLightbox(img, i + 2)}
+                    style={{
+                      animationDelay: `${220 + Math.min(i * 60, 600)}ms`,
+                      '--tint': `${band.color}25`,
+                    }}
+                  >
+                    <img
+                      src={img.url}
+                      alt={`${band.name} live`}
+                      loading="lazy"
+                    />
+                    <div className="gallery-tile-overlay" />
+                  </div>
+                ))}
               </div>
             </div>
           </section>
