@@ -206,13 +206,17 @@ body {
 }
 
 /* Page transition — applied by app/template.js. Every route navigation
-   re-renders the template, replaying this animation. Subtle fade + 8px lift. */
+   re-renders the template, replaying this animation.
+   IMPORTANT: opacity-only (no transform). A non-none transform on this wrapper
+   would create a containing block, and that breaks `position: fixed` children
+   anywhere inside the page — specifically the mobile nav overlay would get
+   anchored to the wrapper instead of the viewport. */
 @keyframes pageFadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 .page-fade-in {
-  animation: pageFadeIn 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: pageFadeIn 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* ─── HERO ANIMATIONS ────────────────────────────────── */
