@@ -4,7 +4,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
-import MagneticButton from '@/components/MagneticButton'
 import { bandsList } from '@/lib/bands'
 
 function useScrollReveal() {
@@ -125,25 +124,25 @@ export default function Home() {
             </h1>
 
             <div className="hero-cta-wrap" style={{ display: 'flex', gap: 'var(--s-4)', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <MagneticButton strength={0.3}>
-                <Link href="#bands" className="btn-primary" style={{
-                  textDecoration: 'none',
-                  color: 'var(--c-epl)',
-                  borderColor: 'var(--c-epl)',
-                }}>
-                  <span>Explore Our Roster</span>
-                  <span>↓</span>
-                </Link>
-              </MagneticButton>
-              <MagneticButton strength={0.3}>
-                <Link href="/contact" className="btn-primary" style={{
-                  textDecoration: 'none',
-                  color: 'rgba(255,255,255,0.6)',
-                  borderColor: 'rgba(255,255,255,0.2)',
-                }}>
-                  <span>Book a Show</span>
-                </Link>
-              </MagneticButton>
+              {/* Magnetic effect removed 2026-05-10 per Evan — felt disorienting
+                  on the homepage CTAs. The .btn-primary "fill from left" hover
+                  is back to being the only effect. MagneticButton stays on band
+                  page + /musicians primary CTAs. */}
+              <Link href="#bands" className="btn-primary" style={{
+                textDecoration: 'none',
+                color: 'var(--c-epl)',
+                borderColor: 'var(--c-epl)',
+              }}>
+                <span>Explore Our Roster</span>
+                <span>↓</span>
+              </Link>
+              <Link href="/contact" className="btn-primary" style={{
+                textDecoration: 'none',
+                color: 'rgba(255,255,255,0.6)',
+                borderColor: 'rgba(255,255,255,0.2)',
+              }}>
+                <span>Book a Show</span>
+              </Link>
             </div>
           </div>
 
