@@ -152,8 +152,11 @@ export default function Home() {
         </section>
 
         {/* ── VENUE STRIP ────────────────────────────────── */}
-        {/* Curated list of venues EPL bands have played. Hardcoded for Phase 2A; later phases
-            may pull dynamically from Airtable VENUES table or render real logo files. */}
+        {/* Curated list of venues EPL bands have played. Phase 14 added the
+            first round of real logos (rendered from /public/venues/{slug}.png).
+            Venues without a logo yet render as plain text labels — the strip
+            mixes both gracefully. Drop a new PNG into /public/venues/ and add
+            its slug + name to the array to upgrade a text entry to a logo. */}
         <section style={{
           borderTop: '1px solid var(--c-border)',
           borderBottom: '1px solid var(--c-border)',
@@ -176,7 +179,7 @@ export default function Home() {
               flexWrap: 'wrap',
               justifyContent: 'center',
               alignItems: 'center',
-              gap: 'var(--s-3) var(--s-5)',
+              gap: 'var(--s-4) var(--s-6)',
               fontFamily: 'var(--ff-label)',
               fontSize: 'var(--t-body-s)',
               fontWeight: 500,
@@ -185,34 +188,50 @@ export default function Home() {
               color: 'var(--c-text-dim)',
             }}>
               {[
-                'Granada Theatre',
+                { logo: '/venues/granada-theater.png', name: 'Granada Theater' },
                 'Texas Live',
-                "O'Sheas",
-                'Pour Shack',
+                { logo: '/venues/osheas.png', name: "O'Sheas" },
+                { logo: '/venues/pour-shack.png', name: 'Pour Shack' },
+                { logo: '/venues/legacy-hall.png', name: 'Legacy Hall' },
+                { logo: '/venues/beer-city-music-hall.png', name: 'Beer City Music Hall' },
+                { logo: '/venues/hurricane-alley.png', name: 'Hurricane Alley' },
                 'Haltom Theater',
                 'Magnolia Motor Lounge',
                 'Station 330',
                 'The Revel',
-                'Hurricane Alley',
                 'Panther Island Pavilion',
-              ].map((venue, i, arr) => (
-                <span key={venue} style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 'var(--s-3)',
-                  whiteSpace: 'nowrap',
-                }}>
-                  {venue}
-                  {i < arr.length - 1 && (
-                    <span style={{
-                      color: 'var(--c-epl)',
-                      opacity: 0.4,
-                      fontSize: '12px',
-                      lineHeight: 1,
-                    }}>·</span>
-                  )}
-                </span>
-              ))}
+              ].map((venue, i, arr) => {
+                const isLogo = typeof venue === 'object' && venue.logo
+                const key = isLogo ? venue.name : venue
+                const name = isLogo ? venue.name : venue
+                return (
+                  <span key={key} style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 'var(--s-3)',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {isLogo ? (
+                      <img
+                        src={venue.logo}
+                        alt={name}
+                        title={name}
+                        className="venue-logo"
+                      />
+                    ) : (
+                      name
+                    )}
+                    {i < arr.length - 1 && (
+                      <span style={{
+                        color: 'var(--c-epl)',
+                        opacity: 0.4,
+                        fontSize: '12px',
+                        lineHeight: 1,
+                      }}>·</span>
+                    )}
+                  </span>
+                )
+              })}
             </div>
           </div>
         </section>

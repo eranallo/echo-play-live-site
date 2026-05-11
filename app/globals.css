@@ -627,6 +627,32 @@ body {
   }
 }
 
+/* ─── VENUE LOGOS (homepage "As Played At" strip) ─────
+   Real venue logos display at uniform height alongside text-only entries
+   for venues that don't have logos yet. Subtle opacity by default so the
+   strip reads as a unified "trusted by" row rather than a noisy logo wall.
+   Hover bumps opacity for a touch of interactivity. */
+.venue-logo {
+  height: 56px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  opacity: 0.6;
+  filter: grayscale(0.85);
+  transition: opacity 0.3s ease, filter 0.3s ease;
+  display: block;
+}
+.venue-logo:hover {
+  opacity: 1;
+  filter: grayscale(0);
+}
+@media (max-width: 768px) {
+  .venue-logo {
+    height: 40px;
+    max-width: 100px;
+  }
+}
+
 /* ─── ROSTER (musicians) ─────────────────────────────── */
 /* Card uses CSS-var --accent so we can color the hover treatment per band
    without inline styles. The page sets `--accent` on each card via inline
