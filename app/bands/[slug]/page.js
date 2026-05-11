@@ -5,6 +5,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import AnimatedStat from '@/components/AnimatedStat'
+import MagneticButton from '@/components/MagneticButton'
 import { getBand, bandsList } from '@/lib/bands'
 
 function useScrollReveal() {
@@ -20,6 +22,41 @@ function useScrollReveal() {
     els?.forEach(el => observer.observe(el))
     return () => observer.disconnect()
   }, [])
+  return ref
+}
+
+// Phase 12: Parallax hook — translateY on scroll for depth. Disabled on
+// mobile (perf) and reduced-motion. Returns a ref + the current translate
+// value (which the component applies inline so transforms stack cleanly
+// with the existing image objectPosition).
+function useParallaxY(ratio = 0.25, maxOffset = 200) {
+  const ref = useRef(null)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (window.innerWidth < 768) return
+
+    let raf = 0
+    const apply = () => {
+      const el = ref.current
+      if (!el) return
+      const rect = el.getBoundingClientRect()
+      // Only translate while the element is roughly within the viewport.
+      if (rect.bottom < 0 || rect.top > window.innerHeight) return
+      const offset = Math.max(-maxOffset, Math.min(maxOffset, window.scrollY * ratio))
+      el.style.transform = `translate3d(0, ${offset}px, 0)`
+    }
+    const onScroll = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(apply)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    apply()
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      cancelAnimationFrame(raf)
+    }
+  }, [ratio, maxOffset])
   return ref
 }
 
@@ -58,6 +95,7 @@ const SocialIcon = ({ platform }) => {
 export default function BandPage({ params }) {
   const band = getBand(params.slug)
   const pageRef = useScrollReveal()
+  const heroParallaxRef = useParallaxY(0.25)
   const [images, setImages] = useState([])
   const [lightboxImg, setLightboxImg] = useState(null)
   const [lightboxIdx, setLightboxIdx] = useState(0)
@@ -154,9 +192,10 @@ export default function BandPage({ params }) {
           overflow: 'hidden',
           padding: '0 0 72px',
         }}>
-          {/* Hero image */}
+          {/* Hero image with subtle parallax (Phase 12). On mobile + reduced-
+              motion, useParallaxY no-ops so the image stays anchored. */}
           {heroImg ? (
-            <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+            <div ref={heroParallaxRef} style={{ position: 'absolute', inset: 0, zIndex: 0, willChange: 'transform' }}>
               <Image
                 src={heroImg.url}
                 alt={`${band.name} live`}
@@ -269,18 +308,20 @@ export default function BandPage({ params }) {
                   <SocialIcon platform={platform} />{platform}
                 </a>
               ))}
-              <Link href="/contact" style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                fontFamily: 'Barlow Condensed, sans-serif',
-                fontSize: '11px', fontWeight: 700, letterSpacing: '0.18em',
-                textTransform: 'uppercase', color: '#080808',
-                background: band.color, padding: '9px 20px',
-                textDecoration: 'none', transition: 'opacity 0.2s ease',
-                backdropFilter: 'blur(8px)',
-              }}
-                onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-              >Book This Band →</Link>
+              <MagneticButton>
+                <Link href="/contact" style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '8px',
+                  fontFamily: 'Barlow Condensed, sans-serif',
+                  fontSize: '11px', fontWeight: 700, letterSpacing: '0.18em',
+                  textTransform: 'uppercase', color: '#080808',
+                  background: band.color, padding: '9px 20px',
+                  textDecoration: 'none', transition: 'opacity 0.2s ease',
+                  backdropFilter: 'blur(8px)',
+                }}
+                  onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
+                  onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                >Book This Band →</Link>
+              </MagneticButton>
             </div>
           </div>
         </section>
@@ -309,7 +350,9 @@ export default function BandPage({ params }) {
                     color: band.color,
                     lineHeight: 1,
                     marginBottom: '4px',
-                  }}>{stat.value}</div>
+                  }}>
+                    <AnimatedStat value={stat.value} />
+                  </div>
                   <div style={{
                     fontFamily: 'Barlow Condensed, sans-serif',
                     fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em',
@@ -858,17 +901,19 @@ export default function BandPage({ params }) {
             <div className="reveal delay-300" style={{
               display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap',
             }}>
-              <Link href="/contact" style={{
-                display: 'inline-flex', alignItems: 'center', gap: '10px',
-                fontFamily: 'Barlow Condensed, sans-serif',
-                fontSize: '12px', fontWeight: 700, letterSpacing: '0.18em',
-                textTransform: 'uppercase', color: '#080808',
-                background: band.color, padding: '15px 32px',
-                textDecoration: 'none', transition: 'opacity 0.2s ease, transform 0.2s ease',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.opacity = '0.88'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)' }}
-              >Submit Booking Inquiry →</Link>
+              <MagneticButton strength={0.3} radius={100}>
+                <Link href="/contact" style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '10px',
+                  fontFamily: 'Barlow Condensed, sans-serif',
+                  fontSize: '12px', fontWeight: 700, letterSpacing: '0.18em',
+                  textTransform: 'uppercase', color: '#080808',
+                  background: band.color, padding: '15px 32px',
+                  textDecoration: 'none', transition: 'opacity 0.2s ease',
+                }}
+                  onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
+                  onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                >Submit Booking Inquiry →</Link>
+              </MagneticButton>
               <a href={`mailto:${band.bookingEmail}`} style={{
                 display: 'inline-flex', alignItems: 'center',
                 fontFamily: 'Barlow Condensed, sans-serif',

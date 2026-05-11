@@ -12,6 +12,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import RevealOnView from '@/components/RevealOnView'
 import ScrollToTopOnMount from '@/components/ScrollToTopOnMount'
+import MagneticButton from '@/components/MagneticButton'
 import { getMusicians } from '@/lib/musicians'
 
 export const revalidate = 1800
@@ -105,21 +106,22 @@ export default async function MusiciansPage() {
             }}>
               Want to book one of these bands?
             </h2>
-            <Link href="/contact" className="reveal-up delay-200" style={{
-              display: 'inline-block',
-              fontFamily: 'var(--ff-label)',
-              fontSize: 'var(--t-label)',
-              fontWeight: 700,
-              letterSpacing: 'var(--ls-label-tight)',
-              textTransform: 'uppercase',
-              color: 'var(--c-bg)',
-              background: 'var(--c-epl)',
-              padding: '16px 36px',
-              textDecoration: 'none',
-              transition: 'transform 0.3s var(--ease-out), box-shadow 0.3s ease',
-            }}>
-              Start a booking inquiry →
-            </Link>
+            <MagneticButton strength={0.3} radius={100}>
+              <Link href="/contact" className="reveal-up delay-200" style={{
+                display: 'inline-block',
+                fontFamily: 'var(--ff-label)',
+                fontSize: 'var(--t-label)',
+                fontWeight: 700,
+                letterSpacing: 'var(--ls-label-tight)',
+                textTransform: 'uppercase',
+                color: 'var(--c-bg)',
+                background: 'var(--c-epl)',
+                padding: '16px 36px',
+                textDecoration: 'none',
+              }}>
+                Start a booking inquiry →
+              </Link>
+            </MagneticButton>
           </div>
         </section>
 
@@ -174,7 +176,6 @@ function MusicianCard({ musician, stagger = 0 }) {
             src={musician.photo.thumb}
             alt={musician.name}
             fill
-            unoptimized
             style={{ objectFit: 'cover', objectPosition: 'center 30%' }}
             sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw"
           />
