@@ -39,11 +39,9 @@ export default function SongsSection({ band, defaultExpanded = false }) {
     return () => { cancelled = true }
   }, [band?.slug])
 
-  // Hide the section entirely until we've heard back, AND when no live songs
-  // are tagged for this band yet — better to omit than show "0 songs" on the
-  // public site.
-  if (!loaded) return null
-  if (!songs.length) return null
+  // ─── ALL HOOKS MUST RUN ON EVERY RENDER (Rules of Hooks) ─────────
+  // Compute these unconditionally — early returns below are fine because
+  // they come AFTER every hook call.
 
   // De-dup artists for the summary line.
   const uniqueArtists = useMemo(() => {
@@ -63,6 +61,13 @@ export default function SongsSection({ band, defaultExpanded = false }) {
       return hay.includes(q)
     })
   }, [songs, query])
+
+  // Hide the section entirely until we've heard back, AND when no live songs
+  // are tagged for this band yet — better to omit than show "0 songs" on the
+  // public site. These early returns come AFTER all hooks so the hook count
+  // is stable across renders.
+  if (!loaded) return null
+  if (!songs.length) return null
 
   const accent = band?.color || 'var(--c-epl)'
   const accentSoft = `${accent}15`
