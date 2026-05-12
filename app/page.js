@@ -188,22 +188,46 @@ export default function Home() {
               color: 'var(--c-text-dim)',
             }}>
               {[
-                { logo: '/venues/granada-theater.png', name: 'Granada Theater' },
-                'Texas Live',
-                { logo: '/venues/osheas.png', name: "O'Sheas" },
-                { logo: '/venues/pour-shack.png', name: 'Pour Shack' },
-                { logo: '/venues/legacy-hall.png', name: 'Legacy Hall' },
-                { logo: '/venues/beer-city-music-hall.png', name: 'Beer City Music Hall' },
-                { logo: '/venues/hurricane-alley.png', name: 'Hurricane Alley' },
-                'Haltom Theater',
-                'Magnolia Motor Lounge',
-                'Station 330',
+                // 20 venues with curated logos (Phase 14 + Phase 14.1).
+                // `fb` is the Facebook page URL — wraps the logo in a link.
+                // Omit `fb` (or use null) when there's no URL yet; logo stays
+                // un-linked. Venues without a logo render as plain text.
+                { logo: '/venues/granada-theater.png',       name: 'Granada Theater' },
+                { logo: '/venues/texas-live.png',            name: 'Texas Live' },
+                { logo: '/venues/tower-theater.png',         name: 'Tower Theater',         fb: 'https://www.facebook.com/towertheatreokc' },
+                { logo: '/venues/beer-city-music-hall.png',  name: 'Beer City Music Hall' },
+                { logo: '/venues/haltom-theater.png',        name: 'Haltom Theater' },
+                { logo: '/venues/magnolia-motor-lounge.png', name: 'Magnolia Motor Lounge', fb: 'https://www.facebook.com/Magnolia.Motor.Lounge' },
+                { logo: '/venues/legacy-hall.png',           name: 'Legacy Hall',           fb: 'https://www.facebook.com/LegacyFoodHall' },
+                { logo: '/venues/ozark-music-hall.png',      name: 'Ozark Music Hall',      fb: 'https://www.facebook.com/OzarkMusicHall' },
+                { logo: '/venues/wild-acre-live.png',        name: 'Wild Acre Live',        fb: 'https://www.facebook.com/wildacrelive' },
+                { logo: '/venues/hop-fusion-ale-works.png',  name: 'Hop Fusion Ale Works',  fb: 'https://www.facebook.com/hopfusion' },
+                { logo: '/venues/roanoke-tavern.png',        name: 'Live at Roanoke Tavern', fb: 'https://www.facebook.com/liveatroanoketavern' },
+                { logo: '/venues/the-rustic.png',            name: 'The Rustic',            fb: 'https://www.facebook.com/therusticdallas/' },
+                { logo: '/venues/ridglea-room.png',          name: 'Ridglea Room' },
+                { logo: '/venues/hurricane-alley.png',       name: 'Hurricane Alley' },
+                { logo: '/venues/osheas.png',                name: "O'Sheas" },
+                { logo: '/venues/station-330.png',           name: 'Station 330',           fb: 'https://www.facebook.com/Station330' },
+                { logo: '/venues/pour-shack.png',            name: 'Pour Shack' },
+                { logo: '/venues/chill-lewisville.png',      name: 'Chill — Lewisville',    fb: 'https://www.facebook.com/ChillLewisville' },
+                { logo: '/venues/fat-daddys.png',            name: 'Fat Daddys',            fb: 'https://www.facebook.com/FatDaddysLive' },
+                { logo: '/venues/broncos.png',               name: "Bronco's",              fb: 'https://www.facebook.com/BroncosSportsBarTX' },
+                // Text-only entries (kept from previous strip).
                 'The Revel',
                 'Panther Island Pavilion',
               ].map((venue, i, arr) => {
                 const isLogo = typeof venue === 'object' && venue.logo
                 const key = isLogo ? venue.name : venue
                 const name = isLogo ? venue.name : venue
+                const fb = isLogo ? venue.fb : null
+                const logoEl = isLogo ? (
+                  <img
+                    src={venue.logo}
+                    alt={name}
+                    title={name}
+                    className="venue-logo"
+                  />
+                ) : null
                 return (
                   <span key={key} style={{
                     display: 'inline-flex',
@@ -212,12 +236,19 @@ export default function Home() {
                     whiteSpace: 'nowrap',
                   }}>
                     {isLogo ? (
-                      <img
-                        src={venue.logo}
-                        alt={name}
-                        title={name}
-                        className="venue-logo"
-                      />
+                      fb ? (
+                        <a
+                          href={fb}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`${name} on Facebook`}
+                          style={{ display: 'inline-flex', textDecoration: 'none' }}
+                        >
+                          {logoEl}
+                        </a>
+                      ) : (
+                        logoEl
+                      )
                     ) : (
                       name
                     )}
