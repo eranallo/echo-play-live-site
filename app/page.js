@@ -212,9 +212,8 @@ export default function Home() {
                 { logo: '/venues/chill-lewisville.png',      name: 'Chill — Lewisville',    fb: 'https://www.facebook.com/ChillLewisville' },
                 { logo: '/venues/fat-daddys.png',            name: 'Fat Daddys',            fb: 'https://www.facebook.com/FatDaddysLive' },
                 { logo: '/venues/broncos.png',               name: "Bronco's",              fb: 'https://www.facebook.com/BroncosSportsBarTX' },
-                // Text-only entries (kept from previous strip).
-                'The Revel',
-                'Panther Island Pavilion',
+                { logo: '/venues/the-revel.png',             name: 'The Revel' },
+                { logo: '/venues/panther-island-pavilion.png', name: 'Panther Island Pavilion', fb: 'https://www.facebook.com/PantherIslandPavilion' },
               ].map((venue, i, arr) => {
                 const isLogo = typeof venue === 'object' && venue.logo
                 const key = isLogo ? venue.name : venue

@@ -637,8 +637,13 @@ body {
   width: auto;
   max-width: 140px;
   object-fit: contain;
-  opacity: 0.6;
-  filter: grayscale(0.85);
+  /* Lighter treatment than the original v1: Phase 14.2 softened the filter
+     because several logos (Haltom, Rustic, Station 330) were re-exported as
+     near-white-on-transparent and the original 85% grayscale + 60% opacity
+     made them disappear into the dark hero. 75% opacity with no desaturation
+     keeps the pale ones visible while still feeling subtle. */
+  opacity: 0.75;
+  filter: grayscale(0.3);
   transition: opacity 0.3s ease, filter 0.3s ease;
   display: block;
 }
