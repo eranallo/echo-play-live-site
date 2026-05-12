@@ -34,9 +34,9 @@
   --c-text-faint: rgba(255, 255, 255, 0.25);
 
   /* ── Colors: accent (EPL gold) ──────────────────────── */
-  --c-epl: #F5C518;
-  --c-epl-soft: rgba(245, 197, 24, 0.08);
-  --c-epl-line: rgba(245, 197, 24, 0.4);
+  --c-epl: #D4A017;
+  --c-epl-soft: rgba(212, 160, 23, 0.08);
+  --c-epl-line: rgba(212, 160, 23, 0.4);
 
   /* ── Colors: bands ──────────────────────────────────── */
   --c-slgn: #00B4D8;
@@ -491,7 +491,7 @@ body {
 
 .form-input:focus {
   border-color: var(--c-epl);
-  background: rgba(245, 197, 24, 0.03);
+  background: rgba(212, 160, 23, 0.03);
 }
 
 .form-input::placeholder {
@@ -550,7 +550,7 @@ body {
   background: #0a0a0a;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(245, 197, 24, 0.4);
+  background: rgba(212, 160, 23, 0.4);
   border-radius: 2px;
 }
 

@@ -12,7 +12,7 @@ module.exports = {
         barlow: ['var(--font-barlow)'],
       },
       colors: {
-        epl: '#F5C518',
+        epl: '#D4A017',
         slgn: '#00B4D8',
         beldings: '#FF6B35',
         jambi: '#9D4EDD',

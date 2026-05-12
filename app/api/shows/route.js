@@ -136,7 +136,7 @@ export async function GET() {
         status: f['Status'] || 'Confirmed',
         bandName,
         bandSlug: slug,
-        bandColor: bandData?.color || '#F5C518',
+        bandColor: bandData?.color || '#D4A017',
         bandsintownUrl: primaryBand?.bandsintownUrl || null,
       }
     })

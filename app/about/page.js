@@ -51,7 +51,7 @@ export default function AboutPage() {
         }}>
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'radial-gradient(ellipse 80% 60% at 80% 40%, rgba(245,197,24,0.04) 0%, transparent 60%)',
+            background: 'radial-gradient(ellipse 80% 60% at 80% 40%, rgba(212, 160, 23,0.04) 0%, transparent 60%)',
           }} />
           {/* Big text watermark */}
           <div style={{
@@ -60,7 +60,7 @@ export default function AboutPage() {
             fontSize: 'clamp(120px, 30vw, 400px)',
             right: '-0.05em', bottom: '-0.1em',
             lineHeight: 0.8,
-            color: 'rgba(245,197,24,0.03)',
+            color: 'rgba(212, 160, 23,0.03)',
             pointerEvents: 'none',
             letterSpacing: '-0.02em',
             userSelect: 'none',
@@ -76,7 +76,7 @@ export default function AboutPage() {
               maxWidth: '800px',
             }}>
               About<br />
-              <span style={{ color: '#F5C518' }}>Echo Play</span><br />
+              <span style={{ color: '#D4A017' }}>Echo Play</span><br />
               Live
             </h1>
           </div>
@@ -146,7 +146,7 @@ export default function AboutPage() {
                     fontFamily: 'Bebas Neue, cursive',
                     fontSize: '120px',
                     lineHeight: 1,
-                    color: '#F5C518',
+                    color: '#D4A017',
                     opacity: 0.15,
                     pointerEvents: 'none',
                   }}>"</div>
@@ -168,7 +168,7 @@ export default function AboutPage() {
                   }}>
                     <div style={{
                       width: '36px', height: '36px',
-                      background: '#F5C518',
+                      background: '#D4A017',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontFamily: 'Bebas Neue, cursive',
                       fontSize: '16px',
@@ -220,7 +220,7 @@ export default function AboutPage() {
                         fontFamily: 'Bebas Neue, cursive',
                         fontSize: '24px',
                         letterSpacing: '0.04em',
-                        color: '#F5C518',
+                        color: '#D4A017',
                       }}>{value}</div>
                     </div>
                   ))}
@@ -251,7 +251,7 @@ export default function AboutPage() {
                 >
                   <div style={{
                     width: '32px', height: '3px',
-                    background: '#F5C518',
+                    background: '#D4A017',
                     marginBottom: '24px',
                   }} />
                   <h3 style={{
@@ -297,7 +297,7 @@ export default function AboutPage() {
                 textDecoration: 'none',
                 transition: 'color 0.2s ease',
               }}
-                onMouseEnter={e => e.currentTarget.style.color = '#F5C518'}
+                onMouseEnter={e => e.currentTarget.style.color = '#D4A017'}
                 onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.35)'}
               >View Full Roster →</Link>
             </div>

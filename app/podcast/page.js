@@ -68,7 +68,7 @@ export default function PodcastPage() {
           {/* Subtle ambient gradient */}
           <div style={{
             position: 'absolute', inset: 0, zIndex: 0,
-            background: 'radial-gradient(ellipse 70% 60% at 30% 20%, rgba(245,197,24,0.06), transparent 60%), radial-gradient(ellipse 60% 50% at 80% 80%, rgba(157,78,221,0.04), transparent 60%)',
+            background: 'radial-gradient(ellipse 70% 60% at 30% 20%, rgba(212, 160, 23,0.06), transparent 60%), radial-gradient(ellipse 60% 50% at 80% 80%, rgba(157,78,221,0.04), transparent 60%)',
             pointerEvents: 'none',
           }} />
 

@@ -58,7 +58,7 @@ export default function ShowsPage() {
         }}>
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'radial-gradient(ellipse 60% 80% at 20% 50%, rgba(245,197,24,0.04) 0%, transparent 60%)',
+            background: 'radial-gradient(ellipse 60% 80% at 20% 50%, rgba(212, 160, 23,0.04) 0%, transparent 60%)',
           }} />
           <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative' }}>
             <div className="section-label reveal" style={{ marginBottom: '16px' }}>On Stage</div>
@@ -67,7 +67,7 @@ export default function ShowsPage() {
               fontSize: 'clamp(64px, 14vw, 180px)',
               letterSpacing: '0.01em', lineHeight: 0.85, marginBottom: '24px',
             }}>
-              Shows &<br /><span style={{ color: '#F5C518' }}>Events</span>
+              Shows &<br /><span style={{ color: '#D4A017' }}>Events</span>
             </h1>
             <p className="reveal delay-200" style={{
               fontFamily: 'Barlow, sans-serif', fontSize: '16px',
@@ -106,8 +106,8 @@ export default function ShowsPage() {
                     fontSize: '11px', fontWeight: 600, letterSpacing: '0.18em',
                     textTransform: 'uppercase', padding: '16px 20px',
                     background: 'none', border: 'none',
-                    borderBottom: `2px solid ${isActive ? (band ? band.color : '#F5C518') : 'transparent'}`,
-                    color: isActive ? (band ? band.color : '#F5C518') : 'rgba(255,255,255,0.35)',
+                    borderBottom: `2px solid ${isActive ? (band ? band.color : '#D4A017') : 'transparent'}`,
+                    color: isActive ? (band ? band.color : '#D4A017') : 'rgba(255,255,255,0.35)',
                     cursor: 'pointer', transition: 'color 0.2s ease, border-color 0.2s ease',
                     whiteSpace: 'nowrap', marginBottom: '-1px',
                   }}>
@@ -147,13 +147,13 @@ export default function ShowsPage() {
             }}>
               <div style={{
                 width: '8px', height: '8px', borderRadius: '50%',
-                background: '#F5C518', boxShadow: '0 0 8px #F5C518',
+                background: '#D4A017', boxShadow: '0 0 8px #D4A017',
                 animation: 'pulse 2s ease-in-out infinite',
               }} />
               <div style={{
                 fontFamily: 'Barlow Condensed, sans-serif',
                 fontSize: '11px', fontWeight: 600, letterSpacing: '0.25em',
-                textTransform: 'uppercase', color: '#F5C518',
+                textTransform: 'uppercase', color: '#D4A017',
               }}>Upcoming Shows</div>
             </div>
 
@@ -301,7 +301,7 @@ export default function ShowsPage() {
               fontFamily: 'Barlow Condensed, sans-serif',
               fontSize: '12px', fontWeight: 700, letterSpacing: '0.18em',
               textTransform: 'uppercase', color: '#080808',
-              background: '#F5C518', padding: '14px 28px', textDecoration: 'none',
+              background: '#D4A017', padding: '14px 28px', textDecoration: 'none',
               transition: 'opacity 0.2s ease',
             }}
               onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}

@@ -103,7 +103,7 @@ export default function ContactPage() {
         }}>
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'radial-gradient(ellipse 60% 60% at 30% 60%, rgba(245,197,24,0.04) 0%, transparent 60%)',
+            background: 'radial-gradient(ellipse 60% 60% at 30% 60%, rgba(212, 160, 23,0.04) 0%, transparent 60%)',
           }} />
           <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative' }}>
             <div className="section-label reveal" style={{ marginBottom: '16px' }}>Get In Touch</div>
@@ -115,7 +115,7 @@ export default function ContactPage() {
               marginBottom: '24px',
             }}>
               Book a<br />
-              <span style={{ color: '#F5C518' }}>Show</span>
+              <span style={{ color: '#D4A017' }}>Show</span>
             </h1>
             <p className="reveal delay-200" style={{
               fontFamily: 'Barlow, sans-serif',
@@ -146,8 +146,8 @@ export default function ContactPage() {
 
                 {submitted ? (
                   <div className="reveal" style={{
-                    border: '1px solid rgba(245,197,24,0.3)',
-                    background: 'rgba(245,197,24,0.04)',
+                    border: '1px solid rgba(212, 160, 23,0.3)',
+                    background: 'rgba(212, 160, 23,0.04)',
                     padding: '40px',
                     textAlign: 'center',
                   }}>
@@ -155,7 +155,7 @@ export default function ContactPage() {
                       fontFamily: 'Bebas Neue, cursive',
                       fontSize: '48px',
                       letterSpacing: '0.04em',
-                      color: '#F5C518',
+                      color: '#D4A017',
                       marginBottom: '12px',
                     }}>Inquiry Received</div>
                     <p style={{
@@ -166,7 +166,7 @@ export default function ContactPage() {
                       marginBottom: '20px',
                     }}>
                       {bookingEmail ? (
-                        <>Routed to <strong style={{ color: '#F5C518' }}>{bookingEmail}</strong>. Most bookers hear back within 24 hours.</>
+                        <>Routed to <strong style={{ color: '#D4A017' }}>{bookingEmail}</strong>. Most bookers hear back within 24 hours.</>
                       ) : (
                         <>Routed to the right band&apos;s booking team. Most bookers hear back within 24 hours.</>
                       )}
@@ -386,7 +386,7 @@ export default function ContactPage() {
                         fontFamily: 'Barlow Condensed, Barlow, sans-serif',
                         fontSize: '13px', fontWeight: 600, letterSpacing: '0.15em',
                         textTransform: 'uppercase', color: '#080808',
-                        background: submitting ? 'rgba(245,197,24,0.6)' : '#F5C518',
+                        background: submitting ? 'rgba(212, 160, 23,0.6)' : '#D4A017',
                         padding: '16px 36px', border: 'none',
                         cursor: submitting ? 'not-allowed' : 'pointer',
                         transition: 'opacity 0.2s ease, transform 0.2s ease',
@@ -439,7 +439,7 @@ export default function ContactPage() {
                     fontWeight: 600,
                     letterSpacing: '0.25em',
                     textTransform: 'uppercase',
-                    color: '#F5C518',
+                    color: '#D4A017',
                     marginBottom: '20px',
                   }}>Booking Direct</div>
                   <p style={{
@@ -507,7 +507,7 @@ export default function ContactPage() {
                     fontWeight: 600,
                     letterSpacing: '0.25em',
                     textTransform: 'uppercase',
-                    color: '#F5C518',
+                    color: '#D4A017',
                     marginBottom: '20px',
                   }}>Follow Our Bands</div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

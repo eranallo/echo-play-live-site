@@ -76,7 +76,7 @@ export default function Home() {
           {/* Subtle horizontal line */}
           <div style={{
             position: 'absolute', left: 0, right: 0, top: '50%',
-            height: '1px', background: 'rgba(245,197,24,0.06)', zIndex: 1,
+            height: '1px', background: 'rgba(212, 160, 23,0.06)', zIndex: 1,
           }} />
 
           <div style={{ position: 'relative', zIndex: 2, maxWidth: '1000px', width: '100%' }}>
@@ -412,7 +412,7 @@ export default function Home() {
           {/* Background accent */}
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'radial-gradient(ellipse 60% 80% at 50% 50%, rgba(245,197,24,0.03) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse 60% 80% at 50% 50%, rgba(212, 160, 23,0.03) 0%, transparent 70%)',
           }} />
 
           <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center', position: 'relative' }}>
@@ -429,7 +429,7 @@ export default function Home() {
               marginBottom: '40px',
             }}>
               "Quality, Hustle,<br />
-              <span style={{ color: '#F5C518' }}>and Love</span><br />
+              <span style={{ color: '#D4A017' }}>and Love</span><br />
               for the Show."
             </blockquote>
 
@@ -450,8 +450,8 @@ export default function Home() {
             <div className="reveal delay-300">
               <Link href="/about" className="btn-primary" style={{
                 textDecoration: 'none',
-                color: '#F5C518',
-                borderColor: 'rgba(245,197,24,0.4)',
+                color: '#D4A017',
+                borderColor: 'rgba(212, 160, 23,0.4)',
               }}>
                 <span>Our Story</span>
                 <span>→</span>
@@ -492,7 +492,7 @@ export default function Home() {
                 display: 'flex', alignItems: 'center', gap: '8px',
                 transition: 'color 0.2s ease',
               }}
-                onMouseEnter={e => e.currentTarget.style.color = '#F5C518'}
+                onMouseEnter={e => e.currentTarget.style.color = '#D4A017'}
                 onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
               >
                 View All Shows →
@@ -573,7 +573,7 @@ export default function Home() {
         }}>
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'linear-gradient(135deg, rgba(245,197,24,0.04) 0%, transparent 50%, rgba(245,197,24,0.02) 100%)',
+            background: 'linear-gradient(135deg, rgba(212, 160, 23,0.04) 0%, transparent 50%, rgba(212, 160, 23,0.02) 100%)',
           }} />
           <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', position: 'relative' }}>
             <div className="section-label reveal" style={{ marginBottom: '24px' }}>Ready to Book?</div>
@@ -585,7 +585,7 @@ export default function Home() {
               marginBottom: '24px',
             }}>
               Bring the<br />
-              <span style={{ color: '#F5C518' }}>Show to You</span>
+              <span style={{ color: '#D4A017' }}>Show to You</span>
             </h2>
             <p className="reveal delay-200" style={{
               fontFamily: 'Barlow, sans-serif',
@@ -607,7 +607,7 @@ export default function Home() {
                 letterSpacing: '0.15em',
                 textTransform: 'uppercase',
                 color: '#080808',
-                background: '#F5C518',
+                background: '#D4A017',
                 padding: '16px 36px',
                 transition: 'opacity 0.2s ease, transform 0.2s ease',
               }}
