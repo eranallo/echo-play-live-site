@@ -1,27 +1,18 @@
 // /podcast — Echo Play Podcast landing page.
 //
-// Summary / promotional page. Visitor lands here to learn about the show
-// and click through to their preferred listening platform.
-//
-// One embedded Buzzsprout player shows the latest episode for instant sampling.
-// The "latest" episode ID is pulled live from the Buzzsprout RSS feed every
-// hour, so this stays current without any code changes when new episodes ship.
+// Pure summary page: hero with subscribe buttons, about strip, "where to
+// listen" platform cards. No embedded player, no episode list — the page is
+// a marketing/discovery surface that hands listeners off to their preferred
+// platform.
 
-import Image from 'next/image'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import RevealOnView from '@/components/RevealOnView'
 import ScrollToTopOnMount from '@/components/ScrollToTopOnMount'
-import {
-  podcast,
-  getEpisodes,
-  buzzsproutEmbedUrl,
-  formatEpisodeDate,
-} from '@/lib/podcast'
+import { podcast } from '@/lib/podcast'
 
 export const revalidate = 3600
 
-// Brand icons (inline so we don't pull in an icon library for one page).
 const Icons = {
   spotify: (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -58,10 +49,7 @@ const platforms = [
   { name: 'RSS Feed',        href: podcast.subscribe.rss,           icon: Icons.rss,        accent: '#F5A623', tagline: 'Subscribe via RSS' },
 ]
 
-export default async function PodcastPage() {
-  const episodes = await getEpisodes()
-  const latest = episodes[0] || null
-
+export default function PodcastPage() {
   return (
     <>
       <ScrollToTopOnMount />
@@ -71,11 +59,13 @@ export default async function PodcastPage() {
 
         {/* ── HERO ─────────────────────────────────────────── */}
         <section style={{
-          padding: 'clamp(120px, 16vw, 200px) var(--gutter-fluid) clamp(60px, 8vw, 100px)',
+          padding: 'clamp(120px, 16vw, 200px) var(--gutter-fluid) clamp(80px, 10vw, 140px)',
           borderBottom: '1px solid var(--c-border)',
           position: 'relative',
           overflow: 'hidden',
+          textAlign: 'center',
         }}>
+          {/* Subtle ambient gradient */}
           <div style={{
             position: 'absolute', inset: 0, zIndex: 0,
             background: 'radial-gradient(ellipse 70% 60% at 30% 20%, rgba(245,197,24,0.06), transparent 60%), radial-gradient(ellipse 60% 50% at 80% 80%, rgba(157,78,221,0.04), transparent 60%)',
@@ -83,158 +73,67 @@ export default async function PodcastPage() {
           }} />
 
           <div style={{
-            maxWidth: 'var(--layout-max)', margin: '0 auto', position: 'relative', zIndex: 1,
-            display: 'grid',
-            gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)',
-            gap: 'clamp(40px, 6vw, 96px)',
-            alignItems: 'center',
-          }} className="podcast-hero-grid">
-
-            <div>
-              <div className="reveal-up" style={{
-                fontFamily: 'var(--ff-label)',
-                fontSize: 'var(--t-label-s)',
-                fontWeight: 600,
-                letterSpacing: 'var(--ls-label)',
-                textTransform: 'uppercase',
-                color: 'var(--c-epl)',
-                marginBottom: 'var(--s-4)',
-              }}>
-                The Podcast
-              </div>
-              <h1 className="reveal delay-100" style={{
-                fontFamily: 'var(--ff-display)',
-                fontSize: 'clamp(56px, 11vw, 148px)',
-                letterSpacing: '0.01em',
-                lineHeight: 0.88,
-                color: 'var(--c-text)',
-                marginBottom: 'var(--s-5)',
-              }}>
-                ECHO PLAY<br />PODCAST
-              </h1>
-              <p className="reveal-up delay-200" style={{
-                fontFamily: 'var(--ff-body)',
-                fontSize: 'clamp(17px, 1.9vw, 21px)',
-                lineHeight: 1.6,
-                fontWeight: 300,
-                color: 'rgba(255,255,255,0.78)',
-                marginBottom: 'var(--s-6)',
-                maxWidth: '560px',
-              }}>
-                {podcast.description}
-              </p>
-
-              <div className="reveal-up delay-300" style={{
-                display: 'flex', flexWrap: 'wrap', gap: 'var(--s-3)',
-              }}>
-                {platforms.slice(0, 4).map(p => (
-                  <a key={p.name}
-                    href={p.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="podcast-subscribe-btn"
-                    style={{ '--accent': p.accent }}
-                  >
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--s-2)' }}>
-                      {p.icon}
-                      <span>{p.name}</span>
-                    </span>
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            {/* Cover art */}
-            <div className="reveal-zoom" style={{
-              position: 'relative',
-              aspectRatio: '1 / 1',
-              maxWidth: '440px',
-              width: '100%',
-              justifySelf: 'center',
+            maxWidth: '900px', margin: '0 auto', position: 'relative', zIndex: 1,
+          }}>
+            <div className="reveal-up" style={{
+              fontFamily: 'var(--ff-label)',
+              fontSize: 'var(--t-label-s)',
+              fontWeight: 600,
+              letterSpacing: 'var(--ls-label)',
+              textTransform: 'uppercase',
+              color: 'var(--c-epl)',
+              marginBottom: 'var(--s-4)',
             }}>
-              <Image
-                src={podcast.artworkUrl}
-                alt={`${podcast.title} cover art`}
-                fill
-                priority
-                unoptimized
-                sizes="(max-width: 900px) 80vw, 440px"
-                style={{ objectFit: 'cover', boxShadow: '0 30px 80px rgba(0,0,0,0.5)' }}
-              />
-              <div style={{
-                position: 'absolute', inset: 0,
-                boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06)',
-                pointerEvents: 'none',
-              }} />
+              The Podcast
+            </div>
+            <h1 className="reveal delay-100" style={{
+              fontFamily: 'var(--ff-display)',
+              fontSize: 'clamp(64px, 13vw, 200px)',
+              letterSpacing: '0.01em',
+              lineHeight: 0.88,
+              color: 'var(--c-text)',
+              marginBottom: 'var(--s-5)',
+            }}>
+              ECHO PLAY<br />PODCAST
+            </h1>
+            <p className="reveal-up delay-200" style={{
+              fontFamily: 'var(--ff-body)',
+              fontSize: 'clamp(17px, 1.9vw, 21px)',
+              lineHeight: 1.6,
+              fontWeight: 300,
+              color: 'rgba(255,255,255,0.78)',
+              marginBottom: 'var(--s-7)',
+              maxWidth: '640px',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            }}>
+              {podcast.description}
+            </p>
+
+            <div className="reveal-up delay-300" style={{
+              display: 'flex', flexWrap: 'wrap', gap: 'var(--s-3)', justifyContent: 'center',
+            }}>
+              {platforms.slice(0, 4).map(p => (
+                <a key={p.name}
+                  href={p.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="podcast-subscribe-btn"
+                  style={{ '--accent': p.accent }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--s-2)' }}>
+                    {p.icon}
+                    <span>{p.name}</span>
+                  </span>
+                </a>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* ── LATEST EPISODE PREVIEW ────────────────────── */}
-        {latest && (
-          <section style={{
-            padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
-            borderBottom: '1px solid var(--c-border)',
-          }}>
-            <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-              <div className="reveal-up" style={{
-                fontFamily: 'var(--ff-label)',
-                fontSize: 'var(--t-label-s)',
-                fontWeight: 600,
-                letterSpacing: 'var(--ls-label)',
-                textTransform: 'uppercase',
-                color: 'var(--c-epl)',
-                marginBottom: 'var(--s-4)',
-              }}>
-                Most Recent Episode
-              </div>
-              <h2 className="reveal delay-100" style={{
-                fontFamily: 'var(--ff-display)',
-                fontSize: 'clamp(32px, 5vw, 56px)',
-                letterSpacing: '0.01em',
-                lineHeight: 0.95,
-                color: 'var(--c-text)',
-                marginBottom: 'var(--s-3)',
-              }}>
-                {latest.title}
-              </h2>
-              <div className="reveal-up delay-200" style={{
-                fontFamily: 'var(--ff-label)',
-                fontSize: 'var(--t-label)',
-                fontWeight: 500,
-                letterSpacing: 'var(--ls-label-tight)',
-                textTransform: 'uppercase',
-                color: 'var(--c-text-dim)',
-                marginBottom: 'var(--s-5)',
-              }}>
-                {[
-                  latest.number ? `Episode ${latest.number}` : null,
-                  formatEpisodeDate(latest.date),
-                  latest.duration,
-                ].filter(Boolean).join(' · ')}
-              </div>
-
-              {latest.buzzsproutId && (
-                <div className="reveal delay-300">
-                  <iframe
-                    src={buzzsproutEmbedUrl(latest.buzzsproutId)}
-                    loading="lazy"
-                    title={`Listen to ${latest.title}`}
-                    width="100%"
-                    height="200"
-                    frameBorder="0"
-                    scrolling="no"
-                    style={{ display: 'block', width: '100%', border: '1px solid var(--c-border)' }}
-                  />
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-
         {/* ── ABOUT ─────────────────────────────────────── */}
         <section style={{
-          padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
+          padding: 'clamp(80px, 10vw, 120px) var(--gutter-fluid)',
           borderBottom: '1px solid var(--c-border)',
           background: 'var(--c-surface-2)',
         }}>
@@ -253,35 +152,36 @@ export default async function PodcastPage() {
               lineHeight: 1.7,
               fontWeight: 300,
               color: 'rgba(255,255,255,0.82)',
-              marginBottom: 'var(--s-6)',
+              marginBottom: 'var(--s-7)',
             }}>
               {podcast.longDescription}
             </p>
             <div className="reveal-up delay-200" style={{
-              display: 'flex', justifyContent: 'center', gap: 'var(--s-6)', flexWrap: 'wrap',
+              display: 'flex', justifyContent: 'center', gap: 'var(--s-7)', flexWrap: 'wrap',
               fontFamily: 'var(--ff-label)',
               fontSize: 'var(--t-label)',
               letterSpacing: 'var(--ls-label-tight)',
               textTransform: 'uppercase',
               color: 'var(--c-text-dim)',
+              textAlign: 'center',
             }}>
               <div>
-                <div style={{ color: 'var(--c-text)', fontFamily: 'var(--ff-display)', fontSize: 'clamp(24px, 3vw, 36px)', letterSpacing: '0.02em', lineHeight: 1 }}>
-                  {podcast.hosts.map(h => h.name).join(' · ')}
+                <div style={{ color: 'var(--c-text)', fontFamily: 'var(--ff-display)', fontSize: 'clamp(22px, 2.6vw, 30px)', letterSpacing: '0.02em', lineHeight: 1.1, marginBottom: 'var(--s-2)' }}>
+                  Evan Ranallo<br />Aaron Allen
                 </div>
-                <div style={{ marginTop: 'var(--s-2)' }}>Hosts</div>
+                <div>Hosts</div>
               </div>
               <div>
-                <div style={{ color: 'var(--c-text)', fontFamily: 'var(--ff-display)', fontSize: 'clamp(24px, 3vw, 36px)', letterSpacing: '0.02em', lineHeight: 1 }}>
+                <div style={{ color: 'var(--c-text)', fontFamily: 'var(--ff-display)', fontSize: 'clamp(22px, 2.6vw, 30px)', letterSpacing: '0.02em', lineHeight: 1.1, marginBottom: 'var(--s-2)' }}>
                   Since {podcast.startYear}
                 </div>
-                <div style={{ marginTop: 'var(--s-2)' }}>Echo Play Live original</div>
+                <div>Echo Play Live original</div>
               </div>
               <div>
-                <div style={{ color: 'var(--c-text)', fontFamily: 'var(--ff-display)', fontSize: 'clamp(24px, 3vw, 36px)', letterSpacing: '0.02em', lineHeight: 1 }}>
-                  Platinum Music
+                <div style={{ color: 'var(--c-text)', fontFamily: 'var(--ff-display)', fontSize: 'clamp(22px, 2.6vw, 30px)', letterSpacing: '0.02em', lineHeight: 1.1, marginBottom: 'var(--s-2)' }}>
+                  Platinum<br />Music Complex
                 </div>
-                <div style={{ marginTop: 'var(--s-2)' }}>Recorded at</div>
+                <div>Recorded at</div>
               </div>
             </div>
           </div>
@@ -291,40 +191,39 @@ export default async function PodcastPage() {
         <section style={{
           padding: 'clamp(80px, 10vw, 120px) var(--gutter-fluid)',
         }}>
-          <div style={{ maxWidth: 'var(--layout-max)', margin: '0 auto', textAlign: 'center' }}>
-            <div className="reveal-up" style={{
-              fontFamily: 'var(--ff-label)',
-              fontSize: 'var(--t-label-s)',
-              fontWeight: 600,
-              letterSpacing: 'var(--ls-label)',
-              textTransform: 'uppercase',
-              color: 'var(--c-epl)',
-              marginBottom: 'var(--s-3)',
-            }}>
-              Where to listen
+          <div style={{ maxWidth: 'var(--layout-max)', margin: '0 auto' }}>
+            <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto var(--s-9)' }}>
+              <div className="reveal-up" style={{
+                fontFamily: 'var(--ff-label)',
+                fontSize: 'var(--t-label-s)',
+                fontWeight: 600,
+                letterSpacing: 'var(--ls-label)',
+                textTransform: 'uppercase',
+                color: 'var(--c-epl)',
+                marginBottom: 'var(--s-3)',
+              }}>
+                Where to listen
+              </div>
+              <h2 className="reveal delay-100" style={{
+                fontFamily: 'var(--ff-display)',
+                fontSize: 'clamp(40px, 6vw, 72px)',
+                letterSpacing: '0.01em',
+                lineHeight: 0.95,
+                color: 'var(--c-text)',
+                marginBottom: 'var(--s-4)',
+              }}>
+                Catch every episode on your favorite app
+              </h2>
+              <p className="reveal-up delay-200" style={{
+                fontFamily: 'var(--ff-body)',
+                fontSize: 'clamp(15px, 1.7vw, 18px)',
+                lineHeight: 1.7,
+                fontWeight: 300,
+                color: 'var(--c-text-dim)',
+              }}>
+                New episodes drop on every major platform at the same time. Tap your platform of choice — we'll meet you there.
+              </p>
             </div>
-            <h2 className="reveal delay-100" style={{
-              fontFamily: 'var(--ff-display)',
-              fontSize: 'clamp(40px, 6vw, 72px)',
-              letterSpacing: '0.01em',
-              lineHeight: 0.95,
-              color: 'var(--c-text)',
-              marginBottom: 'var(--s-3)',
-            }}>
-              Catch every episode on your favorite app
-            </h2>
-            <p className="reveal-up delay-200" style={{
-              fontFamily: 'var(--ff-body)',
-              fontSize: 'clamp(15px, 1.7vw, 18px)',
-              lineHeight: 1.7,
-              fontWeight: 300,
-              color: 'var(--c-text-dim)',
-              marginBottom: 'var(--s-8)',
-              maxWidth: '620px',
-              margin: '0 auto clamp(48px, 6vw, 80px)',
-            }}>
-              New episodes drop on every major platform at the same time. Tap your platform of choice — we'll meet you there.
-            </p>
 
             <div className="podcast-platform-grid">
               {platforms.map((p, i) => (
@@ -340,8 +239,10 @@ export default async function PodcastPage() {
                   }}
                 >
                   <span className="podcast-platform-icon">{p.icon}</span>
-                  <span className="podcast-platform-name">{p.name}</span>
-                  <span className="podcast-platform-tagline">{p.tagline}</span>
+                  <span className="podcast-platform-text">
+                    <span className="podcast-platform-name">{p.name}</span>
+                    <span className="podcast-platform-tagline">{p.tagline}</span>
+                  </span>
                   <span className="podcast-platform-arrow" aria-hidden="true">→</span>
                 </a>
               ))}

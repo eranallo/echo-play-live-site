@@ -681,18 +681,85 @@ body {
   transform: translateY(-2px);
 }
 
-.podcast-episode-row {
-  display: flex;
-  gap: var(--s-5);
-  padding: var(--s-5) var(--s-4);
-  border-left: 3px solid var(--c-border);
-  background: rgba(255,255,255,0.015);
-  transition: background 0.25s ease, border-left-color 0.25s ease, padding-left 0.25s ease;
+/* "Where to listen" platform cards (Phase 15.2). One card per platform.
+   Flex-based row layout: [icon] [name+tagline stacked] [arrow]. Hover bleeds
+   in the platform's accent color. */
+.podcast-platform-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--s-4);
 }
-.podcast-episode-row:hover {
-  background: rgba(245,197,24,0.04);
-  border-left-color: var(--c-epl);
-  padding-left: calc(var(--s-4) + 4px);
+.podcast-platform-card {
+  --accent: var(--c-epl);
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-5);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  text-decoration: none;
+  color: var(--c-text);
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease;
+  min-height: 88px;
+}
+.podcast-platform-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: var(--c-text-dim);
+  transition: color 0.3s ease;
+}
+.podcast-platform-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.podcast-platform-name {
+  display: block;
+  font-family: var(--ff-display);
+  font-size: 22px;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--c-text);
+}
+.podcast-platform-tagline {
+  display: block;
+  font-family: var(--ff-label);
+  font-size: var(--t-label-s);
+  font-weight: 500;
+  letter-spacing: var(--ls-label-tight);
+  text-transform: uppercase;
+  color: var(--c-text-faint);
+  line-height: 1.2;
+}
+.podcast-platform-arrow {
+  flex-shrink: 0;
+  font-size: 22px;
+  color: var(--c-text-faint);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+}
+.podcast-platform-card:hover {
+  background: color-mix(in srgb, var(--accent) 8%, var(--c-surface));
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--c-border));
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px -20px rgba(0, 0, 0, 0.6),
+              0 4px 20px -8px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.podcast-platform-card:hover .podcast-platform-icon {
+  color: var(--accent);
+}
+.podcast-platform-card:hover .podcast-platform-arrow {
+  color: var(--accent);
+  transform: translateX(4px);
 }
 
 @media (max-width: 900px) {
