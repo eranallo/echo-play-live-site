@@ -637,13 +637,13 @@ body {
   width: auto;
   max-width: 140px;
   object-fit: contain;
-  /* Lighter treatment than the original v1: Phase 14.2 softened the filter
-     because several logos (Haltom, Rustic, Station 330) were re-exported as
-     near-white-on-transparent and the original 85% grayscale + 60% opacity
-     made them disappear into the dark hero. 75% opacity with no desaturation
-     keeps the pale ones visible while still feeling subtle. */
-  opacity: 0.75;
-  filter: grayscale(0.3);
+  /* Strong B&W + dim at rest, full color + full opacity on hover.
+     Reverted to original Phase 14 values per Evan 2026-05-11 (the softer
+     Phase 14.2 values felt off). If the pale/brightened logos disappear
+     against the dark hero, the source PNGs should be re-exported with more
+     contrast (darker text/lines) rather than nudging the filter. */
+  opacity: 0.6;
+  filter: grayscale(0.85);
   transition: opacity 0.3s ease, filter 0.3s ease;
   display: block;
 }
