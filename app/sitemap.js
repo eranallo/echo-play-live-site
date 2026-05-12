@@ -13,6 +13,7 @@ export default async function sitemap() {
     { url: SITE_URL,                    priority: 1.0,  changeFrequency: 'weekly' },
     { url: `${SITE_URL}/shows`,         priority: 0.9,  changeFrequency: 'daily' },
     { url: `${SITE_URL}/musicians`,     priority: 0.8,  changeFrequency: 'weekly' },
+    { url: `${SITE_URL}/podcast`,       priority: 0.7,  changeFrequency: 'weekly' },
     { url: `${SITE_URL}/contact`,       priority: 0.8,  changeFrequency: 'monthly' },
     { url: `${SITE_URL}/about`,         priority: 0.6,  changeFrequency: 'monthly' },
   ]
