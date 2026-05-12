@@ -7,6 +7,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import AnimatedStat from '@/components/AnimatedStat'
 import MagneticButton from '@/components/MagneticButton'
+import SongsSection from '@/components/SongsSection'
 import { getBand, bandsList } from '@/lib/bands'
 
 function useScrollReveal() {
@@ -868,6 +869,11 @@ export default function BandPage({ params }) {
             </div>
           </section>
         )}
+
+        {/* ── SONGS WE PLAY (Phase 18) ──────────────────────── */}
+        {/* Self-fetches via /api/songs/{slug} on mount; renders nothing if
+            no live songs are tagged for this band yet. */}
+        <SongsSection band={band} />
 
         {/* ── BOOKING CTA ──────────────────────────────────── */}
         <section style={{
