@@ -136,6 +136,7 @@ export default function Nav() {
             <Link href="/shows" className="nav-link" style={{ textDecoration: 'none' }}>Shows</Link>
             <Link href="/musicians" className="nav-link" style={{ textDecoration: 'none' }}>Roster</Link>
             <Link href="/podcast" className="nav-link" style={{ textDecoration: 'none' }}>Podcast</Link>
+            <Link href="/press" className="nav-link" style={{ textDecoration: 'none' }}>Press</Link>
             <Link href="/about" className="nav-link" style={{ textDecoration: 'none' }}>About</Link>
             <Link href="/contact" style={{
               textDecoration: 'none',
@@ -204,6 +205,7 @@ export default function Nav() {
             { href: '/shows', label: 'Shows' },
             { href: '/musicians', label: 'Roster' },
             { href: '/podcast', label: 'Podcast' },
+            { href: '/press', label: 'Press' },
             { href: '/about', label: 'About' },
             { href: '/contact', label: 'Book Now' },
           ].map(({ href, label }) => (
