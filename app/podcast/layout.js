@@ -1,6 +1,6 @@
 // Phase 15: Metadata + PodcastSeries JSON-LD for the podcast page.
 
-import { podcast, episodes } from '@/lib/podcast'
+import { podcast } from '@/lib/podcast'
 
 const SITE_URL = 'https://echoplay.live'
 
@@ -32,6 +32,9 @@ export const metadata = {
   },
 }
 
+// Episode count omitted from JSON-LD intentionally: episodes are now fetched
+// from the live RSS feed in the page, so the count is dynamic. Google fills
+// this in itself from the feed when needed.
 const podcastLd = {
   '@context': 'https://schema.org',
   '@type': 'PodcastSeries',
@@ -41,7 +44,6 @@ const podcastLd = {
   image: podcast.artworkUrl,
   webFeed: podcast.subscribe.rss,
   author: podcast.hosts.map(h => ({ '@type': 'Person', name: h.name })),
-  numberOfEpisodes: episodes.length,
   sameAs: [
     podcast.subscribe.spotify,
     podcast.subscribe.applePodcasts,

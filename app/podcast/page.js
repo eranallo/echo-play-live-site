@@ -11,12 +11,14 @@ import RevealOnView from '@/components/RevealOnView'
 import ScrollToTopOnMount from '@/components/ScrollToTopOnMount'
 import {
   podcast,
-  episodes,
+  getEpisodes,
   buzzsproutEmbedUrl,
   buzzsproutEpisodeUrl,
   formatEpisodeDate,
 } from '@/lib/podcast'
 
+// Phase 15.1: page revalidates every hour so new episodes published on
+// Buzzsprout show up automatically without a code commit.
 export const revalidate = 3600
 
 // Inline brand icons so we don't pull in an icon library for one page.
@@ -50,9 +52,11 @@ const subscribeLinks = [
   { name: 'RSS Feed',        href: podcast.subscribe.rss,            icon: Icons.rss,     accent: '#F5A623' },
 ]
 
-export default function PodcastPage() {
+export default async function PodcastPage() {
+  const episodes = await getEpisodes()
   const latest = episodes[0]
   const rest = episodes.slice(1)
+  const totalEpisodes = episodes.length
 
   return (
     <>
@@ -271,7 +275,7 @@ export default function PodcastPage() {
                 <div style={{ color: 'var(--c-text)', fontFamily: 'var(--ff-display)', fontSize: 'clamp(24px, 3vw, 36px)', letterSpacing: '0.02em', lineHeight: 1 }}>
                   Since {podcast.startYear}
                 </div>
-                <div style={{ marginTop: 'var(--s-2)' }}>{episodes.length} episodes</div>
+                <div style={{ marginTop: 'var(--s-2)' }}>{totalEpisodes} episodes</div>
               </div>
               <div>
                 <div style={{ color: 'var(--c-text)', fontFamily: 'var(--ff-display)', fontSize: 'clamp(24px, 3vw, 36px)', letterSpacing: '0.02em', lineHeight: 1 }}>
