@@ -11,6 +11,7 @@
 // each song with Spotify album art before this component receives it.
 
 import { useEffect, useMemo, useState } from 'react'
+import SongRequestModal from './SongRequestModal'
 
 export default function SongsSection({ band, defaultExpanded = false }) {
   const [songs, setSongs] = useState([])
@@ -25,6 +26,9 @@ export default function SongsSection({ band, defaultExpanded = false }) {
   // navigate immediately as before.
   const [isHoverCapable, setIsHoverCapable] = useState(true)
   const [revealedId, setRevealedId] = useState(null)
+
+  // Phase 20.1: song request modal toggle for non-tribute bands.
+  const [requestOpen, setRequestOpen] = useState(false)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -165,7 +169,10 @@ export default function SongsSection({ band, defaultExpanded = false }) {
             <div style={{
               display: 'flex',
               justifyContent: 'center',
+              alignItems: 'center',
+              gap: 'var(--s-3)',
               marginTop: 'var(--s-5)',
+              flexWrap: 'wrap',
             }}>
               <button
                 type="button"
@@ -188,6 +195,7 @@ export default function SongsSection({ band, defaultExpanded = false }) {
               >
                 Show all {songs.length} songs
               </button>
+              <RequestButton accent={accent} onClick={() => setRequestOpen(true)} />
             </div>
           </>
         )}
@@ -288,8 +296,12 @@ export default function SongsSection({ band, defaultExpanded = false }) {
 
             <div style={{
               display: 'flex', justifyContent: 'center',
+              alignItems: 'center',
+              gap: 'var(--s-3)',
               marginTop: 'var(--s-6)',
+              flexWrap: 'wrap',
             }}>
+              <RequestButton accent={accent} onClick={() => setRequestOpen(true)} />
               <button
                 type="button"
                 onClick={() => { setExpanded(false); setQuery('') }}
@@ -347,7 +359,46 @@ export default function SongsSection({ band, defaultExpanded = false }) {
           .songs-full-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
         }
       `}</style>
+
+      <SongRequestModal
+        open={requestOpen}
+        onClose={() => setRequestOpen(false)}
+        band={band}
+      />
     </section>
+  )
+}
+
+// Small reusable button — used in both collapsed and expanded states.
+function RequestButton({ accent, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        fontFamily: 'var(--ff-label)',
+        fontSize: '12px',
+        fontWeight: 600,
+        letterSpacing: 'var(--ls-label-tight)',
+        textTransform: 'uppercase',
+        color: 'var(--c-text)',
+        background: 'transparent',
+        border: `1px solid ${accent}`,
+        padding: '13px 24px',
+        cursor: 'pointer',
+        transition: 'background var(--d-fast) var(--ease-in-out), color var(--d-fast) var(--ease-in-out)',
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.background = accent
+        e.currentTarget.style.color = 'var(--c-bg)'
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.background = 'transparent'
+        e.currentTarget.style.color = 'var(--c-text)'
+      }}
+    >
+      Request a song
+    </button>
   )
 }
 

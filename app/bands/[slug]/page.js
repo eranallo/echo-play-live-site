@@ -8,6 +8,7 @@ import Footer from '@/components/Footer'
 import AnimatedStat from '@/components/AnimatedStat'
 import MagneticButton from '@/components/MagneticButton'
 import SongsSection from '@/components/SongsSection'
+import TributeDiscographySection from '@/components/TributeDiscographySection'
 import { getBand, bandsList } from '@/lib/bands'
 
 function useScrollReveal() {
@@ -870,10 +871,16 @@ export default function BandPage({ params }) {
           </section>
         )}
 
-        {/* ── SONGS WE PLAY (Phase 18) ──────────────────────── */}
-        {/* Self-fetches via /api/songs/{slug} on mount; renders nothing if
-            no live songs are tagged for this band yet. */}
-        <SongsSection band={band} />
+        {/* ── SONGS / DISCOGRAPHY (Phase 18 + Phase 20) ─────── */}
+        {/* Tribute bands (Elite, Jambi) get the full discography view of
+            the artist they tribute, with our tracks highlighted. Other bands
+            keep the standard album-art catalog. Both surfaces include the
+            "request a song" modal. */}
+        {band.tributeMode ? (
+          <TributeDiscographySection band={band} />
+        ) : (
+          <SongsSection band={band} />
+        )}
 
         {/* ── BOOKING CTA ──────────────────────────────────── */}
         <section style={{
