@@ -13,7 +13,10 @@ import { getTributeDiscography } from '@/lib/discography'
 import { bands } from '@/lib/bands'
 
 export const runtime = 'nodejs'
-export const revalidate = 3600 // 1 hour at the route level
+// Phase 20.2 hotfix: same lesson as /api/songs/[slug]. A 1-hour cache was
+// pinning the discography view at zero whenever a cold-start request hit a
+// transient failure. 60s gives the same self-heal window.
+export const revalidate = 60
 
 export async function GET(request, { params }) {
   const band = bands[params.slug]
@@ -30,7 +33,9 @@ export async function GET(request, { params }) {
   if (!disco) {
     return NextResponse.json(
       { slug: params.slug, albums: [], performedCount: 0, totalCount: 0 },
-      { headers: { 'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=86400' } }
+      { headers: { // Empty response (Spotify unreachable / artist not found): cache for
+// only 30s so the page recovers quickly once Spotify is healthy.
+'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=300' } }
     )
   }
   return NextResponse.json(
@@ -43,7 +48,7 @@ export async function GET(request, { params }) {
     },
     {
       headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=86400',
       },
     }
   )
