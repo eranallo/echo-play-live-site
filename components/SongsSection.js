@@ -18,6 +18,36 @@ export default function SongsSection({ band, defaultExpanded = false }) {
   const [expanded, setExpanded] = useState(defaultExpanded)
   const [query, setQuery] = useState('')
 
+  // Phase 18.5: two-tap pattern on touch-only devices. The first tap on a card
+  // reveals title/artist/year as an overlay; the second tap on the same card
+  // follows the Spotify link. On hover-capable devices (desktop with mouse) we
+  // skip this entirely — hover already shows the overlay, and a click should
+  // navigate immediately as before.
+  const [isHoverCapable, setIsHoverCapable] = useState(true)
+  const [revealedId, setRevealedId] = useState(null)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    setIsHoverCapable(window.matchMedia('(hover: hover)').matches)
+  }, [])
+
+  // Tap anywhere outside a song card (in this section or out) to dismiss the
+  // revealed overlay so the next single tap reveals fresh state.
+  useEffect(() => {
+    if (revealedId === null) return
+    const onAway = (e) => {
+      if (!(e.target instanceof Element)) return
+      if (!e.target.closest('.song-card')) setRevealedId(null)
+    }
+    document.addEventListener('click', onAway)
+    return () => document.removeEventListener('click', onAway)
+  }, [revealedId])
+
+  function handleCardTap(songId) {
+    // Only used on touch-only devices; desktop never calls this.
+    setRevealedId(prev => (prev === songId ? songId : songId))
+  }
+
   // Fetch the catalog on mount. The endpoint caches server-side for 1h, so
   // this is a fast call after the first hit. We deliberately load on every
   // band-page mount (instead of SSR'ing in the parent) because the page is
@@ -120,7 +150,15 @@ export default function SongsSection({ band, defaultExpanded = false }) {
           <>
             <div className="songs-preview-grid">
               {previewSongs.map(song => (
-                <SongCard key={song.id} song={song} accent={accent} compact />
+                <SongCard
+                  key={song.id}
+                  song={song}
+                  accent={accent}
+                  compact
+                  revealed={revealedId === song.id}
+                  isHoverCapable={isHoverCapable}
+                  onTap={handleCardTap}
+                />
               ))}
             </div>
 
@@ -223,7 +261,14 @@ export default function SongsSection({ band, defaultExpanded = false }) {
             {filtered.length > 0 ? (
               <div className="songs-full-grid">
                 {filtered.map(song => (
-                  <SongCard key={song.id} song={song} accent={accent} />
+                  <SongCard
+                    key={song.id}
+                    song={song}
+                    accent={accent}
+                    revealed={revealedId === song.id}
+                    isHoverCapable={isHoverCapable}
+                    onTap={handleCardTap}
+                  />
                 ))}
               </div>
             ) : (
@@ -307,16 +352,31 @@ export default function SongsSection({ band, defaultExpanded = false }) {
 }
 
 // Single album-art card. Clickable when Spotify URL is available, static otherwise.
-function SongCard({ song, accent, compact = false }) {
+//
+// Two-tap behavior on touch-only devices (Phase 18.5): the first tap reveals
+// the info overlay and intercepts the Spotify link; a second tap on the same
+// (now-revealed) card follows the link. Desktop with a mouse skips this — the
+// overlay is already visible on hover, so a click navigates immediately.
+function SongCard({ song, accent, compact = false, revealed = false, isHoverCapable = true, onTap }) {
   const Wrapper = song.spotifyUrl ? 'a' : 'div'
   const linkProps = song.spotifyUrl
     ? { href: song.spotifyUrl, target: '_blank', rel: 'noopener noreferrer' }
     : {}
 
+  function handleClick(e) {
+    if (!song.spotifyUrl) return
+    if (isHoverCapable) return            // desktop: navigate immediately
+    if (revealed) return                  // touch + already revealed: navigate
+    // Touch + not yet revealed: show the overlay, swallow this tap.
+    e.preventDefault()
+    if (typeof onTap === 'function') onTap(song.id)
+  }
+
   return (
     <Wrapper
       {...linkProps}
-      className="song-card"
+      onClick={handleClick}
+      className={`song-card${revealed ? ' is-revealed' : ''}`}
       title={`${song.title} — ${song.artist}${song.album ? ` (${song.album})` : ''}`}
       style={{
         position: 'relative',
@@ -408,7 +468,8 @@ function SongCard({ song, accent, compact = false }) {
           pointer-events: none;
         }
         .song-card:hover .song-card-overlay,
-        .song-card:focus-visible .song-card-overlay {
+        .song-card:focus-visible .song-card-overlay,
+        .song-card.is-revealed .song-card-overlay {
           opacity: 1;
         }
         .song-card-title {
