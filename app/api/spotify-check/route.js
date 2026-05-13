@@ -1,15 +1,14 @@
-// Phase 18.3: Spotify diagnostic endpoint.
+// Phase 18.3 + 20.4: Spotify diagnostic endpoint.
 //
-// GET /api/songs/_debug returns a JSON blob describing:
-//   - whether SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET are present in the
-//     runtime env (boolean) and how long the values are (number, no secret
-//     content)
-//   - the result of a single fresh token request (uncached)
-//   - the result of a single fresh search for a known track (uncached)
+// GET /api/spotify-check runs a fresh, uncached Spotify probe across three
+// surfaces:
+//   - Token (Client Credentials flow)
+//   - Track search (verifies basic search works — used by the SLGN/TDB catalog)
+//   - Artist search + album discography (used by the Elite/Jambi tribute view)
 //
-// No caching. Safe to expose because it never echoes secret values, only
-// presence + length + Spotify response status. Delete this file (or leave
-// it; it has no marketing surface) once album art is verified working.
+// No caching. Safe to expose because it never echoes secret values. The
+// `conclusion` field at the bottom names the exact failure mode in plain
+// English.
 
 import { NextResponse } from 'next/server'
 
@@ -19,9 +18,6 @@ export const dynamic = 'force-dynamic'
 const TOKEN_URL = 'https://accounts.spotify.com/api/token'
 const SEARCH_URL = 'https://api.spotify.com/v1/search'
 
-// Trim what makes it into the response body if Spotify returns text (errors,
-// HTML, etc.) so we never leak something huge. 240 chars is plenty for any
-// real Spotify error payload.
 function shortPreview(s) {
   if (typeof s !== 'string') return null
   const trimmed = s.trim()
@@ -43,15 +39,15 @@ export async function GET() {
     clientSecretHadWhitespace: secretRaw ? secretRaw !== secretRaw.trim() : false,
   }
 
-  // If creds aren't set, stop here — no point hitting Spotify.
   if (!id || !secret) {
     return NextResponse.json(
-      { env, token: null, search: null, conclusion: 'Spotify env vars not set in this deployment.' },
+      { env, token: null, search: null, artist: null, discography: null,
+        conclusion: 'Spotify env vars not set in this deployment.' },
       { headers: { 'Cache-Control': 'no-store' } }
     )
   }
 
-  // ── Token request ──────────────────────────────────────────────
+  // ── Token request ─────────────────────────────────────────────
   let token = null
   let tokenResult = { ok: false, status: 0, error: null }
   try {
@@ -73,8 +69,7 @@ export async function GET() {
       tokenResult.tokenType = data?.token_type || null
       tokenResult.expiresIn = data?.expires_in || null
     } else {
-      const body = await res.text()
-      tokenResult.error = shortPreview(body)
+      tokenResult.error = shortPreview(await res.text())
     }
   } catch (err) {
     tokenResult.error = `THREW: ${shortPreview(String(err?.message || err))}`
@@ -82,16 +77,17 @@ export async function GET() {
 
   if (!token) {
     return NextResponse.json(
-      { env, token: tokenResult, search: null, conclusion: 'Token request failed — see token.error for details.' },
+      { env, token: tokenResult, search: null, artist: null, discography: null,
+        conclusion: 'Token request failed — see token.error for details.' },
       { headers: { 'Cache-Control': 'no-store' } }
     )
   }
 
-  // ── Sample search ──────────────────────────────────────────────
-  const q = `track:"Dear Maria, Count Me In" artist:"All Time Low"`
-  const url = `${SEARCH_URL}?type=track&limit=1&market=US&q=${encodeURIComponent(q)}`
+  // ── Track search ──────────────────────────────────────────────
   let searchResult = { ok: false, status: 0, error: null }
   try {
+    const q = `track:"Dear Maria, Count Me In" artist:"All Time Low"`
+    const url = `${SEARCH_URL}?type=track&limit=1&market=US&q=${encodeURIComponent(q)}`
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
       cache: 'no-store',
@@ -105,28 +101,95 @@ export async function GET() {
       if (track) {
         searchResult.sample = {
           name: track.name,
-          artist: (track.artists || []).map(a => a.name).join(', '),
-          albumName: track.album?.name,
           albumArt: track.album?.images?.[0]?.url || null,
-          spotifyUrl: track.external_urls?.spotify || null,
         }
       }
     } else {
-      const body = await res.text()
-      searchResult.error = shortPreview(body)
+      searchResult.error = shortPreview(await res.text())
     }
   } catch (err) {
     searchResult.error = `THREW: ${shortPreview(String(err?.message || err))}`
   }
 
-  const conclusion = searchResult.ok && searchResult.sample?.albumArt
-    ? 'Spotify is fully reachable from this deployment. Album art should be loading on band pages once any old cache entries clear (within 1 hour of the redeploy).'
-    : searchResult.ok
-      ? 'Token + search both 200 but no album art on the test track — unusual. Share the raw output with Claude.'
-      : 'Token works but search failed. Check search.error for details.'
+  // ── Artist search (Deftones) ──────────────────────────────────
+  let artistResult = { ok: false, status: 0, error: null }
+  let artistId = null
+  let artistName = null
+  try {
+    const q = 'Deftones'
+    const url = `${SEARCH_URL}?type=artist&limit=5&q=${encodeURIComponent(q)}`
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store',
+    })
+    artistResult.status = res.status
+    artistResult.ok = res.ok
+    if (res.ok) {
+      const data = await res.json()
+      const items = data?.artists?.items || []
+      artistResult.itemsReturned = items.length
+      const exact = items.find(a => a.name?.toLowerCase() === 'deftones')
+      const pick = exact || items[0]
+      if (pick) {
+        artistId = pick.id
+        artistName = pick.name
+        artistResult.sample = { id: pick.id, name: pick.name, followers: pick.followers?.total }
+      }
+    } else {
+      artistResult.error = shortPreview(await res.text())
+    }
+  } catch (err) {
+    artistResult.error = `THREW: ${shortPreview(String(err?.message || err))}`
+  }
+
+  // ── Discography (Deftones albums) ─────────────────────────────
+  let discoResult = { ok: false, status: 0, error: null }
+  if (artistId) {
+    try {
+      const url = `https://api.spotify.com/v1/artists/${artistId}/albums?include_groups=album&limit=50&market=US`
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: 'no-store',
+      })
+      discoResult.status = res.status
+      discoResult.ok = res.ok
+      if (res.ok) {
+        const data = await res.json()
+        const albums = data?.items || []
+        discoResult.albumsReturned = albums.length
+        discoResult.firstThreeNames = albums.slice(0, 3).map(a => `${a.name} (${(a.release_date || '').slice(0, 4)})`)
+      } else {
+        discoResult.error = shortPreview(await res.text())
+      }
+    } catch (err) {
+      discoResult.error = `THREW: ${shortPreview(String(err?.message || err))}`
+    }
+  } else {
+    discoResult.error = 'Skipped — artist lookup returned no ID.'
+  }
+
+  // ── Verdict ───────────────────────────────────────────────────
+  let conclusion
+  if (!searchResult.ok) {
+    conclusion = 'Track search failed. SLGN/TDB catalogs would not work either.'
+  } else if (!artistResult.ok) {
+    conclusion = 'Artist search failed. Elite/Jambi discography depends on this.'
+  } else if (!artistId) {
+    conclusion = 'Artist search returned no Deftones match — unusual. Share output with Claude.'
+  } else if (!discoResult.ok) {
+    conclusion = 'Artist found, but discography fetch failed. See discography.error.'
+  } else if (discoResult.albumsReturned === 0) {
+    conclusion = 'Discography returned 0 albums — unexpected. Share output with Claude.'
+  } else {
+    conclusion =
+      `Everything reachable from this deployment. Artist "${artistName}" found, ` +
+      `${discoResult.albumsReturned} albums returned. If /api/discography/elite still shows empty, ` +
+      `there is a poisoned unstable_cache entry — redeploy with build cache disabled to clear it, ` +
+      `and verify the lib/spotify.js you uploaded has 'spotify-artist-v2' (not v1).`
+  }
 
   return NextResponse.json(
-    { env, token: tokenResult, search: searchResult, conclusion },
+    { env, token: tokenResult, search: searchResult, artist: artistResult, discography: discoResult, conclusion },
     { headers: { 'Cache-Control': 'no-store' } }
   )
 }
