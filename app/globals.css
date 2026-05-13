@@ -627,6 +627,22 @@ body {
   }
 }
 
+/* ─── INTERVIEW <details> OPEN/CLOSED STATE (Phase 19) ─────────────── */
+/* Rotates the '+' summary toggle to look like '×' when the section is open.
+   Also kills the default ▶ marker so our custom toggle is the only affordance. */
+.interview-block summary::-webkit-details-marker {
+  display: none;
+}
+.interview-block summary {
+  list-style: none;
+}
+.interview-block summary:hover {
+  opacity: 0.75;
+}
+.interview-block[open] .interview-summary-toggle {
+  transform: rotate(45deg);
+}
+
 /* ─── VENUE LOGOS (homepage "As Played At" strip) ─────
    Real venue logos display at uniform height alongside text-only entries
    for venues that don't have logos yet. Subtle opacity by default so the

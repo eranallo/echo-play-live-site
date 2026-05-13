@@ -21,16 +21,42 @@ function useScrollReveal() {
 
 const values = [
   {
-    title: 'Quality',
-    description: 'Every show is a production. We hold ourselves to the standard of the bands we tribute. Anything less is unacceptable.',
+    title: 'The Craft',
+    description: 'Every show is built on preparation. We learn the songs the way the records were made and we hold ourselves to the standard of the artists we play. Anything less is phoning it in, and we do not do that.',
   },
   {
-    title: 'Hustle',
-    description: 'We work hard because we love it. The shows, the rehearsals, the coordination. We go all in, every time.',
+    title: 'The Community',
+    description: 'Echo Play Live is a band of friends first. The bandmates carry each other, the crew shows up for one another, and the audiences come back because the room feels like family. None of it is transactional.',
   },
   {
-    title: 'Love for the Show',
-    description: "This isn't a side gig. This is a calling. We exist to give audiences the live music experience they deserve.",
+    title: 'The Moment',
+    description: 'A great song is a time machine. Our job is to bring people back to the first time they heard it. CD changer in the car, Walkman on the bus, record they played until it skipped. That moment, live, again.',
+  },
+]
+
+// Pull-quotes from the founding interviews — one per member who has gone
+// through the bio/interview process so far. Phase 19. Names are kept short
+// since the card layout favors weight on the quote itself.
+const memberVoices = [
+  {
+    quote: "It is not just transactional. It is community-building. We feed each other with our interactions.",
+    name: 'Evan Ranallo',
+    role: 'Founder · Guitar, Bass',
+  },
+  {
+    quote: "A wondrous enjoyment of brotherly love. Communion with like-minded souls and adventurers in this sea of unknown that is life.",
+    name: 'Paul Seidler',
+    role: 'Guitar · SLGN, The Dick Beldings',
+  },
+  {
+    quote: "More than friendship. Camaraderie. The accumulation of really great friends vibing together.",
+    name: 'Kevin Scott',
+    role: 'Bass · SLGN, Jambi, Elite',
+  },
+  {
+    quote: "It is like a family. Everybody looks out for each other. Like a fraternity, in a way.",
+    name: 'Irfan Malik',
+    role: 'Drums · So Long Goodnight',
   },
 ]
 
@@ -104,8 +130,12 @@ export default function AboutPage() {
                   color: 'rgba(255,255,255,0.65)',
                   marginBottom: '24px',
                 }}>
-                  Echo Play Live was founded by Evan Ranallo in 2023 out of a need for band management
-                  amongst friends and all of the projects we share.
+                  Echo Play Live was founded by Evan Ranallo in 2023 out of a simple need. The
+                  projects he and his friends were already running deserved a real home. The bands
+                  had real audiences, the shows had real production demands, and managing it all
+                  required dedicated organization. What started as managing a band among friends
+                  grew into a full management company representing four of the most active live
+                  acts in the DFW Metroplex.
                 </p>
                 <p className="reveal delay-200" style={{
                   fontFamily: 'Barlow, sans-serif',
@@ -115,9 +145,10 @@ export default function AboutPage() {
                   color: 'rgba(255,255,255,0.45)',
                   marginBottom: '24px',
                 }}>
-                  Though our backgrounds vary greatly, we are unified in our vision of quality, hustle,
-                  and love for the show. What started as managing a band among friends grew into a
-                  full management company representing four of the most exciting tribute acts in the DFW Metroplex.
+                  Though everyone on the roster comes from a different musical place, the company
+                  runs on one shared belief. The live show is sacred. Every band under the Echo
+                  Play Live umbrella shows up ready. Every player on the roster knows their job in
+                  the room. Nobody phones it in.
                 </p>
                 <p className="reveal delay-300" style={{
                   fontFamily: 'Barlow, sans-serif',
@@ -126,9 +157,12 @@ export default function AboutPage() {
                   fontWeight: 300,
                   color: 'rgba(255,255,255,0.45)',
                 }}>
-                  Every band under the Echo Play Live umbrella shares a commitment to the live experience.
-                  Real instruments, full sets, every show. Musicians who love music, playing for audiences
-                  who love it just as much.
+                  Talk to anyone in the bands and one word keeps coming up. Community. Brotherly
+                  love. Camaraderie. Family. Echo Play Live is not a vendor and the audience is not
+                  a customer. It is a room of people, on and off the stage, who care about the same
+                  thing for the same reason. The bands look after each other. The audiences come
+                  back. And the goal of every show is to give people a night that feels nostalgic,
+                  energetic, sincere, and worth remembering.
                 </p>
               </div>
 
@@ -269,6 +303,98 @@ export default function AboutPage() {
                     color: 'rgba(255,255,255,0.45)',
                   }}>{v.description}</p>
                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* In Their Words — Phase 19, pull-quotes from member interviews */}
+        <section style={{
+          padding: 'clamp(60px, 10vw, 120px) var(--gutter-fluid)',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          position: 'relative',
+        }}>
+          <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+            <div className="section-label reveal" style={{ marginBottom: '16px' }}>In Their Words</div>
+            <h2 className="reveal delay-100" style={{
+              fontFamily: 'Bebas Neue, cursive',
+              fontSize: 'clamp(40px, 7vw, 88px)',
+              letterSpacing: '0.02em',
+              lineHeight: 0.9,
+              marginBottom: '48px',
+              maxWidth: '900px',
+            }}>
+              What Echo Play Live<br />Means to the Roster
+            </h2>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '1px',
+              background: 'rgba(255,255,255,0.06)',
+            }}>
+              {memberVoices.map((v, i) => (
+                <figure
+                  key={v.name}
+                  className={`reveal delay-${i * 100}`}
+                  style={{
+                    background: '#080808',
+                    padding: 'clamp(28px, 3vw, 40px)',
+                    margin: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    minHeight: '240px',
+                    position: 'relative',
+                  }}
+                >
+                  {/* Quote mark watermark */}
+                  <div aria-hidden="true" style={{
+                    position: 'absolute',
+                    top: '8px', left: '16px',
+                    fontFamily: 'Bebas Neue, cursive',
+                    fontSize: '72px',
+                    lineHeight: 1,
+                    color: '#D4A017',
+                    opacity: 0.12,
+                    pointerEvents: 'none',
+                  }}>"</div>
+
+                  <blockquote style={{
+                    fontFamily: 'Barlow, sans-serif',
+                    fontSize: 'clamp(16px, 1.8vw, 19px)',
+                    fontStyle: 'italic',
+                    fontWeight: 300,
+                    lineHeight: 1.6,
+                    color: 'rgba(255,255,255,0.82)',
+                    margin: 0,
+                    position: 'relative',
+                  }}>
+                    "{v.quote}"
+                  </blockquote>
+                  <figcaption style={{ marginTop: '24px' }}>
+                    <div style={{
+                      width: '24px', height: '2px',
+                      background: '#D4A017',
+                      marginBottom: '12px',
+                    }} />
+                    <div style={{
+                      fontFamily: 'Bebas Neue, cursive',
+                      fontSize: '18px',
+                      letterSpacing: '0.04em',
+                      color: '#fff',
+                    }}>{v.name}</div>
+                    <div style={{
+                      fontFamily: 'Barlow Condensed, Barlow, sans-serif',
+                      fontSize: '11px',
+                      fontWeight: 500,
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      color: 'rgba(255,255,255,0.4)',
+                      marginTop: '2px',
+                    }}>{v.role}</div>
+                  </figcaption>
+                </figure>
               ))}
             </div>
           </div>

@@ -281,8 +281,73 @@ export default async function MusicianPage({ params }) {
                 color: 'rgba(255,255,255,0.45)',
                 fontStyle: 'italic',
               }}>
-                Bio coming soon. Echo Play Live is in the middle of interviewing every player on the roster — full story for {m.name.split(' ')[0]} drops here when the conversation is in.
+                Bio coming soon. Echo Play Live is in the middle of interviewing every player on the roster. The full story for {m.name.split(' ')[0]} drops here when the conversation is in.
               </p>
+            )}
+
+            {/* Phase 19: Interview Q&A. Server-rendered when MEMBERS.Interview is
+                populated; <details> handles the show/hide with no JS. */}
+            {m.interview && m.interview.length > 0 && (
+              <details className="reveal delay-300 interview-block" style={{
+                marginTop: 'var(--s-7)',
+                borderTop: '1px solid var(--c-border)',
+                paddingTop: 'var(--s-6)',
+              }}>
+                <summary style={{
+                  cursor: 'pointer',
+                  listStyle: 'none',
+                  fontFamily: 'var(--ff-label)',
+                  fontSize: 'var(--t-label-s)',
+                  fontWeight: 600,
+                  letterSpacing: 'var(--ls-label)',
+                  textTransform: 'uppercase',
+                  color: accent,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--s-2)',
+                  userSelect: 'none',
+                  transition: 'opacity var(--d-fast) var(--ease-in-out)',
+                }}>
+                  <span className="interview-summary-toggle" aria-hidden="true" style={{
+                    fontFamily: 'var(--ff-display)',
+                    fontSize: '18px',
+                    lineHeight: 1,
+                    display: 'inline-block',
+                    transition: 'transform var(--d-fast) var(--ease-in-out)',
+                  }}>+</span>
+                  Read the full interview with {m.name.split(' ')[0]}
+                </summary>
+
+                <div style={{
+                  marginTop: 'var(--s-5)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 'var(--s-6)',
+                }}>
+                  {m.interview.map((qa, i) => (
+                    <div key={i}>
+                      <h3 style={{
+                        fontFamily: 'var(--ff-display)',
+                        fontSize: 'clamp(20px, 2.4vw, 26px)',
+                        letterSpacing: '0.02em',
+                        lineHeight: 1.25,
+                        color: 'var(--c-text)',
+                        marginBottom: 'var(--s-3)',
+                      }}>{qa.question}</h3>
+                      {qa.paragraphs.map((p, j) => (
+                        <p key={j} style={{
+                          fontFamily: 'var(--ff-body)',
+                          fontSize: 'clamp(15px, 1.6vw, 17px)',
+                          lineHeight: 1.8,
+                          fontWeight: 300,
+                          color: 'rgba(255,255,255,0.72)',
+                          marginBottom: 'var(--s-3)',
+                        }}>{p}</p>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </details>
             )}
           </div>
         </section>
