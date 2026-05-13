@@ -14,7 +14,10 @@ import { getSongsForBand } from '@/lib/songs'
 import { bands } from '@/lib/bands'
 
 export const runtime = 'nodejs'
-export const revalidate = 3600
+// Phase 20.2 hotfix: dropped from 1h → 60s so a transient empty cache state
+// (from a failed cold-start fetch, etc.) heals within a minute instead of
+// dragging the catalog offline for an hour.
+export const revalidate = 60
 
 export async function GET(request, { params }) {
   if (!bands[params.slug]) {
@@ -25,7 +28,10 @@ export async function GET(request, { params }) {
     { slug: params.slug, count: songs.length, songs },
     {
       headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        // Edge cache: 60s fresh, 24h stale-while-revalidate. Bad cached
+        // states (e.g., a network blip caching empty) age out within a
+        // minute, while a healthy response stays fast for repeat visitors.
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=86400',
       },
     }
   )
