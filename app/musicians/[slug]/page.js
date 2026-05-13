@@ -352,6 +352,51 @@ export default async function MusicianPage({ params }) {
           </div>
         </section>
 
+        {/* ── GALLERY (Phase 23) ───────────────────────────── */}
+        {/* Renders only when the member has more than one Website Photo
+            attachment in Airtable. The primary portrait (photos[0]) already
+            appears in the hero, so we slice it off here to avoid duplication. */}
+        {Array.isArray(m.photos) && m.photos.length > 1 && (
+          <section style={{
+            padding: 'clamp(60px, 9vw, 100px) var(--gutter-fluid)',
+            borderBottom: '1px solid var(--c-border)',
+          }}>
+            <div style={{ maxWidth: 'var(--layout-max)', margin: '0 auto' }}>
+              <div className="reveal-up" style={{
+                fontFamily: 'var(--ff-label)',
+                fontSize: 'var(--t-label-s)',
+                fontWeight: 600,
+                letterSpacing: 'var(--ls-label)',
+                textTransform: 'uppercase',
+                color: accent,
+                marginBottom: 'var(--s-5)',
+              }}>
+                More of {m.name.split(' ')[0]}
+              </div>
+              <div className="musician-gallery">
+                {m.photos.slice(1).map((p, i) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <a
+                    key={i}
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="musician-gallery-item reveal-up"
+                    style={{ transitionDelay: `${Math.min(i * 60, 360)}ms` }}
+                  >
+                    <img
+                      src={p.thumb || p.url}
+                      alt={`${m.name} — photo ${i + 2}`}
+                      loading="lazy"
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+          </section>
+        )}
+
         {/* ── ALSO ON THE ROSTER ───────────────────────────── */}
         {otherMembers.length > 0 && (
           <section style={{
