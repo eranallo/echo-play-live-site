@@ -627,6 +627,17 @@ body {
   }
 }
 
+/* ─── ABOUT PAGE ORIGIN STORY GRID — mobile collapse (Phase 21) ─────────── */
+/* The "How It Started" section uses a 1fr 1fr desktop grid that needs to
+   stack on mobile, otherwise the story paragraphs get squeezed to ~150px
+   wide and wrap after every two words. */
+@media (max-width: 768px) {
+  .origin-story-grid {
+    grid-template-columns: 1fr !important;
+    gap: clamp(32px, 8vw, 56px) !important;
+  }
+}
+
 /* ─── INTERVIEW <details> OPEN/CLOSED STATE (Phase 19) ─────────────── */
 /* Rotates the '+' summary toggle to look like '×' when the section is open.
    Also kills the default ▶ marker so our custom toggle is the only affordance. */

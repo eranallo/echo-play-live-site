@@ -114,7 +114,7 @@ export default function AboutPage() {
           borderBottom: '1px solid rgba(255,255,255,0.06)',
         }}>
           <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-            <div style={{
+            <div className="origin-story-grid" style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
               gap: 'clamp(40px, 8vw, 120px)',
