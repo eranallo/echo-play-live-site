@@ -1,6 +1,8 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Nav from '@/components/Nav'
+import FaqSection from '@/components/FaqSection'
+import { FAQ_CONTACT } from '@/lib/faqs'
 import Footer from '@/components/Footer'
 import { bandsList } from '@/lib/bands'
 
@@ -560,6 +562,8 @@ export default function ContactPage() {
             </div>
           </div>
         </section>
+
+        <FaqSection items={FAQ_CONTACT} heading="Booking FAQ" anchorId="faq" />
 
       </main>
       <Footer />

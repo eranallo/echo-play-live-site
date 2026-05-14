@@ -4,6 +4,7 @@
 // is a 'use client' component and can't export metadata directly.
 
 import { faqPage, breadcrumbList, JsonLd } from '@/lib/jsonld'
+import { FAQ_PRESS } from '@/lib/faqs'
 
 const SITE_URL = 'https://echoplay.live'
 
@@ -18,31 +19,7 @@ export const metadata = {
   },
 }
 
-// FAQ content — drafted in EPL voice. Edit freely.
-const FAQ = [
-  {
-    q: 'What is in the EPK?',
-    a: 'A one-page PDF per band with bio, photos, stats, and a band-specific booking email. Each band also has logos in three colorways available for download on this page.',
-  },
-  {
-    q: 'Can I get higher-resolution band photos for print?',
-    a: 'Yes. Email the booking contact for the band you are covering and we will send press-quality photos. Most bands have a 5 to 10 image press pack ready to go.',
-  },
-  {
-    q: 'Are logos available in different formats?',
-    a: 'Yes. Each band logo is available as SVG (vector) and PNG (1024px). Three colorways: full color, white, and black. All downloadable directly from this page.',
-  },
-  {
-    q: 'How do I credit Echo Play Live or one of the bands?',
-    a: 'For press use: "Echo Play Live" or the specific band name. Photographer credit is in the file name when applicable. Otherwise no formal credit line is required.',
-  },
-  {
-    q: 'Who do I contact for an interview or feature?',
-    a: 'Use the booking contact for the band you want to feature. For management-level inquiries, the EPL Hub at echoplay.live/hub will route you appropriately once it ships.',
-  },
-]
-
-const faqLd = faqPage(FAQ)
+const faqLd = faqPage(FAQ_PRESS)
 const breadcrumbLd = breadcrumbList([
   { name: 'Home', url: '/' },
   { name: 'Press & EPK', url: '/press' },

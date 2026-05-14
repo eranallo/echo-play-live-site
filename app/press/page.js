@@ -11,6 +11,8 @@ import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Nav from '@/components/Nav'
+import FaqSection from '@/components/FaqSection'
+import { FAQ_PRESS } from '@/lib/faqs'
 import Footer from '@/components/Footer'
 import { bandsList } from '@/lib/bands'
 
@@ -700,6 +702,9 @@ export default function PressPage() {
             </div>
           </div>
         </section>
+
+        <FaqSection items={FAQ_PRESS} heading="EPK FAQ" anchorId="faq" />
+
       </main>
 
       <style jsx global>{`
