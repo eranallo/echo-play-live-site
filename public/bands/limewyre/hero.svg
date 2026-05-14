@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <radialGradient id="hitGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="40%" stop-color="#D9FF66" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#AEFF00" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="emitterGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#AEFF00" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="atmosphere" cx="50%" cy="55%" r="60%">
+      <stop offset="0%" stop-color="#AEFF00" stop-opacity="0.08"/>
+      <stop offset="60%" stop-color="#AEFF00" stop-opacity="0.02"/>
+      <stop offset="100%" stop-color="#0a0a0a" stop-opacity="1"/>
+    </radialGradient>
+    <pattern id="scanlines" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="2" fill="#0a0a0a"/>
+      <rect y="2" width="4" height="2" fill="#000"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="#000000"/>
+  <rect width="1600" height="900" fill="url(#scanlines)" opacity="0.35"/>
+  <rect width="1600" height="900" fill="url(#atmosphere)"/>
+  <g transform="translate(500, 200)">
+    <path d="M 90 320 A 210 210 0 0 1 510 320" fill="none" stroke="#AEFF00" stroke-width="48" opacity="0.12"/>
+    <path d="M 90 320 A 210 210 0 0 1 510 320" fill="none" stroke="#AEFF00" stroke-width="38" opacity="0.18"/>
+    <path d="M 90 320 A 210 210 0 0 1 510 320" fill="none" stroke="#AEFF00" stroke-width="28"/>
+    <path d="M 130 320 A 170 170 0 0 1 470 320" fill="none" stroke="#AEFF00" stroke-width="1.2" opacity="0.45"/>
+    <g stroke="#AEFF00" stroke-width="20" stroke-linecap="round" opacity="0.18" fill="none">
+      <line x1="300" y1="320" x2="300" y2="115"/><line x1="300" y1="320" x2="120" y2="220"/><line x1="300" y1="320" x2="480" y2="220"/><line x1="300" y1="320" x2="195" y2="135"/><line x1="300" y1="320" x2="405" y2="135"/>
+    </g>
+    <g stroke="#AEFF00" stroke-width="13" stroke-linecap="round" opacity="0.32" fill="none">
+      <line x1="300" y1="320" x2="300" y2="115"/><line x1="300" y1="320" x2="120" y2="220"/><line x1="300" y1="320" x2="480" y2="220"/><line x1="300" y1="320" x2="195" y2="135"/><line x1="300" y1="320" x2="405" y2="135"/>
+    </g>
+    <g stroke="#D9FF66" stroke-width="7" stroke-linecap="round" opacity="0.7" fill="none">
+      <line x1="300" y1="320" x2="300" y2="115"/><line x1="300" y1="320" x2="120" y2="220"/><line x1="300" y1="320" x2="480" y2="220"/><line x1="300" y1="320" x2="195" y2="135"/><line x1="300" y1="320" x2="405" y2="135"/>
+    </g>
+    <g stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none">
+      <line x1="300" y1="320" x2="300" y2="115"/><line x1="300" y1="320" x2="120" y2="220"/><line x1="300" y1="320" x2="480" y2="220"/><line x1="300" y1="320" x2="195" y2="135"/><line x1="300" y1="320" x2="405" y2="135"/>
+    </g>
+    <g><circle cx="300" cy="115" r="14" fill="url(#hitGlow)"/><circle cx="120" cy="220" r="12" fill="url(#hitGlow)"/><circle cx="480" cy="220" r="12" fill="url(#hitGlow)"/><circle cx="195" cy="135" r="11" fill="url(#hitGlow)"/><circle cx="405" cy="135" r="11" fill="url(#hitGlow)"/></g>
+    <g fill="#FFFFFF"><circle cx="300" cy="115" r="5"/><circle cx="120" cy="220" r="4"/><circle cx="480" cy="220" r="4"/><circle cx="195" cy="135" r="3.5"/><circle cx="405" cy="135" r="3.5"/></g>
+    <line x1="60" y1="328" x2="540" y2="328" stroke="#F0F0F0" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="300" cy="320" r="18" fill="url(#emitterGlow)"/>
+    <circle cx="300" cy="320" r="9" fill="#FFFFFF" opacity="0.6"/>
+    <circle cx="300" cy="320" r="5" fill="#FFFFFF"/>
+  </g>
+</svg>

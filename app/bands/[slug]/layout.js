@@ -1,12 +1,12 @@
 // Dynamic per-band metadata + BreadcrumbList JSON-LD.
 
-import { getBand, bandsList } from '@/lib/bands'
+import { getBand, bandsList, allBandsList } from '@/lib/bands'
 import { breadcrumbList, JsonLd } from '@/lib/jsonld'
 
 const SITE_URL = 'https://echoplay.live'
 
 export async function generateStaticParams() {
-  return bandsList.map(band => ({ slug: band.slug }))
+  return allBandsList.map(band => ({ slug: band.slug }))
 }
 
 export async function generateMetadata({ params }) {

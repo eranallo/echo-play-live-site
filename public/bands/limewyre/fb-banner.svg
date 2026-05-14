@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" 
+     viewBox="0 0 1640 624" 
+     width="1640" 
+     height="624">
+  
+  <defs>
+    <radialGradient id="hitGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="40%" stop-color="#D9FF66" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#AEFF00" stop-opacity="0"/>
+    </radialGradient>
+    
+    <radialGradient id="emitterGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#AEFF00" stop-opacity="0"/>
+    </radialGradient>
+    
+    <pattern id="scanlines" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="2" fill="#0a0a0a"/>
+      <rect y="2" width="4" height="2" fill="#000"/>
+    </pattern>
+    
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.7"/>
+    </radialGradient>
+    
+    <linearGradient id="atmosphere" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0a1a00" stop-opacity="0.4"/>
+      <stop offset="50%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#0a1a00" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+  
+  <rect width="1640" height="624" fill="#000000"/>
+  <rect width="1640" height="624" fill="url(#scanlines)" opacity="0.4"/>
+  <rect width="1640" height="624" fill="url(#atmosphere)"/>
+  
+  <ellipse cx="820" cy="320" rx="700" ry="280" fill="#AEFF00" opacity="0.04"/>
+  <ellipse cx="820" cy="320" rx="450" ry="200" fill="#AEFF00" opacity="0.06"/>
+  
+  <!-- Left text block -->
+  <g transform="translate(220, 240)">
+    <text x="0" y="0" 
+          font-family="JetBrains Mono, Courier New, monospace" 
+          font-size="14" 
+          fill="#AEFF00" 
+          letter-spacing="6"
+          font-weight="700">A 2000s ROCK COVER BAND</text>
+    
+    <text x="0" y="48" 
+          font-family="Playfair Display, Georgia, serif" 
+          font-size="32" 
+          font-style="italic"
+          fill="#F0F0F0">all vibes.</text>
+    <text x="0" y="88" 
+          font-family="Playfair Display, Georgia, serif" 
+          font-size="32" 
+          font-style="italic"
+          fill="#AEFF00">no viruses.</text>
+    
+    <line x1="0" y1="118" x2="60" y2="118" stroke="#AEFF00" stroke-width="2"/>
+    
+    <text x="0" y="148" 
+          font-family="JetBrains Mono, Courier New, monospace" 
+          font-size="11" 
+          fill="#888" 
+          letter-spacing="4"
+          font-weight="700">ECHO PLAY LIVE · DFW · EST. 2026</text>
+  </g>
+  
+  <!-- Logo mark -->
+  <g transform="translate(900, 60) scale(0.85)">
+    <path d="M 90 320 A 210 210 0 0 1 510 320" 
+          fill="none" stroke="#AEFF00" stroke-width="48" opacity="0.12"/>
+    <path d="M 90 320 A 210 210 0 0 1 510 320" 
+          fill="none" stroke="#AEFF00" stroke-width="38" opacity="0.18"/>
+    <path d="M 90 320 A 210 210 0 0 1 510 320" 
+          fill="none" stroke="#AEFF00" stroke-width="28"/>
+    <path d="M 130 320 A 170 170 0 0 1 470 320" 
+          fill="none" stroke="#AEFF00" stroke-width="1.5" opacity="0.5"/>
+    
+    <g stroke="#AEFF00" stroke-width="22" stroke-linecap="round" opacity="0.18" fill="none">
+      <line x1="300" y1="320" x2="300" y2="115"/>
+      <line x1="300" y1="320" x2="120" y2="220"/>
+      <line x1="300" y1="320" x2="480" y2="220"/>
+      <line x1="300" y1="320" x2="195" y2="135"/>
+      <line x1="300" y1="320" x2="405" y2="135"/>
+    </g>
+    <g stroke="#AEFF00" stroke-width="14" stroke-linecap="round" opacity="0.32" fill="none">
+      <line x1="300" y1="320" x2="300" y2="115"/>
+      <line x1="300" y1="320" x2="120" y2="220"/>
+      <line x1="300" y1="320" x2="480" y2="220"/>
+      <line x1="300" y1="320" x2="195" y2="135"/>
+      <line x1="300" y1="320" x2="405" y2="135"/>
+    </g>
+    <g stroke="#D9FF66" stroke-width="7" stroke-linecap="round" opacity="0.75" fill="none">
+      <line x1="300" y1="320" x2="300" y2="115"/>
+      <line x1="300" y1="320" x2="120" y2="220"/>
+      <line x1="300" y1="320" x2="480" y2="220"/>
+      <line x1="300" y1="320" x2="195" y2="135"/>
+      <line x1="300" y1="320" x2="405" y2="135"/>
+    </g>
+    <g stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none">
+      <line x1="300" y1="320" x2="300" y2="115"/>
+      <line x1="300" y1="320" x2="120" y2="220"/>
+      <line x1="300" y1="320" x2="480" y2="220"/>
+      <line x1="300" y1="320" x2="195" y2="135"/>
+      <line x1="300" y1="320" x2="405" y2="135"/>
+    </g>
+    
+    <circle cx="300" cy="115" r="16" fill="url(#hitGlow)"/>
+    <circle cx="120" cy="220" r="14" fill="url(#hitGlow)"/>
+    <circle cx="480" cy="220" r="14" fill="url(#hitGlow)"/>
+    <circle cx="195" cy="135" r="13" fill="url(#hitGlow)"/>
+    <circle cx="405" cy="135" r="13" fill="url(#hitGlow)"/>
+    
+    <g fill="#FFFFFF">
+      <circle cx="300" cy="115" r="6"/>
+      <circle cx="120" cy="220" r="5"/>
+      <circle cx="480" cy="220" r="5"/>
+      <circle cx="195" cy="135" r="4.5"/>
+      <circle cx="405" cy="135" r="4.5"/>
+    </g>
+    
+    <line x1="60" y1="328" x2="540" y2="328" 
+          stroke="#F0F0F0" stroke-width="6" stroke-linecap="round"/>
+    
+    <circle cx="300" cy="320" r="20" fill="url(#emitterGlow)"/>
+    <circle cx="300" cy="320" r="10" fill="#FFFFFF" opacity="0.6"/>
+    <circle cx="300" cy="320" r="5" fill="#FFFFFF"/>
+    
+    <text x="300" y="448" 
+          text-anchor="middle"
+          font-family="Allerta Stencil, Stardos Stencil, Impact, sans-serif" 
+          font-size="118" 
+          letter-spacing="3"
+          font-weight="400">
+      <tspan fill="#F0F0F0">LIME</tspan><tspan fill="#AEFF00">WYRE</tspan>
+    </text>
+  </g>
+  
+  <rect width="1640" height="624" fill="url(#vignette)"/>
+</svg>

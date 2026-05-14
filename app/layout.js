@@ -1,7 +1,7 @@
 import './globals.css'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import { bands } from '@/lib/bands'
+import { bands, bandsList } from '@/lib/bands'
 
 const SITE_URL = 'https://echoplay.live'
 
@@ -85,7 +85,7 @@ const jsonLd = {
       ],
       makesOffer: { '@type': 'Offer', name: 'Live music booking' },
     },
-    ...Object.values(bands).map(band => ({
+    ...bandsList.map(band => ({
       '@type': 'MusicGroup',
       '@id': `${SITE_URL}/bands/${band.slug}#group`,
       name: band.name,
