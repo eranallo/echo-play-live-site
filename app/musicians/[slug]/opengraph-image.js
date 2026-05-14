@@ -35,7 +35,8 @@ async function loadBebasNeue() {
 }
 
 export default async function OpengraphImage({ params }) {
-  const m = await getMusician(params.slug)
+  const { slug } = await params
+  const m = await getMusician(slug)
 
   // Fallback if the musician slug isn't found — return a neutral EPL card.
   const name = m?.name || 'Echo Play Live'

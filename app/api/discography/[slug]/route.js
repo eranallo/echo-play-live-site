@@ -19,20 +19,21 @@ export const runtime = 'nodejs'
 export const revalidate = 60
 
 export async function GET(request, { params }) {
-  const band = bands[params.slug]
+  const { slug } = await params
+  const band = bands[slug]
   if (!band) {
     return NextResponse.json({ error: 'Band not found' }, { status: 404 })
   }
   if (!band.tributeMode) {
     return NextResponse.json(
-      { error: `Band ${params.slug} is not a tribute band` },
+      { error: `Band ${slug} is not a tribute band` },
       { status: 404 }
     )
   }
-  const disco = await getTributeDiscography(params.slug)
+  const disco = await getTributeDiscography(slug)
   if (!disco) {
     return NextResponse.json(
-      { slug: params.slug, albums: [], performedCount: 0, totalCount: 0 },
+      { slug: slug, albums: [], performedCount: 0, totalCount: 0 },
       { headers: { // Empty response (Spotify unreachable / artist not found): cache for
 // only 30s so the page recovers quickly once Spotify is healthy.
 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=300' } }
@@ -40,7 +41,7 @@ export async function GET(request, { params }) {
   }
   return NextResponse.json(
     {
-      slug: params.slug,
+      slug: slug,
       artist: disco.artist,
       albums: disco.albums,
       performedCount: disco.performedCount,

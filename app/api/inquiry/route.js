@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server'
 import { bands } from '@/lib/bands'
 import { rateLimit } from '@/lib/ratelimit'
-
-const AIRTABLE_BASE = 'appYUOoJgvRyZ7fLB'
-const AIRTABLE_TABLE = 'tbliRPed3vD70R476'
+import { TABLES, tableUrl } from '@/lib/airtable'
 
 // Length caps (Phase 38c). Generous for legitimate use, tight enough to
 // block multi-megabyte abuse payloads.
@@ -103,7 +101,7 @@ export async function POST(request) {
 
     // Create record in Airtable
     const airtableRes = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`,
+      tableUrl(TABLES.INQUIRIES),
       {
         method: 'POST',
         headers: {

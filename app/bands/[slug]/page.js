@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { use, useEffect, useRef, useState } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -95,7 +95,12 @@ const SocialIcon = ({ platform }) => {
 // heroObjectPosition also lives in bands.js per band.
 
 export default function BandPage({ params }) {
-  const band = getBand(params.slug)
+  // Phase 38 hotfix: Next.js 16 made `params` async in client components too.
+  // Unwrap with React's use() hook. Without this, params.slug is undefined at
+  // hydration time, getBand returns null, notFound() fires, and every band
+  // page 404s in the browser.
+  const { slug } = use(params)
+  const band = getBand(slug)
   const pageRef = useScrollReveal()
   const heroParallaxRef = useParallaxY(0.25)
   const [images, setImages] = useState([])

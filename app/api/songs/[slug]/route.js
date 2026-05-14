@@ -20,12 +20,13 @@ export const runtime = 'nodejs'
 export const revalidate = 60
 
 export async function GET(request, { params }) {
-  if (!bands[params.slug]) {
+  const { slug } = await params
+  if (!bands[slug]) {
     return NextResponse.json({ error: 'Band not found' }, { status: 404 })
   }
-  const songs = await getSongsForBand(params.slug)
+  const songs = await getSongsForBand(slug)
   return NextResponse.json(
-    { slug: params.slug, count: songs.length, songs },
+    { slug: slug, count: songs.length, songs },
     {
       headers: {
         // Edge cache: 60s fresh, 24h stale-while-revalidate. Bad cached

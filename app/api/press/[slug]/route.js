@@ -148,7 +148,8 @@ function drawChip(page, text, x, y, font, opts) {
 }
 
 export async function GET(request, { params }) {
-  const band = getBand(params.slug)
+  const { slug } = await params
+  const band = getBand(slug)
   if (!band) {
     return NextResponse.json({ error: 'Band not found' }, { status: 404 })
   }

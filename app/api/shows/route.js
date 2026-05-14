@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server'
 import { bandNameToSlug, bands } from '@/lib/bands'
 
-const AIRTABLE_BASE = 'appYUOoJgvRyZ7fLB'
-const AIRTABLE_SHOWS = 'tblSFV8wY62hD7kCW'
-const AIRTABLE_VENUES = 'tbleV69KlU8tygF5B'
-const AIRTABLE_BANDS = 'tble6HQKSixIUdGcH'
+import { TABLES, tableUrl } from '@/lib/airtable'
 
 export async function GET() {
   try {
@@ -35,7 +32,7 @@ export async function GET() {
     params.append('maxRecords', '30')
 
     const res = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_SHOWS}?${params}`,
+      `${tableUrl(TABLES.SHOWS)}?${params}`,
       { headers, next: { revalidate: 1800 } }
     )
 
@@ -58,7 +55,7 @@ export async function GET() {
       vParams.append('fields[]', 'Venue Name')
       vParams.append('fields[]', 'Address')
       const venueRes = await fetch(
-        `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_VENUES}?${vParams}`,
+        `${tableUrl(TABLES.VENUES)}?${vParams}`,
         { headers, next: { revalidate: 3600 } }
       )
       if (venueRes.ok) {
@@ -80,7 +77,7 @@ export async function GET() {
       bParams.append('fields[]', 'Band Name')
       bParams.append('fields[]', 'Bandsintown URL')
       const bandRes = await fetch(
-        `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_BANDS}?${bParams}`,
+        `${tableUrl(TABLES.BANDS)}?${bParams}`,
         { headers, next: { revalidate: 3600 } }
       )
       if (bandRes.ok) {

@@ -9,7 +9,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
-  const band = getBand(params.slug)
+  const { slug } = await params
+  const band = getBand(slug)
   if (!band) return {}
 
   const url = `${SITE_URL}/bands/${band.slug}`
@@ -21,7 +22,7 @@ export async function generateMetadata({ params }) {
   return {
     title,
     description,
-    alternates: { canonical: `/bands/${band.slug}` },
+    alternates: { canonical: `/bands/${slug}` },
     keywords: [
       band.name,
       band.shortName,

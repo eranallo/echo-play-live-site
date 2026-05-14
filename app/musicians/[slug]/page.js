@@ -21,7 +21,8 @@ export const revalidate = 1800
 const SITE_URL = 'https://echoplay.live'
 
 export default async function MusicianPage({ params }) {
-  const m = await getMusician(params.slug)
+  const { slug } = await params
+  const m = await getMusician(slug)
   if (!m) notFound()
 
   // Phase 10D: Person JSON-LD for rich Google snippets when someone searches

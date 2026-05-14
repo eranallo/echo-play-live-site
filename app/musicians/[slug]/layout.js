@@ -11,7 +11,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
-  const m = await getMusician(params.slug)
+  const { slug } = await params
+  const m = await getMusician(slug)
   if (!m) return { title: 'Musician not found' }
 
   const url = `${SITE_URL}/musicians/${m.slug}`

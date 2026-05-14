@@ -15,19 +15,10 @@
 import { NextResponse } from 'next/server'
 import { bands } from '@/lib/bands'
 import { rateLimit } from '@/lib/ratelimit'
+import { tableUrl, getSongRequestsTableId } from '@/lib/airtable'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
-
-// ── Airtable config ─────────────────────────────────────────────────
-//
-// The SONG REQUESTS table ID is what Airtable Cobuilder produces after
-// creating the table from the prompt. Fill it in once you have it. The
-// site will return a 500 with a useful error message until it's set, so
-// you don't accidentally lose a request to /dev/null.
-
-const AIRTABLE_BASE = 'appYUOoJgvRyZ7fLB'
-const SONG_REQUESTS_TABLE_ID = process.env.AIRTABLE_SONG_REQUESTS_TABLE_ID || ''
 
 // Field names — match the names Cobuilder will produce from the prompt.
 // If anything came back named slightly differently, edit here.
@@ -84,6 +75,7 @@ export async function POST(request) {
   // Block obviously bad config before touching the network.
   const token = process.env.AIRTABLE_API_TOKEN
   if (!token) return jsonErr('Server misconfigured: AIRTABLE_API_TOKEN missing', 500)
+  const SONG_REQUESTS_TABLE_ID = getSongRequestsTableId()
   if (!SONG_REQUESTS_TABLE_ID) {
     return jsonErr(
       'Server misconfigured: AIRTABLE_SONG_REQUESTS_TABLE_ID not set. Drop the SONG REQUESTS table ID into Vercel env vars to enable submissions.',
@@ -118,7 +110,7 @@ export async function POST(request) {
   if (body.company) return NextResponse.json({ ok: true, deduped: false })
 
   // ── Dedupe: check for an existing open request with the same title + band
-  const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${SONG_REQUESTS_TABLE_ID}` +
+  const url = tableUrl(SONG_REQUESTS_TABLE_ID) +
     `?filterByFormula=` +
     encodeURIComponent(
       `AND(LOWER({${F.SONG_TITLE}})="${escapeFormulaLiteral(songTitle.toLowerCase())}",` +
@@ -161,7 +153,7 @@ export async function POST(request) {
 
     try {
       const patchRes = await fetch(
-        `https://api.airtable.com/v0/${AIRTABLE_BASE}/${SONG_REQUESTS_TABLE_ID}/${existing.id}`,
+        `${tableUrl(SONG_REQUESTS_TABLE_ID)}/${existing.id}`,
         {
           method: 'PATCH',
           headers: {
@@ -205,7 +197,7 @@ export async function POST(request) {
 
   try {
     const createRes = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE}/${SONG_REQUESTS_TABLE_ID}`,
+      tableUrl(SONG_REQUESTS_TABLE_ID),
       {
         method: 'POST',
         headers: {
