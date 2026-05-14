@@ -1,6 +1,7 @@
-// Dynamic per-band metadata. Title, description, and OG fields generated from lib/bands.js.
+// Dynamic per-band metadata + BreadcrumbList JSON-LD.
 
 import { getBand, bandsList } from '@/lib/bands'
+import { breadcrumbList, JsonLd } from '@/lib/jsonld'
 
 const SITE_URL = 'https://echoplay.live'
 
@@ -46,6 +47,20 @@ export async function generateMetadata({ params }) {
   }
 }
 
-export default function BandLayout({ children }) {
-  return children
+export default async function BandLayout({ children, params }) {
+  const { slug } = await params
+  const band = getBand(slug)
+  const breadcrumb = band
+    ? breadcrumbList([
+        { name: 'Home', url: '/' },
+        { name: band.name, url: `/bands/${band.slug}` },
+      ])
+    : null
+
+  return (
+    <>
+      {breadcrumb && <JsonLd data={breadcrumb} />}
+      {children}
+    </>
+  )
 }

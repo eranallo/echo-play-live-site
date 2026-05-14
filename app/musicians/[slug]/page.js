@@ -15,6 +15,7 @@ import Footer from '@/components/Footer'
 import RevealOnView from '@/components/RevealOnView'
 import ScrollToTopOnMount from '@/components/ScrollToTopOnMount'
 import { getMusician, getMusicians } from '@/lib/musicians'
+import { breadcrumbList } from '@/lib/jsonld'
 
 export const revalidate = 1800
 
@@ -45,6 +46,14 @@ export default async function MusicianPage({ params }) {
     }),
   }
 
+  // BreadcrumbList JSON-LD (Phase 39c) — Home → Roster → {musician name}.
+  // Google uses this to render breadcrumbs in search snippets instead of the raw URL.
+  const breadcrumbLd = breadcrumbList([
+    { name: 'Home', url: '/' },
+    { name: 'Roster', url: '/musicians' },
+    { name: m.name, url: `/musicians/${m.slug}` },
+  ])
+
   // Other roster members (for the "Also on the Roster" rail)
   const allMusicians = await getMusicians()
   const otherMembers = allMusicians
@@ -72,6 +81,10 @@ export default async function MusicianPage({ params }) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       <ScrollToTopOnMount />
       <Nav />
