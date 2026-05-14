@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { bands } from '@/lib/bands'
+import { rateLimit } from '@/lib/ratelimit'
 
 const AIRTABLE_BASE = 'appYUOoJgvRyZ7fLB'
 const AIRTABLE_TABLE = 'tbliRPed3vD70R476'
@@ -26,6 +27,21 @@ function clean(value, max) {
 }
 
 export async function POST(request) {
+  // Phase 38b: rate limit. 5 inquiries per 10 minutes per IP. Generous for
+  // a venue rep submitting + correcting + retrying; tight enough that a bot
+  // flooding gets blocked within seconds.
+  const limited = rateLimit(request, {
+    capacity: 5,
+    refillMs: 120_000,   // 1 token every 2 min → 5 in 10 min sustained
+    scope: 'inquiry',
+  })
+  if (!limited.ok) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again shortly.' },
+      { status: 429, headers: { 'Retry-After': String(limited.retryAfter) } }
+    )
+  }
+
   try {
     const body = await request.json()
 

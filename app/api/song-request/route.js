@@ -14,6 +14,7 @@
 
 import { NextResponse } from 'next/server'
 import { bands } from '@/lib/bands'
+import { rateLimit } from '@/lib/ratelimit'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -65,6 +66,21 @@ function escapeFormulaLiteral(s) {
 }
 
 export async function POST(request) {
+  // Phase 38b: rate limit. 10 requests per 10 minutes per IP. Higher than
+  // /api/inquiry because legitimate fans browsing a song catalog may submit
+  // multiple requests in a single session.
+  const limited = rateLimit(request, {
+    capacity: 10,
+    refillMs: 60_000,    // 1 token per minute → 10 in 10 min sustained
+    scope: 'song-request',
+  })
+  if (!limited.ok) {
+    return NextResponse.json(
+      { ok: false, error: 'Too many requests. Please try again shortly.' },
+      { status: 429, headers: { 'Retry-After': String(limited.retryAfter) } }
+    )
+  }
+
   // Block obviously bad config before touching the network.
   const token = process.env.AIRTABLE_API_TOKEN
   if (!token) return jsonErr('Server misconfigured: AIRTABLE_API_TOKEN missing', 500)
