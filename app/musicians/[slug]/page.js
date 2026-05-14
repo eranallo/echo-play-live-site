@@ -352,11 +352,11 @@ export default async function MusicianPage({ params }) {
           </div>
         </section>
 
-        {/* ── GALLERY (Phase 23) ───────────────────────────── */}
-        {/* Renders only when the member has more than one Website Photo
-            attachment in Airtable. The primary portrait (photos[0]) already
-            appears in the hero, so we slice it off here to avoid duplication. */}
-        {Array.isArray(m.photos) && m.photos.length > 1 && (
+        {/* ── GALLERY (Phase 23 / 24) ──────────────────────── */}
+        {/* Phase 24: `m.photos` now comes from the Airtable "Website Photos"
+            field, which is the gallery only (Profile Photos drives the hero
+            separately). Render every photo, no slicing. Hidden when empty. */}
+        {Array.isArray(m.photos) && m.photos.length > 0 && (
           <section style={{
             padding: 'clamp(60px, 9vw, 100px) var(--gutter-fluid)',
             borderBottom: '1px solid var(--c-border)',
@@ -374,7 +374,7 @@ export default async function MusicianPage({ params }) {
                 More of {m.name.split(' ')[0]}
               </div>
               <div className="musician-gallery">
-                {m.photos.slice(1).map((p, i) => (
+                {m.photos.map((p, i) => (
                   // eslint-disable-next-line @next/next/no-img-element
                   <a
                     key={i}
@@ -386,7 +386,7 @@ export default async function MusicianPage({ params }) {
                   >
                     <img
                       src={p.thumb || p.url}
-                      alt={`${m.name} — photo ${i + 2}`}
+                      alt={`${m.name} — photo ${i + 1}`}
                       loading="lazy"
                     />
                   </a>
