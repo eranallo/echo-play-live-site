@@ -3,6 +3,9 @@ import { bands } from '@/lib/bands'
 import { rateLimit } from '@/lib/ratelimit'
 import { TABLES, tableUrl } from '@/lib/airtable'
 
+// Phase 32: Inquiry Source field on INQUIRIES (Phase 31 schema).
+const INQUIRY_SOURCE_FIELD = 'Inquiry Source'
+
 // Length caps (Phase 38c). Generous for legitimate use, tight enough to
 // block multi-megabyte abuse payloads.
 const LIMITS = {
@@ -56,6 +59,9 @@ export async function POST(request) {
     const date = clean(body.date, LIMITS.date)
     const venue = clean(body.venue, LIMITS.venue)
     const message = clean(body.message, LIMITS.message)
+    // Phase 32: optional inquirySource for QR landing leads. Must match an
+    // Airtable single-select choice or the write silently drops the field.
+    const inquirySource = clean(body.inquirySource, 80)
 
     // Required-field validation.
     if (!name) {
@@ -98,6 +104,9 @@ export async function POST(request) {
     if (message) {
       fields['Special Requests'] = message
     }
+    if (inquirySource) {
+      fields[INQUIRY_SOURCE_FIELD] = inquirySource
+    }
 
     // Create record in Airtable
     const airtableRes = await fetch(
@@ -108,7 +117,7 @@ export async function POST(request) {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ fields }),
+        body: JSON.stringify({ fields, typecast: true }),
       }
     )
 

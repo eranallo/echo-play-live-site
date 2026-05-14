@@ -15,7 +15,8 @@
     "next": "^16.2.6",
     "pdf-lib": "^1.17.1",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",
