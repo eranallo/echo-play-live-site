@@ -5,6 +5,7 @@
 // a marketing/discovery surface that hands listeners off to their preferred
 // platform.
 
+import Link from 'next/link'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import RevealOnView from '@/components/RevealOnView'
@@ -167,7 +168,9 @@ export default function PodcastPage() {
             }}>
               <div>
                 <div style={{ color: 'var(--c-text)', fontFamily: 'var(--ff-display)', fontSize: 'clamp(22px, 2.6vw, 30px)', letterSpacing: '0.02em', lineHeight: 1.1, marginBottom: 'var(--s-2)' }}>
-                  Evan Ranallo<br />Aaron Allen
+                  <Link href="/musicians/evan-ranallo" style={{ color: 'inherit', textDecoration: 'none' }}>Evan Ranallo</Link>
+                  <br />
+                  <Link href="/musicians/aaron-allen" style={{ color: 'inherit', textDecoration: 'none' }}>Aaron Allen</Link>
                 </div>
                 <div>Hosts</div>
               </div>

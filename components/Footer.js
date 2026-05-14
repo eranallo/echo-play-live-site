@@ -120,6 +120,7 @@ export default function Footer() {
               {[
                 { href: '/', label: 'Home' },
                 { href: '/shows', label: 'Shows' },
+                { href: '/musicians', label: 'Roster' },
                 { href: '/podcast', label: 'Podcast' },
                 { href: '/press', label: 'Press / EPK' },
                 { href: '/about', label: 'About' },

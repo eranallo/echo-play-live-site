@@ -130,7 +130,7 @@ export default function AboutPage() {
                   color: 'rgba(255,255,255,0.65)',
                   marginBottom: '24px',
                 }}>
-                  Echo Play Live was founded by Evan Ranallo in 2023 out of a simple need. The
+                  Echo Play Live was founded by <Link href="/musicians/evan-ranallo" style={{ color: 'inherit', textDecoration: 'underline', textDecorationColor: 'rgba(255,255,255,0.25)', textUnderlineOffset: '4px' }}>Evan Ranallo</Link> in 2023 out of a simple need. The
                   projects he and his friends were already running deserved a real home. The bands
                   had real audiences, the shows had real production demands, and managing it all
                   required dedicated organization. What started as managing a band among friends
