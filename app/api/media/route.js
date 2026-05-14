@@ -8,10 +8,16 @@ const FOLDER_MAP = {
   'elite': ['Elite/Media', 'Elite'],
 }
 
+// @vercel/blob v2 dropped the `filename` field from list() results.
+// Derive it from pathname (e.g., "Jambi/Media/01-photo.jpg" -> "01-photo.jpg").
+function filenameOf(blob) {
+  return (blob.pathname || '').split('/').pop() || ''
+}
+
 function sortNumerically(blobs) {
   return [...blobs].sort((a, b) => {
-    const aNum = parseInt(a.filename.match(/^(\d+)/)?.[1] || '9999')
-    const bNum = parseInt(b.filename.match(/^(\d+)/)?.[1] || '9999')
+    const aNum = parseInt(filenameOf(a).match(/^(\d+)/)?.[1] || '9999')
+    const bNum = parseInt(filenameOf(b).match(/^(\d+)/)?.[1] || '9999')
     return aNum - bNum
   })
 }
@@ -42,7 +48,7 @@ export async function GET(request) {
     const images = sortNumerically(allBlobs).map(b => ({
       url: b.url,
       pathname: b.pathname,
-      filename: b.filename,
+      filename: filenameOf(b),
       size: b.size,
       uploadedAt: b.uploadedAt,
     }))
