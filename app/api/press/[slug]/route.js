@@ -9,8 +9,10 @@
 // Cache: 24 hours on the CDN — band copy changes rarely.
 
 import { NextResponse } from 'next/server'
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+import { PDFDocument, StandardFonts, rgb, pushGraphicsState, popGraphicsState, rectangle, clip, endPath } from 'pdf-lib'
 import { getBand } from '@/lib/bands'
+import fs from 'node:fs/promises'
+import path from 'node:path'
 
 export const runtime = 'nodejs'
 export const revalidate = 86400 // 24 hours
@@ -31,6 +33,54 @@ function hexToRgb(hex) {
   const h = hex.replace('#', '')
   const n = parseInt(h, 16)
   return rgb(((n >> 16) & 0xff) / 255, ((n >> 8) & 0xff) / 255, (n & 0xff) / 255)
+}
+
+// Phase 25: Load a band hero image and embed it into the PDF.
+// Accepts both local /public paths (e.g. "/bands/jambi/hero.jpg") and remote
+// URLs (e.g. Vercel Blob URLs still used by The Dick Beldings). Returns the
+// embedded PDFImage or null when the load fails (page still renders, just
+// without a banner).
+async function loadBandHero(pdf, heroPath) {
+  if (!heroPath) return null
+  try {
+    let bytes
+    if (/^https?:\/\//i.test(heroPath)) {
+      const res = await fetch(heroPath, { cache: 'no-store' })
+      if (!res.ok) return null
+      bytes = new Uint8Array(await res.arrayBuffer())
+    } else {
+      // Local path under /public — resolve from the deploy's working dir.
+      const full = path.join(process.cwd(), 'public', heroPath.replace(/^\//, ''))
+      bytes = await fs.readFile(full)
+    }
+    // Most band photos are JPG; fall back to PNG if needed.
+    try { return await pdf.embedJpg(bytes) } catch {}
+    try { return await pdf.embedPng(bytes) } catch {}
+    return null
+  } catch {
+    return null
+  }
+}
+
+// Phase 25: Draw an image to "cover" a target rect (scaled to fill, cropped to
+// the box). pdf-lib doesn't expose a higher-level clip API, so we push a
+// clipping path with raw PDF operators around the drawImage call.
+function drawCoveredImage(page, image, x, y, w, h) {
+  if (!image) return
+  const scale = Math.max(w / image.width, h / image.height)
+  const drawW = image.width * scale
+  const drawH = image.height * scale
+  const drawX = x - (drawW - w) / 2
+  const drawY = y - (drawH - h) / 2
+
+  page.pushOperators(
+    pushGraphicsState(),
+    rectangle(x, y, w, h),
+    clip(),
+    endPath(),
+  )
+  page.drawImage(image, { x: drawX, y: drawY, width: drawW, height: drawH })
+  page.pushOperators(popGraphicsState())
 }
 
 // Fetch Bebas Neue once per cold start; cached per Vercel instance.
@@ -138,24 +188,55 @@ export async function GET(request, { params }) {
     x: 0, y: PAGE_H - 6, width: PAGE_W, height: 6, color: C_GOLD,
   })
 
-  // ── Header: EPL wordmark + section label ──────────────────────
-  let cursorY = PAGE_H - MARGIN - 8
+  // ── Hero banner (Phase 25) ────────────────────────────────────
+  // Full-width band photo immediately under the gold accent bar. Replaces the
+  // empty white space at the top of the previous layout. Falls back to a flat
+  // dark block when the image fails to load so the rest of the layout still
+  // anchors correctly.
+  const BANNER_H = 160
+  const BANNER_TOP = PAGE_H - 6                    // 786
+  const BANNER_BOTTOM = BANNER_TOP - BANNER_H      // 626
+
+  const heroImage = await loadBandHero(pdf, band.heroPhoto)
+  if (heroImage) {
+    drawCoveredImage(page, heroImage, 0, BANNER_BOTTOM, PAGE_W, BANNER_H)
+  } else {
+    page.drawRectangle({
+      x: 0, y: BANNER_BOTTOM, width: PAGE_W, height: BANNER_H,
+      color: rgb(0.09, 0.09, 0.09),
+    })
+  }
+  // Thin accent rule under the banner for separation from the body.
+  page.drawRectangle({
+    x: 0, y: BANNER_BOTTOM - 1, width: PAGE_W, height: 1, color: accent,
+  })
+
+  // Dark scrim along the top of the banner so the EPL/right labels stay legible
+  // regardless of which photo is loaded.
+  page.drawRectangle({
+    x: 0, y: BANNER_TOP - 28, width: PAGE_W, height: 28,
+    color: rgb(0, 0, 0), opacity: 0.5,
+  })
+
+  // ── Header: EPL wordmark + section label (overlaid on banner) ─
+  const headerY = BANNER_TOP - 20
   page.drawText('ECHO PLAY LIVE', {
-    x: MARGIN, y: cursorY, size: 11, font: display, color: C_GOLD,
+    x: MARGIN, y: headerY, size: 11, font: display, color: C_GOLD,
     characterSpacing: 2,
   })
   const rightLabel = 'PRESS ONE-PAGER'
   const rightLabelWidth = display.widthOfTextAtSize(rightLabel, 11) + (rightLabel.length - 1) * 2
   page.drawText(rightLabel, {
-    x: PAGE_W - MARGIN - rightLabelWidth, y: cursorY,
-    size: 11, font: display, color: C_DIM, characterSpacing: 2,
+    x: PAGE_W - MARGIN - rightLabelWidth, y: headerY,
+    size: 11, font: display, color: rgb(0.95, 0.95, 0.95), characterSpacing: 2,
   })
 
-  // ── Band name (display, large) ────────────────────────────────
-  cursorY -= 70
-  // Auto-scale band name so very long names (e.g. "The Dick Beldings") still fit.
-  let nameSize = 64
-  while (display.widthOfTextAtSize(band.name.toUpperCase(), nameSize) > COL_W && nameSize > 32) {
+  // ── Band name (display, large) — sits just below banner ──────
+  let cursorY = BANNER_BOTTOM - 38
+  // Auto-scale band name so very long names (e.g. "The Dick Beldings") still
+  // fit. Starting size dropped from 64→48 to make room for the new banner.
+  let nameSize = 48
+  while (display.widthOfTextAtSize(band.name.toUpperCase(), nameSize) > COL_W && nameSize > 28) {
     nameSize -= 2
   }
   page.drawText(band.name.toUpperCase(), {
