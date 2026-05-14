@@ -1,13 +1,14 @@
-// Phase 33 — Linktree-style button list.
+// Phase 42 — Refined Linktree-style button list.
 //
-// One full-width button per link. Big tap targets for mobile. Icon optional
-// (Lucide-style SVGs). Renders nothing when links array is empty (graceful
-// empty state).
+// Major changes from v1:
+// - Left-side accent stripe in band color
+// - Glass effect (backdrop-filter blur)
+// - Polished hover state (scale + glow)
+// - Better icon presentation (filled circular badge in band color)
+// - Stagger entrance via .reveal-up
 
 'use client'
 
-// Inline SVG icons keyed to the Airtable Icon singleSelect choices.
-// Adding a new icon: define here + add the choice value in Airtable LINKS.Icon.
 const ICONS = {
   Instagram: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>,
   Spotify: <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02z"/></svg>,
@@ -31,7 +32,7 @@ export default function LinkList({ links, primaryColor = '#D4A017' }) {
   return (
     <section
       style={{
-        padding: '32px 20px 24px',
+        padding: '40px 20px 32px',
         maxWidth: '480px',
         margin: '0 auto',
       }}
@@ -43,47 +44,104 @@ export default function LinkList({ links, primaryColor = '#D4A017' }) {
           margin: 0,
           display: 'flex',
           flexDirection: 'column',
-          gap: '12px',
+          gap: '14px',
         }}
       >
-        {links.map(link => (
-          <li key={link.id}>
+        {links.map((link, i) => (
+          <li
+            key={link.id}
+            className="reveal-up"
+            style={{ transitionDelay: `${Math.min(i * 60, 400)}ms` }}
+          >
             <a
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
+              className="qr-link-button"
               style={{
+                position: 'relative',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                gap: '12px',
-                padding: '18px 20px',
-                background: 'rgba(255,255,255,0.05)',
-                border: `1.5px solid ${primaryColor}40`,
+                gap: '16px',
+                padding: '18px 20px 18px 28px',
+                background: 'rgba(255,255,255,0.04)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                border: `1px solid ${primaryColor}30`,
                 color: '#fff',
                 fontFamily: 'var(--ff-body, sans-serif)',
                 fontSize: '16px',
                 fontWeight: 500,
                 textDecoration: 'none',
-                textAlign: 'center',
-                transition: 'background 150ms ease, border-color 150ms ease, transform 100ms ease',
+                transition: 'transform 180ms ease, background 180ms ease, border-color 180ms ease, box-shadow 180ms ease',
                 cursor: 'pointer',
+                overflow: 'hidden',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.background = `${primaryColor}20`
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.background = `${primaryColor}10`
                 e.currentTarget.style.borderColor = primaryColor
+                e.currentTarget.style.boxShadow = `0 8px 24px -8px ${primaryColor}40`
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.05)'
-                e.currentTarget.style.borderColor = `${primaryColor}40`
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
+                e.currentTarget.style.borderColor = `${primaryColor}30`
+                e.currentTarget.style.boxShadow = 'none'
               }}
+              onMouseDown={e => { e.currentTarget.style.transform = 'translateY(0px) scale(0.98)' }}
+              onMouseUp={e => { e.currentTarget.style.transform = 'translateY(-2px)' }}
+              onTouchStart={e => { e.currentTarget.style.transform = 'scale(0.98)' }}
+              onTouchEnd={e => { e.currentTarget.style.transform = '' }}
             >
+              {/* Left accent stripe */}
+              <span
+                aria-hidden
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: '4px',
+                  background: primaryColor,
+                }}
+              />
+
+              {/* Icon badge */}
               {link.icon && ICONS[link.icon] && (
-                <span style={{ display: 'flex', alignItems: 'center', color: primaryColor }}>
+                <span
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '36px',
+                    height: '36px',
+                    background: `${primaryColor}20`,
+                    border: `1px solid ${primaryColor}40`,
+                    color: primaryColor,
+                    flexShrink: 0,
+                  }}
+                >
                   {ICONS[link.icon]}
                 </span>
               )}
-              <span>{link.label}</span>
+
+              <span style={{ flex: 1, textAlign: 'left' }}>{link.label}</span>
+
+              {/* Arrow indicator */}
+              <span
+                aria-hidden
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: 'rgba(255,255,255,0.4)',
+                  fontFamily: 'var(--ff-display, sans-serif)',
+                  fontSize: '20px',
+                  lineHeight: 1,
+                }}
+              >
+                →
+              </span>
             </a>
           </li>
         ))}

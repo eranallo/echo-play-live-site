@@ -1,9 +1,10 @@
-// Phase 34 — Band QR landing page (root slug, e.g., /the-dick-beldings).
+// Phase 34 / 42 — Band QR landing page (root slug, e.g., /the-dick-beldings).
 //
 // Server component. Pulls merged data via getBandLandingData (lib/bands.js
-// canonical + Airtable overrides). Returns 404 for unknown slugs. Doesn't
-// conflict with explicit routes (about/contact/shows/etc.) because Next.js
-// resolves those first.
+// canonical + Airtable overrides). Returns 404 for unknown slugs.
+//
+// Phase 42 refinements: wrapped in RevealOnView for scroll-reveal animations;
+// added subtle band-color tinted background gradient at the bottom.
 
 import { notFound } from 'next/navigation'
 import { getBandLandingData, inquirySourceLabelFor } from '@/lib/qr-landing'
@@ -12,6 +13,7 @@ import Hero from '@/components/landing/Hero'
 import LinkList from '@/components/landing/LinkList'
 import MediaHighlights from '@/components/landing/MediaHighlights'
 import BookingCTA from '@/components/landing/BookingCTA'
+import RevealOnView from '@/components/RevealOnView'
 
 export const revalidate = 1800
 
@@ -25,60 +27,69 @@ export default async function BandLandingPage({ params }) {
   if (!data) notFound()
 
   return (
-    <main style={{ background: '#0a0a0a', minHeight: '100vh' }}>
-      <Hero
-        name={data.name}
-        shortName={data.shortName}
-        tagline={data.tagline}
-        heroImage={data.heroImage}
-        heroVideoUrl={data.heroVideoUrl}
-        primaryColor={data.primaryColor}
-      />
-
-      {data.bio && (
-        <section
-          style={{
-            padding: '24px 20px',
-            maxWidth: '480px',
-            margin: '0 auto',
-            color: 'rgba(255,255,255,0.85)',
-            fontFamily: 'var(--ff-body, sans-serif)',
-            fontSize: '15px',
-            lineHeight: 1.6,
-            whiteSpace: 'pre-line',
-            textAlign: 'center',
-          }}
-        >
-          {data.bio}
-        </section>
-      )}
-
-      <LinkList links={data.links} primaryColor={data.primaryColor} />
-      <MediaHighlights media={data.media} primaryColor={data.primaryColor} />
-      <BookingCTA
-        bandName={data.name}
-        bandSlug={data.slug}
-        bookingEmail={data.bookingEmail}
-        primaryColor={data.primaryColor}
-        inquirySource={inquirySourceLabelFor(data.slug)}
-      />
-
-      <footer
+    <RevealOnView>
+      <main
         style={{
-          padding: '24px 20px 40px',
-          textAlign: 'center',
-          color: 'rgba(255,255,255,0.35)',
-          fontFamily: 'var(--ff-label, sans-serif)',
-          fontSize: '11px',
-          letterSpacing: '0.2em',
-          textTransform: 'uppercase',
-          borderTop: '1px solid rgba(255,255,255,0.05)',
+          background: `radial-gradient(ellipse at 50% 90%, ${data.primaryColor}15 0%, transparent 50%), #0a0a0a`,
+          minHeight: '100vh',
         }}
       >
-        <a href="/" style={{ color: 'inherit', textDecoration: 'none' }}>
-          Echo Play Live
-        </a>
-      </footer>
-    </main>
+        <Hero
+          name={data.name}
+          shortName={data.shortName}
+          tagline={data.tagline}
+          heroImage={data.heroImage}
+          heroVideoUrl={data.heroVideoUrl}
+          primaryColor={data.primaryColor}
+          secondaryColor={data.secondaryColor}
+        />
+
+        {data.bio && (
+          <section
+            className="reveal-up"
+            style={{
+              padding: '40px 24px 8px',
+              maxWidth: '520px',
+              margin: '0 auto',
+              color: 'rgba(255,255,255,0.88)',
+              fontFamily: 'var(--ff-body, sans-serif)',
+              fontSize: '16px',
+              lineHeight: 1.65,
+              whiteSpace: 'pre-line',
+              textAlign: 'center',
+            }}
+          >
+            {data.bio}
+          </section>
+        )}
+
+        <LinkList links={data.links} primaryColor={data.primaryColor} />
+        <MediaHighlights media={data.media} primaryColor={data.primaryColor} />
+        <BookingCTA
+          bandName={data.name}
+          bandSlug={data.slug}
+          bookingEmail={data.bookingEmail}
+          primaryColor={data.primaryColor}
+          inquirySource={inquirySourceLabelFor(data.slug)}
+        />
+
+        <footer
+          style={{
+            padding: '32px 20px 48px',
+            textAlign: 'center',
+            color: 'rgba(255,255,255,0.3)',
+            fontFamily: 'var(--ff-label, sans-serif)',
+            fontSize: '11px',
+            letterSpacing: '0.25em',
+            textTransform: 'uppercase',
+            borderTop: '1px solid rgba(255,255,255,0.05)',
+          }}
+        >
+          <a href="/" style={{ color: 'inherit', textDecoration: 'none' }}>
+            Echo Play Live
+          </a>
+        </footer>
+      </main>
+    </RevealOnView>
   )
 }
