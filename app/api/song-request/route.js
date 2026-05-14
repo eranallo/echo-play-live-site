@@ -52,6 +52,18 @@ function normTitle(s) {
   return String(s || '').toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim()
 }
 
+// Phase 38d: Escape user input for safe use in Airtable filterByFormula
+// string literals. Order matters: backslash first, then quote. Strip control
+// characters and curly braces (curlies break Airtable field-reference parsing).
+function escapeFormulaLiteral(s) {
+  return String(s || '')
+    .replace(/[\u0000-\u001f]/g, '')   // strip control chars + NULL
+    .replace(/[{}]/g, '')                 // strip braces (field-ref tokens)
+    .replace(/\\/g, '\\\\')           // escape backslash
+    .replace(/"/g, '\\"')              // escape double quote
+    .slice(0, 200)                        // cap length (no real song title exceeds this)
+}
+
 export async function POST(request) {
   // Block obviously bad config before touching the network.
   const token = process.env.AIRTABLE_API_TOKEN
@@ -93,8 +105,8 @@ export async function POST(request) {
   const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${SONG_REQUESTS_TABLE_ID}` +
     `?filterByFormula=` +
     encodeURIComponent(
-      `AND(LOWER({${F.SONG_TITLE}})="${songTitle.toLowerCase().replace(/"/g, '\\"')}",` +
-      `FIND("${band.airtableId}",ARRAYJOIN({${F.BAND_REQUESTED_FOR}}))>0,` +
+      `AND(LOWER({${F.SONG_TITLE}})="${escapeFormulaLiteral(songTitle.toLowerCase())}",` +
+      `FIND("${escapeFormulaLiteral(band.airtableId)}",ARRAYJOIN({${F.BAND_REQUESTED_FOR}}))>0,` +
       `{${F.STATUS}}!="Declined")`
     ) +
     `&maxRecords=1`

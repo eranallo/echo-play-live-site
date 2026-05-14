@@ -4,15 +4,51 @@ import { bands } from '@/lib/bands'
 const AIRTABLE_BASE = 'appYUOoJgvRyZ7fLB'
 const AIRTABLE_TABLE = 'tbliRPed3vD70R476'
 
+// Length caps (Phase 38c). Generous for legitimate use, tight enough to
+// block multi-megabyte abuse payloads.
+const LIMITS = {
+  name: 80,
+  email: 120,
+  eventType: 60,
+  date: 60,
+  venue: 120,
+  message: 2000,
+}
+
+// Permissive but real email shape check. Not RFC-compliant; blocks the most
+// obvious garbage (no @, no dot, whitespace).
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// Normalize an inbound string field: coerce to string, trim, cap length.
+function clean(value, max) {
+  if (typeof value !== 'string') return ''
+  return value.trim().slice(0, max)
+}
+
 export async function POST(request) {
   try {
     const body = await request.json()
-    const { name, email, band, eventType, date, venue, message, website } = body
 
-    // Honeypot: if a bot filled the hidden `website` field, return success
-    // without writing to Airtable. Silent rejection so bots don't retry.
-    if (website && typeof website === 'string' && website.trim() !== '') {
+    // Honeypot first (cheapest reject path).
+    if (typeof body.website === 'string' && body.website.trim() !== '') {
       return NextResponse.json({ success: true, recordId: null, bookingEmail: '' })
+    }
+
+    // Normalize + cap every string field.
+    const name = clean(body.name, LIMITS.name)
+    const email = clean(body.email, LIMITS.email)
+    const band = clean(body.band, 80)
+    const eventType = clean(body.eventType, LIMITS.eventType)
+    const date = clean(body.date, LIMITS.date)
+    const venue = clean(body.venue, LIMITS.venue)
+    const message = clean(body.message, LIMITS.message)
+
+    // Required-field validation.
+    if (!name) {
+      return NextResponse.json({ error: 'Name is required' }, { status: 400 })
+    }
+    if (!email || !EMAIL_RE.test(email)) {
+      return NextResponse.json({ error: 'Valid email is required' }, { status: 400 })
     }
 
     const token = process.env.AIRTABLE_API_TOKEN
