@@ -105,12 +105,14 @@ export default function TributeDiscographySection({ band }) {
             marginTop: 'var(--s-4)',
             maxWidth: '640px',
           }}>
-            Songs we perform are highlighted. Click any of them to open in Spotify. See one we don't play that you want to hear? Tap "Request" to send it to the band.
+            Tap any album to see its tracks. Songs we perform are highlighted. Click any of them to open in Spotify. See one we don't play that you want to hear? Tap "Request" to send it to the band.
           </p>
         </div>
 
         {/* Albums */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s-6)' }}>
+        {/* Phase 48: smaller inter-album gap since each album collapses to a
+            compact header row. */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s-3)' }}>
           {data.albums.map(album => (
             <AlbumBlock
               key={album.id}
@@ -139,11 +141,18 @@ export default function TributeDiscographySection({ band }) {
   )
 }
 
+// Phase 48: collapsible album cards. Each album is now a single clickable
+// header row (thumbnail + name + meta + badge + chevron). The track list is
+// hidden by default and revealed on click. This keeps the discography page
+// short while still surfacing the "X in set" badge so fans can spot albums
+// with songs they recognize from the band's set.
 function AlbumBlock({ album, accent, band, onRequest }) {
+  const [isExpanded, setIsExpanded] = useState(false)
   const performedInAlbum = useMemo(
     () => album.tracks.filter(t => t.isPerformed).length,
     [album]
   )
+  const panelId = `album-tracks-${album.id}`
 
   return (
     <article style={{
@@ -151,72 +160,107 @@ function AlbumBlock({ album, accent, band, onRequest }) {
       background: 'var(--c-bg)',
       overflow: 'hidden',
     }}>
-      <div className="disco-album-grid" style={{
-        display: 'grid',
-        gridTemplateColumns: 'minmax(0, 200px) minmax(0, 1fr)',
-        gap: 0,
-      }}>
-        {/* Cover + meta column */}
-        <div style={{
-          padding: 'clamp(20px, 2.5vw, 28px)',
-          borderRight: '1px solid rgba(255,255,255,0.06)',
-          background: '#0a0a0a',
-        }}>
-          {album.coverUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={album.coverUrl}
-              alt={`${album.name} cover`}
-              loading="lazy"
-              style={{
-                width: '100%', height: 'auto', display: 'block',
-                aspectRatio: '1 / 1', objectFit: 'cover',
-              }}
-            />
-          ) : (
-            <div style={{ aspectRatio: '1 / 1', background: '#080808' }} />
-          )}
-          <div style={{ marginTop: 'var(--s-3)' }}>
-            <div style={{
-              fontFamily: 'var(--ff-display)',
-              fontSize: 'clamp(20px, 2.4vw, 26px)',
-              letterSpacing: '0.02em',
-              lineHeight: 1.1,
-              color: 'var(--c-text)',
-              marginBottom: '4px',
-            }}>{album.name}</div>
-            <div style={{
-              fontFamily: 'var(--ff-label)',
-              fontSize: '10px',
-              fontWeight: 600,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.45)',
-              marginBottom: '10px',
-            }}>{album.year || '—'} · {album.tracks.length} tracks</div>
-            {performedInAlbum > 0 && (
-              <div style={{
-                display: 'inline-block',
-                fontFamily: 'var(--ff-label)',
-                fontSize: '9px',
-                fontWeight: 600,
-                letterSpacing: '0.15em',
-                textTransform: 'uppercase',
-                color: accent,
-                background: `${accent}15`,
-                border: `1px solid ${accent}40`,
-                padding: '4px 8px',
-              }}>{performedInAlbum} in set</div>
-            )}
-          </div>
+      <button
+        type="button"
+        onClick={() => setIsExpanded(v => !v)}
+        aria-expanded={isExpanded}
+        aria-controls={panelId}
+        className="disco-album-header"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '80px minmax(0, 1fr) auto auto',
+          alignItems: 'center',
+          gap: 'clamp(12px, 1.5vw, 20px)',
+          width: '100%',
+          padding: 'clamp(12px, 1.5vw, 16px) clamp(14px, 2vw, 24px)',
+          background: 'transparent',
+          border: 'none',
+          color: 'inherit',
+          textAlign: 'left',
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+        }}
+      >
+        {album.coverUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={album.coverUrl}
+            alt={`${album.name} cover`}
+            loading="lazy"
+            style={{
+              width: 80, height: 80, display: 'block',
+              objectFit: 'cover',
+            }}
+          />
+        ) : (
+          <div style={{ width: 80, height: 80, background: '#080808' }} />
+        )}
+
+        <div style={{ minWidth: 0 }}>
+          <div style={{
+            fontFamily: 'var(--ff-display)',
+            fontSize: 'clamp(18px, 2vw, 22px)',
+            letterSpacing: '0.02em',
+            lineHeight: 1.15,
+            color: 'var(--c-text)',
+            marginBottom: '4px',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}>{album.name}</div>
+          <div style={{
+            fontFamily: 'var(--ff-label)',
+            fontSize: '10px',
+            fontWeight: 600,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.45)',
+          }}>{album.year || '—'} · {album.tracks.length} tracks</div>
         </div>
 
-        {/* Track list */}
-        <ol style={{
-          listStyle: 'none',
-          margin: 0,
-          padding: 'clamp(8px, 1vw, 12px) 0',
-        }}>
+        {performedInAlbum > 0 ? (
+          <div className="disco-album-badge" style={{
+            fontFamily: 'var(--ff-label)',
+            fontSize: '9px',
+            fontWeight: 600,
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            color: accent,
+            background: `${accent}15`,
+            border: `1px solid ${accent}40`,
+            padding: '4px 8px',
+            whiteSpace: 'nowrap',
+          }}>{performedInAlbum} in set</div>
+        ) : <span aria-hidden="true" />}
+
+        <span
+          aria-hidden="true"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 24, height: 24,
+            color: 'rgba(255,255,255,0.5)',
+            transition: 'transform 200ms ease',
+            transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M3 5l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+      </button>
+
+      {isExpanded && (
+        <ol
+          id={panelId}
+          style={{
+            listStyle: 'none',
+            margin: 0,
+            padding: 'clamp(4px, 1vw, 8px) 0',
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+          }}
+        >
           {album.tracks.map((track, idx) => (
             <TrackRow
               key={track.id || `${album.id}-${idx}`}
@@ -226,12 +270,19 @@ function AlbumBlock({ album, accent, band, onRequest }) {
             />
           ))}
         </ol>
-      </div>
+      )}
 
       <style jsx>{`
-        @media (max-width: 640px) {
-          .disco-album-grid {
-            grid-template-columns: 1fr !important;
+        .disco-album-header:hover {
+          background: rgba(255, 255, 255, 0.02);
+        }
+        .disco-album-header:focus-visible {
+          outline: 2px solid ${accent};
+          outline-offset: -2px;
+        }
+        @media (max-width: 520px) {
+          .disco-album-badge {
+            display: none;
           }
         }
       `}</style>
