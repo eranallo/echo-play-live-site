@@ -108,6 +108,18 @@ export default function BandPage({ params }) {
   const [lightboxIdx, setLightboxIdx] = useState(0)
   const [mediaLoaded, setMediaLoaded] = useState(false)
   const [lineup, setLineup] = useState([])
+  // Phase 47: hero video gating. Default false so SSR + reduced-motion users
+  // get the still poster (heroPhoto). The effect flips this to true on mount
+  // only when the browser is OK with motion.
+  const [allowHeroVideo, setAllowHeroVideo] = useState(false)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setAllowHeroVideo(!mq.matches)
+    update()
+    mq.addEventListener?.('change', update)
+    return () => mq.removeEventListener?.('change', update)
+  }, [])
 
   useEffect(() => {
     if (!band) return
@@ -212,6 +224,32 @@ export default function BandPage({ params }) {
                 unoptimized
                 sizes="100vw"
               />
+              {/* Phase 47: hero video layer. Sits over the Image (which acts
+                  as poster) so the still always paints first. Hidden for
+                  prefers-reduced-motion users via `allowHeroVideo`. If the
+                  browser blocks autoplay, the muted Image underneath remains
+                  visible. */}
+              {band.heroVideo && allowHeroVideo && (
+                <video
+                  src={band.heroVideo}
+                  poster={heroImg.url}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: band.heroObjectPosition || 'center 20%',
+                    pointerEvents: 'none',
+                  }}
+                />
+              )}
               {/* Gradient overlay: clear at top, dark at bottom for text legibility */}
               <div style={{
                 position: 'absolute', inset: 0,
