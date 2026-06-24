@@ -1,9 +1,17 @@
 import './globals.css'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Bebas_Neue, Barlow, Barlow_Condensed } from 'next/font/google'
 import { bands, bandsList } from '@/lib/bands'
 
 const SITE_URL = 'https://echoplay.live'
+
+// Phase 51: self-hosted fonts via next/font. Eliminates the render-blocking
+// Google Fonts request, prevents layout shift via auto fallback metrics, and
+// exposes each family as a CSS variable consumed by --ff-* tokens in globals.css.
+const bebas = Bebas_Neue({ weight: '400', subsets: ['latin'], display: 'swap', variable: '--font-bebas' })
+const barlow = Barlow({ weight: ['300','400','500','600','700'], style: ['normal','italic'], subsets: ['latin'], display: 'swap', variable: '--font-barlow' })
+const barlowCondensed = Barlow_Condensed({ weight: ['300','400','500','600','700'], subsets: ['latin'], display: 'swap', variable: '--font-barlow-condensed' })
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -106,14 +114,8 @@ const jsonLd = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${bebas.variable} ${barlow.variable} ${barlowCondensed.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

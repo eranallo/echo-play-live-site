@@ -1,6 +1,5 @@
-/* @import must come FIRST per CSS spec. Next.js 16 + Turbopack enforces this
-   strictly (Next.js 14 with Webpack was more forgiving). */
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap');
+/* Fonts are self-hosted via next/font (see app/layout.js); the families are
+   exposed as --font-* CSS variables on <html> and consumed by --ff-* below. */
 
 @tailwind base;
 @tailwind components;
@@ -14,9 +13,9 @@
    ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ── Fonts ──────────────────────────────────────────── */
-  --ff-display: 'Bebas Neue', cursive;
-  --ff-body: 'Barlow', sans-serif;
-  --ff-label: 'Barlow Condensed', sans-serif;
+  --ff-display: var(--font-bebas), 'Bebas Neue', cursive;
+  --ff-body: var(--font-barlow), 'Barlow', sans-serif;
+  --ff-label: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
 
   /* ── Colors: surfaces ───────────────────────────────── */
   --c-bg: #080808;

@@ -221,7 +221,6 @@ export default function BandPage({ params }) {
                 fill
                 style={{ objectFit: 'cover', objectPosition: band.heroObjectPosition || 'center 20%' }}
                 priority
-                unoptimized
                 sizes="100vw"
               />
               {/* Phase 47: hero video layer. Sits over the Image (which acts
@@ -748,7 +747,6 @@ export default function BandPage({ params }) {
                             src={m.photo.thumb}
                             alt={m.name}
                             fill
-                            unoptimized
                             style={{ objectFit: 'cover', objectPosition: 'center 30%' }}
                             sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw"
                           />

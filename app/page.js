@@ -295,12 +295,11 @@ export default function Home() {
                     <div className="band-card-image">
                       <Image
                         src={band.heroPhoto}
-                        alt=""
+                        alt={band.name}
                         fill
                         style={{ objectFit: 'cover', objectPosition: 'center 30%' }}
                         sizes="100vw"
                         quality={75}
-                        unoptimized
                       />
                     </div>
                   )}

@@ -134,7 +134,6 @@ export default async function MusicianPage({ params }) {
                     src={m.photo.thumb}
                     alt={m.name}
                     fill
-                    unoptimized
                     priority
                     sizes="(max-width: 900px) 100vw, 40vw"
                     style={{ objectFit: 'cover', objectPosition: 'center 25%' }}
