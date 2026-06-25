@@ -1,22 +1,23 @@
 /** @type {import('next').NextConfig} */
 
-// ── Content-Security-Policy (Report-Only for v1) ──────────────────
-// Browsers REPORT violations to the console but do not block. After observing
-// a week or two of report traffic with no false positives, flip the header
-// name from 'Content-Security-Policy-Report-Only' to 'Content-Security-Policy'
-// in the headers() function below.
+// ── Content-Security-Policy (ENFORCED) ───────────────────────────
+// Enforced (Phase 53). Verified against the live site: shows/Bandsintown
+// widget, band discography (scdn), and YouTube embeds (QR pages) all load
+// from allowlisted hosts. 'unsafe-inline' on script/style is retained until
+// the nonce + inline-style refactor lands; tightening those is a future step.
 //
 // 'unsafe-inline' on style-src is required because the codebase uses ~745
 // inline style props (see Phase 40a). When that refactor lands, we can drop
 // 'unsafe-inline'. Until then it's the realistic compromise.
-const CSP_REPORT_ONLY = [
+const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://vitals.vercel-insights.com https://widget.bandsintown.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
   "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com https://*.vercel-storage.com https://*.airtableusercontent.com https://dl.airtable.com https://www.buzzsprout.com https://i.scdn.co https://mosaic.scdn.co",
+  "media-src 'self' blob: https://*.public.blob.vercel-storage.com https://*.vercel-storage.com https://*.airtableusercontent.com",
   "connect-src 'self' https://va.vercel-scripts.com https://vitals.vercel-insights.com https://api.spotify.com https://api.airtable.com https://accounts.spotify.com https://rest.bandsintown.com",
-  "frame-src 'self' https://widget.bandsintown.com https://open.spotify.com",
+  "frame-src 'self' https://widget.bandsintown.com https://open.spotify.com https://www.youtube-nocookie.com",
   "frame-ancestors 'none'",
   "object-src 'none'",
   "base-uri 'self'",
@@ -42,9 +43,8 @@ const SECURITY_HEADERS = [
     key: 'Permissions-Policy',
     value: 'camera=(), microphone=(), geolocation=(), interest-cohort=(), browsing-topics=()',
   },
-  // CSP in Report-Only mode for v1. Flip the header name to enforce once
-  // violation reports look clean.
-  { key: 'Content-Security-Policy-Report-Only', value: CSP_REPORT_ONLY },
+  // CSP enforced (Phase 53). Verified against the live site before flipping.
+  { key: 'Content-Security-Policy', value: CSP },
 ]
 
 const nextConfig = {
