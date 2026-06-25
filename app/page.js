@@ -269,7 +269,7 @@ export default function Home() {
         {/* ── BAND SHOWCASE ─────────────────────────────── */}
         <section id="bands" style={{ padding: '0' }}>
           {/* Band cards */}
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ borderTop: '1px solid var(--c-border)' }}>
             {bandsList.map((band, index) => (
               <Link
                 key={band.slug}
@@ -406,7 +406,7 @@ export default function Home() {
           padding: 'clamp(80px, 12vw, 160px) var(--gutter-fluid)',
           position: 'relative',
           overflow: 'hidden',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
+          borderTop: '1px solid var(--c-border)',
         }}>
           {/* Background accent */}
           <div style={{
@@ -420,7 +420,7 @@ export default function Home() {
             </div>
 
             <blockquote className="reveal delay-100" style={{
-              fontFamily: 'Bebas Neue, cursive',
+              fontFamily: 'var(--ff-display)',
               fontSize: 'clamp(36px, 7vw, 88px)',
               letterSpacing: '0.03em',
               lineHeight: 1.0,
@@ -428,12 +428,12 @@ export default function Home() {
               marginBottom: '40px',
             }}>
               "Quality, Hustle,<br />
-              <span style={{ color: '#D4A017' }}>and Love</span><br />
+              <span style={{ color: 'var(--c-epl)' }}>and Love</span><br />
               for the Show."
             </blockquote>
 
             <p className="reveal delay-200" style={{
-              fontFamily: 'Barlow, sans-serif',
+              fontFamily: 'var(--ff-body)',
               fontSize: 'clamp(15px, 2vw, 18px)',
               lineHeight: 1.8,
               color: 'rgba(255,255,255,0.45)',
@@ -449,8 +449,8 @@ export default function Home() {
             <div className="reveal delay-300">
               <Link href="/about" className="btn-primary" style={{
                 textDecoration: 'none',
-                color: '#D4A017',
-                borderColor: 'rgba(212, 160, 23,0.4)',
+                color: 'var(--c-epl)',
+                borderColor: 'var(--c-epl-line)',
               }}>
                 <span>Our Story</span>
                 <span>→</span>
@@ -462,7 +462,7 @@ export default function Home() {
         {/* ── SHOWS TEASER ──────────────────────────────── */}
         <section style={{
           padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
+          borderTop: '1px solid var(--c-border)',
           background: 'rgba(255,255,255,0.01)',
         }}>
           <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
@@ -474,7 +474,7 @@ export default function Home() {
               <div className="reveal">
                 <div className="section-label" style={{ marginBottom: '8px' }}>On Stage</div>
                 <h2 style={{
-                  fontFamily: 'Bebas Neue, cursive',
+                  fontFamily: 'var(--ff-display)',
                   fontSize: 'clamp(36px, 6vw, 72px)',
                   letterSpacing: '0.03em',
                   lineHeight: 0.9,
@@ -482,7 +482,7 @@ export default function Home() {
               </div>
               <Link href="/shows" className="reveal reveal-right" style={{
                 textDecoration: 'none',
-                fontFamily: 'Barlow Condensed, Barlow, sans-serif',
+                fontFamily: 'var(--ff-label)',
                 fontSize: '12px',
                 fontWeight: 600,
                 letterSpacing: '0.15em',
@@ -491,7 +491,7 @@ export default function Home() {
                 display: 'flex', alignItems: 'center', gap: '8px',
                 transition: 'color 0.2s ease',
               }}
-                onMouseEnter={e => e.currentTarget.style.color = '#D4A017'}
+                onMouseEnter={e => e.currentTarget.style.color = 'var(--c-epl)'}
                 onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
               >
                 View All Shows →
@@ -509,7 +509,7 @@ export default function Home() {
                   }}>
                     <div style={{ width: '3px', height: '18px', background: band.color, flexShrink: 0 }} />
                     <Link href={`/bands/${band.slug}`} style={{
-                      fontFamily: 'Bebas Neue, cursive',
+                      fontFamily: 'var(--ff-display)',
                       fontSize: '20px', letterSpacing: '0.04em',
                       color: band.color, textDecoration: 'none',
                       transition: 'opacity 0.2s ease',
@@ -540,7 +540,7 @@ export default function Home() {
             {/* Bandsintown widget style overrides */}
             <style>{`
               .bit-widget { background: transparent !important; font-family: 'Barlow', sans-serif !important; }
-              .bit-event { background: rgba(255,255,255,0.015) !important; border: none !important; border-bottom: 1px solid rgba(255,255,255,0.06) !important; padding: 14px 0 !important; margin: 0 !important; }
+              .bit-event { background: rgba(255,255,255,0.015) !important; border: none !important; border-bottom: 1px solid var(--c-border) !important; padding: 14px 0 !important; margin: 0 !important; }
               .bit-event:hover { background: rgba(255,255,255,0.03) !important; }
               .bit-date * { font-family: 'Bebas Neue', cursive !important; font-size: 16px !important; letter-spacing: 0.06em !important; color: #fff !important; }
               .bit-venue * { font-family: 'Barlow', sans-serif !important; color: rgba(255,255,255,0.85) !important; font-size: 13px !important; }
@@ -566,7 +566,7 @@ export default function Home() {
         {/* ── BOOKING CTA ───────────────────────────────── */}
         <section style={{
           padding: 'clamp(80px, 12vw, 140px) var(--gutter-fluid)',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
+          borderTop: '1px solid var(--c-border)',
           position: 'relative',
           overflow: 'hidden',
         }}>
@@ -577,17 +577,17 @@ export default function Home() {
           <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', position: 'relative' }}>
             <div className="section-label reveal" style={{ marginBottom: '24px' }}>Ready to Book?</div>
             <h2 className="reveal delay-100" style={{
-              fontFamily: 'Bebas Neue, cursive',
+              fontFamily: 'var(--ff-display)',
               fontSize: 'clamp(48px, 9vw, 120px)',
               letterSpacing: '0.02em',
               lineHeight: 0.9,
               marginBottom: '24px',
             }}>
               Bring the<br />
-              <span style={{ color: '#D4A017' }}>Show to You</span>
+              <span style={{ color: 'var(--c-epl)' }}>Show to You</span>
             </h2>
             <p className="reveal delay-200" style={{
-              fontFamily: 'Barlow, sans-serif',
+              fontFamily: 'var(--ff-body)',
               fontSize: '16px',
               lineHeight: 1.7,
               color: 'rgba(255,255,255,0.4)',
@@ -600,13 +600,13 @@ export default function Home() {
               <Link href="/contact" style={{
                 textDecoration: 'none',
                 display: 'inline-flex', alignItems: 'center', gap: '10px',
-                fontFamily: 'Barlow Condensed, Barlow, sans-serif',
+                fontFamily: 'var(--ff-label)',
                 fontSize: '13px',
                 fontWeight: 600,
                 letterSpacing: '0.15em',
                 textTransform: 'uppercase',
                 color: '#080808',
-                background: '#D4A017',
+                background: 'var(--c-epl)',
                 padding: '16px 36px',
                 transition: 'opacity 0.2s ease, transform 0.2s ease',
               }}
