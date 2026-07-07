@@ -1,5 +1,6 @@
 import CampaignDraftPanel from '@/components/admin/CampaignDraftPanel'
 import ShowControls from '@/components/admin/ShowControls'
+import WorkLaneRunner from '@/components/admin/WorkLaneRunner'
 import { getAdminShowDetail } from '@/lib/admin/airtable'
 
 export const dynamic = 'force-dynamic'
@@ -203,6 +204,10 @@ export default async function AdminShowDetailPage({ params }) {
         )}
 
         <div style={{ display: 'grid', gap: 'var(--s-6)' }}>
+          <Section eyebrow="Phase 4" title="Specialist Work Lanes">
+            <WorkLaneRunner showId={show.id} />
+          </Section>
+
           <Section eyebrow="Phase 1.4" title="Manual Airtable Updates">
             <ShowControls showId={show.id} notes={show.editableNotes} checklist={show.checklist} />
           </Section>
