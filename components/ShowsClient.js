@@ -6,38 +6,27 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { bandsList } from '@/lib/bands'
 
-function useScrollReveal() {
+function useReveal() {
   const ref = useRef(null)
-
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('revealed')
-      }),
-      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
-    )
-
-    const elements = ref.current?.querySelectorAll('.reveal, .reveal-left, .reveal-right')
-    elements?.forEach(element => observer.observe(element))
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible')
+      })
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' })
+    ref.current?.querySelectorAll('.ps-reveal').forEach(el => observer.observe(el))
     return () => observer.disconnect()
   }, [])
-
   return ref
 }
 
-function formatShowTime(value) {
+function showTime(value) {
   if (!value || value === 'Time TBD' || value === 'TBD') return ''
   const text = String(value).trim()
   const date = new Date(text)
-
   if (text.includes('T') && !Number.isNaN(date.getTime())) {
-    return new Intl.DateTimeFormat('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZone: 'America/Chicago',
-    }).format(date)
+    return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).format(date)
   }
-
   return text
 }
 
@@ -46,261 +35,135 @@ function filterName(filter) {
   return bandsList.find(band => band.slug === filter)?.name || 'This band'
 }
 
-function ShowCard({ show }) {
+function EventCard({ show, index }) {
   const color = show.bandColor || '#D4A017'
-  const displayTime = formatShowTime(show.startTime)
-  const hasSupport = Array.isArray(show.supportNames) && show.supportNames.length > 0
+  const time = showTime(show.startTime)
+  const support = Array.isArray(show.supportNames) && show.supportNames.length ? show.supportNames.join(' + ') : ''
 
   return (
-    <article className="show-card" style={{
-      border: '1px solid rgba(255,255,255,0.07)',
-      background: 'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.012))',
-      padding: 'clamp(20px, 3vw, 34px)',
-      display: 'grid',
-      gridTemplateColumns: 'minmax(120px, 0.26fr) minmax(0, 1fr) auto',
-      gap: 'clamp(18px, 3vw, 36px)',
-      alignItems: 'center',
-      opacity: 1,
-      transform: 'none',
-    }}>
-      <div>
-        <div style={{
-          fontFamily: 'var(--ff-display)',
-          fontSize: 'clamp(30px, 5vw, 58px)',
-          lineHeight: 0.85,
-          letterSpacing: 'var(--ls-display)',
-          color,
-          whiteSpace: 'pre-line',
-        }}>
-          {show.dateLabel?.replace(/, /g, '\n') || 'Date TBD'}
-        </div>
-        {displayTime && (
-          <div style={{
-            marginTop: 'var(--s-3)',
-            fontFamily: 'var(--ff-label)',
-            fontSize: '11px',
-            letterSpacing: '0.16em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.45)',
-          }}>
-            {displayTime}
-          </div>
-        )}
+    <article className="ps-event ps-reveal" style={{ '--accent': color, '--delay': `${index * 70}ms` }}>
+      <div className="ps-event-date">
+        <span>{show.dateLabel?.split(',')[0] || 'Date'}</span>
+        <strong>{show.dateLabel?.replace(/,/g, '').split(' ').slice(1).join(' ') || 'TBD'}</strong>
+        {time && <em>{time}</em>}
       </div>
-
-      <div style={{ minWidth: 0 }}>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '10px' }}>
-          {show.bandSlug ? (
-            <Link href={`/bands/${show.bandSlug}`} style={{
-              fontFamily: 'var(--ff-label)',
-              fontSize: '11px',
-              fontWeight: 700,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color,
-              textDecoration: 'none',
-            }}>
-              {show.bandName}
-            </Link>
-          ) : (
-            <span style={{
-              fontFamily: 'var(--ff-label)',
-              fontSize: '11px',
-              fontWeight: 700,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color,
-            }}>
-              {show.bandName}
-            </span>
-          )}
-          {hasSupport && <span style={{ color: 'rgba(255,255,255,0.38)', fontSize: '13px' }}>with {show.supportNames.join(' + ')}</span>}
+      <div className="ps-event-main">
+        <div className="ps-billing">
+          {show.bandSlug ? <Link href={`/bands/${show.bandSlug}`}>{show.bandName}</Link> : <span>{show.bandName}</span>}
+          {support && <small>with {support}</small>}
         </div>
-
-        <h2 style={{
-          fontFamily: 'var(--ff-display)',
-          fontSize: 'clamp(34px, 5vw, 70px)',
-          lineHeight: 0.9,
-          letterSpacing: 'var(--ls-display)',
-          color: 'var(--c-text)',
-          margin: '0 0 12px',
-        }}>
-          {show.venueName}
-        </h2>
-
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', color: 'rgba(255,255,255,0.42)', fontSize: '14px' }}>
-          <span>{show.ticketLabel}</span>
-          {show.publicStatus && <span>• {show.publicStatus}</span>}
-        </div>
+        <h2>{show.venueName}</h2>
+        <p>{show.ticketLabel}{show.publicStatus ? ` · ${show.publicStatus}` : ''}</p>
       </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'stretch' }}>
-        {show.ticketUrl ? (
-          <a href={show.ticketUrl} target="_blank" rel="noopener noreferrer" style={{
-            fontFamily: 'var(--ff-label)',
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            color: '#080808',
-            background: color,
-            padding: '12px 16px',
-            textDecoration: 'none',
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-          }}>
-            Tickets →
-          </a>
-        ) : (
-          <span style={{
-            fontFamily: 'var(--ff-label)',
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            color,
-            border: `1px solid ${color}66`,
-            padding: '12px 16px',
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-            opacity: 0.82,
-          }}>
-            Details Soon
-          </span>
-        )}
+      <div className="ps-event-action">
+        {show.ticketUrl ? <a href={show.ticketUrl} target="_blank" rel="noopener noreferrer">Tickets →</a> : <span>Details soon</span>}
       </div>
     </article>
   )
 }
 
 export default function ShowsClient({ shows = [] }) {
-  const pageRef = useScrollReveal()
+  const ref = useReveal()
   const [filter, setFilter] = useState('all')
-
-  const filteredShows = filter === 'all'
-    ? shows
-    : shows.filter(show => Array.isArray(show.bandSlugs) && show.bandSlugs.includes(filter))
+  const filteredShows = filter === 'all' ? shows : shows.filter(show => Array.isArray(show.bandSlugs) && show.bandSlugs.includes(filter))
+  const nextShow = filteredShows[0]
 
   return (
     <>
       <Nav />
-      <main ref={pageRef} style={{ background: '#080808', minHeight: '100vh' }}>
-        <section style={{
-          padding: 'clamp(120px, 16vw, 180px) var(--gutter-fluid) clamp(60px, 8vw, 100px)',
-          position: 'relative',
-          overflow: 'hidden',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-        }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 60% 80% at 20% 50%, rgba(212,160,23,0.04) 0%, transparent 60%)' }} />
-          <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative' }}>
-            <div className="section-label reveal" style={{ marginBottom: '16px' }}>On Stage</div>
-            <h1 className="reveal delay-100" style={{
-              fontFamily: 'var(--ff-display)',
-              fontSize: 'clamp(64px, 14vw, 180px)',
-              letterSpacing: '0.01em',
-              lineHeight: 0.85,
-              marginBottom: '24px',
-            }}>
-              Shows &<br /><span style={{ color: 'var(--c-epl)' }}>Events</span>
-            </h1>
-            <p className="reveal delay-200" style={{
-              fontSize: '16px',
-              lineHeight: 1.7,
-              color: 'rgba(255,255,255,0.52)',
-              maxWidth: '620px',
-            }}>
-              Announced public dates only. Ticket links and lineup details are added here as each show campaign goes live.
-            </p>
-          </div>
-        </section>
-
-        <div style={{
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-          position: 'sticky',
-          top: '60px',
-          zIndex: 10,
-          background: 'rgba(8,8,8,0.96)',
-          backdropFilter: 'blur(12px)',
-        }}>
-          <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative' }}>
-            <div className="filter-bar-scroll" style={{ padding: '0 var(--gutter-fluid)', display: 'flex', overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              {['all', ...bandsList.map(band => band.slug)].map(slug => {
-                const band = slug === 'all' ? null : bandsList.find(item => item.slug === slug)
-                const isActive = filter === slug
-
-                return (
-                  <button key={slug} onClick={() => setFilter(slug)} style={{
-                    fontFamily: 'var(--ff-label)',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    padding: '16px 20px',
-                    background: 'none',
-                    border: 'none',
-                    borderBottom: `2px solid ${isActive ? (band ? band.color : '#D4A017') : 'transparent'}`,
-                    color: isActive ? (band ? band.color : '#D4A017') : 'rgba(255,255,255,0.35)',
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                    marginBottom: '-1px',
-                  }}>
-                    {slug === 'all' ? 'All Shows' : band.name}
-                  </button>
-                )
-              })}
-            </div>
-            <div className="filter-bar-fade" style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '40px', background: 'linear-gradient(to right, rgba(8,8,8,0) 0%, rgba(8,8,8,0.96) 100%)', pointerEvents: 'none' }} />
-          </div>
-        </div>
-
-        <style jsx global>{`
-          .filter-bar-scroll::-webkit-scrollbar { display: none; }
-          @media (min-width: 769px) { .filter-bar-fade { display: none; } }
-          @media (max-width: 760px) { .show-card { grid-template-columns: 1fr !important; } }
+      <main ref={ref} className="ps-site">
+        <style>{`
+          .ps-site { min-height:100vh; background:radial-gradient(circle at 15% -5%, rgba(212,160,23,.18), transparent 32%), radial-gradient(circle at 88% 8%, rgba(255,255,255,.07), transparent 28%), linear-gradient(180deg,#0e0e0e 0%,#050505 48%,#030303 100%); color:var(--c-text); overflow:hidden; }
+          .ps-site::before { content:''; position:fixed; inset:0; pointer-events:none; background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px); background-size:72px 72px; mask-image:linear-gradient(to bottom,#000,transparent 72%); opacity:.55; }
+          .ps-wrap { width:min(1520px, calc(100vw - clamp(32px,7vw,112px))); margin:0 auto; position:relative; z-index:1; }
+          .ps-hero { padding:clamp(120px,14vw,200px) 0 clamp(44px,7vw,92px); position:relative; }
+          .ps-hero-grid { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr); gap:clamp(28px,6vw,86px); align-items:end; }
+          .ps-kicker { display:inline-flex; gap:12px; align-items:center; font-family:var(--ff-label); font-size:11px; letter-spacing:.26em; text-transform:uppercase; color:var(--c-epl); font-weight:800; }
+          .ps-kicker::before { content:''; width:9px; height:9px; border-radius:50%; background:var(--c-epl); box-shadow:0 0 24px var(--c-epl); }
+          .ps-title { font-family:var(--ff-display); font-size:clamp(76px,15vw,220px); line-height:.76; letter-spacing:-.015em; margin:18px 0 22px; }
+          .ps-title span { color:var(--c-epl); }
+          .ps-copy { color:rgba(255,255,255,.58); font-size:clamp(16px,1.5vw,21px); line-height:1.6; max-width:700px; }
+          .ps-feature { min-height:370px; border:1px solid rgba(255,255,255,.10); border-radius:38px; background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.018)); padding:28px; position:relative; overflow:hidden; box-shadow:0 44px 130px rgba(0,0,0,.44); }
+          .ps-feature::after { content:''; position:absolute; inset:0; background:radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--feature, #D4A017) 26%, transparent), transparent 42%); pointer-events:none; }
+          .ps-feature span { font-family:var(--ff-label); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--c-epl); position:relative; z-index:1; }
+          .ps-feature strong { display:block; font-family:var(--ff-display); font-size:clamp(48px,7vw,92px); line-height:.82; margin:18px 0 12px; position:relative; z-index:1; }
+          .ps-feature p { color:rgba(255,255,255,.58); line-height:1.55; position:relative; z-index:1; }
+          .ps-filter { position:sticky; top:60px; z-index:10; border-top:1px solid rgba(255,255,255,.08); border-bottom:1px solid rgba(255,255,255,.08); background:rgba(6,6,6,.78); backdrop-filter:blur(24px); }
+          .ps-filter-scroll { display:flex; gap:10px; overflow-x:auto; padding:12px 0; scrollbar-width:none; }
+          .ps-filter-scroll::-webkit-scrollbar { display:none; }
+          .ps-filter button { flex:0 0 auto; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.025); color:rgba(255,255,255,.50); border-radius:999px; padding:12px 16px; font-family:var(--ff-label); font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; cursor:pointer; transition:transform .2s ease,border-color .2s ease,color .2s ease,background .2s ease; }
+          .ps-filter button:hover { transform:translateY(-2px); }
+          .ps-filter button.active { color:#080808; background:var(--filter); border-color:var(--filter); }
+          .ps-list { padding:clamp(58px,9vw,126px) 0; }
+          .ps-list-head { display:flex; justify-content:space-between; align-items:end; gap:24px; margin-bottom:34px; }
+          .ps-list-head h2 { font-family:var(--ff-display); font-size:clamp(44px,8vw,112px); line-height:.82; letter-spacing:-.01em; }
+          .ps-list-head p { color:rgba(255,255,255,.48); max-width:420px; line-height:1.55; }
+          .ps-events { display:grid; gap:18px; }
+          .ps-event { display:grid; grid-template-columns:minmax(128px,.22fr) minmax(0,1fr) auto; gap:clamp(18px,4vw,60px); align-items:center; min-height:260px; border:1px solid rgba(255,255,255,.10); border-radius:34px; padding:clamp(22px,3vw,36px); background:linear-gradient(180deg,rgba(255,255,255,.052),rgba(255,255,255,.015)); box-shadow:0 30px 110px rgba(0,0,0,.30); position:relative; overflow:hidden; opacity:0; transform:translateY(28px); transition:opacity .7s ease var(--delay), transform .7s ease var(--delay), border-color .25s ease; }
+          .ps-event.is-visible { opacity:1; transform:translateY(0); }
+          .ps-event::after { content:''; position:absolute; inset:-40% -25% auto auto; width:55%; height:120%; background:radial-gradient(circle, color-mix(in srgb, var(--accent) 22%, transparent), transparent 64%); pointer-events:none; }
+          .ps-event:hover { border-color:color-mix(in srgb, var(--accent) 55%, white 8%); }
+          .ps-event-date span,.ps-billing a,.ps-billing span { font-family:var(--ff-label); font-size:11px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); text-decoration:none; }
+          .ps-event-date strong { display:block; white-space:pre-line; font-family:var(--ff-display); font-size:clamp(44px,6vw,86px); line-height:.78; color:#fff; margin:10px 0; }
+          .ps-event-date em { color:rgba(255,255,255,.42); font-style:normal; font-size:13px; letter-spacing:.08em; text-transform:uppercase; }
+          .ps-billing { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:12px; }
+          .ps-billing small { color:rgba(255,255,255,.44); font-size:14px; }
+          .ps-event-main h2 { font-family:var(--ff-display); font-size:clamp(46px,7vw,108px); line-height:.82; letter-spacing:-.01em; margin:0 0 16px; }
+          .ps-event-main p { color:rgba(255,255,255,.50); }
+          .ps-event-action a,.ps-event-action span { display:inline-flex; align-items:center; justify-content:center; min-height:52px; padding:0 20px; border:1px solid color-mix(in srgb, var(--accent) 72%, transparent); color:var(--accent); border-radius:999px; text-decoration:none; font-family:var(--ff-label); font-size:11px; letter-spacing:.15em; text-transform:uppercase; white-space:nowrap; }
+          .ps-event-action a { background:color-mix(in srgb, var(--accent) 10%, transparent); }
+          .ps-empty { border:1px solid rgba(255,255,255,.10); border-radius:34px; padding:44px; background:rgba(255,255,255,.028); color:rgba(255,255,255,.58); line-height:1.65; }
+          .ps-bottom { padding:0 0 clamp(70px,10vw,140px); }
+          .ps-follow { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+          .ps-follow a { border:1px solid rgba(255,255,255,.10); border-radius:999px; padding:10px 14px; text-decoration:none; font-family:var(--ff-label); font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:rgba(255,255,255,.54); }
+          .ps-reveal { opacity:0; transform:translateY(28px); transition:opacity .72s ease, transform .72s ease; }
+          .ps-reveal.is-visible { opacity:1; transform:translateY(0); }
+          @media (max-width:960px){ .ps-hero-grid,.ps-event{grid-template-columns:1fr}.ps-event-action{justify-self:start}.ps-list-head{display:grid}.ps-title{font-size:clamp(70px,22vw,150px)} }
+          @media (prefers-reduced-motion:reduce){ .ps-reveal,.ps-event{transition:none;opacity:1;transform:none} }
         `}</style>
 
-        <section style={{ padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)' }}>
-          <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '40px' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#D4A017', boxShadow: '0 0 8px #D4A017' }} />
-              <div style={{ fontFamily: 'var(--ff-label)', fontSize: '11px', fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#D4A017' }}>
-                {filteredShows.length ? `${filteredShows.length} Announced ${filteredShows.length === 1 ? 'Show' : 'Shows'}` : filter === 'all' ? 'Announced Shows' : `${filterName(filter)} Shows`}
-              </div>
+        <section className="ps-hero">
+          <div className="ps-wrap ps-hero-grid">
+            <div>
+              <div className="ps-kicker ps-reveal">Announced public dates only</div>
+              <h1 className="ps-title ps-reveal">Shows that feel like <span>events.</span></h1>
+              <p className="ps-copy ps-reveal">Browse upcoming Echo Play Live dates. We only publish shows once they are approved for public release, so what you see here is ready for fans.</p>
             </div>
-
-            {filteredShows.length ? (
-              <div style={{ display: 'grid', gap: '18px' }}>
-                {filteredShows.map(show => <ShowCard key={show.id} show={show} />)}
-              </div>
-            ) : (
-              <div style={{ border: '1px solid rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.018)', padding: '40px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
-                No announced public shows for {filterName(filter)} yet. Check back soon or follow the band for new date announcements.
-              </div>
-            )}
-
-            <div style={{ marginTop: '48px', paddingTop: '36px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-              <div style={{ fontFamily: 'var(--ff-label)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)', marginBottom: '16px' }}>
-                Follow on Bandsintown
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                {bandsList.filter(band => band.social?.bandsintown).map(band => (
-                  <a key={band.slug} href={band.social.bandsintown} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--ff-label)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: band.color, border: `1px solid ${band.color}40`, padding: '8px 16px', textDecoration: 'none' }}>
-                    {band.shortName} →
-                  </a>
-                ))}
-              </div>
-            </div>
+            <aside className="ps-feature ps-reveal" style={{ '--feature': nextShow?.bandColor || '#D4A017' }}>
+              <span>Next announced show</span>
+              <strong>{nextShow ? nextShow.bandName : 'More dates soon'}</strong>
+              <p>{nextShow ? `${nextShow.venueName} · ${nextShow.dateLabel}` : 'Follow the bands and check back as campaigns go live.'}</p>
+            </aside>
           </div>
         </section>
 
-        <section style={{ padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)', borderTop: '1px solid rgba(255,255,255,0.06)', textAlign: 'center' }}>
-          <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-            <p className="reveal" style={{ fontSize: '15px', color: 'rgba(255,255,255,0.4)', marginBottom: '24px' }}>
-              Interested in booking one of our bands for your venue or event?
-            </p>
-            <Link className="reveal delay-100" href="/contact" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', fontFamily: 'var(--ff-label)', fontSize: '12px', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#080808', background: '#D4A017', padding: '14px 28px', textDecoration: 'none' }}>
-              Booking Inquiry →
-            </Link>
+        <nav className="ps-filter" aria-label="Show filters">
+          <div className="ps-wrap ps-filter-scroll">
+            {['all', ...bandsList.map(band => band.slug)].map(slug => {
+              const band = slug === 'all' ? null : bandsList.find(item => item.slug === slug)
+              const active = filter === slug
+              const color = band?.color || '#D4A017'
+              return <button className={active ? 'active' : ''} style={{ '--filter': color }} key={slug} onClick={() => setFilter(slug)}>{slug === 'all' ? 'All Shows' : band.shortName || band.name}</button>
+            })}
+          </div>
+        </nav>
+
+        <section className="ps-list">
+          <div className="ps-wrap">
+            <div className="ps-list-head ps-reveal">
+              <h2>{filteredShows.length || 'No'} announced {filteredShows.length === 1 ? 'show' : 'shows'}</h2>
+              <p>{filter === 'all' ? 'Everything currently approved for public release.' : `Public dates featuring ${filterName(filter)}.`}</p>
+            </div>
+            {filteredShows.length ? <div className="ps-events">{filteredShows.map((show, index) => <EventCard key={show.id} show={show} index={index} />)}</div> : <div className="ps-empty">No announced public shows for {filterName(filter)} yet. Check back soon or follow the band for new date announcements.</div>}
+          </div>
+        </section>
+
+        <section className="ps-bottom">
+          <div className="ps-wrap">
+            <div className="ps-kicker ps-reveal">Follow the roster</div>
+            <div className="ps-follow ps-reveal">
+              {bandsList.filter(band => band.social?.bandsintown).map(band => <a key={band.slug} href={band.social.bandsintown} target="_blank" rel="noopener noreferrer">{band.shortName || band.name} →</a>)}
+            </div>
           </div>
         </section>
       </main>
