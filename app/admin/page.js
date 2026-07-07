@@ -1,3 +1,7 @@
+import { getAdminShowsOverview } from '@/lib/admin/airtable'
+
+export const dynamic = 'force-dynamic'
+
 const statusCards = [
   {
     eyebrow: 'Phase 1',
@@ -10,9 +14,9 @@ const statusCards = [
     body: 'The /admin route requires ADMIN_USERNAME and ADMIN_PASSWORD environment variables before it can be viewed.',
   },
   {
-    eyebrow: 'Next Step',
+    eyebrow: 'Data Layer',
     title: 'Read-Only Airtable',
-    body: 'Next we connect upcoming shows, bands, and venues in a read-only mode before allowing agent-generated drafts.',
+    body: 'Upcoming shows are now pulled server-side from Airtable. No write actions or public data exposure yet.',
   },
 ]
 
@@ -25,7 +29,115 @@ const workflowCards = [
   'Venue Follow-Ups',
 ]
 
-export default function AdminPage() {
+function StatusPill({ children, active }) {
+  return (
+    <span style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      border: `1px solid ${active ? 'var(--c-epl-line)' : 'var(--c-border)'}`,
+      background: active ? 'rgba(212, 160, 23, 0.08)' : 'var(--c-surface-2)',
+      color: active ? 'var(--c-epl)' : 'var(--c-text-dim)',
+      padding: '5px 8px',
+      fontFamily: 'var(--ff-label)',
+      fontSize: '10px',
+      letterSpacing: '0.12em',
+      textTransform: 'uppercase',
+      whiteSpace: 'nowrap',
+    }}>
+      {children}
+    </span>
+  )
+}
+
+function ShowCard({ show }) {
+  return (
+    <article style={{
+      border: '1px solid var(--c-border)',
+      background: show.needsAttention ? 'rgba(212, 160, 23, 0.035)' : 'rgba(255, 255, 255, 0.015)',
+      padding: 'var(--s-5)',
+      display: 'grid',
+      gap: 'var(--s-4)',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 'var(--s-4)', flexWrap: 'wrap' }}>
+        <div>
+          <div style={{
+            fontFamily: 'var(--ff-label)',
+            fontSize: 'var(--t-label-s)',
+            letterSpacing: 'var(--ls-label-tight)',
+            color: 'var(--c-epl)',
+            textTransform: 'uppercase',
+            marginBottom: 'var(--s-2)',
+          }}>
+            {show.dateLabel} · {show.startTime}
+          </div>
+          <h3 style={{
+            fontFamily: 'var(--ff-display)',
+            fontSize: 'clamp(28px, 3vw, 42px)',
+            letterSpacing: 'var(--ls-display)',
+            lineHeight: 0.95,
+          }}>
+            {show.band}
+          </h3>
+          <p style={{ color: 'var(--c-text-muted)', marginTop: 'var(--s-2)', lineHeight: 'var(--lh-snug)' }}>
+            {show.venue}
+          </p>
+        </div>
+
+        <div style={{ textAlign: 'right' }}>
+          <StatusPill active={show.needsAttention}>
+            {show.needsAttention ? 'Needs Attention' : 'On Track'}
+          </StatusPill>
+          <p style={{ color: 'var(--c-text-faint)', marginTop: 'var(--s-2)', fontSize: '13px' }}>
+            {show.status}
+          </p>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--s-2)' }}>
+        <StatusPill active={show.contractSigned}>Contract</StatusPill>
+        <StatusPill active={show.graphicCreated}>Graphic</StatusPill>
+        <StatusPill active={show.facebookEventCreated}>FB Event</StatusPill>
+        <StatusPill active={show.bandsintownPosted}>Bandsintown</StatusPill>
+        <StatusPill active={show.promotionReleased}>Promo</StatusPill>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+        gap: 'var(--s-3)',
+        color: 'var(--c-text-dim)',
+        fontSize: '14px',
+      }}>
+        <div><strong style={{ color: 'var(--c-text-muted)' }}>Age:</strong> {show.ageRestriction}</div>
+        <div><strong style={{ color: 'var(--c-text-muted)' }}>Ticket:</strong> {show.ticketPrice || (show.ticketUrl ? 'Link Available' : 'TBD')}</div>
+      </div>
+
+      {show.missingFlags.length > 0 && (
+        <div style={{ borderTop: '1px solid var(--c-border-subtle)', paddingTop: 'var(--s-3)' }}>
+          <div style={{
+            fontFamily: 'var(--ff-label)',
+            fontSize: '10px',
+            letterSpacing: '0.14em',
+            color: 'var(--c-text-faint)',
+            textTransform: 'uppercase',
+            marginBottom: 'var(--s-2)',
+          }}>
+            Missing / Incomplete
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--s-2)' }}>
+            {show.missingFlags.map(flag => (
+              <StatusPill key={flag} active>{flag}</StatusPill>
+            ))}
+          </div>
+        </div>
+      )}
+    </article>
+  )
+}
+
+export default async function AdminPage() {
+  const showsOverview = await getAdminShowsOverview()
+
   return (
     <main style={{
       minHeight: '100vh',
@@ -83,10 +195,12 @@ export default function AdminPage() {
               Current Status
             </div>
             <div style={{ fontFamily: 'var(--ff-display)', fontSize: '44px', lineHeight: 1 }}>
-              Foundation
+              {showsOverview.ok ? 'Live Data' : 'Foundation'}
             </div>
             <p style={{ color: 'var(--c-text-dim)', marginTop: 'var(--s-3)', lineHeight: 'var(--lh-snug)' }}>
-              No private data is displayed yet. This keeps the first admin release safe and reviewable.
+              {showsOverview.ok
+                ? `${showsOverview.counts.total} upcoming shows loaded. ${showsOverview.counts.needsAttention} need attention.`
+                : 'Airtable data is not loading yet. Check env vars and deployment logs.'}
             </p>
           </div>
         </div>
@@ -127,6 +241,56 @@ export default function AdminPage() {
             </article>
           ))}
         </div>
+
+        <section style={{
+          border: '1px solid var(--c-border)',
+          background: 'rgba(255, 255, 255, 0.015)',
+          padding: 'var(--s-6)',
+          marginBottom: 'var(--s-8)',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 'var(--s-5)', flexWrap: 'wrap', marginBottom: 'var(--s-5)' }}>
+            <div>
+              <div className="section-label" style={{ marginBottom: 'var(--s-3)' }}>
+                Upcoming Shows
+              </div>
+              <h2 style={{
+                fontFamily: 'var(--ff-display)',
+                fontSize: 'var(--t-h2)',
+                letterSpacing: 'var(--ls-display)',
+                lineHeight: 1,
+              }}>
+                Read-Only Airtable Dashboard
+              </h2>
+            </div>
+            {showsOverview.ok && (
+              <StatusPill active>
+                {showsOverview.counts.needsAttention} Need Attention
+              </StatusPill>
+            )}
+          </div>
+
+          {!showsOverview.ok ? (
+            <div style={{
+              border: '1px solid var(--c-epl-line)',
+              background: 'rgba(212, 160, 23, 0.06)',
+              padding: 'var(--s-5)',
+              color: 'var(--c-text-muted)',
+              lineHeight: 'var(--lh-base)',
+            }}>
+              <strong style={{ color: 'var(--c-epl)' }}>Airtable is not connected on this deployment.</strong>
+              <br />
+              {showsOverview.error}
+            </div>
+          ) : showsOverview.shows.length === 0 ? (
+            <p style={{ color: 'var(--c-text-dim)' }}>No upcoming shows found.</p>
+          ) : (
+            <div style={{ display: 'grid', gap: 'var(--s-4)' }}>
+              {showsOverview.shows.map(show => (
+                <ShowCard key={show.id} show={show} />
+              ))}
+            </div>
+          )}
+        </section>
 
         <section style={{
           border: '1px solid var(--c-border)',
