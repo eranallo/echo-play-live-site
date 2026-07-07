@@ -1,7 +1,7 @@
 'use client'
 
 import Script from 'next/script'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 
 const A = process.env.NEXT_PUBLIC_META_PIXEL_ID
@@ -12,7 +12,7 @@ function pagePath(pathname, searchParams) {
   return `${pathname || '/'}${query ? `?${query}` : ''}`
 }
 
-export default function VendorTags() {
+function VendorTagsInner() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
@@ -56,8 +56,15 @@ export default function VendorTags() {
     }
   }, [])
 
+  return null
+}
+
+export default function VendorTags() {
   return (
     <>
+      <Suspense fallback={null}>
+        <VendorTagsInner />
+      </Suspense>
       {A && (
         <Script id="meta-init" strategy="afterInteractive">
           {`
