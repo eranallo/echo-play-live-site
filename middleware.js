@@ -16,14 +16,14 @@ function unauthorized() {
 export function middleware(request) {
   const pathname = request.nextUrl.pathname
 
-  if (!pathname.startsWith('/admin')) {
+  if (!pathname.startsWith('/admin') && !pathname.startsWith('/api/admin')) {
     return NextResponse.next()
   }
 
   const expectedUsername = process.env.ADMIN_USERNAME
   const expectedPassword = process.env.ADMIN_PASSWORD
 
-  // Fail closed. If credentials are not configured in Vercel, /admin is not accessible.
+  // Fail closed. If credentials are not configured in Vercel, admin pages and admin APIs are not accessible.
   if (!expectedUsername || !expectedPassword) {
     return unauthorized()
   }
@@ -62,5 +62,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*'],
 }
