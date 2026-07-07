@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 
-function ActionButton({ children, disabled, onClick }) {
+function ActionButton({ children, disabled, onClick, type = 'button' }) {
   return (
-    <button onClick={onClick} disabled={disabled} style={{
+    <button type={type} onClick={onClick} disabled={disabled} style={{
       border: '1px solid var(--c-epl-line)',
       color: disabled ? 'var(--c-text-faint)' : 'var(--c-epl)',
       padding: '12px 14px',
@@ -143,6 +143,231 @@ function SpecialistCard({ specialist }) {
   )
 }
 
+function SuggestedAction({ action }) {
+  return (
+    <a href={action.href || '/admin/chief-of-staff'} style={{
+      display: 'block',
+      border: `1px solid ${action.requiresApproval ? 'var(--c-epl-line)' : 'var(--c-border)'}`,
+      background: action.requiresApproval ? 'rgba(212, 160, 23, 0.06)' : 'var(--c-surface-2)',
+      color: 'inherit',
+      textDecoration: 'none',
+      padding: 'var(--s-3)',
+    }}>
+      <div style={{ display: 'flex', gap: 'var(--s-2)', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <strong style={{ color: action.requiresApproval ? 'var(--c-epl)' : 'var(--c-text-muted)' }}>{action.label}</strong>
+        {action.requiresApproval && <Pill active>Approval</Pill>}
+      </div>
+      {action.specialist && <div style={{ color: 'var(--c-text-faint)', fontFamily: 'var(--ff-label)', fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: 'var(--s-2)' }}>{action.specialist}</div>}
+      {action.description && <p style={{ color: 'var(--c-text-dim)', lineHeight: 'var(--lh-snug)', marginTop: 'var(--s-2)' }}>{action.description}</p>}
+    </a>
+  )
+}
+
+function ChatResponse({ response }) {
+  if (!response) return null
+
+  const routing = Array.isArray(response.specialistRouting) ? response.specialistRouting : []
+  const actions = Array.isArray(response.suggestedActions) ? response.suggestedActions : []
+  const shows = Array.isArray(response.referencedShows) ? response.referencedShows : []
+  const warnings = Array.isArray(response.approvalWarnings) ? response.approvalWarnings : []
+  const followUps = Array.isArray(response.followUpQuestions) ? response.followUpQuestions : []
+
+  return (
+    <div style={{ display: 'grid', gap: 'var(--s-4)' }}>
+      <p style={{ color: 'var(--c-text-muted)', lineHeight: 'var(--lh-base)', whiteSpace: 'pre-wrap' }}>{response.answer}</p>
+
+      {shows.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--s-2)' }}>
+          {shows.map(show => (
+            <a key={show.id || show.href} href={show.href || `/admin/shows/${show.id}`} style={{ color: 'var(--c-epl)', textDecoration: 'none' }}>
+              <Pill active>{show.label || 'Open Show'}</Pill>
+            </a>
+          ))}
+        </div>
+      )}
+
+      {actions.length > 0 && (
+        <div style={{ display: 'grid', gap: 'var(--s-3)' }}>
+          <div className="section-label">Suggested Actions</div>
+          {actions.map((action, index) => <SuggestedAction key={`${action.label}-${index}`} action={action} />)}
+        </div>
+      )}
+
+      {routing.length > 0 && (
+        <div style={{ display: 'grid', gap: 'var(--s-3)' }}>
+          <div className="section-label">Specialist Routing</div>
+          {routing.map((item, index) => (
+            <div key={`${item.specialist}-${index}`} style={{ border: '1px solid var(--c-border-subtle)', background: 'var(--c-surface-2)', padding: 'var(--s-3)' }}>
+              <strong style={{ color: 'var(--c-epl)' }}>{item.specialist || 'Chief of Staff'}</strong>
+              {item.reason && <p style={{ color: 'var(--c-text-muted)', lineHeight: 'var(--lh-snug)', marginTop: 'var(--s-2)' }}>{item.reason}</p>}
+              {Array.isArray(item.actions) && item.actions.length > 0 && (
+                <ul style={{ color: 'var(--c-text-dim)', lineHeight: 'var(--lh-base)', paddingLeft: '1.1rem', marginTop: 'var(--s-2)' }}>
+                  {item.actions.map((action, actionIndex) => <li key={actionIndex}>{action}</li>)}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {warnings.length > 0 && (
+        <details style={{ border: '1px solid var(--c-epl-line)', background: 'rgba(212, 160, 23, 0.04)', padding: 'var(--s-3)', color: 'var(--c-text-muted)' }}>
+          <summary style={{ color: 'var(--c-epl)', cursor: 'pointer', fontFamily: 'var(--ff-label)', letterSpacing: '0.12em', textTransform: 'uppercase', fontSize: '11px' }}>Approval Guardrails</summary>
+          <ul style={{ lineHeight: 'var(--lh-base)', paddingLeft: '1.1rem', marginTop: 'var(--s-3)' }}>
+            {warnings.slice(0, 8).map((warning, index) => <li key={index}>{warning}</li>)}
+          </ul>
+        </details>
+      )}
+
+      {followUps.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--s-2)' }}>
+          {followUps.slice(0, 3).map(question => <Pill key={question}>{question}</Pill>)}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ChiefOfStaffChat() {
+  const [question, setQuestion] = useState('')
+  const [sending, setSending] = useState(false)
+  const [chatError, setChatError] = useState(null)
+  const [messages, setMessages] = useState([
+    {
+      role: 'assistant',
+      content: 'I’m ready. Ask me what needs attention, which specialist should handle something, or how to get a show ready.',
+      response: null,
+    },
+  ])
+
+  async function askQuestion(event, overrideQuestion) {
+    event?.preventDefault()
+    const cleanQuestion = String(overrideQuestion || question).trim()
+    if (!cleanQuestion) return
+
+    const userMessage = { role: 'user', content: cleanQuestion }
+    const nextMessages = [...messages, userMessage]
+    setMessages(nextMessages)
+    setQuestion('')
+    setSending(true)
+    setChatError(null)
+
+    try {
+      const response = await fetch('/api/admin/chief-of-staff/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: cleanQuestion,
+          history: nextMessages.slice(-8).map(message => ({ role: message.role, content: message.content })),
+        }),
+      })
+      const data = await response.json()
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || 'Chief of Staff chat failed.')
+      }
+
+      const assistantMessage = {
+        role: 'assistant',
+        content: data.response?.answer || 'I generated a response.',
+        response: data.response,
+        aiRunId: data.aiRunId,
+        aiRunError: data.aiRunError,
+      }
+      setMessages(current => [...current, assistantMessage])
+    } catch (error) {
+      setChatError(error?.message || 'Chief of Staff chat failed.')
+      setMessages(current => [...current, { role: 'assistant', content: 'I hit an issue answering that. Try again or narrow the question to a specific show.', response: null }])
+    } finally {
+      setSending(false)
+    }
+  }
+
+  const quickPrompts = [
+    'What needs my attention today?',
+    'Which shows need graphics?',
+    'What approvals are waiting?',
+    'What should the Campaign Agent handle next?',
+  ]
+
+  return (
+    <Section eyebrow="Conversation" title="Talk to Your Chief of Staff">
+      <div style={{ display: 'grid', gap: 'var(--s-4)' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--s-2)' }}>
+          {quickPrompts.map(prompt => (
+            <button key={prompt} type="button" onClick={event => askQuestion(event, prompt)} disabled={sending} style={{
+              border: '1px solid var(--c-border)',
+              background: 'var(--c-surface-2)',
+              color: 'var(--c-text-muted)',
+              padding: '8px 10px',
+              fontFamily: 'var(--ff-label)',
+              fontSize: '10px',
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              cursor: sending ? 'not-allowed' : 'pointer',
+            }}>
+              {prompt}
+            </button>
+          ))}
+        </div>
+
+        <div style={{
+          border: '1px solid var(--c-border)',
+          background: 'rgba(0, 0, 0, 0.16)',
+          padding: 'var(--s-4)',
+          display: 'grid',
+          gap: 'var(--s-4)',
+          maxHeight: '760px',
+          overflow: 'auto',
+        }}>
+          {messages.map((message, index) => (
+            <div key={`${message.role}-${index}`} style={{
+              justifySelf: message.role === 'user' ? 'end' : 'start',
+              maxWidth: 'min(100%, 860px)',
+              border: `1px solid ${message.role === 'user' ? 'var(--c-epl-line)' : 'var(--c-border)'}`,
+              background: message.role === 'user' ? 'rgba(212, 160, 23, 0.07)' : 'var(--c-surface-2)',
+              padding: 'var(--s-4)',
+              color: 'var(--c-text-muted)',
+            }}>
+              <div style={{ fontFamily: 'var(--ff-label)', fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: message.role === 'user' ? 'var(--c-epl)' : 'var(--c-text-faint)', marginBottom: 'var(--s-2)' }}>
+                {message.role === 'user' ? 'You' : 'Chief of Staff'}
+              </div>
+              {message.response ? <ChatResponse response={message.response} /> : <p style={{ lineHeight: 'var(--lh-base)' }}>{message.content}</p>}
+              {message.aiRunId && <p style={{ color: 'var(--c-text-faint)', fontSize: '12px', marginTop: 'var(--s-3)' }}>Logged to AI RUNS: {message.aiRunId}</p>}
+              {message.aiRunError && <p style={{ color: '#f3a6a6', fontSize: '12px', marginTop: 'var(--s-3)' }}>Run log failed: {message.aiRunError}</p>}
+            </div>
+          ))}
+          {sending && <p style={{ color: 'var(--c-epl)', fontFamily: 'var(--ff-label)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Thinking…</p>}
+        </div>
+
+        {chatError && <Message message={{ type: 'error', text: chatError }} />}
+
+        <form onSubmit={askQuestion} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 'var(--s-3)' }}>
+          <textarea
+            value={question}
+            onChange={event => setQuestion(event.target.value)}
+            rows={3}
+            placeholder="Ask your Chief of Staff…"
+            style={{
+              width: '100%',
+              border: '1px solid var(--c-border)',
+              background: 'var(--c-bg)',
+              color: 'var(--c-text-muted)',
+              padding: 'var(--s-3)',
+              font: 'inherit',
+              lineHeight: 'var(--lh-base)',
+              resize: 'vertical',
+            }}
+          />
+          <ActionButton type="submit" disabled={sending || !question.trim()}>
+            Send
+          </ActionButton>
+        </form>
+      </div>
+    </Section>
+  )
+}
+
 export default function ChiefOfStaffConsole({ initialBrief }) {
   const [brief, setBrief] = useState(initialBrief)
   const [loading, setLoading] = useState(false)
@@ -196,6 +421,8 @@ export default function ChiefOfStaffConsole({ initialBrief }) {
 
       <Message message={message} />
       {brief?.generationWarning && <Message message={{ type: 'error', text: brief.generationWarning }} />}
+
+      <ChiefOfStaffChat />
 
       <Section eyebrow="Chief of Staff" title="Command Brief">
         <p style={{ color: 'var(--c-text-muted)', fontSize: 'var(--t-body-l)', lineHeight: 'var(--lh-base)' }}>
