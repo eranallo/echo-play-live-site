@@ -131,6 +131,21 @@ function ShowCard({ show }) {
           </div>
         </div>
       )}
+
+      <a href={`/admin/shows/${show.id}`} style={{
+        justifySelf: 'start',
+        border: '1px solid var(--c-epl-line)',
+        color: 'var(--c-epl)',
+        padding: '10px 14px',
+        fontFamily: 'var(--ff-label)',
+        fontSize: '11px',
+        letterSpacing: '0.14em',
+        textTransform: 'uppercase',
+        textDecoration: 'none',
+        background: 'rgba(212, 160, 23, 0.06)',
+      }}>
+        Open Show Detail
+      </a>
     </article>
   )
 }
