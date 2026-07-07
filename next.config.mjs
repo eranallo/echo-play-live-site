@@ -1,22 +1,13 @@
 /** @type {import('next').NextConfig} */
 
-// ── Content-Security-Policy (ENFORCED) ───────────────────────────
-// Enforced (Phase 53). Verified against the live site: shows/Bandsintown
-// widget, band discography (scdn), and YouTube embeds (QR pages) all load
-// from allowlisted hosts. 'unsafe-inline' on script/style is retained until
-// the nonce + inline-style refactor lands; tightening those is a future step.
-//
-// 'unsafe-inline' on style-src is required because the codebase uses ~745
-// inline style props (see Phase 40a). When that refactor lands, we can drop
-// 'unsafe-inline'. Until then it's the realistic compromise.
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://vitals.vercel-insights.com https://widget.bandsintown.com",
+  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://vitals.vercel-insights.com https://widget.bandsintown.com https://connect.facebook.net https://analytics.tiktok.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
-  "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com https://*.vercel-storage.com https://*.airtableusercontent.com https://dl.airtable.com https://www.buzzsprout.com https://i.scdn.co https://mosaic.scdn.co",
+  "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com https://*.vercel-storage.com https://*.airtableusercontent.com https://dl.airtable.com https://www.buzzsprout.com https://i.scdn.co https://mosaic.scdn.co https://www.facebook.com https://analytics.tiktok.com https://*.tiktok.com",
   "media-src 'self' blob: https://*.public.blob.vercel-storage.com https://*.vercel-storage.com https://*.airtableusercontent.com",
-  "connect-src 'self' https://va.vercel-scripts.com https://vitals.vercel-insights.com https://api.spotify.com https://api.airtable.com https://accounts.spotify.com https://rest.bandsintown.com",
+  "connect-src 'self' https://va.vercel-scripts.com https://vitals.vercel-insights.com https://api.spotify.com https://api.airtable.com https://accounts.spotify.com https://rest.bandsintown.com https://www.facebook.com https://graph.facebook.com https://analytics.tiktok.com https://*.tiktok.com",
   "frame-src 'self' https://widget.bandsintown.com https://open.spotify.com https://www.youtube-nocookie.com",
   "frame-ancestors 'none'",
   "object-src 'none'",
@@ -26,31 +17,23 @@ const CSP = [
 ].join('; ')
 
 const SECURITY_HEADERS = [
-  // Force HTTPS for 2 years on this domain + all subdomains. Submitting to
-  // the HSTS preload list later is a manual step at https://hstspreload.org.
   {
     key: 'Strict-Transport-Security',
     value: 'max-age=63072000; includeSubDomains; preload',
   },
-  // Anti-clickjacking. Stronger than X-Frame-Options.
   { key: 'X-Frame-Options', value: 'DENY' },
-  // Prevent MIME-type sniffing.
   { key: 'X-Content-Type-Options', value: 'nosniff' },
-  // Trim referrer leakage on cross-origin navigation.
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-  // Disable browser features the site doesn't use.
   {
     key: 'Permissions-Policy',
     value: 'camera=(), microphone=(), geolocation=(), interest-cohort=(), browsing-topics=()',
   },
-  // CSP enforced (Phase 53). Verified against the live site before flipping.
   { key: 'Content-Security-Policy', value: CSP },
 ]
 
 const nextConfig = {
   images: {
     remotePatterns: [
-      // Vercel Blob storage (TDB + Jambi photos, future band media)
       {
         protocol: 'https',
         hostname: 'wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com',
@@ -63,10 +46,6 @@ const nextConfig = {
         protocol: 'https',
         hostname: '*.vercel-storage.com',
       },
-      // Airtable signed image URLs (member photos from MEMBERS.Website Photo)
-      // Phase 10D: enables Next.js Image optimization for musician photos.
-      // Airtable signs URLs that expire (~2h); we re-fetch every 60s via the
-      // getMusicians revalidate window, so the optimizer always has fresh URLs.
       {
         protocol: 'https',
         hostname: 'v5.airtableusercontent.com',
@@ -79,7 +58,6 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'dl.airtable.com',
       },
-      // Buzzsprout podcast cover art (Phase 15).
       {
         protocol: 'https',
         hostname: 'www.buzzsprout.com',
@@ -89,7 +67,6 @@ const nextConfig = {
   async headers() {
     return [
       {
-        // Apply to every route.
         source: '/(.*)',
         headers: SECURITY_HEADERS,
       },
