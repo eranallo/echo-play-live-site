@@ -18,14 +18,8 @@ export default function VendorTags() {
 
   useEffect(() => {
     const currentPath = pagePath(pathname, searchParams)
-
-    if (A && window.fbq) {
-      window.fbq('track', 'PageView', { page_path: currentPath })
-    }
-
-    if (B && window.ttq?.page) {
-      window.ttq.page()
-    }
+    if (A && window.fbq) window.fbq('track', 'PageView', { page_path: currentPath })
+    if (B && window.ttq?.page) window.ttq.page()
   }, [pathname, searchParams])
 
   useEffect(() => {
@@ -63,13 +57,14 @@ export default function VendorTags() {
       {B && (
         <Script id="tt-init" strategy="afterInteractive">
           {`
+            window.TiktokAnalyticsObject='ttq';
             window.ttq=window.ttq||[];
-            window.ttq.load=function(){};
-            window.ttq.page=function(){};
+            ['page','track','identify','ready'].forEach(function(m){window.ttq[m]=window.ttq[m]||function(){window.ttq.push([m].concat([].slice.call(arguments)))}});
+            var s=document.createElement('script');s.async=true;s.src='https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=${B}&lib=ttq';document.head.appendChild(s);
+            window.ttq.page();
           `}
         </Script>
       )}
-      {B && <Script src="https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=${B}&lib=ttq" strategy="afterInteractive" />}
     </>
   )
 }
