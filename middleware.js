@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 
 const ADMIN_REALM = 'Echo Play Live Admin'
+const PROTECTED_PREFIXES = ['/admin', '/api/admin', '/portal', '/api/portal']
 
 function unauthorized() {
   return new NextResponse('Authentication required.', {
@@ -16,14 +17,14 @@ function unauthorized() {
 export function middleware(request) {
   const pathname = request.nextUrl.pathname
 
-  if (!pathname.startsWith('/admin') && !pathname.startsWith('/api/admin')) {
+  if (!PROTECTED_PREFIXES.some(prefix => pathname.startsWith(prefix))) {
     return NextResponse.next()
   }
 
   const expectedUsername = process.env.ADMIN_USERNAME
   const expectedPassword = process.env.ADMIN_PASSWORD
 
-  // Fail closed. If credentials are not configured in Vercel, admin pages and admin APIs are not accessible.
+  // Fail closed. If credentials are not configured in Vercel, protected pages and APIs are not accessible.
   if (!expectedUsername || !expectedPassword) {
     return unauthorized()
   }
@@ -62,5 +63,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*', '/portal/:path*', '/api/portal/:path*'],
 }
