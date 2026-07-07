@@ -30,6 +30,23 @@ function showTime(value) {
   return text
 }
 
+function cleanMoneyLabel(value) {
+  const text = value === null || value === undefined ? '' : String(value).trim()
+  if (!text) return ''
+  if (text.toLowerCase().includes('free')) return text
+  const stripped = text.replace(/\$/g, '').trim()
+  if (/^\d+(\.\d+)?$/.test(stripped)) return `$${Number(stripped).toLocaleString('en-US')}`
+  return text
+}
+
+function showDetails(show) {
+  const ticket = cleanMoneyLabel(show.ticketLabel)
+  const status = show.publicStatus || ''
+  if (!ticket) return status
+  if (!status || ticket.toLowerCase() === status.toLowerCase()) return ticket
+  return `${ticket} · ${status}`
+}
+
 function filterName(filter) {
   if (filter === 'all') return 'All Shows'
   return bandsList.find(band => band.slug === filter)?.name || 'This band'
@@ -53,7 +70,7 @@ function EventCard({ show, index }) {
           {support && <small>with {support}</small>}
         </div>
         <h2>{show.venueName}</h2>
-        <p>{show.ticketLabel}{show.publicStatus ? ` · ${show.publicStatus}` : ''}</p>
+        <p>{showDetails(show)}</p>
       </div>
       <div className="ps-event-action">
         {show.ticketUrl ? <a href={show.ticketUrl} target="_blank" rel="noopener noreferrer">Tickets →</a> : <span>Details soon</span>}
