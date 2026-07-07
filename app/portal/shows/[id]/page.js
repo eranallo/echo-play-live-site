@@ -1,4 +1,4 @@
-import { Card, ErrorCard, InfoRow, Pill, PortalShell, PortalTopBar, SectionLabel, TimeBlock } from '@/components/portal/PortalUI'
+import { Card, ErrorCard, InfoRow, InlineActions, Pill, PortalShell, PortalTopBar, SectionLabel, TimeBlock } from '@/components/portal/PortalUI'
 import { getPortalShow } from '@/lib/portal/airtable'
 
 export const dynamic = 'force-dynamic'
@@ -23,25 +23,36 @@ export default async function PortalShowPage({ params, searchParams }) {
   const show = detail.show
   const mapHref = show.venueAddress ? `https://maps.apple.com/?q=${encodeURIComponent(show.venueAddress)}` : null
   const backHref = BackHref({ searchParams: resolvedSearch })
+  const ticketLabel = show.ticketPrice || (show.ticketUrl ? 'Ticket link available' : 'TBD')
 
   return (
     <PortalShell>
       <PortalTopBar title="Show Detail" subtitle={show.dateLabel} backHref={backHref} />
 
       <section style={{ marginBottom: 20 }}>
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
+        <div className="portal-show-kicker">
           {show.bandNames.map(name => <Pill key={name} accent>{name}</Pill>)}
           {show.indoorOutdoor && <Pill>{show.indoorOutdoor}</Pill>}
+          {show.ageRestriction && <Pill>{show.ageRestriction}</Pill>}
         </div>
-        <h1 style={{ fontSize: 32, lineHeight: 1, margin: 0, letterSpacing: '-0.04em' }}>{show.venueName}</h1>
-        <p style={{ color: '#7b7f91', margin: '10px 0 0', fontSize: 14 }}>{show.dateLabel}</p>
+        <h1 className="portal-hero-title" style={{ marginBottom: 8 }}>{show.venueName}</h1>
+        <p className="portal-hero-subtitle" style={{ marginTop: 0 }}>{show.dateLabel}</p>
+        <InlineActions actions={[
+          mapHref ? { href: mapHref, label: 'Open Map' } : null,
+          show.ticketUrl ? { href: show.ticketUrl, label: 'Tickets' } : null,
+        ]} />
       </section>
 
       <Card accent>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+        <div className="portal-time-grid" style={{ marginTop: 0 }}>
           <TimeBlock label="Load" value={show.loadIn} />
           <TimeBlock label="Start" value={show.start} />
           <TimeBlock label="End" value={show.end} />
+        </div>
+        <div className="portal-time-grid">
+          <TimeBlock label="Sound" value={show.soundCheck} />
+          <TimeBlock label="Age" value={show.ageRestriction} />
+          <TimeBlock label="Ticket" value={ticketLabel} />
         </div>
       </Card>
 
@@ -49,15 +60,14 @@ export default async function PortalShowPage({ params, searchParams }) {
       <Card>
         <InfoRow label="Venue" value={show.venueName} />
         <InfoRow label="Address" value={show.venueAddress} href={mapHref} />
-        <InfoRow label="Age" value={show.ageRestriction} />
-        <InfoRow label="Ticket" value={show.ticketPrice || (show.ticketUrl ? 'Ticket link available' : 'TBD')} href={show.ticketUrl || null} />
+        <InfoRow label="Ticket" value={ticketLabel} href={show.ticketUrl || null} />
       </Card>
 
       <SectionLabel>People</SectionLabel>
       <Card>
-        <InfoRow label="Members" value={show.memberNames.join(', ')} />
-        <InfoRow label="Sound" value={show.soundEngineerNames.join(', ')} />
-        <InfoRow label="Merch" value={show.merchPersonNames.join(', ')} />
+        <InfoRow label="Members" value={show.memberNames.join(', ') || 'No members listed.'} />
+        <InfoRow label="Sound" value={show.soundEngineerNames.join(', ') || 'No sound engineer listed.'} />
+        <InfoRow label="Merch" value={show.merchPersonNames.join(', ') || 'No merch person listed.'} />
       </Card>
 
       <SectionLabel>Notes</SectionLabel>
@@ -71,24 +81,24 @@ export default async function PortalShowPage({ params, searchParams }) {
       <Card>
         {detail.setlist ? (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, marginBottom: 12 }}>
-              <div style={{ fontWeight: 800 }}>{detail.setlist.name}</div>
-              {detail.setlist.length && <div style={{ color: '#7b7f91', fontSize: 12 }}>{detail.setlist.length}</div>}
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, marginBottom: 14 }}>
+              <div style={{ fontFamily: 'var(--ff-display)', fontSize: 38, lineHeight: 0.9, letterSpacing: 'var(--ls-display)' }}>{detail.setlist.name}</div>
+              {detail.setlist.length && <Pill>{detail.setlist.length}</Pill>}
             </div>
             {detail.setlist.songs.length ? (
-              <ol style={{ margin: 0, paddingLeft: 20, color: '#f4f4f6', lineHeight: 1.55 }}>
+              <ol style={{ margin: 0, paddingLeft: 22, color: 'var(--c-text)', lineHeight: 1.65 }}>
                 {detail.setlist.songs.map(song => (
-                  <li key={song.id}>
-                    {song.title}{song.artist ? <span style={{ color: '#7b7f91' }}> — {song.artist}</span> : null}
+                  <li key={song.id} style={{ padding: '6px 0', borderBottom: '1px solid var(--c-border)' }}>
+                    <strong>{song.title}</strong>{song.artist ? <span style={{ color: 'var(--c-text-dim)' }}> — {song.artist}</span> : null}
                   </li>
                 ))}
               </ol>
             ) : (
-              <div style={{ color: '#7b7f91' }}>No songs attached to this setlist yet.</div>
+              <div style={{ color: 'var(--c-text-muted)' }}>No songs attached to this setlist yet.</div>
             )}
           </div>
         ) : (
-          <div style={{ color: '#7b7f91' }}>No setlist attached yet.</div>
+          <div style={{ color: 'var(--c-text-muted)' }}>No setlist attached yet.</div>
         )}
       </Card>
     </PortalShell>
