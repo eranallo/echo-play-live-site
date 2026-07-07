@@ -1,4 +1,5 @@
-import { getAdminShowsOverview } from '@/lib/admin/airtable'
+import OpsFoundation from '@/components/admin/OpsFoundation'
+import { getAdminOpsFoundation, getAdminShowsOverview } from '@/lib/admin/airtable'
 
 export const dynamic = 'force-dynamic'
 
@@ -151,7 +152,10 @@ function ShowCard({ show }) {
 }
 
 export default async function AdminPage() {
-  const showsOverview = await getAdminShowsOverview()
+  const [showsOverview, opsFoundation] = await Promise.all([
+    getAdminShowsOverview(),
+    getAdminOpsFoundation(),
+  ])
 
   return (
     <main style={{
@@ -256,6 +260,8 @@ export default async function AdminPage() {
             </article>
           ))}
         </div>
+
+        <OpsFoundation ops={opsFoundation} />
 
         <section style={{
           border: '1px solid var(--c-border)',
