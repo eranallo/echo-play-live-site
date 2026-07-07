@@ -11,23 +11,58 @@ function useScrollReveal() {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed') }),
+      entries => entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('revealed')
+      }),
       { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
     )
-    const els = ref.current?.querySelectorAll('.reveal, .reveal-left, .reveal-right')
-    els?.forEach(el => observer.observe(el))
+
+    const elements = ref.current?.querySelectorAll('.reveal, .reveal-left, .reveal-right')
+    elements?.forEach(element => observer.observe(element))
+
     return () => observer.disconnect()
   }, [])
 
   return ref
 }
 
+function formatShowTime(value) {
+  if (!value || value === 'Time TBD' || value === 'TBD') return ''
+
+  const text = String(value).trim()
+  const date = new Date(text)
+
+  if (text.includes('T') && !Number.isNaN(date.getTime())) {
+    return new Intl.DateTimeFormat('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZone: 'America/Chicago',
+    }).format(date)
+  }
+
+  return text
+}
+
+function formatTicketLabel(value) {
+  if (value === null || value === undefined || value === '') return 'Ticket info coming soon'
+
+  const text = String(value).trim()
+  if (!text) return 'Ticket info coming soon'
+  if (text.toLowerCase().includes('free')) return text
+  if (text.startsWith('$')) return text
+  if (/^\d+(\.\d+)?$/.test(text)) return `$${Number(text).toLocaleString('en-US')}`
+
+  return text
+}
+
 function ShowCard({ show }) {
   const band = bandsList.find(item => item.name === show.bandName)
   const color = band?.color || show.bandColor || '#D4A017'
+  const displayTime = formatShowTime(show.startTime)
+  const ticketLabel = formatTicketLabel(show.ticketLabel)
 
   return (
-    <article className="reveal" style={{
+    <article className="show-card reveal" style={{
       border: '1px solid rgba(255,255,255,0.07)',
       background: 'rgba(255,255,255,0.018)',
       padding: 'clamp(20px, 3vw, 32px)',
@@ -43,10 +78,11 @@ function ShowCard({ show }) {
           lineHeight: 0.85,
           letterSpacing: 'var(--ls-display)',
           color,
+          whiteSpace: 'pre-line',
         }}>
           {show.dateLabel?.replace(/, /g, '\n') || 'Date TBD'}
         </div>
-        {show.startTime && (
+        {displayTime && (
           <div style={{
             marginTop: 'var(--s-3)',
             fontFamily: 'var(--ff-label)',
@@ -55,7 +91,7 @@ function ShowCard({ show }) {
             textTransform: 'uppercase',
             color: 'rgba(255,255,255,0.45)',
           }}>
-            {show.startTime}
+            {displayTime}
           </div>
         )}
       </div>
@@ -82,9 +118,16 @@ function ShowCard({ show }) {
         }}>
           {show.venueName}
         </h2>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', color: 'rgba(255,255,255,0.42)', fontFamily: 'var(--ff-body)', fontSize: '14px' }}>
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '8px',
+          color: 'rgba(255,255,255,0.42)',
+          fontFamily: 'var(--ff-body)',
+          fontSize: '14px',
+        }}>
           {show.status && <span>{show.status}</span>}
-          {show.ticketLabel && <span>• {show.ticketLabel}</span>}
+          {ticketLabel && <span>• {ticketLabel}</span>}
         </div>
       </div>
 
@@ -146,7 +189,8 @@ export default function ShowsClient({ shows = [] }) {
           borderBottom: '1px solid rgba(255,255,255,0.06)',
         }}>
           <div style={{
-            position: 'absolute', inset: 0,
+            position: 'absolute',
+            inset: 0,
             background: 'radial-gradient(ellipse 60% 80% at 20% 50%, rgba(212, 160, 23,0.04) 0%, transparent 60%)',
           }} />
           <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative' }}>
@@ -188,9 +232,10 @@ export default function ShowsClient({ shows = [] }) {
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
             }}>
-              {['all', ...bandsList.map(b => b.slug)].map(slug => {
-                const band = slug === 'all' ? null : bandsList.find(b => b.slug === slug)
+              {['all', ...bandsList.map(band => band.slug)].map(slug => {
+                const band = slug === 'all' ? null : bandsList.find(item => item.slug === slug)
                 const isActive = filter === slug
+
                 return (
                   <button key={slug} onClick={() => setFilter(slug)} style={{
                     fontFamily: 'var(--ff-label)',
@@ -213,7 +258,11 @@ export default function ShowsClient({ shows = [] }) {
               })}
             </div>
             <div className="filter-bar-fade" style={{
-              position: 'absolute', right: 0, top: 0, bottom: 0, width: '40px',
+              position: 'absolute',
+              right: 0,
+              top: 0,
+              bottom: 0,
+              width: '40px',
               background: 'linear-gradient(to right, rgba(8,8,8,0) 0%, rgba(8,8,8,0.96) 100%)',
               pointerEvents: 'none',
             }} />
@@ -223,9 +272,7 @@ export default function ShowsClient({ shows = [] }) {
         <style jsx global>{`
           .filter-bar-scroll::-webkit-scrollbar { display: none; }
           @media (min-width: 769px) { .filter-bar-fade { display: none; } }
-          @media (max-width: 760px) {
-            article.reveal { grid-template-columns: 1fr !important; }
-          }
+          @media (max-width: 760px) { .show-card { grid-template-columns: 1fr !important; } }
         `}</style>
 
         <section style={{ padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)' }}>
@@ -273,7 +320,7 @@ export default function ShowsClient({ shows = [] }) {
                 Follow on Bandsintown
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                {bandsList.filter(b => b.social?.bandsintown).map(band => (
+                {bandsList.filter(band => band.social?.bandsintown).map(band => (
                   <a key={band.slug} href={band.social.bandsintown} target="_blank" rel="noopener noreferrer" style={{
                     display: 'inline-flex',
                     alignItems: 'center',
