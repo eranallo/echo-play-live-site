@@ -149,7 +149,7 @@ export default async function AdminSetupPage() {
               Airtable Safety Layer
             </h1>
             <p style={{ fontSize: 'var(--t-body-l)', color: 'var(--c-text-muted)', lineHeight: 'var(--lh-base)' }}>
-              This page checks whether the support tables for agents, approvals, and run logs are ready for the dashboard. It reads metadata server-side and does not expose Airtable credentials.
+              This page checks whether the support tables for agents, approvals, and run logs are ready for the dashboard. It reads Airtable metadata server-side using the current deployment environment and does not expose credentials.
             </p>
           </div>
 
