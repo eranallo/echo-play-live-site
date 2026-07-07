@@ -3,6 +3,26 @@ import { getPortalDirectory } from '@/lib/portal/airtable'
 
 export const dynamic = 'force-dynamic'
 
+function PortalStep({ number, title, body }) {
+  return (
+    <div className="portal-step">
+      <div>{number}</div>
+      <strong>{title}</strong>
+      <span>{body}</span>
+    </div>
+  )
+}
+
+function RoleCard({ title, count, body, href }) {
+  return (
+    <a className="portal-role-card" href={href}>
+      <span>{count}</span>
+      <strong>{title}</strong>
+      <p>{body}</p>
+    </a>
+  )
+}
+
 export default async function PortalPage() {
   const directory = await getPortalDirectory()
 
@@ -14,33 +34,32 @@ export default async function PortalPage() {
     <PortalShell>
       <PortalHero
         eyebrow="Echo Play Live"
-        title="Crew Portal"
-        subtitle="Show-day info, call times, venue details, assignments, notes, and setlists — built for quick phone use when everyone is moving fast."
+        title="Showday Portal"
+        subtitle="Fast, phone-first show information for the people actually loading gear, playing the set, running merch, and getting through the night."
       >
         <InlineActions actions={[
-          { href: '#members', label: 'Band Members' },
-          { href: '#crew', label: 'Crew' },
+          { href: '#members', label: 'I’m Band' },
+          { href: '#crew', label: 'I’m Crew' },
         ]} />
       </PortalHero>
 
+      <div className="portal-home-pulse">
+        <RoleCard title="Band Members" count={directory.members.length} body="Open your profile, then jump into your next assigned show." href="#members" />
+        <RoleCard title="Crew" count={directory.crew.length} body="Find your assignments, call times, notes, and venue details." href="#crew" />
+      </div>
+
       <Card accent>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-          <div>
-            <div className="portal-metric-value">{directory.members.length}</div>
-            <div className="portal-metric-label">Members</div>
-            <div className="portal-metric-sub">active records</div>
-          </div>
-          <div>
-            <div className="portal-metric-value">{directory.crew.length}</div>
-            <div className="portal-metric-label">Crew</div>
-            <div className="portal-metric-sub">active records</div>
-          </div>
+        <div className="portal-card-heading">How to use this</div>
+        <div className="portal-steps">
+          <PortalStep number="1" title="Tap your name" body="Start from your member or crew profile." />
+          <PortalStep number="2" title="Open next show" body="Check load-in, start time, venue, notes, and setlist." />
+          <PortalStep number="3" title="Use it day-of" body="Pull up maps, details, and assignments when things are moving." />
         </div>
       </Card>
 
       <section id="members">
         <SectionLabel>Band Members</SectionLabel>
-        <div className="portal-stagger">
+        <div className="portal-stagger portal-directory-list">
           {directory.members.length > 0 ? directory.members.map(member => (
             <PersonRow key={member.id} person={member} href={`/portal/member/${member.id}`} />
           )) : (
@@ -51,7 +70,7 @@ export default async function PortalPage() {
 
       <section id="crew">
         <SectionLabel>Crew</SectionLabel>
-        <div className="portal-stagger">
+        <div className="portal-stagger portal-directory-list">
           {directory.crew.length > 0 ? directory.crew.map(crew => (
             <PersonRow key={crew.id} person={crew} href={`/portal/crew/${crew.id}`} />
           )) : (
