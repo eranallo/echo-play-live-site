@@ -38,8 +38,22 @@ export default function VendorTags() {
       if (B && window.ttq?.track) window.ttq.track('ClickButton', params)
     }
 
+    const onSubmit = event => {
+      const form = event.target
+      if (!(form instanceof HTMLFormElement)) return
+      if (window.location.pathname !== '/contact') return
+
+      const params = { content_name: 'Booking Inquiry', page_path: window.location.pathname }
+      if (A && window.fbq) window.fbq('track', 'Lead', params)
+      if (B && window.ttq?.track) window.ttq.track('SubmitForm', params)
+    }
+
     document.addEventListener('click', onClick, { capture: true })
-    return () => document.removeEventListener('click', onClick, { capture: true })
+    document.addEventListener('submit', onSubmit, { capture: true })
+    return () => {
+      document.removeEventListener('click', onClick, { capture: true })
+      document.removeEventListener('submit', onSubmit, { capture: true })
+    }
   }, [])
 
   return (
