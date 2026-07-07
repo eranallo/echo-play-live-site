@@ -3,12 +3,10 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Bebas_Neue, Barlow, Barlow_Condensed } from 'next/font/google'
 import { bands, bandsList } from '@/lib/bands'
+import VendorTags from '@/components/VendorTags'
 
 const SITE_URL = 'https://echoplay.live'
 
-// Phase 51: self-hosted fonts via next/font. Eliminates the render-blocking
-// Google Fonts request, prevents layout shift via auto fallback metrics, and
-// exposes each family as a CSS variable consumed by --ff-* tokens in globals.css.
 const bebas = Bebas_Neue({ weight: '400', subsets: ['latin'], display: 'swap', variable: '--font-bebas' })
 const barlow = Barlow({ weight: ['300','400','500','600','700'], style: ['normal','italic'], subsets: ['latin'], display: 'swap', variable: '--font-barlow' })
 const barlowCondensed = Barlow_Condensed({ weight: ['300','400','500','600','700'], subsets: ['latin'], display: 'swap', variable: '--font-barlow-condensed' })
@@ -39,6 +37,9 @@ export const metadata = {
   alternates: {
     canonical: '/',
   },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -64,8 +65,6 @@ export const metadata = {
   },
 }
 
-// JSON-LD: LocalBusiness for the EPL operation, MusicGroup for each band.
-// Helps Google show rich knowledge cards and link bands → roster on search.
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -123,10 +122,9 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         {children}
-        {/* Phase 13: Vercel Web Analytics (page views + referrers) +
-            Speed Insights (real-user Core Web Vitals). Cookieless. */}
         <Analytics />
         <SpeedInsights />
+        <VendorTags />
       </body>
     </html>
   )
