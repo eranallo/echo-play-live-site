@@ -120,6 +120,23 @@ export default function OpsFoundation({ ops }) {
 
       <OpsTableStatus tables={ops.tables} />
 
+      <div style={{ marginTop: 'var(--s-5)' }}>
+        <a href="/admin/setup" style={{
+          display: 'inline-flex',
+          border: '1px solid var(--c-epl-line)',
+          color: 'var(--c-epl)',
+          padding: '10px 14px',
+          fontFamily: 'var(--ff-label)',
+          fontSize: '11px',
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          textDecoration: 'none',
+          background: 'rgba(212, 160, 23, 0.06)',
+        }}>
+          Check Airtable Setup
+        </a>
+      </div>
+
       {!ops.ok && (
         <div style={{
           border: '1px solid var(--c-epl-line)',
@@ -129,7 +146,7 @@ export default function OpsFoundation({ ops }) {
           lineHeight: 'var(--lh-base)',
           marginTop: 'var(--s-5)',
         }}>
-          <strong style={{ color: 'var(--c-epl)' }}>Setup still needed:</strong> create the Airtable support tables named AI AGENTS, APPROVAL QUEUE, and AI RUNS. The dashboard is ready to read from them once they exist.
+          <strong style={{ color: 'var(--c-epl)' }}>Setup still needed:</strong> create the Airtable support tables named AI AGENTS, APPROVAL QUEUE, and AI RUNS. Use the setup checker to see exact missing fields.
         </div>
       )}
 
