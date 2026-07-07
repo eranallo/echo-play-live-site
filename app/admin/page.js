@@ -5,23 +5,25 @@ export const dynamic = 'force-dynamic'
 
 const statusCards = [
   {
-    eyebrow: 'Phase 1',
-    title: 'Admin Shell',
-    body: 'Private command-center route is active. This page is intentionally not linked from the public navigation.',
+    eyebrow: 'Executive Layer',
+    title: 'Chief of Staff',
+    body: 'The first specialist coordinator is active. It turns show data, approvals, and agent logs into a practical dispatch brief.',
+    href: '/admin/chief-of-staff',
   },
   {
     eyebrow: 'Security',
     title: 'Protected Access',
-    body: 'The /admin route requires ADMIN_USERNAME and ADMIN_PASSWORD environment variables before it can be viewed.',
+    body: 'The /admin route and admin API routes require ADMIN_USERNAME and ADMIN_PASSWORD environment variables before they can be viewed.',
   },
   {
     eyebrow: 'Data Layer',
-    title: 'Read-Only Airtable',
-    body: 'Upcoming shows are now pulled server-side from Airtable. No write actions or public data exposure yet.',
+    title: 'Airtable Connected',
+    body: 'Shows, agent logs, approvals, and safe manual updates are handled server-side so private credentials are not exposed to the browser.',
   },
 ]
 
 const workflowCards = [
+  'Chief of Staff',
   'Show Campaign Agent',
   'Approval Queue',
   'AI Run Log',
@@ -48,6 +50,48 @@ function StatusPill({ children, active }) {
       {children}
     </span>
   )
+}
+
+function AdminActionCard({ card }) {
+  const body = (
+    <article style={{
+      border: card.href ? '1px solid var(--c-epl-line)' : '1px solid var(--c-border)',
+      background: card.href ? 'rgba(212, 160, 23, 0.04)' : 'var(--c-surface-2)',
+      padding: 'var(--s-5)',
+      minHeight: '100%',
+    }}>
+      <div style={{
+        fontFamily: 'var(--ff-label)',
+        fontSize: 'var(--t-label-s)',
+        letterSpacing: 'var(--ls-label-tight)',
+        textTransform: 'uppercase',
+        color: 'var(--c-epl)',
+        marginBottom: 'var(--s-3)',
+      }}>
+        {card.eyebrow}
+      </div>
+      <h2 style={{
+        fontFamily: 'var(--ff-display)',
+        fontSize: 'var(--t-h3)',
+        letterSpacing: 'var(--ls-display)',
+        marginBottom: 'var(--s-3)',
+      }}>
+        {card.title}
+      </h2>
+      <p style={{ color: 'var(--c-text-dim)', lineHeight: 'var(--lh-base)' }}>
+        {card.body}
+      </p>
+      {card.href && (
+        <div style={{ marginTop: 'var(--s-4)', color: 'var(--c-epl)', fontFamily: 'var(--ff-label)', fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+          Open Module →
+        </div>
+      )}
+    </article>
+  )
+
+  if (!card.href) return body
+
+  return <a href={card.href} style={{ color: 'inherit', textDecoration: 'none' }}>{body}</a>
 }
 
 function ShowCard({ show }) {
@@ -193,7 +237,7 @@ export default async function AdminPage() {
               lineHeight: 'var(--lh-base)',
               color: 'var(--c-text-muted)',
             }}>
-              Phase 1 creates the private admin foundation for Echo Play Live. This page is the safe starting point for shows, campaigns, approvals, agent logs, and future specialist workflows.
+              The command center is now the operating layer for shows, campaigns, approvals, run logs, specialists, and the musician portal.
             </p>
           </div>
 
@@ -231,33 +275,7 @@ export default async function AdminPage() {
           marginBottom: 'var(--s-8)',
         }}>
           {statusCards.map(card => (
-            <article key={card.title} style={{
-              border: '1px solid var(--c-border)',
-              background: 'var(--c-surface-2)',
-              padding: 'var(--s-5)',
-            }}>
-              <div style={{
-                fontFamily: 'var(--ff-label)',
-                fontSize: 'var(--t-label-s)',
-                letterSpacing: 'var(--ls-label-tight)',
-                textTransform: 'uppercase',
-                color: 'var(--c-epl)',
-                marginBottom: 'var(--s-3)',
-              }}>
-                {card.eyebrow}
-              </div>
-              <h2 style={{
-                fontFamily: 'var(--ff-display)',
-                fontSize: 'var(--t-h3)',
-                letterSpacing: 'var(--ls-display)',
-                marginBottom: 'var(--s-3)',
-              }}>
-                {card.title}
-              </h2>
-              <p style={{ color: 'var(--c-text-dim)', lineHeight: 'var(--lh-base)' }}>
-                {card.body}
-              </p>
-            </article>
+            <AdminActionCard key={card.title} card={card} />
           ))}
         </div>
 
@@ -280,7 +298,7 @@ export default async function AdminPage() {
                 letterSpacing: 'var(--ls-display)',
                 lineHeight: 1,
               }}>
-                Read-Only Airtable Dashboard
+                Airtable Dashboard
               </h2>
             </div>
             {showsOverview.ok && (
@@ -319,7 +337,7 @@ export default async function AdminPage() {
           padding: 'var(--s-6)',
         }}>
           <div className="section-label" style={{ marginBottom: 'var(--s-4)' }}>
-            Planned Admin Modules
+            Specialist Roadmap
           </div>
           <div style={{
             display: 'grid',
@@ -329,13 +347,13 @@ export default async function AdminPage() {
             {workflowCards.map(name => (
               <div key={name} style={{
                 border: '1px solid var(--c-border-subtle)',
-                background: 'var(--c-surface-2)',
+                background: name === 'Chief of Staff' ? 'rgba(212, 160, 23, 0.06)' : 'var(--c-surface-2)',
                 padding: 'var(--s-4)',
                 fontFamily: 'var(--ff-label)',
                 fontSize: 'var(--t-body-s)',
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
-                color: 'var(--c-text-muted)',
+                color: name === 'Chief of Staff' ? 'var(--c-epl)' : 'var(--c-text-muted)',
               }}>
                 {name}
               </div>
