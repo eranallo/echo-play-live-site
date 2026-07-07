@@ -136,7 +136,11 @@ function ActionPlaceholder() {
 }
 
 export default async function AdminShowDetailPage({ params }) {
-  const detail = await getAdminShowDetail(params.id)
+  const resolvedParams = await params
+  const showId = resolvedParams?.id
+  const detail = showId
+    ? await getAdminShowDetail(showId)
+    : { ok: false, show: null, error: 'No show ID was provided in the admin route.' }
 
   if (!detail.ok || !detail.show) {
     return (
