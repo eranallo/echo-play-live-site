@@ -1,4 +1,4 @@
-import { Card, ErrorCard, PersonRow, PortalHero, PortalShell, SectionLabel } from '@/components/portal/PortalUI'
+import { Card, EmptyState, ErrorCard, InlineActions, PersonRow, PortalHero, PortalShell, SectionLabel } from '@/components/portal/PortalUI'
 import { getPortalDirectory } from '@/lib/portal/airtable'
 
 export const dynamic = 'force-dynamic'
@@ -14,36 +14,51 @@ export default async function PortalPage() {
     <PortalShell>
       <PortalHero
         eyebrow="Echo Play Live"
-        title="Musician Portal"
-        subtitle="A mobile-first place for band members and crew to see show details, call times, venue info, assignments, and upcoming schedules."
-      />
+        title="Crew Portal"
+        subtitle="Show-day info, call times, venue details, assignments, notes, and setlists — built for quick phone use when everyone is moving fast."
+      >
+        <InlineActions actions={[
+          { href: '#members', label: 'Band Members' },
+          { href: '#crew', label: 'Crew' },
+        ]} />
+      </PortalHero>
 
-      <div style={{ display: 'grid', gap: 10, marginBottom: 18 }}>
-        <Card accent>
-          <div style={{ fontSize: 13, color: '#d4a017', fontWeight: 800, marginBottom: 4 }}>Portal Preview</div>
-          <div style={{ color: '#f4f4f6', fontSize: 14, lineHeight: 1.45 }}>
-            This is the new portal preview inside the main Echo Play Live website.
+      <Card accent>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <div>
+            <div className="portal-metric-value">{directory.members.length}</div>
+            <div className="portal-metric-label">Members</div>
+            <div className="portal-metric-sub">active records</div>
           </div>
-        </Card>
-      </div>
+          <div>
+            <div className="portal-metric-value">{directory.crew.length}</div>
+            <div className="portal-metric-label">Crew</div>
+            <div className="portal-metric-sub">active records</div>
+          </div>
+        </div>
+      </Card>
 
-      <SectionLabel>Band Members</SectionLabel>
-      <div>
-        {directory.members.length > 0 ? directory.members.map(member => (
-          <PersonRow key={member.id} person={member} href={`/portal/member/${member.id}`} />
-        )) : (
-          <Card>No active members found.</Card>
-        )}
-      </div>
+      <section id="members">
+        <SectionLabel>Band Members</SectionLabel>
+        <div className="portal-stagger">
+          {directory.members.length > 0 ? directory.members.map(member => (
+            <PersonRow key={member.id} person={member} href={`/portal/member/${member.id}`} />
+          )) : (
+            <EmptyState title="No members yet" body="Active member records will appear here once Airtable has them." />
+          )}
+        </div>
+      </section>
 
-      <SectionLabel>Crew</SectionLabel>
-      <div>
-        {directory.crew.length > 0 ? directory.crew.map(crew => (
-          <PersonRow key={crew.id} person={crew} href={`/portal/crew/${crew.id}`} />
-        )) : (
-          <Card>No active crew records found.</Card>
-        )}
-      </div>
+      <section id="crew">
+        <SectionLabel>Crew</SectionLabel>
+        <div className="portal-stagger">
+          {directory.crew.length > 0 ? directory.crew.map(crew => (
+            <PersonRow key={crew.id} person={crew} href={`/portal/crew/${crew.id}`} />
+          )) : (
+            <EmptyState title="No crew yet" body="Active crew records will appear here once Airtable has them." />
+          )}
+        </div>
+      </section>
     </PortalShell>
   )
 }
