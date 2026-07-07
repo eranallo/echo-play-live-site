@@ -1,631 +1,199 @@
 'use client'
+
 import { useEffect, useRef } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { bandsList } from '@/lib/bands'
 
-function useScrollReveal() {
+const VENUES = ['Granada Theater', 'Texas Live', 'Haltom Theater', 'Magnolia Motor Lounge', 'Legacy Hall', 'The Revel', 'Hurricane Alley', 'Panther Island Pavilion']
+
+function useReveal() {
   const ref = useRef(null)
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('revealed')
-        }
-      }),
-      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
-    )
-    const els = ref.current?.querySelectorAll('.reveal, .reveal-left, .reveal-right')
-    els?.forEach(el => observer.observe(el))
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible')
+      })
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' })
+
+    ref.current?.querySelectorAll('.pp-reveal').forEach(el => observer.observe(el))
     return () => observer.disconnect()
   }, [])
   return ref
 }
 
-// Exact artist names as registered on Bandsintown
-const artistNames = {
-  'so-long-goodnight': 'So Long Goodnight',
-  'the-dick-beldings': 'The Dick Beldings',
-  'jambi': 'Jambi - Tribute To Tool',
-  'elite': 'Elite - Tribute To Deftones',
+function BandPanel({ band, index }) {
+  return (
+    <Link className="pp-band-panel pp-reveal" href={`/bands/${band.slug}`} style={{ '--band': band.color, '--delay': `${index * 90}ms` }}>
+      <div className="pp-band-media">
+        {band.heroPhoto && <Image src={band.heroPhoto} alt="" fill sizes="(max-width: 900px) 100vw, 50vw" style={{ objectFit: 'cover' }} />}
+      </div>
+      <div className="pp-band-content">
+        <span>{band.era}</span>
+        <h3>{band.name}</h3>
+        <p>{band.tagline}</p>
+        <em>Explore the show →</em>
+      </div>
+    </Link>
+  )
 }
 
 export default function Home() {
-  const pageRef = useScrollReveal()
-
-  // Load Bandsintown widget script once
-  useEffect(() => {
-    if (document.querySelector('script[src*="bandsintown"]')) return
-    const script = document.createElement('script')
-    script.src = 'https://widget.bandsintown.com/main.min.js'
-    script.async = true
-    document.head.appendChild(script)
-  }, [])
+  const pageRef = useReveal()
+  const featured = bandsList.slice(0, 4)
 
   return (
     <>
       <Nav />
-      {/* Phase 1: hero section refactored to use design tokens. Rest of page still inline-styled (Phase 2). */}
-      <main ref={pageRef} style={{ background: 'var(--c-bg)' }}>
+      <main ref={pageRef} className="pp-site">
+        <style>{`
+          .pp-site {
+            --pp-bg:#050505;
+            --pp-card:rgba(255,255,255,.045);
+            --pp-line:rgba(255,255,255,.105);
+            --pp-muted:rgba(255,255,255,.58);
+            --pp-faint:rgba(255,255,255,.34);
+            background:
+              radial-gradient(circle at 50% -10%, rgba(212,160,23,.22), transparent 34%),
+              radial-gradient(circle at 90% 12%, rgba(255,255,255,.08), transparent 28%),
+              linear-gradient(180deg,#0d0d0d 0%,#050505 48%,#030303 100%);
+            color:var(--c-text);
+            overflow:hidden;
+          }
+          .pp-site::before { content:''; position:fixed; inset:0; pointer-events:none; opacity:.55; background-image:linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),linear-gradient(90deg,rgba(255,255,255,.014) 1px, transparent 1px); background-size:72px 72px; mask-image:linear-gradient(to bottom, #000, transparent 72%); }
+          .pp-wrap { width:min(1520px, calc(100vw - clamp(32px, 7vw, 112px))); margin:0 auto; position:relative; z-index:1; }
+          .pp-kicker { display:inline-flex; align-items:center; gap:12px; font-family:var(--ff-label); font-size:11px; font-weight:800; letter-spacing:.26em; text-transform:uppercase; color:var(--c-epl); }
+          .pp-kicker::before { content:''; width:9px; height:9px; border-radius:50%; background:var(--c-epl); box-shadow:0 0 24px var(--c-epl); }
+          .pp-hero { min-height:100svh; display:grid; align-items:end; padding:clamp(120px, 13vw, 190px) 0 clamp(40px, 7vw, 90px); position:relative; }
+          .pp-hero-grid { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr); gap:clamp(28px,6vw,88px); align-items:end; }
+          .pp-title { font-family:var(--ff-display); font-size:clamp(76px, 15vw, 232px); line-height:.76; letter-spacing:-.015em; margin:18px 0 22px; max-width:1020px; }
+          .pp-title span { color:var(--c-epl); text-shadow:0 0 56px rgba(212,160,23,.20); }
+          .pp-copy { color:var(--pp-muted); font-size:clamp(16px,1.5vw,21px); line-height:1.6; max-width:720px; }
+          .pp-hero-card { border:1px solid var(--pp-line); border-radius:36px; padding:24px; min-height:430px; background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.018)); box-shadow:0 40px 120px rgba(0,0,0,.48); backdrop-filter:blur(20px); position:relative; overflow:hidden; }
+          .pp-hero-card::after { content:''; position:absolute; inset:0; background:radial-gradient(circle at 70% 10%,rgba(212,160,23,.25),transparent 38%); pointer-events:none; }
+          .pp-hero-orbit { position:absolute; inset:36px; border:1px solid rgba(212,160,23,.22); border-radius:50%; animation:ppFloat 7s ease-in-out infinite; }
+          .pp-hero-orbit:nth-child(2) { inset:76px; opacity:.55; animation-delay:-2s; }
+          .pp-hero-metric { position:absolute; z-index:1; left:24px; bottom:24px; right:24px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+          .pp-hero-metric div { border:1px solid var(--pp-line); border-radius:20px; padding:14px; background:rgba(0,0,0,.32); }
+          .pp-hero-metric strong { display:block; font-family:var(--ff-display); font-size:42px; line-height:.8; color:var(--c-epl); }
+          .pp-hero-metric span { display:block; margin-top:7px; color:var(--pp-faint); font-size:11px; text-transform:uppercase; letter-spacing:.12em; }
+          .pp-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:32px; }
+          .pp-button { display:inline-flex; align-items:center; gap:10px; min-height:52px; padding:0 20px; border:1px solid var(--pp-line); border-radius:999px; color:#fff; text-decoration:none; font-family:var(--ff-label); font-size:12px; letter-spacing:.15em; text-transform:uppercase; transition:transform .25s ease,border-color .25s ease,background .25s ease; }
+          .pp-button:hover { transform:translateY(-3px); border-color:var(--c-epl); background:rgba(212,160,23,.08); }
+          .pp-button-primary { background:var(--c-epl); border-color:var(--c-epl); color:#080808; }
+          .pp-section { padding:clamp(72px, 11vw, 160px) 0; position:relative; }
+          .pp-section-head { display:flex; justify-content:space-between; align-items:end; gap:24px; margin-bottom:clamp(28px,5vw,70px); }
+          .pp-section-head h2 { font-family:var(--ff-display); font-size:clamp(52px,10vw,150px); line-height:.78; letter-spacing:-.01em; max-width:920px; }
+          .pp-section-head p { color:var(--pp-muted); line-height:1.65; max-width:430px; }
+          .pp-highlights { display:grid; grid-template-columns:1.15fr .85fr; gap:18px; }
+          .pp-highlight { min-height:360px; border:1px solid var(--pp-line); border-radius:34px; padding:clamp(22px,3vw,36px); background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.018)); box-shadow:0 30px 110px rgba(0,0,0,.32); position:relative; overflow:hidden; }
+          .pp-highlight::after { content:''; position:absolute; inset:auto -20% -45% -20%; height:70%; background:radial-gradient(circle, rgba(212,160,23,.14), transparent 62%); }
+          .pp-highlight h3 { font-family:var(--ff-display); font-size:clamp(40px,6vw,92px); line-height:.86; letter-spacing:-.005em; max-width:760px; position:relative; z-index:1; }
+          .pp-highlight p { color:var(--pp-muted); line-height:1.65; max-width:520px; margin-top:20px; position:relative; z-index:1; }
+          .pp-highlight-small { display:grid; gap:18px; }
+          .pp-mini { min-height:171px; border:1px solid var(--pp-line); border-radius:30px; padding:24px; background:rgba(255,255,255,.034); }
+          .pp-mini strong { display:block; font-family:var(--ff-display); font-size:48px; line-height:.85; color:var(--c-epl); }
+          .pp-mini span { display:block; margin-top:12px; color:var(--pp-muted); line-height:1.45; }
+          .pp-band-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:18px; }
+          .pp-band-panel { min-height:520px; border:1px solid var(--pp-line); border-radius:34px; overflow:hidden; position:relative; color:inherit; text-decoration:none; background:#0b0b0b; box-shadow:0 34px 120px rgba(0,0,0,.40); transform:translateY(28px); opacity:0; transition:opacity .7s ease var(--delay), transform .7s ease var(--delay), border-color .25s ease; }
+          .pp-band-panel.is-visible { opacity:1; transform:translateY(0); }
+          .pp-band-panel:hover { border-color:color-mix(in srgb, var(--band) 60%, white 10%); }
+          .pp-band-media { position:absolute; inset:0; opacity:.55; filter:saturate(.8) contrast(1.1); transform:scale(1.03); transition:transform .75s ease, opacity .75s ease; }
+          .pp-band-panel:hover .pp-band-media { transform:scale(1.08); opacity:.72; }
+          .pp-band-media::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.86)), radial-gradient(circle at 20% 0%, color-mix(in srgb, var(--band) 30%, transparent), transparent 44%); }
+          .pp-band-content { position:absolute; inset:auto 0 0 0; padding:clamp(22px,3vw,38px); }
+          .pp-band-content span { font-family:var(--ff-label); color:var(--band); font-size:11px; letter-spacing:.23em; text-transform:uppercase; font-weight:800; }
+          .pp-band-content h3 { font-family:var(--ff-display); font-size:clamp(44px,6vw,88px); line-height:.82; letter-spacing:-.005em; margin:12px 0; max-width:720px; }
+          .pp-band-content p { color:rgba(255,255,255,.66); line-height:1.55; max-width:560px; }
+          .pp-band-content em { display:inline-flex; margin-top:18px; color:var(--band); font-style:normal; font-family:var(--ff-label); font-size:11px; letter-spacing:.15em; text-transform:uppercase; }
+          .pp-venues { border-top:1px solid var(--pp-line); border-bottom:1px solid var(--pp-line); overflow:hidden; padding:24px 0; background:rgba(255,255,255,.018); }
+          .pp-marquee { display:flex; gap:36px; white-space:nowrap; animation:ppMarquee 34s linear infinite; color:rgba(255,255,255,.42); font-family:var(--ff-label); letter-spacing:.18em; text-transform:uppercase; font-size:12px; }
+          .pp-marquee span { display:inline-flex; gap:36px; }
+          .pp-cta { min-height:70svh; display:grid; place-items:center; text-align:center; padding:clamp(84px, 12vw, 170px) 0; }
+          .pp-cta h2 { font-family:var(--ff-display); font-size:clamp(64px,14vw,190px); line-height:.78; letter-spacing:-.015em; max-width:1100px; margin:18px auto; }
+          .pp-cta p { color:var(--pp-muted); max-width:620px; margin:0 auto; line-height:1.65; }
+          .pp-reveal { opacity:0; transform:translateY(28px); transition:opacity .75s ease, transform .75s ease; }
+          .pp-reveal.is-visible { opacity:1; transform:translateY(0); }
+          @keyframes ppFloat { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-12px) scale(1.02)} }
+          @keyframes ppMarquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+          @media (max-width:960px){ .pp-hero-grid,.pp-highlights,.pp-band-grid{grid-template-columns:1fr}.pp-hero-card{min-height:300px}.pp-section-head{display:grid}.pp-title{font-size:clamp(72px,22vw,154px)} }
+          @media (prefers-reduced-motion:reduce){ .pp-reveal,.pp-band-panel,.pp-marquee,.pp-hero-orbit{animation:none;transition:none;opacity:1;transform:none} }
+        `}</style>
 
-        {/* ── HERO ─────────────────────────────────────────── */}
-        <section style={{
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          position: 'relative',
-          overflow: 'hidden',
-          textAlign: 'center',
-          padding: '120px var(--gutter-d) var(--s-8)',
-        }}>
-          {/* Animated background */}
-          <div className="hero-bg" style={{
-            position: 'absolute', inset: 0, zIndex: 0,
-          }} />
-
-          {/* Radial vignette */}
-          <div style={{
-            position: 'absolute', inset: 0, zIndex: 1,
-            background: 'radial-gradient(ellipse 80% 60% at 50% 50%, transparent 20%, rgba(8,8,8,0.7) 100%)',
-          }} />
-
-          {/* Subtle horizontal line */}
-          <div style={{
-            position: 'absolute', left: 0, right: 0, top: '50%',
-            height: '1px', background: 'rgba(212, 160, 23,0.06)', zIndex: 1,
-          }} />
-
-          <div style={{ position: 'relative', zIndex: 2, maxWidth: '1000px', width: '100%' }}>
-            <div className="hero-label" style={{
-              fontFamily: 'var(--ff-label)',
-              fontSize: 'var(--t-label)',
-              fontWeight: 600,
-              letterSpacing: '0.3em',
-              textTransform: 'uppercase',
-              color: 'var(--c-epl)',
-              marginBottom: 'var(--s-6)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 'var(--s-4)',
-            }}>
-              <span style={{ width: 'var(--s-6)', height: '1px', background: 'var(--c-epl)', opacity: 0.5 }} />
-              Tribute & Cover Band Management · DFW · Est. 2023
-              <span style={{ width: 'var(--s-6)', height: '1px', background: 'var(--c-epl)', opacity: 0.5 }} />
-            </div>
-
-            <h1 style={{
-              fontFamily: 'var(--ff-display)',
-              fontSize: 'var(--t-display-xl)',
-              lineHeight: 'var(--lh-display)',
-              letterSpacing: 'var(--ls-display-tight)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              marginBottom: 'var(--s-6)',
-              userSelect: 'none',
-            }}>
-              {['ECHO', 'PLAY', 'LIVE'].map((word, i) => (
-                <span key={word} className="hero-word">
-                  <span
-                    className="hero-word-inner"
-                    style={{
-                      color: i === 1 ? 'var(--c-epl)' : 'var(--c-text)',
-                    }}
-                  >
-                    {word}
-                  </span>
-                </span>
-              ))}
-            </h1>
-
-            <div className="hero-cta-wrap" style={{ display: 'flex', gap: 'var(--s-4)', justifyContent: 'center', flexWrap: 'wrap' }}>
-              {/* Magnetic effect removed 2026-05-10 per Evan — felt disorienting
-                  on the homepage CTAs. The .btn-primary "fill from left" hover
-                  is back to being the only effect. MagneticButton stays on band
-                  page + /musicians primary CTAs. */}
-              <Link href="#bands" className="btn-primary" style={{
-                textDecoration: 'none',
-                color: 'var(--c-epl)',
-                borderColor: 'var(--c-epl)',
-              }}>
-                <span>Explore Our Roster</span>
-                <span>↓</span>
-              </Link>
-              <Link href="/contact" className="btn-primary" style={{
-                textDecoration: 'none',
-                color: 'rgba(255,255,255,0.6)',
-                borderColor: 'rgba(255,255,255,0.2)',
-              }}>
-                <span>Book a Show</span>
-              </Link>
-            </div>
-          </div>
-
-          {/* Scroll cue removed 2026-05-10: was visually colliding with the
-              hero CTA row on certain viewports. The venue strip peeking up
-              below the hero is enough of a "more below" signal on its own. */}
-        </section>
-
-        {/* ── VENUE STRIP ────────────────────────────────── */}
-        {/* Curated list of venues EPL bands have played. Phase 14 added the
-            first round of real logos (rendered from /public/venues/{slug}.png).
-            Venues without a logo yet render as plain text labels — the strip
-            mixes both gracefully. Drop a new PNG into /public/venues/ and add
-            its slug + name to the array to upgrade a text entry to a logo. */}
-        <section style={{
-          borderTop: '1px solid var(--c-border)',
-          borderBottom: '1px solid var(--c-border)',
-          background: 'var(--c-surface-2)',
-          padding: 'var(--s-7) var(--gutter-d)',
-        }}>
-          <div className="reveal" style={{
-            maxWidth: 'var(--layout-max)',
-            margin: '0 auto',
-            textAlign: 'center',
-          }}>
-            <div className="section-label" style={{
-              marginBottom: 'var(--s-5)',
-              opacity: 0.7,
-            }}>
-              As Played At
-            </div>
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: 'var(--s-4) var(--s-6)',
-              fontFamily: 'var(--ff-label)',
-              fontSize: 'var(--t-body-s)',
-              fontWeight: 500,
-              letterSpacing: 'var(--ls-label-tight)',
-              textTransform: 'uppercase',
-              color: 'var(--c-text-dim)',
-            }}>
-              {[
-                // 20 venues with curated logos (Phase 14 + Phase 14.1).
-                // `fb` is the Facebook page URL — wraps the logo in a link.
-                // Omit `fb` (or use null) when there's no URL yet; logo stays
-                // un-linked. Venues without a logo render as plain text.
-                { logo: '/venues/granada-theater.png',       name: 'Granada Theater' },
-                { logo: '/venues/texas-live.png',            name: 'Texas Live' },
-                { logo: '/venues/tower-theater.png',         name: 'Tower Theater',         fb: 'https://www.facebook.com/towertheatreokc' },
-                { logo: '/venues/beer-city-music-hall.png',  name: 'Beer City Music Hall' },
-                { logo: '/venues/haltom-theater.png',        name: 'Haltom Theater' },
-                { logo: '/venues/magnolia-motor-lounge.png', name: 'Magnolia Motor Lounge', fb: 'https://www.facebook.com/Magnolia.Motor.Lounge' },
-                { logo: '/venues/legacy-hall.png',           name: 'Legacy Hall',           fb: 'https://www.facebook.com/LegacyFoodHall' },
-                { logo: '/venues/ozark-music-hall.png',      name: 'Ozark Music Hall',      fb: 'https://www.facebook.com/OzarkMusicHall' },
-                { logo: '/venues/wild-acre-live.png',        name: 'Wild Acre Live',        fb: 'https://www.facebook.com/wildacrelive' },
-                { logo: '/venues/hop-fusion-ale-works.png',  name: 'Hop Fusion Ale Works',  fb: 'https://www.facebook.com/hopfusion' },
-                { logo: '/venues/roanoke-tavern.png',        name: 'Live at Roanoke Tavern', fb: 'https://www.facebook.com/liveatroanoketavern' },
-                { logo: '/venues/the-rustic.png',            name: 'The Rustic',            fb: 'https://www.facebook.com/therusticdallas/' },
-                { logo: '/venues/ridglea-room.png',          name: 'Ridglea Room' },
-                { logo: '/venues/hurricane-alley.png',       name: 'Hurricane Alley' },
-                { logo: '/venues/osheas.png',                name: "O'Sheas" },
-                { logo: '/venues/station-330.png',           name: 'Station 330',           fb: 'https://www.facebook.com/Station330' },
-                { logo: '/venues/pour-shack.png',            name: 'Pour Shack' },
-                { logo: '/venues/chill-lewisville.png',      name: 'Chill — Lewisville',    fb: 'https://www.facebook.com/ChillLewisville' },
-                { logo: '/venues/fat-daddys.png',            name: 'Fat Daddys',            fb: 'https://www.facebook.com/FatDaddysLive' },
-                { logo: '/venues/broncos.png',               name: "Bronco's",              fb: 'https://www.facebook.com/BroncosSportsBarTX' },
-                { logo: '/venues/the-revel.png',             name: 'The Revel' },
-                { logo: '/venues/panther-island-pavilion.png', name: 'Panther Island Pavilion', fb: 'https://www.facebook.com/PantherIslandPavilion' },
-              ].map((venue, i, arr) => {
-                const isLogo = typeof venue === 'object' && venue.logo
-                const key = isLogo ? venue.name : venue
-                const name = isLogo ? venue.name : venue
-                const fb = isLogo ? venue.fb : null
-                const logoEl = isLogo ? (
-                  <img
-                    src={venue.logo}
-                    alt={name}
-                    title={name}
-                    className="venue-logo"
-                  />
-                ) : null
-                return (
-                  <span key={key} style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 'var(--s-3)',
-                    whiteSpace: 'nowrap',
-                  }}>
-                    {isLogo ? (
-                      fb ? (
-                        <a
-                          href={fb}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={`${name} on Facebook`}
-                          style={{ display: 'inline-flex', textDecoration: 'none' }}
-                        >
-                          {logoEl}
-                        </a>
-                      ) : (
-                        logoEl
-                      )
-                    ) : (
-                      name
-                    )}
-                    {i < arr.length - 1 && (
-                      <span style={{
-                        color: 'var(--c-epl)',
-                        opacity: 0.4,
-                        fontSize: '12px',
-                        lineHeight: 1,
-                      }}>·</span>
-                    )}
-                  </span>
-                )
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* ── BAND SHOWCASE ─────────────────────────────── */}
-        <section id="bands" style={{ padding: '0' }}>
-          {/* Band cards */}
-          <div style={{ borderTop: '1px solid var(--c-border)' }}>
-            {bandsList.map((band, index) => (
-              <Link
-                key={band.slug}
-                href={`/bands/${band.slug}`}
-                style={{ textDecoration: 'none', display: 'block' }}
-              >
-                <div
-                  className={`band-card reveal ${index % 2 === 0 ? 'reveal-left' : 'reveal-right'}`}
-                  style={{
-                    borderBottom: '1px solid var(--c-border)',
-                    position: 'relative',
-                    overflow: 'hidden',
-                  }}
-                >
-                  {/* Band color tint (subtle, was already here) */}
-                  <div
-                    className="band-card-bg"
-                    style={{ background: band.color }}
-                  />
-
-                  {/* Band hero image bleed on hover (when available) */}
-                  {band.heroPhoto && (
-                    <div className="band-card-image">
-                      <Image
-                        src={band.heroPhoto}
-                        alt={band.name}
-                        fill
-                        style={{ objectFit: 'cover', objectPosition: 'center 30%' }}
-                        sizes="100vw"
-                        quality={75}
-                      />
-                    </div>
-                  )}
-
-                  {/* Big band-color shortname behind content */}
-                  <div className="band-card-ghost" style={{ color: band.color }}>
-                    {band.shortName}
-                  </div>
-
-                  <div style={{
-                    maxWidth: 'var(--layout-max)',
-                    margin: '0 auto',
-                    padding: '52px var(--gutter-d)',
-                    display: 'grid',
-                    gridTemplateColumns: '1fr auto',
-                    alignItems: 'center',
-                    gap: '40px',
-                    position: 'relative',
-                    zIndex: 2,
-                  }}>
-                    {/* Content */}
-                    <div>
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 'var(--s-4)',
-                        marginBottom: 'var(--s-2)',
-                        flexWrap: 'wrap',
-                      }}>
-                        <span style={{
-                          fontFamily: 'var(--ff-label)',
-                          fontSize: 'var(--t-label-s)',
-                          fontWeight: 600,
-                          letterSpacing: '0.25em',
-                          textTransform: 'uppercase',
-                          color: band.color,
-                          opacity: 0.8,
-                        }}>
-                          {band.era}
-                        </span>
-                        {band.genre.map(g => (
-                          <span key={g} style={{
-                            fontFamily: 'var(--ff-label)',
-                            fontSize: 'var(--t-label-s)',
-                            letterSpacing: 'var(--ls-label-tight)',
-                            textTransform: 'uppercase',
-                            color: 'rgba(255,255,255,0.25)',
-                          }}>
-                            {g}
-                          </span>
-                        ))}
-                      </div>
-
-                      <h3 style={{
-                        fontFamily: 'var(--ff-display)',
-                        fontSize: 'var(--t-h1)',
-                        letterSpacing: 'var(--ls-display)',
-                        lineHeight: 0.9,
-                        color: 'var(--c-text)',
-                        marginBottom: 'var(--s-3)',
-                      }}>
-                        {band.name}
-                      </h3>
-
-                      <p style={{
-                        fontFamily: 'var(--ff-body)',
-                        fontSize: '14px',
-                        lineHeight: 1.65,
-                        color: 'rgba(255,255,255,0.55)',
-                        maxWidth: '500px',
-                      }}>
-                        {band.tagline}
-                      </p>
-
-                      <div
-                        className="band-card-line"
-                        style={{ background: band.color, marginTop: '20px' }}
-                      />
-                    </div>
-
-                    {/* Arrow */}
-                    <div style={{
-                      width: '48px', height: '48px',
-                      border: `1px solid ${band.color}`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: band.color,
-                      fontSize: '20px',
-                      flexShrink: 0,
-                      transition: 'background var(--d-base) var(--ease-in-out), color var(--d-base) var(--ease-in-out)',
-                    }}
-                      className="band-arrow"
-                    >
-                      →
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* ── MANIFESTO ─────────────────────────────────── */}
-        <section style={{
-          padding: 'clamp(80px, 12vw, 160px) var(--gutter-fluid)',
-          position: 'relative',
-          overflow: 'hidden',
-          borderTop: '1px solid var(--c-border)',
-        }}>
-          {/* Background accent */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'radial-gradient(ellipse 60% 80% at 50% 50%, rgba(212, 160, 23,0.03) 0%, transparent 70%)',
-          }} />
-
-          <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center', position: 'relative' }}>
-            <div className="section-label reveal" style={{ marginBottom: '32px' }}>
-              Who We Are
-            </div>
-
-            <blockquote className="reveal delay-100" style={{
-              fontFamily: 'var(--ff-display)',
-              fontSize: 'clamp(36px, 7vw, 88px)',
-              letterSpacing: '0.03em',
-              lineHeight: 1.0,
-              color: '#fff',
-              marginBottom: '40px',
-            }}>
-              "Quality, Hustle,<br />
-              <span style={{ color: 'var(--c-epl)' }}>and Love</span><br />
-              for the Show."
-            </blockquote>
-
-            <p className="reveal delay-200" style={{
-              fontFamily: 'var(--ff-body)',
-              fontSize: 'clamp(15px, 2vw, 18px)',
-              lineHeight: 1.8,
-              color: 'rgba(255,255,255,0.45)',
-              maxWidth: '600px',
-              margin: '0 auto 48px',
-            }}>
-              Echo Play Live was founded by Evan Ranallo in 2023 out of a need for band management
-              amongst friends and all the projects we share. Though our backgrounds vary greatly,
-              we are unified in our vision. Every show is a live, full-band performance.
-              The music, the energy, the crowd.
-            </p>
-
-            <div className="reveal delay-300">
-              <Link href="/about" className="btn-primary" style={{
-                textDecoration: 'none',
-                color: 'var(--c-epl)',
-                borderColor: 'var(--c-epl-line)',
-              }}>
-                <span>Our Story</span>
-                <span>→</span>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* ── SHOWS TEASER ──────────────────────────────── */}
-        <section style={{
-          padding: 'clamp(60px, 8vw, 100px) var(--gutter-fluid)',
-          borderTop: '1px solid var(--c-border)',
-          background: 'rgba(255,255,255,0.01)',
-        }}>
-          <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-            <div style={{
-              display: 'flex', alignItems: 'flex-end',
-              justifyContent: 'space-between', flexWrap: 'wrap',
-              gap: '20px', marginBottom: '48px',
-            }}>
-              <div className="reveal">
-                <div className="section-label" style={{ marginBottom: '8px' }}>On Stage</div>
-                <h2 style={{
-                  fontFamily: 'var(--ff-display)',
-                  fontSize: 'clamp(36px, 6vw, 72px)',
-                  letterSpacing: '0.03em',
-                  lineHeight: 0.9,
-                }}>Upcoming Shows</h2>
+        <section className="pp-hero">
+          <div className="pp-wrap pp-hero-grid">
+            <div>
+              <div className="pp-kicker pp-reveal">DFW tribute & cover band management</div>
+              <h1 className="pp-title pp-reveal">Live music with <span>production value.</span></h1>
+              <p className="pp-copy pp-reveal">Echo Play Live builds premium live-music experiences for venues, festivals, private events, and fans who still want the room to feel electric.</p>
+              <div className="pp-actions pp-reveal">
+                <Link className="pp-button pp-button-primary" href="/contact">Book a band →</Link>
+                <Link className="pp-button" href="/shows">View shows</Link>
+                <Link className="pp-button" href="#roster">Explore roster</Link>
               </div>
-              <Link href="/shows" className="reveal reveal-right" style={{
-                textDecoration: 'none',
-                fontFamily: 'var(--ff-label)',
-                fontSize: '12px',
-                fontWeight: 600,
-                letterSpacing: '0.15em',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.4)',
-                display: 'flex', alignItems: 'center', gap: '8px',
-                transition: 'color 0.2s ease',
-              }}
-                onMouseEnter={e => e.currentTarget.style.color = 'var(--c-epl)'}
-                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
-              >
-                View All Shows →
-              </Link>
             </div>
-
-            {/* Per-band Bandsintown widgets, next 1 show each */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-              {bandsList.map(band => (
-                <div key={band.slug} className="reveal">
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: '12px',
-                    marginBottom: '8px', paddingBottom: '8px',
-                    borderBottom: `1px solid ${band.color}30`,
-                  }}>
-                    <div style={{ width: '3px', height: '18px', background: band.color, flexShrink: 0 }} />
-                    <Link href={`/bands/${band.slug}`} style={{
-                      fontFamily: 'var(--ff-display)',
-                      fontSize: '20px', letterSpacing: '0.04em',
-                      color: band.color, textDecoration: 'none',
-                      transition: 'opacity 0.2s ease',
-                    }}
-                      onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
-                      onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-                    >{band.name}</Link>
-                  </div>
-                  <a
-                    className="bit-widget-initializer"
-                    data-artist-name={artistNames[band.slug] || band.name}
-                    data-display-local-dates="false"
-                    data-display-past-dates="false"
-                    data-auto-style="false"
-                    data-font-color="#ffffff"
-                    data-text-color="#ffffff"
-                    data-link-color={band.color}
-                    data-popup-background-color="#0a0a0a"
-                    data-background-color="transparent"
-                    data-display-limit="1"
-                    data-separator-color="rgba(255,255,255,0.06)"
-                    data-play-my-city="false"
-                  />
-                </div>
-              ))}
-            </div>
-
-            {/* Bandsintown widget style overrides */}
-            <style>{`
-              .bit-widget { background: transparent !important; font-family: 'Barlow', sans-serif !important; }
-              .bit-event { background: rgba(255,255,255,0.015) !important; border: none !important; border-bottom: 1px solid var(--c-border) !important; padding: 14px 0 !important; margin: 0 !important; }
-              .bit-event:hover { background: rgba(255,255,255,0.03) !important; }
-              .bit-date * { font-family: 'Bebas Neue', cursive !important; font-size: 16px !important; letter-spacing: 0.06em !important; color: #fff !important; }
-              .bit-venue * { font-family: 'Barlow', sans-serif !important; color: rgba(255,255,255,0.85) !important; font-size: 13px !important; }
-              .bit-location * { font-family: 'Barlow', sans-serif !important; color: rgba(255,255,255,0.4) !important; font-size: 11px !important; }
-              .bit-offers a, .bit-rsvp a { font-family: 'Barlow Condensed', sans-serif !important; font-size: 9px !important; font-weight: 700 !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; padding: 5px 10px !important; border-radius: 0 !important; }
-              .bit-no-dates-title { font-family: 'Barlow', sans-serif !important; color: rgba(255,255,255,0.18) !important; font-size: 12px !important; font-style: italic; }
-              .bit-no-dates-container { background: transparent !important; padding: 6px 0 !important; }
-            `}</style>
-
-            <div className="reveal" style={{ textAlign: 'center', marginTop: '40px' }}>
-              <Link href="/shows" className="btn-primary" style={{
-                textDecoration: 'none',
-                color: 'rgba(255,255,255,0.6)',
-                borderColor: 'rgba(255,255,255,0.15)',
-              }}>
-                <span>Full Schedule</span>
-                <span>→</span>
-              </Link>
+            <div className="pp-hero-card pp-reveal" aria-hidden="true">
+              <div className="pp-hero-orbit" /><div className="pp-hero-orbit" />
+              <div className="pp-hero-metric">
+                <div><strong>{bandsList.length}</strong><span>active acts</span></div>
+                <div><strong>DFW</strong><span>home base</span></div>
+                <div><strong>100%</strong><span>live band</span></div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* ── BOOKING CTA ───────────────────────────────── */}
-        <section style={{
-          padding: 'clamp(80px, 12vw, 140px) var(--gutter-fluid)',
-          borderTop: '1px solid var(--c-border)',
-          position: 'relative',
-          overflow: 'hidden',
-        }}>
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(135deg, rgba(212, 160, 23,0.04) 0%, transparent 50%, rgba(212, 160, 23,0.02) 100%)',
-          }} />
-          <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', position: 'relative' }}>
-            <div className="section-label reveal" style={{ marginBottom: '24px' }}>Ready to Book?</div>
-            <h2 className="reveal delay-100" style={{
-              fontFamily: 'var(--ff-display)',
-              fontSize: 'clamp(48px, 9vw, 120px)',
-              letterSpacing: '0.02em',
-              lineHeight: 0.9,
-              marginBottom: '24px',
-            }}>
-              Bring the<br />
-              <span style={{ color: 'var(--c-epl)' }}>Show to You</span>
-            </h2>
-            <p className="reveal delay-200" style={{
-              fontFamily: 'var(--ff-body)',
-              fontSize: '16px',
-              lineHeight: 1.7,
-              color: 'rgba(255,255,255,0.4)',
-              marginBottom: '40px',
-            }}>
-              Venues, festivals, private events. We bring the full live experience wherever you need it.
-              Reach out and let's make something unforgettable.
-            </p>
-            <div className="reveal delay-300" style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
-              <Link href="/contact" style={{
-                textDecoration: 'none',
-                display: 'inline-flex', alignItems: 'center', gap: '10px',
-                fontFamily: 'var(--ff-label)',
-                fontSize: '13px',
-                fontWeight: 600,
-                letterSpacing: '0.15em',
-                textTransform: 'uppercase',
-                color: '#080808',
-                background: 'var(--c-epl)',
-                padding: '16px 36px',
-                transition: 'opacity 0.2s ease, transform 0.2s ease',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)' }}
-              >
-                Book Now →
-              </Link>
-              <Link href="/shows" className="btn-primary" style={{
-                textDecoration: 'none',
-                color: 'rgba(255,255,255,0.5)',
-                borderColor: 'rgba(255,255,255,0.15)',
-              }}>
-                <span>View Upcoming Shows</span>
-              </Link>
+        <section className="pp-venues">
+          <div className="pp-marquee">
+            <span>{VENUES.map(v => <b key={v}>{v}</b>)}</span>
+            <span>{VENUES.map(v => <b key={`${v}-2`}>{v}</b>)}</span>
+          </div>
+        </section>
+
+        <section className="pp-section">
+          <div className="pp-wrap">
+            <div className="pp-section-head pp-reveal">
+              <h2>Built for the room.</h2>
+              <p>Not background noise. Not a playlist. These are full-band shows with recognizable songs, production discipline, and real crowd energy.</p>
+            </div>
+            <div className="pp-highlights">
+              <article className="pp-highlight pp-reveal">
+                <h3>Tributes, covers, and themed nights that feel like events.</h3>
+                <p>From emo and 90s alt-rock to Tool and Deftones-inspired heavy nights, each act is positioned as a complete entertainment product.</p>
+              </article>
+              <div className="pp-highlight-small">
+                <article className="pp-mini pp-reveal"><strong>01</strong><span>Professional show flow for venues and promoters.</span></article>
+                <article className="pp-mini pp-reveal"><strong>02</strong><span>Fan-facing campaigns, artwork, listings, and ticket paths.</span></article>
+              </div>
             </div>
           </div>
         </section>
 
+        <section id="roster" className="pp-section">
+          <div className="pp-wrap">
+            <div className="pp-section-head pp-reveal">
+              <h2>The roster.</h2>
+              <p>Each band has its own sonic lane and visual world. The brand stays premium; the room changes with the act.</p>
+            </div>
+            <div className="pp-band-grid">
+              {featured.map((band, index) => <BandPanel key={band.slug} band={band} index={index} />)}
+            </div>
+          </div>
+        </section>
+
+        <section className="pp-cta">
+          <div className="pp-wrap">
+            <div className="pp-kicker pp-reveal">Booking, festivals, private events</div>
+            <h2 className="pp-reveal">Bring the show to your room.</h2>
+            <p className="pp-reveal">Tell us the venue, date, audience, and budget. We’ll help match the right act and build the night around it.</p>
+            <div className="pp-actions pp-reveal" style={{ justifyContent: 'center' }}>
+              <Link className="pp-button pp-button-primary" href="/contact">Start booking →</Link>
+              <Link className="pp-button" href="/shows">See announced dates</Link>
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </>
