@@ -1,4 +1,4 @@
-import { Card, ErrorCard, MetricGrid, Pill, PortalShell, PortalTopBar, SectionLabel, ShowCard } from '@/components/portal/PortalUI'
+import { Card, EmptyState, ErrorCard, MetricGrid, PersonHeader, PortalShell, PortalTopBar, SectionLabel, ShowCard } from '@/components/portal/PortalUI'
 import { getMemberPortal } from '@/lib/portal/airtable'
 
 export const dynamic = 'force-dynamic'
@@ -16,20 +16,7 @@ export default async function MemberPortalPage({ params }) {
   return (
     <PortalShell>
       <PortalTopBar title={person.name} subtitle={person.role || 'Band Member'} />
-
-      <section style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24 }}>
-        {person.photo ? (
-          <img src={person.photo} alt="" style={{ width: 58, height: 58, borderRadius: '50%', objectFit: 'cover' }} />
-        ) : (
-          <div style={{ width: 58, height: 58, borderRadius: '50%', background: 'rgba(212,160,23,0.1)', color: '#d4a017', display: 'grid', placeItems: 'center', fontWeight: 900 }}>
-            {person.name.split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase()}
-          </div>
-        )}
-        <div>
-          <h1 style={{ fontSize: 26, lineHeight: 1, margin: 0 }}>{person.name}</h1>
-          {person.role && <div style={{ marginTop: 8 }}><Pill accent>{person.role}</Pill></div>}
-        </div>
-      </section>
+      <PersonHeader person={person} type="Band Member" />
 
       <MetricGrid items={[
         { label: 'My Shows', value: portal.shows.length, sub: 'upcoming', icon: '🎸', accent: true },
@@ -40,30 +27,30 @@ export default async function MemberPortalPage({ params }) {
       {portal.nextShow ? (
         <ShowCard show={portal.nextShow} href={`/portal/shows/${portal.nextShow.id}?from=member&person=${person.id}`} />
       ) : (
-        <Card>No upcoming shows assigned yet.</Card>
+        <EmptyState title="No next show" body="You do not have an upcoming show assigned yet." />
       )}
 
       <SectionLabel>Upcoming Shows</SectionLabel>
-      <div style={{ display: 'grid', gap: 12 }}>
+      <div className="portal-stagger" style={{ display: 'grid', gap: 12 }}>
         {portal.shows.length > 0 ? portal.shows.map(show => (
           <ShowCard key={show.id} show={show} href={`/portal/shows/${show.id}?from=member&person=${person.id}`} />
         )) : (
-          <Card>No upcoming shows found.</Card>
+          <EmptyState title="No shows found" body="Assigned shows will appear here once they are attached to your member record." />
         )}
       </div>
 
       <SectionLabel>Blackout Dates</SectionLabel>
       <Card>
         {portal.blackouts.length > 0 ? (
-          <div style={{ display: 'grid', gap: 10 }}>
+          <div style={{ display: 'grid', gap: 12 }}>
             {portal.blackouts.slice(0, 6).map(item => (
-              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, borderBottom: '1px solid #232333', paddingBottom: 10 }}>
-                <div style={{ fontSize: 13, fontWeight: 700 }}>{item.dateLabel}</div>
-                <div style={{ color: '#7b7f91', fontSize: 12 }}>{item.reason || 'No reason listed'}</div>
+              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 14, borderBottom: '1px solid var(--c-border)', paddingBottom: 12 }}>
+                <div style={{ fontWeight: 800 }}>{item.dateLabel}</div>
+                <div style={{ color: 'var(--c-text-dim)', fontSize: 13, textAlign: 'right' }}>{item.reason || 'No reason listed'}</div>
               </div>
             ))}
           </div>
-        ) : 'No blackout dates on record.'}
+        ) : <span style={{ color: 'var(--c-text-muted)' }}>No blackout dates on record.</span>}
       </Card>
     </PortalShell>
   )
