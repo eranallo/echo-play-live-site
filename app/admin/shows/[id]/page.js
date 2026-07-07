@@ -1,3 +1,5 @@
+import CampaignDraftPanel from '@/components/admin/CampaignDraftPanel'
+import ShowControls from '@/components/admin/ShowControls'
 import { getAdminShowDetail } from '@/lib/admin/airtable'
 
 export const dynamic = 'force-dynamic'
@@ -102,39 +104,6 @@ function Checklist({ items }) {
   )
 }
 
-function ActionPlaceholder() {
-  const actions = [
-    'Generate Campaign Draft',
-    'Create Canva Brief',
-    'Advance Show',
-    'Draft Venue Follow-Up',
-  ]
-
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--s-3)' }}>
-      {actions.map(action => (
-        <button key={action} disabled style={{
-          border: '1px dashed var(--c-border)',
-          background: 'rgba(255, 255, 255, 0.02)',
-          color: 'var(--c-text-faint)',
-          padding: 'var(--s-4)',
-          fontFamily: 'var(--ff-label)',
-          fontSize: '11px',
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          textAlign: 'left',
-          cursor: 'not-allowed',
-        }}>
-          {action}
-          <span style={{ display: 'block', marginTop: 'var(--s-2)', fontFamily: 'var(--ff-body)', letterSpacing: 0, textTransform: 'none', fontSize: '13px' }}>
-            Coming after approval queue is active.
-          </span>
-        </button>
-      ))}
-    </div>
-  )
-}
-
 export default async function AdminShowDetailPage({ params }) {
   const resolvedParams = await params
   const showId = resolvedParams?.id
@@ -185,7 +154,7 @@ export default async function AdminShowDetailPage({ params }) {
         }}>
           <div style={{ maxWidth: '820px' }}>
             <div className="section-label" style={{ color: 'var(--c-epl)', marginBottom: 'var(--s-4)' }}>
-              Read-Only Show Detail
+              Admin Show Detail
             </div>
             <h1 style={{
               fontFamily: 'var(--ff-display)',
@@ -234,6 +203,14 @@ export default async function AdminShowDetailPage({ params }) {
         )}
 
         <div style={{ display: 'grid', gap: 'var(--s-6)' }}>
+          <Section eyebrow="Phase 1.4" title="Manual Airtable Updates">
+            <ShowControls showId={show.id} notes={show.editableNotes} checklist={show.checklist} />
+          </Section>
+
+          <Section eyebrow="Phase 1.6–1.7" title="Show Campaign Agent Draft">
+            <CampaignDraftPanel showId={show.id} />
+          </Section>
+
           <Section eyebrow="Status" title="Workflow Checklist">
             <Checklist items={show.checklist} />
           </Section>
@@ -258,12 +235,8 @@ export default async function AdminShowDetailPage({ params }) {
             </Section>
           </div>
 
-          <Section eyebrow="Internal" title="Notes">
+          <Section eyebrow="Internal" title="Notes Snapshot">
             <DetailGrid rows={show.notes} />
-          </Section>
-
-          <Section eyebrow="Next Build" title="Agent Actions">
-            <ActionPlaceholder />
           </Section>
         </div>
       </section>
