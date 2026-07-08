@@ -1,4 +1,5 @@
-import { getAdminOpsFoundation, getAdminShowsOverview } from '@/lib/admin/airtable'
+import AdminNav from '@/components/admin/AdminNav'
+import { getCachedAdminOpsFoundation, getCachedAdminShowsOverview } from '@/lib/admin/cachedAirtable'
 import { specialistGuideOptions } from '@/lib/admin/specialistGuides'
 
 export const dynamic = 'force-dynamic'
@@ -66,8 +67,8 @@ function RunItem({ run }) {
 
 export default async function SpecialistHubPage() {
   const [showsOverview, opsFoundation] = await Promise.all([
-    getAdminShowsOverview(),
-    getAdminOpsFoundation(),
+    getCachedAdminShowsOverview(),
+    getCachedAdminOpsFoundation(),
   ])
 
   const lanes = specialistGuideOptions()
@@ -78,14 +79,12 @@ export default async function SpecialistHubPage() {
 
   return (
     <main className="sh-shell">
+      <AdminNav contextLabel="Specialists" backHref="/admin" backLabel="Command Center" />
       <style>{`
-        .sh-shell { min-height:100vh; padding:clamp(84px,8vw,124px) var(--gutter-fluid); color:var(--c-text); background:radial-gradient(circle at 8% 0%, rgba(212,160,23,.18), transparent 32%), linear-gradient(180deg,#111,var(--c-bg) 36%,#050505); overflow:hidden; }
+        .sh-shell { min-height:100vh; padding:clamp(84px,8vw,124px) var(--gutter-fluid); padding-bottom:clamp(88px,8vw,124px); color:var(--c-text); background:radial-gradient(circle at 8% 0%, rgba(212,160,23,.18), transparent 32%), linear-gradient(180deg,#111,var(--c-bg) 36%,#050505); overflow:hidden; }
         .sh-wrap { max-width:var(--layout-max); margin:0 auto; position:relative; }
         .sh-wrap:before { content:''; position:fixed; inset:0; pointer-events:none; background-image:linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px); background-size:54px 54px; opacity:.42; mask-image:linear-gradient(to bottom, black, transparent 75%); }
         .sh-wrap > * { position:relative; z-index:1; }
-        .sh-nav { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:var(--s-7); }
-        .sh-nav a { color:var(--c-text-muted); text-decoration:none; border:1px solid var(--c-border); background:rgba(255,255,255,.025); padding:9px 12px; border-radius:999px; font-family:var(--ff-label); font-size:10px; letter-spacing:.12em; text-transform:uppercase; }
-        .sh-nav a:hover { border-color:var(--c-epl-line); color:var(--c-epl); }
         .sh-label { font-family:var(--ff-label); font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--c-epl); }
         .sh-hero { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,.44fr); gap:var(--s-7); align-items:end; margin-bottom:var(--s-7); }
         .sh-hero h1 { font-family:var(--ff-display); font-size:clamp(68px,11vw,150px); line-height:.76; letter-spacing:var(--ls-display); margin:var(--s-3) 0 var(--s-4); max-width:900px; }
@@ -118,18 +117,10 @@ export default async function SpecialistHubPage() {
         .sh-run strong, .sh-rule strong { display:block; color:var(--c-text-muted); margin:6px 0; }
         .sh-rule p { font-size:13px; }
         @media(max-width:1100px){ .sh-grid { grid-template-columns:repeat(2, minmax(0,1fr)); } .sh-hero, .sh-lower { grid-template-columns:1fr; } }
-        @media(max-width:680px){ .sh-shell { padding-top:70px; } .sh-nav { align-items:flex-start; } .sh-nav div { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; } .sh-grid { grid-template-columns:1fr; } .sh-card { min-height:210px; } .sh-show { grid-template-columns:1fr; } .sh-show em { justify-self:start; } }
+        @media(max-width:680px){ .sh-shell { padding-top:74px; } .sh-grid { grid-template-columns:1fr; } .sh-card { min-height:210px; } .sh-show { grid-template-columns:1fr; } .sh-show em { justify-self:start; } }
       `}</style>
 
       <section className="sh-wrap">
-        <nav className="sh-nav" aria-label="Specialist navigation">
-          <a href="/admin">← Command Center</a>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-            <a href="/admin/chief-of-staff">Chief</a>
-            <a href="/admin/approvals">Review Queue</a>
-          </div>
-        </nav>
-
         <header className="sh-hero">
           <div>
             <span className="sh-label">Specialist Hub</span>
