@@ -23,13 +23,14 @@ function buildSourceNotes(task) {
 }
 
 function TaskRow({ task, source, onComplete, onCreateFromTask, busy }) {
+  const effectiveSource = task.type === 'Airtable' ? 'Airtable' : source
   const high = isHigh(task)
-  const canComplete = source === 'Airtable' && task.id && !task.isDone
-  const canCreate = source !== 'Airtable'
+  const canComplete = effectiveSource === 'Airtable' && task.id && !task.isDone
+  const canCreate = effectiveSource !== 'Airtable'
 
   return (
     <div className={`tqc-row ${high ? 'tqc-high' : ''}`}>
-      <div className="tqc-type"><span>{source}</span><strong>{task.type || task.source || 'Task'}</strong></div>
+      <div className="tqc-type"><span>{effectiveSource}</span><strong>{task.type || task.source || 'Task'}</strong></div>
       <div className="tqc-main"><h3>{task.title}</h3><p>{task.body || task.notes || task.relatedShow || 'No notes yet.'}</p></div>
       <div className="tqc-meta"><span>{task.priority || 'Normal'}</span><em>{task.due || task.dueLabel || 'No due date'}</em></div>
       <div className="tqc-actions">
