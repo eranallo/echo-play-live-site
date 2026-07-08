@@ -8,10 +8,7 @@ import SongsSection from '@/components/SongsSection'
 import TributeDiscographySection from '@/components/TributeDiscographySection'
 import { bandsList } from '@/lib/bands'
 import BandHero from '@/components/band/BandHero'
-import BandStatsBar from '@/components/band/BandStatsBar'
 import BandAbout from '@/components/band/BandAbout'
-import BandExperience from '@/components/band/BandExperience'
-import BandHistory from '@/components/band/BandHistory'
 import BandLineup from '@/components/band/BandLineup'
 import BandGallery from '@/components/band/BandGallery'
 import BandBookingCta from '@/components/band/BandBookingCta'
@@ -138,11 +135,9 @@ export default function BandPageClient({ band }) {
   }, [lightboxImg, lightboxIdx, images])
 
   const otherBands = bandsList.filter(b => b.slug !== band.slug)
-  const stats = band.stats || []
   const curatedUrls = new Set([band.heroPhoto, band.featurePhoto, band.crowdPhoto].filter(Boolean))
   const heroImg = band.heroPhoto ? { url: band.heroPhoto } : (images[0] || null)
   const featureImg = band.featurePhoto ? { url: band.featurePhoto } : (images[1] || null)
-  const crowdImg = band.crowdPhoto ? { url: band.crowdPhoto } : (images[4] || null)
   const galleryImages = images.filter(img => !curatedUrls.has(img.url))
 
   const openLightbox = (img, idx) => {
@@ -155,12 +150,7 @@ export default function BandPageClient({ band }) {
       <Nav />
       <main ref={pageRef} className="band-page-main" style={{ background: '#080808' }}>
         <BandHero band={band} heroImg={heroImg} heroParallaxRef={heroParallaxRef} allowHeroVideo={allowHeroVideo} />
-        {stats.length > 0 && <BandStatsBar band={band} stats={stats} />}
         <BandAbout band={band} featureImg={featureImg} openLightbox={openLightbox} />
-        {(crowdImg || band.experienceHeadline || band.experienceBody) && (
-          <BandExperience band={band} crowdImg={crowdImg} openLightbox={openLightbox} />
-        )}
-        {band.history && band.history.length > 0 && <BandHistory band={band} />}
         {lineup.length > 0 && <BandLineup band={band} lineup={lineup} />}
         {mediaLoaded && galleryImages.length > 0 && (
           <BandGallery band={band} galleryImages={galleryImages} openLightbox={openLightbox} />
