@@ -1,5 +1,6 @@
+import AdminNav from '@/components/admin/AdminNav'
 import TaskQueueClient from '@/components/admin/TaskQueueClient'
-import { getAdminOpsFoundation, getAdminShowsOverview } from '@/lib/admin/airtable'
+import { getCachedAdminOpsFoundation, getCachedAdminShowsOverview } from '@/lib/admin/cachedAirtable'
 
 export const dynamic = 'force-dynamic'
 
@@ -54,8 +55,8 @@ function inferredTasks(shows, approvals) {
 
 export default async function AdminTasksPage() {
   const [showsOverview, opsFoundation] = await Promise.all([
-    getAdminShowsOverview(),
-    getAdminOpsFoundation(),
+    getCachedAdminShowsOverview(),
+    getCachedAdminOpsFoundation(),
   ])
 
   const shows = showsOverview?.shows || []
@@ -66,11 +67,11 @@ export default async function AdminTasksPage() {
 
   return (
     <main className="tq-shell">
+      <AdminNav contextLabel="Tasks" backHref="/admin" backLabel="Command Center" />
       <style>{`
-        .tq-shell{min-height:100vh;padding:clamp(76px,8vw,116px) var(--gutter-fluid);background:radial-gradient(circle at 10% 0%,rgba(212,160,23,.16),transparent 32%),linear-gradient(180deg,#101010,#050505 42%,#030303);color:var(--c-text)}.tq-wrap{max-width:var(--layout-max);margin:0 auto}.tq-top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:var(--s-6)}.tq-back,.tq-nav a,.tq-label{font-family:var(--ff-label);font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--c-epl);text-decoration:none;font-style:normal}.tq-nav{display:flex;gap:8px;flex-wrap:wrap}.tq-nav a{border:1px solid var(--c-border);color:var(--c-text-muted);padding:9px 12px;border-radius:999px}.tq-nav a:hover{border-color:var(--c-epl-line);color:var(--c-epl)}.tq-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.45fr);gap:var(--s-6);align-items:end;margin-bottom:var(--s-6)}.tq-hero h1{font-family:var(--ff-display);font-size:clamp(64px,10vw,140px);line-height:.78;letter-spacing:var(--ls-display);margin:var(--s-3) 0}.tq-hero p{color:var(--c-text-muted);font-size:var(--t-body-l);line-height:var(--lh-base);max-width:760px}.tq-status{border:1px solid var(--c-epl-line);background:rgba(212,160,23,.06);padding:var(--s-5)}.tq-status strong{display:block;font-family:var(--ff-display);font-size:58px;line-height:.85;color:var(--c-epl);margin:8px 0}.tq-status p{color:var(--c-text-dim);line-height:var(--lh-base)}@media(max-width:980px){.tq-hero{grid-template-columns:1fr}}@media(max-width:680px){.tq-shell{padding-top:70px}.tq-top{align-items:flex-start}.tq-nav{justify-content:flex-end}.tq-hero h1{font-size:clamp(58px,20vw,92px)}}
+        .tq-shell{min-height:100vh;padding:clamp(82px,8vw,122px) var(--gutter-fluid);padding-bottom:clamp(88px,8vw,122px);background:radial-gradient(circle at 10% 0%,rgba(212,160,23,.16),transparent 32%),linear-gradient(180deg,#101010,#050505 42%,#030303);color:var(--c-text)}.tq-wrap{max-width:var(--layout-max);margin:0 auto}.tq-label{font-family:var(--ff-label);font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--c-epl);text-decoration:none;font-style:normal}.tq-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.45fr);gap:var(--s-6);align-items:end;margin-bottom:var(--s-6)}.tq-hero h1{font-family:var(--ff-display);font-size:clamp(64px,10vw,140px);line-height:.78;letter-spacing:var(--ls-display);margin:var(--s-3) 0}.tq-hero p{color:var(--c-text-muted);font-size:var(--t-body-l);line-height:var(--lh-base);max-width:760px}.tq-status{border:1px solid var(--c-epl-line);background:rgba(212,160,23,.06);padding:var(--s-5)}.tq-status strong{display:block;font-family:var(--ff-display);font-size:58px;line-height:.85;color:var(--c-epl);margin:8px 0}.tq-status p{color:var(--c-text-dim);line-height:var(--lh-base)}@media(max-width:980px){.tq-hero{grid-template-columns:1fr}}@media(max-width:680px){.tq-shell{padding-top:74px}.tq-hero h1{font-size:clamp(58px,20vw,92px)}}
       `}</style>
       <div className="tq-wrap">
-        <nav className="tq-top"><a className="tq-back" href="/admin">← Command Center</a><div className="tq-nav"><a href="/admin/chief-of-staff">Chief</a><a href="/admin/specialists">Specialists</a><a href="/admin/approvals">Approvals</a></div></nav>
         <header className="tq-hero"><div><span className="tq-label">Work Queue</span><h1>Tasks</h1><p>This is the hard-data work layer. Create tasks, convert inferred work into Airtable records, and mark work complete when it is done.</p></div><aside className="tq-status"><span className="tq-label">Task table</span><strong>{tasksTable?.ready ? 'On' : 'Pending'}</strong><p>{tasksTable?.ready ? `${airtableTasks.length} open Airtable task${airtableTasks.length === 1 ? '' : 's'}` : 'The command center is ready for a TASKS table, but it is not connected yet.'}</p></aside></header>
         <TaskQueueClient airtableTasks={airtableTasks} inferredTasks={inferred} tasksTableReady={Boolean(tasksTable?.ready)} />
       </div>
