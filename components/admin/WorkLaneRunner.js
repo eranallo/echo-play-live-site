@@ -33,6 +33,60 @@ function SmallList({ title, items }) {
   )
 }
 
+function SpecialistTasks({ output }) {
+  const [busy, setBusy] = useState(null)
+  const [created, setCreated] = useState([])
+  const [message, setMessage] = useState(null)
+  const actions = output?.recommendedNextActions || []
+
+  if (!actions.length) return null
+
+  async function createTask(action, index) {
+    setBusy(index)
+    setMessage(null)
+    try {
+      const response = await fetch('/api/admin/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: action,
+          priority: 'Normal',
+          source: `Specialist: ${output.specialist?.label || output.lane || 'Unknown'}`,
+          notes: [
+            output.summary,
+            output.show?.title ? `Show: ${output.show.title}` : '',
+            output.show?.showId ? `Show ID: ${output.show.showId}` : '',
+          ].filter(Boolean).join('\n'),
+          status: 'Todo',
+        }),
+      })
+      const data = await response.json()
+      if (!response.ok || !data.ok) throw new Error(data.error || 'Task creation failed.')
+      setCreated(current => [...current, index])
+      setMessage({ type: 'success', text: 'Task sent to Airtable.' })
+    } catch (error) {
+      setMessage({ type: 'error', text: error?.message || 'Task creation failed.' })
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  return (
+    <div className="wl-task-actions">
+      <strong>Create tasks from next actions</strong>
+      <div className="wl-action-list">
+        {actions.map((action, index) => (
+          <div key={`${action}-${index}`} className="wl-action-row">
+            <span>{action}</span>
+            <button disabled={busy !== null || created.includes(index)} onClick={() => createTask(action, index)}>{created.includes(index) ? 'Created' : busy === index ? 'Saving…' : 'Make Task'}</button>
+          </div>
+        ))}
+      </div>
+      {message && <p className={`wl-message ${message.type === 'error' ? 'wl-message-error' : ''}`}>{message.text}</p>}
+    </div>
+  )
+}
+
 function PreviewValue({ value }) {
   if (Array.isArray(value)) {
     return (
@@ -98,6 +152,8 @@ function OutputBlock({ result }) {
         <SmallList title="Open Items" items={output.missing} />
       </div>
 
+      <SpecialistTasks output={output} />
+
       <WorkPreview work={output.work} />
 
       <details className="wl-details">
@@ -153,11 +209,11 @@ export default function WorkLaneRunner({ showId }) {
         .wl-lane:hover { border-color:var(--c-epl-line); }
         .wl-eyebrow, .wl-lane span { color:var(--c-epl); font-family:var(--ff-label); font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
         .wl-lane strong { display:block; color:var(--c-text); font-size:16px; margin-top:6px; }
-        .wl-lane p, .wl-summary, .wl-small-block li, .wl-object-row em { color:var(--c-text-dim); line-height:var(--lh-snug); }
+        .wl-lane p, .wl-summary, .wl-small-block li, .wl-object-row em, .wl-action-row span { color:var(--c-text-dim); line-height:var(--lh-snug); }
         .wl-lane p { font-size:13px; margin-top:8px; }
-        .wl-button { align-self:end; border:1px solid var(--c-epl-line); color:var(--c-epl); padding:12px 14px; font-family:var(--ff-label); font-size:11px; letter-spacing:.14em; text-transform:uppercase; background:rgba(212,160,23,.06); cursor:pointer; transition:background .18s ease, color .18s ease, opacity .18s ease; }
-        .wl-button:disabled { opacity:.48; cursor:not-allowed; color:var(--c-text-faint); border-color:var(--c-border); background:var(--c-surface-2); }
-        .wl-button:not(:disabled):hover { background:var(--c-epl); color:var(--c-bg); }
+        .wl-button, .wl-action-row button { align-self:end; border:1px solid var(--c-epl-line); color:var(--c-epl); padding:12px 14px; font-family:var(--ff-label); font-size:11px; letter-spacing:.14em; text-transform:uppercase; background:rgba(212,160,23,.06); cursor:pointer; transition:background .18s ease, color .18s ease, opacity .18s ease; }
+        .wl-button:disabled, .wl-action-row button:disabled { opacity:.48; cursor:not-allowed; color:var(--c-text-faint); border-color:var(--c-border); background:var(--c-surface-2); }
+        .wl-button:not(:disabled):hover, .wl-action-row button:not(:disabled):hover { background:var(--c-epl); color:var(--c-bg); }
         .wl-message { color:var(--c-epl); line-height:var(--lh-base); }
         .wl-message-error { color:#f3a6a6; }
         .wl-results { display:grid; gap:var(--s-4); }
@@ -168,9 +224,12 @@ export default function WorkLaneRunner({ showId }) {
         .wl-badges span { border:1px solid var(--c-border); color:var(--c-text-dim); padding:6px 8px; font-family:var(--ff-label); font-size:10px; letter-spacing:.12em; text-transform:uppercase; }
         .wl-badges .wl-badge-gold { color:var(--c-epl); border-color:var(--c-epl-line); background:rgba(212,160,23,.06); }
         .wl-output-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:var(--s-3); }
-        .wl-small-block, .wl-work-card { border:1px solid var(--c-border); background:rgba(0,0,0,.18); padding:var(--s-4); }
-        .wl-small-block strong, .wl-work-card strong { display:block; color:var(--c-text-muted); margin-bottom:10px; }
+        .wl-small-block, .wl-work-card, .wl-task-actions { border:1px solid var(--c-border); background:rgba(0,0,0,.18); padding:var(--s-4); }
+        .wl-small-block strong, .wl-work-card strong, .wl-task-actions > strong { display:block; color:var(--c-text-muted); margin-bottom:10px; }
         .wl-small-block ul, .wl-work-card ul { padding-left:18px; display:grid; gap:6px; }
+        .wl-action-list { display:grid; gap:8px; }
+        .wl-action-row { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; border:1px solid var(--c-border); background:var(--c-bg); padding:10px; }
+        .wl-action-row button { padding:9px 10px; font-size:10px; }
         .wl-work-preview { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:var(--s-3); }
         .wl-object-grid { display:grid; gap:1px; background:var(--c-border); }
         .wl-object-row { display:grid; grid-template-columns:minmax(110px,.42fr) 1fr; gap:10px; background:var(--c-bg); padding:9px 10px; }
@@ -182,7 +241,7 @@ export default function WorkLaneRunner({ showId }) {
         .wl-log-row { display:flex; flex-wrap:wrap; gap:12px; color:var(--c-text-faint); font-size:12px; }
         .wl-log-row a { color:var(--c-epl); font-family:var(--ff-label); font-size:11px; letter-spacing:.14em; text-transform:uppercase; text-decoration:none; }
         .wl-error { color:#f3a6a6; }
-        @media(max-width:640px){ .wl-output { padding:var(--s-4); } .wl-object-row { grid-template-columns:1fr; } }
+        @media(max-width:640px){ .wl-output { padding:var(--s-4); } .wl-object-row, .wl-action-row { grid-template-columns:1fr; } }
       `}</style>
 
       <div className="wl-note">
