@@ -2,16 +2,23 @@ import { getAdminOpsFoundation, getAdminShowsOverview } from '@/lib/admin/airtab
 
 export const dynamic = 'force-dynamic'
 
-const TOOL_LINKS = [
-  { label: 'Airtable', href: 'https://airtable.com/appYUOoJgvRyZ7fLB', sub: 'Source of truth' },
-  { label: 'Google Drive', href: 'https://drive.google.com/drive/my-drive', sub: 'Docs + assets' },
-  { label: 'Canva', href: 'https://www.canva.com/', sub: 'Design work' },
-  { label: 'Gmail', href: 'https://mail.google.com/', sub: 'Venue comms' },
-  { label: 'Calendar', href: 'https://calendar.google.com/', sub: 'Dates + holds' },
-  { label: 'GitHub', href: 'https://github.com/eranallo/echo-play-live-site', sub: 'Website repo' },
-  { label: 'Vercel', href: 'https://vercel.com/eranallo-6688s-projects/echo-play-live-site', sub: 'Deployments' },
-  { label: 'Meta Business', href: 'https://business.facebook.com/', sub: 'Ads + events' },
-  { label: 'Bandsintown', href: 'https://artists.bandsintown.com/', sub: 'Listings' },
+const WORK_AREAS = [
+  { label: 'Chief', href: '/admin/chief-of-staff', body: 'Ask what matters today, route work, and generate a brief.' },
+  { label: 'Shows', href: '/admin#shows', body: 'Upcoming dates, missing details, show health, and actions.' },
+  { label: 'Tasks', href: '/admin/tasks', body: 'Hard-data work queue from tasks, approvals, and show gaps.' },
+  { label: 'Specialists', href: '/admin/specialists', body: 'Advance, promo, design, finance, content, web, merch, booking.' },
+  { label: 'Approvals', href: '/admin/approvals', body: 'Review public, external, financial, and booking-sensitive work.' },
+]
+
+const TOOLS = [
+  ['Airtable', 'https://airtable.com/appYUOoJgvRyZ7fLB'],
+  ['Gmail', 'https://mail.google.com/'],
+  ['Calendar', 'https://calendar.google.com/'],
+  ['Drive', 'https://drive.google.com/drive/my-drive'],
+  ['Canva', 'https://www.canva.com/'],
+  ['Bandsintown', 'https://artists.bandsintown.com/'],
+  ['Meta', 'https://business.facebook.com/'],
+  ['Vercel', 'https://vercel.com/eranallo-6688s-projects/echo-play-live-site'],
 ]
 
 function daysUntil(dateValue) {
@@ -24,109 +31,94 @@ function daysUntil(dateValue) {
   return Math.ceil((date - today) / 86400000)
 }
 
-function urgencyLabel(days) {
-  if (days === null) return 'Upcoming'
+function dueText(days) {
+  if (days === null) return 'No date'
   if (days < 0) return 'Past'
   if (days === 0) return 'Today'
-  if (days <= 7) return `${days} days`
+  if (days === 1) return 'Tomorrow'
   return `${days} days`
 }
 
-function firstShowLink(shows) {
-  return shows?.[0]?.id ? `/admin/shows/${shows[0].id}` : '/admin'
-}
+function buildQueue(shows, approvals, tasks) {
+  const queue = []
 
-function buildTodos(showsOverview, opsFoundation) {
-  const shows = showsOverview?.shows || []
-  const pendingApprovals = (opsFoundation?.approvals || []).filter(item => item.status === 'Pending')
-  const todos = []
+  tasks
+    .filter(task => !['Done', 'Complete', 'Completed'].includes(task.status))
+    .slice(0, 5)
+    .forEach(task => queue.push({
+      type: 'Task',
+      label: task.priority || 'Task',
+      title: task.title,
+      body: task.notes || `${task.status} · ${task.dueLabel}`,
+      href: '/admin/tasks',
+      tone: task.priority === 'High' || task.priority === 'Urgent' ? 'hot' : 'normal',
+    }))
 
-  pendingApprovals.slice(0, 3).forEach(item => {
-    todos.push({
-      eyebrow: 'Review',
-      title: item.item || 'Approval waiting',
-      body: item.proposedChange || 'Generated work is waiting in the review queue.',
+  approvals
+    .filter(item => item.status === 'Pending')
+    .slice(0, 4)
+    .forEach(item => queue.push({
+      type: 'Approval',
+      label: item.riskLevel || 'Review',
+      title: item.item,
+      body: item.proposedChange || 'Review item waiting.',
       href: '/admin/approvals',
-      cta: 'Open queue',
       tone: 'gold',
-    })
-  })
+    }))
 
   shows
     .filter(show => show.needsAttention)
-    .slice(0, 6)
+    .slice(0, 8)
     .forEach(show => {
       const days = daysUntil(show.date)
-      todos.push({
-        eyebrow: urgencyLabel(days),
+      queue.push({
+        type: 'Show',
+        label: dueText(days),
         title: `${show.band} at ${show.venue}`,
-        body: `${show.missingFlags.slice(0, 4).join(', ')}${show.missingFlags.length > 4 ? '…' : ''}`,
+        body: show.missingFlags.join(' · '),
         href: `/admin/shows/${show.id}`,
-        cta: 'Work show',
         tone: days !== null && days <= 7 ? 'hot' : 'normal',
       })
     })
 
-  if (todos.length === 0) {
-    todos.push({
-      eyebrow: 'Clean slate',
-      title: 'No urgent dashboard items',
-      body: 'Start with the Chief of Staff brief or review the next show while there is room to breathe.',
-      href: '/admin/chief-of-staff',
-      cta: 'Ask Chief',
-      tone: 'normal',
-    })
-  }
-
-  return todos.slice(0, 7)
+  return queue.slice(0, 10)
 }
 
-function ActionCard({ href, eyebrow, title, body, cta, big = false }) {
+function Stat({ label, value, sub }) {
+  return <div className="cv-stat"><span>{label}</span><strong>{value}</strong><p>{sub}</p></div>
+}
+
+function AreaCard({ area }) {
+  return <a className="cv-area" href={area.href}><strong>{area.label}</strong><p>{area.body}</p><span>Open →</span></a>
+}
+
+function QueueItem({ item, index }) {
   return (
-    <a className={`cc-card cc-action ${big ? 'cc-action-big' : ''}`} href={href}>
-      <span className="cc-eyebrow">{eyebrow}</span>
-      <strong>{title}</strong>
-      <p>{body}</p>
-      <span className="cc-cta">{cta} →</span>
+    <a className={`cv-queue cv-${item.tone}`} href={item.href}>
+      <div className="cv-num">{String(index + 1).padStart(2, '0')}</div>
+      <div><span>{item.type} · {item.label}</span><strong>{item.title}</strong><p>{item.body}</p></div>
+      <em>Open</em>
     </a>
   )
 }
 
-function TodoItem({ todo, index }) {
-  return (
-    <a className={`cc-todo cc-todo-${todo.tone}`} href={todo.href} style={{ animationDelay: `${index * 55}ms` }}>
-      <div className="cc-todo-index">{String(index + 1).padStart(2, '0')}</div>
-      <div>
-        <span className="cc-eyebrow">{todo.eyebrow}</span>
-        <strong>{todo.title}</strong>
-        <p>{todo.body}</p>
-      </div>
-      <span className="cc-todo-cta">{todo.cta}</span>
-    </a>
-  )
-}
-
-function MiniShow({ show }) {
+function ShowCard({ show }) {
   const days = daysUntil(show.date)
+  const completeCount = [show.contractSigned, show.graphicCreated, show.facebookEventCreated, show.bandsintownPosted, show.promotionReleased].filter(Boolean).length
+  const progress = Math.round((completeCount / 5) * 100)
   return (
-    <a className="cc-mini-show" href={`/admin/shows/${show.id}`}>
-      <div>
-        <span>{urgencyLabel(days)}</span>
-        <strong>{show.band}</strong>
-        <p>{show.venue} · {show.dateLabel}</p>
-      </div>
-      <em>{show.needsAttention ? `${show.missingFlags.length} items` : 'On track'}</em>
+    <a className="cv-show" href={`/admin/shows/${show.id}`}>
+      <div className="cv-show-top"><span>{dueText(days)}</span><em>{show.status}</em></div>
+      <h3>{show.band}</h3>
+      <p>{show.venue} · {show.dateLabel} · {show.startTime}</p>
+      <div className="cv-progress"><i style={{ width: `${progress}%` }} /></div>
+      <div className="cv-show-foot"><span>{progress}% ready</span><b>{show.missingFlags.length ? `${show.missingFlags.length} open` : 'On track'}</b></div>
     </a>
   )
 }
 
-function ToolLink({ tool }) {
-  return (
-    <a className="cc-tool" href={tool.href} target="_blank" rel="noreferrer">
-      <strong>{tool.label}</strong>
-      <span>{tool.sub}</span>
-    </a>
-  )
+function TaskPreview({ task }) {
+  return <div className="cv-task"><span>{task.status}</span><strong>{task.title}</strong><p>{task.dueLabel} · {task.priority}</p></div>
 }
 
 export default async function AdminPage() {
@@ -136,224 +128,81 @@ export default async function AdminPage() {
   ])
 
   const shows = showsOverview?.shows || []
+  const approvals = opsFoundation?.approvals || []
+  const tasks = opsFoundation?.tasks || []
+  const pendingApprovals = approvals.filter(item => item.status === 'Pending')
+  const openTasks = tasks.filter(task => !['Done', 'Complete', 'Completed'].includes(task.status))
   const needsAttention = shows.filter(show => show.needsAttention)
-  const pendingApprovals = (opsFoundation?.approvals || []).filter(item => item.status === 'Pending')
-  const todos = buildTodos(showsOverview, opsFoundation)
+  const queue = buildQueue(shows, approvals, tasks)
   const nextShow = shows[0]
-  const specialistShowLink = firstShowLink(needsAttention.length ? needsAttention : shows)
 
   return (
-    <main className="cc-shell">
+    <main className="cv-shell">
       <style>{`
-        .cc-shell {
-          min-height: 100vh;
-          padding: clamp(84px, 8vw, 118px) var(--gutter-fluid);
-          background:
-            radial-gradient(circle at 12% 0%, rgba(212,160,23,0.20), transparent 34%),
-            radial-gradient(circle at 86% 12%, rgba(255,255,255,0.08), transparent 30%),
-            linear-gradient(180deg, #101010 0%, var(--c-bg) 38%, #050505 100%);
-          color: var(--c-text);
-          overflow: hidden;
-        }
-        .cc-wrap { max-width: var(--layout-max); margin: 0 auto; position: relative; }
-        .cc-wrap::before {
-          content: '';
-          position: fixed;
-          inset: 0;
-          pointer-events: none;
-          background-image: linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.014) 1px, transparent 1px);
-          background-size: 54px 54px;
-          mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent 70%);
-          opacity: .55;
-        }
-        .cc-topnav { display:flex; justify-content:space-between; gap:16px; align-items:center; margin-bottom: var(--s-7); position:relative; z-index:1; }
-        .cc-brand { display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; }
-        .cc-brand img { width:42px; height:42px; object-fit:contain; border:1px solid var(--c-epl-line); border-radius:16px; padding:5px; background:rgba(212,160,23,.06); }
-        .cc-brand span, .cc-eyebrow { font-family:var(--ff-label); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--c-epl); font-weight:800; }
-        .cc-navlinks { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
-        .cc-navlinks a, .cc-cta-button { color:var(--c-text-muted); text-decoration:none; border:1px solid var(--c-border); background:rgba(255,255,255,.025); padding:9px 12px; border-radius:999px; font-family:var(--ff-label); font-size:10px; letter-spacing:.12em; text-transform:uppercase; transition:transform .2s var(--ease-out), border-color .2s var(--ease-out), color .2s var(--ease-out); }
-        .cc-navlinks a:hover, .cc-cta-button:hover { transform:translateY(-2px); border-color:var(--c-epl-line); color:var(--c-epl); }
-        .cc-hero { position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr); gap:var(--s-7); align-items:end; margin-bottom:var(--s-7); animation: ccRise .65s var(--ease-out) both; }
-        .cc-hero h1 { font-family:var(--ff-display); font-size:clamp(68px, 10vw, 148px); line-height:.78; letter-spacing:var(--ls-display); max-width:900px; margin:var(--s-3) 0 var(--s-4); }
-        .cc-hero p { color:var(--c-text-muted); font-size:var(--t-body-l); line-height:var(--lh-base); max-width:720px; }
-        .cc-card { position:relative; overflow:hidden; border:1px solid var(--c-border); background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.014)); box-shadow:0 24px 90px rgba(0,0,0,.34); backdrop-filter:blur(18px); }
-        .cc-card::after { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle at 100% 0%, rgba(212,160,23,.14), transparent 40%); opacity:.9; }
-        .cc-card > * { position:relative; z-index:1; }
-        .cc-status-card { padding:var(--s-6); border-color:var(--c-epl-line); border-radius:28px; }
-        .cc-status-card strong { display:block; font-family:var(--ff-display); font-size:58px; line-height:.85; letter-spacing:var(--ls-display); margin:10px 0; color:var(--c-epl); }
-        .cc-status-card p { font-size:14px; color:var(--c-text-dim); }
-        .cc-primary-grid { position:relative; z-index:1; display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:var(--s-5); margin-bottom:var(--s-7); }
-        .cc-action { display:grid; gap:12px; min-height:220px; padding:var(--s-5); border-radius:28px; text-decoration:none; color:inherit; transition:transform .24s var(--ease-out), border-color .24s var(--ease-out), background .24s var(--ease-out); animation: ccRise .7s var(--ease-out) both; }
-        .cc-action:hover { transform:translateY(-5px); border-color:var(--c-epl-line); background:linear-gradient(180deg, rgba(212,160,23,.075), rgba(255,255,255,.018)); }
-        .cc-action strong { display:block; font-family:var(--ff-display); font-size:clamp(36px,4vw,58px); line-height:.86; letter-spacing:var(--ls-display); }
-        .cc-action p { color:var(--c-text-dim); line-height:var(--lh-base); max-width:410px; }
-        .cc-action-big { min-height:260px; border-color:var(--c-epl-line); background:radial-gradient(circle at 0% 0%, rgba(212,160,23,.18), transparent 44%), linear-gradient(180deg, rgba(212,160,23,.07), rgba(255,255,255,.016)); }
-        .cc-cta { align-self:end; color:var(--c-epl); font-family:var(--ff-label); font-size:11px; letter-spacing:.14em; text-transform:uppercase; }
-        .cc-main-grid { position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1.08fr) minmax(340px,.92fr); gap:var(--s-6); align-items:start; }
-        .cc-panel { border:1px solid var(--c-border); border-radius:30px; padding:var(--s-6); background:rgba(255,255,255,.018); box-shadow:0 24px 90px rgba(0,0,0,.24); animation:ccRise .8s var(--ease-out) both; }
-        .cc-panel-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:var(--s-5); }
-        .cc-panel h2 { font-family:var(--ff-display); font-size:var(--t-h2); line-height:.92; letter-spacing:var(--ls-display); }
-        .cc-panel-head p { color:var(--c-text-dim); font-size:14px; margin-top:8px; max-width:440px; }
-        .cc-todo-list { display:grid; gap:12px; }
-        .cc-todo { display:grid; grid-template-columns:42px 1fr auto; gap:14px; align-items:center; color:inherit; text-decoration:none; padding:15px; border:1px solid var(--c-border); border-radius:22px; background:rgba(255,255,255,.024); animation:ccRise .65s var(--ease-out) both; transition:transform .2s var(--ease-out), border-color .2s var(--ease-out); }
-        .cc-todo:hover { transform:translateX(4px); border-color:var(--c-epl-line); }
-        .cc-todo-index { width:34px; height:34px; display:grid; place-items:center; border:1px solid var(--c-border); border-radius:12px; color:var(--c-text-faint); font-family:var(--ff-label); font-size:10px; }
-        .cc-todo strong { display:block; color:var(--c-text); font-size:16px; margin:4px 0; }
-        .cc-todo p { color:var(--c-text-dim); font-size:13px; line-height:1.35; }
-        .cc-todo-cta { color:var(--c-epl); font-family:var(--ff-label); font-size:10px; letter-spacing:.12em; text-transform:uppercase; white-space:nowrap; }
-        .cc-todo-hot { border-color:rgba(212,160,23,.48); background:rgba(212,160,23,.055); }
-        .cc-specialists { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-        .cc-specialist { min-height:150px; border:1px solid var(--c-border); border-radius:24px; background:rgba(255,255,255,.024); padding:16px; text-decoration:none; color:inherit; display:grid; gap:10px; transition:transform .22s var(--ease-out), border-color .22s var(--ease-out); }
-        .cc-specialist:hover { transform:translateY(-4px); border-color:var(--c-epl-line); }
-        .cc-specialist b { font-family:var(--ff-display); font-size:32px; line-height:.9; letter-spacing:var(--ls-display); }
-        .cc-specialist span { color:var(--c-text-dim); font-size:13px; line-height:1.35; }
-        .cc-mini-shows { display:grid; gap:10px; }
-        .cc-mini-show { display:flex; justify-content:space-between; gap:14px; align-items:center; color:inherit; text-decoration:none; border:1px solid var(--c-border); border-radius:20px; padding:14px; background:rgba(0,0,0,.18); transition:transform .2s var(--ease-out), border-color .2s var(--ease-out); }
-        .cc-mini-show:hover { transform:translateY(-3px); border-color:var(--c-epl-line); }
-        .cc-mini-show span { color:var(--c-epl); font-family:var(--ff-label); font-size:10px; letter-spacing:.12em; text-transform:uppercase; }
-        .cc-mini-show strong { display:block; margin-top:5px; }
-        .cc-mini-show p, .cc-mini-show em { color:var(--c-text-dim); font-size:13px; font-style:normal; }
-        .cc-tools { position:relative; z-index:1; margin-top:var(--s-7); }
-        .cc-tool-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
-        .cc-tool { display:grid; gap:6px; min-height:86px; padding:14px; border:1px solid var(--c-border); border-radius:20px; text-decoration:none; color:inherit; background:rgba(255,255,255,.02); transition:transform .2s var(--ease-out), border-color .2s var(--ease-out); }
-        .cc-tool:hover { transform:translateY(-3px); border-color:var(--c-epl-line); }
-        .cc-tool strong { color:var(--c-text); }
-        .cc-tool span { color:var(--c-text-dim); font-size:12px; }
-        @keyframes ccRise { from { opacity:0; transform:translateY(18px) scale(.985); } to { opacity:1; transform:translateY(0) scale(1); } }
-        @media (max-width: 980px) { .cc-hero, .cc-main-grid, .cc-primary-grid { grid-template-columns:1fr; } .cc-specialists { grid-template-columns:1fr; } }
-        @media (max-width: 640px) { .cc-shell { padding-top:70px; } .cc-topnav { align-items:flex-start; } .cc-navlinks { max-width:220px; } .cc-todo { grid-template-columns:1fr; } .cc-todo-index { display:none; } .cc-todo-cta { justify-self:start; } }
-        @media (prefers-reduced-motion: reduce) { .cc-hero, .cc-action, .cc-panel, .cc-todo { animation:none; } .cc-action, .cc-todo, .cc-tool, .cc-specialist, .cc-mini-show { transition:none; } }
+        .cv-shell{min-height:100vh;padding:clamp(78px,8vw,118px) var(--gutter-fluid);background:radial-gradient(circle at 8% 0%,rgba(212,160,23,.18),transparent 34%),linear-gradient(180deg,#101010,#060606 44%,#030303);color:var(--c-text);overflow:hidden}.cv-wrap{max-width:var(--layout-max);margin:0 auto}.cv-shell *{box-sizing:border-box}.cv-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:var(--s-6)}.cv-brand{display:flex;gap:12px;align-items:center;text-decoration:none;color:inherit}.cv-brand span,.cv-label,.cv-stat span,.cv-queue span,.cv-show-top span,.cv-show-top em,.cv-show-foot span,.cv-show-foot b,.cv-task span{font-family:var(--ff-label);font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--c-epl);font-style:normal}.cv-nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.cv-nav a{border:1px solid var(--c-border);color:var(--c-text-muted);text-decoration:none;padding:9px 12px;border-radius:999px;font-family:var(--ff-label);font-size:10px;letter-spacing:.12em;text-transform:uppercase}.cv-nav a:hover{border-color:var(--c-epl-line);color:var(--c-epl)}.cv-hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);gap:var(--s-6);align-items:end;margin-bottom:var(--s-6)}.cv-hero h1{font-family:var(--ff-display);font-size:clamp(64px,10vw,142px);line-height:.78;letter-spacing:var(--ls-display);margin:var(--s-3) 0 var(--s-4);max-width:900px}.cv-hero p{color:var(--c-text-muted);font-size:var(--t-body-l);line-height:var(--lh-base);max-width:740px}.cv-hero-actions{display:flex;gap:1px;border:1px solid var(--c-epl-line);width:max-content;max-width:100%;margin-top:var(--s-5)}.cv-hero-actions a{display:inline-flex;min-height:48px;align-items:center;justify-content:center;padding:0 16px;color:var(--c-text);text-decoration:none;border-right:1px solid var(--c-epl-line);font-family:var(--ff-label);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.cv-hero-actions a:first-child{background:var(--c-epl);color:#060606}.cv-hero-actions a:last-child{border-right:0}.cv-status{border:1px solid var(--c-epl-line);background:linear-gradient(180deg,rgba(212,160,23,.08),rgba(255,255,255,.018));padding:var(--s-5);display:grid;gap:var(--s-4)}.cv-status h2{font-family:var(--ff-display);font-size:clamp(44px,5vw,74px);line-height:.82}.cv-status p{color:var(--c-text-dim);line-height:var(--lh-base)}.cv-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--c-border);border:1px solid var(--c-border);margin-bottom:var(--s-6)}.cv-stat{background:#070707;padding:var(--s-4);min-height:132px;display:grid;align-content:end}.cv-stat strong{font-family:var(--ff-display);font-size:48px;line-height:.85;color:var(--c-text);margin:6px 0}.cv-stat p{color:var(--c-text-dim);line-height:var(--lh-snug)}.cv-main{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(340px,.88fr);gap:var(--s-6);align-items:start}.cv-panel{border:1px solid var(--c-border);background:rgba(255,255,255,.018);padding:var(--s-5)}.cv-panel-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:var(--s-5)}.cv-panel h2{font-family:var(--ff-display);font-size:var(--t-h2);line-height:.92;letter-spacing:var(--ls-display)}.cv-panel-head p{color:var(--c-text-dim);font-size:14px;margin-top:7px;max-width:480px}.cv-queue-list,.cv-show-grid,.cv-area-grid,.cv-task-list,.cv-tool-grid{display:grid;gap:10px}.cv-queue{display:grid;grid-template-columns:42px 1fr auto;gap:14px;align-items:center;color:inherit;text-decoration:none;border:1px solid var(--c-border);background:#070707;padding:14px;transition:transform .18s ease,border-color .18s ease}.cv-queue:hover{transform:translateX(4px);border-color:var(--c-epl-line)}.cv-queue strong{display:block;color:var(--c-text);margin:5px 0}.cv-queue p,.cv-area p,.cv-show p,.cv-task p{color:var(--c-text-dim);line-height:var(--lh-snug)}.cv-queue em{font-family:var(--ff-label);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--c-text-faint);font-style:normal}.cv-num{display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--c-border);font-family:var(--ff-label);font-size:10px;color:var(--c-text-faint)}.cv-hot{border-color:rgba(255,106,0,.34)}.cv-gold{border-color:var(--c-epl-line)}.cv-lower{display:grid;grid-template-columns:1fr;gap:var(--s-6)}.cv-area-grid{grid-template-columns:repeat(2,1fr)}.cv-area{min-height:174px;border:1px solid var(--c-border);background:#070707;padding:var(--s-4);color:inherit;text-decoration:none;display:grid;align-content:space-between;transition:border-color .18s ease,transform .18s ease}.cv-area:hover{border-color:var(--c-epl-line);transform:translateY(-2px)}.cv-area strong{font-family:var(--ff-display);font-size:40px;line-height:.86}.cv-area span{color:var(--c-epl);font-family:var(--ff-label);font-size:10px;letter-spacing:.12em;text-transform:uppercase}.cv-show-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-show{border:1px solid var(--c-border);background:#070707;padding:var(--s-4);color:inherit;text-decoration:none;display:grid;gap:12px;min-height:190px}.cv-show:hover{border-color:var(--c-epl-line)}.cv-show-top,.cv-show-foot{display:flex;justify-content:space-between;gap:10px}.cv-show h3{font-family:var(--ff-display);font-size:42px;line-height:.86}.cv-progress{height:7px;background:rgba(255,255,255,.08);overflow:hidden}.cv-progress i{display:block;height:100%;background:var(--c-epl)}.cv-side{display:grid;gap:var(--s-6)}.cv-task{border:1px solid var(--c-border);background:#070707;padding:14px}.cv-task strong{display:block;margin:6px 0;color:var(--c-text-muted)}.cv-tool-grid{grid-template-columns:repeat(2,1fr)}.cv-tool{border:1px solid var(--c-border);padding:12px;color:var(--c-text-muted);text-decoration:none;font-family:var(--ff-label);font-size:10px;letter-spacing:.12em;text-transform:uppercase;background:#070707}.cv-tool:hover{color:var(--c-epl);border-color:var(--c-epl-line)}.cv-empty{color:var(--c-text-muted);line-height:var(--lh-base);border:1px dashed var(--c-border);padding:var(--s-4)}.cv-mobile-tabs{display:none;position:sticky;bottom:0;z-index:20;background:rgba(5,5,5,.94);border-top:1px solid var(--c-border);backdrop-filter:blur(16px);margin:var(--s-6) calc(var(--gutter-fluid) * -1) 0}.cv-mobile-tabs a{min-height:54px;display:grid;place-items:center;color:var(--c-text-muted);text-decoration:none;font-family:var(--ff-label);font-size:10px;letter-spacing:.12em;text-transform:uppercase;border-right:1px solid var(--c-border)}.cv-mobile-tabs a:last-child{border-right:0}.cv-mobile-tabs a:first-child{color:var(--c-epl)}@media(max-width:1100px){.cv-hero,.cv-main{grid-template-columns:1fr}.cv-stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:720px){.cv-shell{padding:70px var(--gutter-fluid) 0}.cv-top{align-items:flex-start}.cv-nav{display:none}.cv-hero h1{font-size:clamp(58px,20vw,92px)}.cv-hero-actions{display:grid;width:100%;grid-template-columns:1fr 1fr}.cv-hero-actions a{border-right:0;border-bottom:1px solid var(--c-epl-line)}.cv-hero-actions a:last-child{border-bottom:0}.cv-stats,.cv-area-grid,.cv-show-grid,.cv-tool-grid{grid-template-columns:1fr}.cv-main{gap:var(--s-4)}.cv-panel{padding:var(--s-4);margin-left:calc(var(--gutter-fluid) * -0.25);margin-right:calc(var(--gutter-fluid) * -0.25)}.cv-panel-head{display:grid}.cv-queue{grid-template-columns:36px 1fr}.cv-queue em{display:none}.cv-show h3{font-size:36px}.cv-mobile-tabs{display:grid;grid-template-columns:repeat(5,1fr)}}
       `}</style>
-
-      <section className="cc-wrap">
-        <nav className="cc-topnav" aria-label="Command center navigation">
-          <a className="cc-brand" href="/admin">
-            <img src="/logo.png" alt="" />
-            <span>Echo Play Live Ops</span>
-          </a>
-          <div className="cc-navlinks">
-            <a href="/admin/chief-of-staff">Chief</a>
-            <a href="/admin/approvals">Reviews</a>
-            <a href="/portal">Portal</a>
-            <a href="/">Public Site</a>
+      <div className="cv-wrap">
+        <nav className="cv-top">
+          <a className="cv-brand" href="/admin"><span>Echo Play OS</span></a>
+          <div className="cv-nav">
+            <a href="/admin/chief-of-staff">Chief</a><a href="/admin/tasks">Tasks</a><a href="/admin/specialists">Specialists</a><a href="/admin/approvals">Approvals</a><a href="/portal">Portal</a>
           </div>
         </nav>
 
-        <header className="cc-hero">
+        <header className="cv-hero">
           <div>
-            <span className="cc-eyebrow">Private Command Center</span>
-            <h1>What needs my attention?</h1>
-            <p>
-              A practical front door for the work: ask the Chief of Staff, handle today’s todos, run specialists from show pages, and jump into the tools you actually use.
-            </p>
+            <span className="cv-label">Today</span>
+            <h1>Run the day.</h1>
+            <p>Your command center should show the work, not make you hunt for it. Start here, then jump into shows, tasks, approvals, or the Chief of Staff.</p>
+            <div className="cv-hero-actions"><a href="/admin/chief-of-staff">Ask Chief</a><a href="/admin/tasks">Open Tasks</a></div>
           </div>
-          <div className="cc-card cc-status-card">
-            <span className="cc-eyebrow">Operations Pulse</span>
-            <strong>{needsAttention.length}</strong>
-            <p>{needsAttention.length === 1 ? 'show needs attention' : 'shows need attention'} · {pendingApprovals.length} review item{pendingApprovals.length === 1 ? '' : 's'} waiting</p>
-          </div>
+          <aside className="cv-status">
+            <span className="cv-label">Next show</span>
+            <h2>{nextShow ? nextShow.band : 'No show loaded'}</h2>
+            <p>{nextShow ? `${nextShow.venue} · ${nextShow.dateLabel} · ${nextShow.startTime}` : 'Add shows in Airtable to populate this workspace.'}</p>
+          </aside>
         </header>
 
-        <section className="cc-primary-grid" aria-label="Primary actions">
-          <ActionCard
-            big
-            eyebrow="Start Here"
-            title="Talk to Chief of Staff"
-            body="Ask what matters today, what to delegate, what show is at risk, or what specialist should run next."
-            cta="Open Chief"
-            href="/admin/chief-of-staff"
-          />
-          <ActionCard
-            eyebrow="Review"
-            title="Approval Queue"
-            body="Generated copy, design briefs, and routed work live here before anything becomes official."
-            cta="Review work"
-            href="/admin/approvals"
-          />
-          <ActionCard
-            eyebrow="Team App"
-            title="Musician Portal"
-            body="Check the phone-first app your band and crew use for show-day info."
-            cta="Open portal"
-            href="/portal"
-          />
+        <section className="cv-stats">
+          <Stat label="Open Work" value={queue.length} sub="Tasks, approvals, and show gaps" />
+          <Stat label="Shows" value={shows.length} sub={`${needsAttention.length} need attention`} />
+          <Stat label="Approvals" value={pendingApprovals.length} sub="Waiting for review" />
+          <Stat label="Tasks" value={openTasks.length} sub={opsFoundation?.tables?.find(t => t.label === 'TASKS')?.ready ? 'From Airtable' : 'Task table pending'} />
         </section>
 
-        <section className="cc-main-grid">
-          <div className="cc-panel">
-            <div className="cc-panel-head">
-              <div>
-                <span className="cc-eyebrow">Today’s Work</span>
-                <h2>Todos</h2>
-                <p>Less dashboard, more action. These are the things most likely to move the business forward or prevent a show-day scramble.</p>
-              </div>
-              <a className="cc-cta-button" href="/admin/chief-of-staff">Ask Chief</a>
-            </div>
-            <div className="cc-todo-list">
-              {todos.map((todo, index) => <TodoItem key={`${todo.title}-${index}`} todo={todo} index={index} />)}
-            </div>
+        <section className="cv-main">
+          <div className="cv-lower">
+            <section className="cv-panel">
+              <div className="cv-panel-head"><div><span className="cv-label">Work Queue</span><h2>Needs action</h2><p>Prioritized from Airtable show health, approvals, and the task table when available.</p></div><a className="cv-tool" href="/admin/tasks">View all</a></div>
+              <div className="cv-queue-list">{queue.length ? queue.map((item, index) => <QueueItem key={`${item.type}-${item.title}-${index}`} item={item} index={index} />) : <div className="cv-empty">No urgent items loaded.</div>}</div>
+            </section>
+
+            <section id="shows" className="cv-panel">
+              <div className="cv-panel-head"><div><span className="cv-label">Shows</span><h2>Upcoming</h2><p>Every show is a project workspace with status, details, specialists, notes, and actions.</p></div></div>
+              <div className="cv-show-grid">{shows.slice(0, 6).map(show => <ShowCard key={show.id} show={show} />)}</div>
+            </section>
           </div>
 
-          <div style={{ display: 'grid', gap: 'var(--s-6)' }}>
-            <div className="cc-panel">
-              <div className="cc-panel-head">
-                <div>
-                  <span className="cc-eyebrow">Specialists</span>
-                  <h2>Run a lane</h2>
-                  <p>Specialists run from show detail pages so the output stays tied to a real show.</p>
-                </div>
-              </div>
-              <div className="cc-specialists">
-                <a className="cc-specialist" href={specialistShowLink}>
-                  <b>Advance</b>
-                  <span>Call sheet, venue questions, show-day readiness.</span>
-                  <span className="cc-cta">Open show →</span>
-                </a>
-                <a className="cc-specialist" href={specialistShowLink}>
-                  <b>Promo</b>
-                  <span>Event copy, captions, listing copy, promo steps.</span>
-                  <span className="cc-cta">Open show →</span>
-                </a>
-                <a className="cc-specialist" href={specialistShowLink}>
-                  <b>Design</b>
-                  <span>Canva-ready brief, required text, sizes, assets.</span>
-                  <span className="cc-cta">Open show →</span>
-                </a>
-              </div>
-            </div>
+          <aside className="cv-side">
+            <section className="cv-panel">
+              <div className="cv-panel-head"><div><span className="cv-label">Work Areas</span><h2>Navigate</h2></div></div>
+              <div className="cv-area-grid">{WORK_AREAS.map(area => <AreaCard key={area.label} area={area} />)}</div>
+            </section>
 
-            <div className="cc-panel">
-              <div className="cc-panel-head">
-                <div>
-                  <span className="cc-eyebrow">Operations Rundown</span>
-                  <h2>Next shows</h2>
-                  <p>Only the near-term shows, not a giant backend table.</p>
-                </div>
-              </div>
-              <div className="cc-mini-shows">
-                {shows.length ? shows.slice(0, 4).map(show => <MiniShow key={show.id} show={show} />) : (
-                  <p style={{ color: 'var(--c-text-muted)' }}>No upcoming shows loaded.</p>
-                )}
-              </div>
-            </div>
-          </div>
+            <section className="cv-panel">
+              <div className="cv-panel-head"><div><span className="cv-label">Tasks</span><h2>Open</h2></div></div>
+              <div className="cv-task-list">{openTasks.length ? openTasks.slice(0, 5).map(task => <TaskPreview key={task.id} task={task} />) : <div className="cv-empty">No TASKS records found yet. The app is ready to read them once the table exists.</div>}</div>
+            </section>
+
+            <section className="cv-panel">
+              <div className="cv-panel-head"><div><span className="cv-label">Tools</span><h2>Quick links</h2></div></div>
+              <div className="cv-tool-grid">{TOOLS.map(([label, href]) => <a className="cv-tool" href={href} target="_blank" rel="noreferrer" key={label}>{label}</a>)}</div>
+            </section>
+          </aside>
         </section>
 
-        <section className="cc-tools">
-          <div className="cc-panel">
-            <div className="cc-panel-head">
-              <div>
-                <span className="cc-eyebrow">Tool Belt</span>
-                <h2>Jump out fast</h2>
-                <p>The tools you touch while booking, promoting, designing, and running shows.</p>
-              </div>
-            </div>
-            <div className="cc-tool-grid">
-              {TOOL_LINKS.map(tool => <ToolLink key={tool.label} tool={tool} />)}
-            </div>
-          </div>
-        </section>
-      </section>
+        <nav className="cv-mobile-tabs" aria-label="Mobile command center navigation"><a href="/admin">Today</a><a href="/admin/tasks">Tasks</a><a href="#shows">Shows</a><a href="/admin/chief-of-staff">Chief</a><a href="/admin/approvals">Review</a></nav>
+      </div>
     </main>
   )
 }
