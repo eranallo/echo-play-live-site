@@ -1,5 +1,5 @@
 import { getAdminOpsFoundation, getAdminShowsOverview } from '@/lib/admin/airtable'
-import { workLaneOptions } from '@/lib/admin/specialistPlaceholder'
+import { specialistGuideOptions } from '@/lib/admin/specialistGuides'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,18 +22,18 @@ function urgencyLabel(days) {
 
 function SpecialistCard({ lane }) {
   return (
-    <article className="sh-card">
+    <a className="sh-card" href={`/admin/specialists/${lane.kind}`}>
       <div className="sh-card-top">
         <span>{lane.group}</span>
         <em>{lane.risk} risk</em>
       </div>
       <h2>{lane.shortLabel || lane.label}</h2>
-      <p>{lane.helper}</p>
+      <p>{lane.tagline || lane.helper}</p>
       <div className="sh-card-bottom">
-        <strong>{lane.review ? 'Approval queued' : 'Logged only'}</strong>
-        <span>{lane.review ? 'Public / external guardrail' : 'Internal planning lane'}</span>
+        <strong>{lane.approval ? 'Approval queued' : 'Logged only'}</strong>
+        <span>Open specialist homepage →</span>
       </div>
-    </article>
+    </a>
   )
 }
 
@@ -70,7 +70,7 @@ export default async function SpecialistHubPage() {
     getAdminOpsFoundation(),
   ])
 
-  const lanes = workLaneOptions()
+  const lanes = specialistGuideOptions()
   const shows = showsOverview?.shows || []
   const runs = opsFoundation?.runs || []
   const approvals = opsFoundation?.approvals || []
@@ -94,8 +94,8 @@ export default async function SpecialistHubPage() {
         .sh-pulse strong { display:block; font-family:var(--ff-display); font-size:64px; line-height:.86; color:var(--c-epl); margin:8px 0; }
         .sh-pulse p { font-size:13px; color:var(--c-text-dim); }
         .sh-grid { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:var(--s-3); margin-bottom:var(--s-7); }
-        .sh-card { min-height:250px; border:1px solid var(--c-border); border-radius:28px; padding:var(--s-5); background:linear-gradient(180deg, rgba(255,255,255,.044), rgba(255,255,255,.014)); display:grid; gap:var(--s-3); box-shadow:0 18px 70px rgba(0,0,0,.18); }
-        .sh-card:hover { border-color:var(--c-epl-line); }
+        .sh-card { min-height:250px; border:1px solid var(--c-border); border-radius:28px; padding:var(--s-5); background:linear-gradient(180deg, rgba(255,255,255,.044), rgba(255,255,255,.014)); display:grid; gap:var(--s-3); box-shadow:0 18px 70px rgba(0,0,0,.18); color:inherit; text-decoration:none; }
+        .sh-card:hover { border-color:var(--c-epl-line); transform:translateY(-2px); }
         .sh-card-top { display:flex; justify-content:space-between; align-items:center; gap:10px; }
         .sh-card-top span, .sh-card-top em, .sh-card-bottom strong, .sh-show-date span, .sh-run span { font-family:var(--ff-label); font-size:10px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--c-epl); font-style:normal; }
         .sh-card-top em { color:var(--c-text-faint); }
@@ -133,9 +133,9 @@ export default async function SpecialistHubPage() {
         <header className="sh-hero">
           <div>
             <span className="sh-label">Specialist Hub</span>
-            <h1>Delegate the work.</h1>
+            <h1>Know who to use.</h1>
             <p>
-              Specialists turn a real show record into focused plans, drafts, checklists, and review-ready next steps. They do not bypass approval for public, external, financial, or booking-sensitive actions.
+              Each specialist has a defined job, inputs, outputs, and guardrails. Open a specialist homepage before running it to understand when it fits and how to use it correctly.
             </p>
           </div>
           <aside className="sh-pulse">
