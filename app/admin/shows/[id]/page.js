@@ -5,246 +5,83 @@ import { getAdminShowDetail } from '@/lib/admin/airtable'
 
 export const dynamic = 'force-dynamic'
 
-function StatusPill({ children, active }) {
-  return (
-    <span style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      border: `1px solid ${active ? 'var(--c-epl-line)' : 'var(--c-border)'}`,
-      background: active ? 'rgba(212, 160, 23, 0.08)' : 'var(--c-surface-2)',
-      color: active ? 'var(--c-epl)' : 'var(--c-text-dim)',
-      padding: '5px 8px',
-      fontFamily: 'var(--ff-label)',
-      fontSize: '10px',
-      letterSpacing: '0.12em',
-      textTransform: 'uppercase',
-      whiteSpace: 'nowrap',
-    }}>
-      {children}
-    </span>
-  )
+function progress(checklist = []) {
+  if (!checklist.length) return 0
+  return Math.round((checklist.filter(item => item.complete).length / checklist.length) * 100)
 }
 
-function Section({ title, eyebrow, children }) {
+function DetailCard({ label, value }) {
+  return <div className="sw-detail"><span>{label}</span><strong>{value}</strong></div>
+}
+
+function DataPanel({ title, eyebrow, rows }) {
   return (
-    <section style={{
-      border: '1px solid var(--c-border)',
-      background: 'rgba(255, 255, 255, 0.015)',
-      padding: 'var(--s-6)',
-    }}>
-      {eyebrow && (
-        <div className="section-label" style={{ marginBottom: 'var(--s-3)' }}>
-          {eyebrow}
-        </div>
-      )}
-      <h2 style={{
-        fontFamily: 'var(--ff-display)',
-        fontSize: 'var(--t-h3)',
-        letterSpacing: 'var(--ls-display)',
-        marginBottom: 'var(--s-5)',
-      }}>
-        {title}
-      </h2>
-      {children}
+    <section className="sw-panel">
+      <div className="sw-panel-head"><span>{eyebrow}</span><h2>{title}</h2></div>
+      <div className="sw-data-grid">{rows.map(([label, value]) => <DetailCard key={label} label={label} value={value} />)}</div>
     </section>
   )
 }
 
-function DetailGrid({ rows }) {
+function StatusBoard({ items }) {
   return (
-    <div style={{ display: 'grid', gap: '1px', background: 'var(--c-border-subtle)' }}>
-      {rows.map(([label, value]) => (
-        <div key={label} style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(150px, 220px) 1fr',
-          gap: 'var(--s-4)',
-          background: 'var(--c-bg)',
-          padding: 'var(--s-3) var(--s-4)',
-        }}>
-          <div style={{
-            fontFamily: 'var(--ff-label)',
-            fontSize: '10px',
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: 'var(--c-text-faint)',
-          }}>
-            {label}
-          </div>
-          <div style={{ color: 'var(--c-text-muted)', lineHeight: 'var(--lh-snug)', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>
-            {value}
-          </div>
-        </div>
-      ))}
+    <div className="sw-status-board">
+      {items.map(item => <div key={item.label} className={`sw-status ${item.complete ? 'sw-done' : ''}`}><span>{item.complete ? 'Done' : 'Open'}</span><strong>{item.label}</strong></div>)}
     </div>
   )
 }
 
-function Checklist({ items }) {
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 'var(--s-3)' }}>
-      {items.map(item => (
-        <div key={item.label} style={{
-          border: `1px solid ${item.complete ? 'var(--c-epl-line)' : 'var(--c-border)'}`,
-          background: item.complete ? 'rgba(212, 160, 23, 0.06)' : 'var(--c-surface-2)',
-          padding: 'var(--s-4)',
-        }}>
-          <div style={{
-            fontFamily: 'var(--ff-label)',
-            fontSize: '10px',
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: item.complete ? 'var(--c-epl)' : 'var(--c-text-faint)',
-            marginBottom: 'var(--s-2)',
-          }}>
-            {item.complete ? 'Complete' : 'Open'}
-          </div>
-          <div style={{ color: 'var(--c-text-muted)' }}>{item.label}</div>
-        </div>
-      ))}
-    </div>
-  )
+function MissingFlag({ flag }) {
+  return <span className="sw-flag">{flag}</span>
 }
 
 export default async function AdminShowDetailPage({ params }) {
   const resolvedParams = await params
   const showId = resolvedParams?.id
-  const detail = showId
-    ? await getAdminShowDetail(showId)
-    : { ok: false, show: null, error: 'No show ID was provided in the admin route.' }
+  const detail = showId ? await getAdminShowDetail(showId) : { ok: false, show: null, error: 'No show ID was provided in the admin route.' }
 
   if (!detail.ok || !detail.show) {
     return (
-      <main style={{ minHeight: '100vh', padding: 'clamp(96px, 10vw, 140px) var(--gutter-fluid)', background: 'var(--c-bg)' }}>
-        <section style={{ maxWidth: 'var(--layout-max)', margin: '0 auto' }}>
-          <a href="/admin" style={{ color: 'var(--c-epl)', textDecoration: 'none', fontFamily: 'var(--ff-label)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-            ← Back to Command Center
-          </a>
-          <div style={{ marginTop: 'var(--s-7)', border: '1px solid var(--c-epl-line)', background: 'rgba(212, 160, 23, 0.06)', padding: 'var(--s-6)', color: 'var(--c-text-muted)' }}>
-            <strong style={{ color: 'var(--c-epl)' }}>Show detail could not be loaded.</strong>
-            <br />
-            {detail.error}
-          </div>
-        </section>
-      </main>
+      <main className="sw-shell"><div className="sw-wrap"><a className="sw-back" href="/admin">← Command Center</a><section className="sw-panel"><h1>Show could not be loaded.</h1><p>{detail.error}</p></section></div></main>
     )
   }
 
   const show = detail.show
+  const ready = progress(show.checklist)
 
   return (
-    <main style={{
-      minHeight: '100vh',
-      padding: 'clamp(96px, 10vw, 140px) var(--gutter-fluid)',
-      background: 'radial-gradient(ellipse 80% 60% at 50% 0%, var(--c-epl-soft) 0%, transparent 60%), var(--c-bg)',
-    }}>
-      <section style={{ maxWidth: 'var(--layout-max)', margin: '0 auto' }}>
-        <a href="/admin" style={{ color: 'var(--c-epl)', textDecoration: 'none', fontFamily: 'var(--ff-label)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-          ← Back to Command Center
-        </a>
-
-        <header style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          gap: 'var(--s-7)',
-          flexWrap: 'wrap',
-          borderBottom: '1px solid var(--c-border)',
-          paddingBottom: 'var(--s-7)',
-          marginTop: 'var(--s-6)',
-          marginBottom: 'var(--s-7)',
-        }}>
-          <div style={{ maxWidth: '820px' }}>
-            <div className="section-label" style={{ color: 'var(--c-epl)', marginBottom: 'var(--s-4)' }}>
-              Admin Show Detail
-            </div>
-            <h1 style={{
-              fontFamily: 'var(--ff-display)',
-              fontSize: 'var(--t-display)',
-              lineHeight: 'var(--lh-display)',
-              letterSpacing: 'var(--ls-display)',
-              marginBottom: 'var(--s-4)',
-            }}>
-              {show.band}
-            </h1>
-            <p style={{ fontSize: 'var(--t-body-l)', color: 'var(--c-text-muted)', lineHeight: 'var(--lh-base)' }}>
-              {show.venue} · {show.dateLabel} · {show.startTime}
-            </p>
-          </div>
-
-          <div style={{
-            border: '1px solid var(--c-epl-line)',
-            background: 'rgba(212, 160, 23, 0.06)',
-            padding: 'var(--s-5)',
-            minWidth: '260px',
-          }}>
-            <div style={{ fontFamily: 'var(--ff-label)', fontSize: 'var(--t-label)', letterSpacing: 'var(--ls-label)', textTransform: 'uppercase', color: 'var(--c-epl)', marginBottom: 'var(--s-2)' }}>
-              Show Status
-            </div>
-            <div style={{ fontFamily: 'var(--ff-display)', fontSize: '44px', lineHeight: 1 }}>
-              {show.needsAttention ? 'Needs Work' : 'On Track'}
-            </div>
-            <p style={{ color: 'var(--c-text-dim)', marginTop: 'var(--s-3)', lineHeight: 'var(--lh-snug)' }}>
-              {show.status} · {show.missingFlags.length} open items
-            </p>
-          </div>
+    <main className="sw-shell">
+      <style>{`
+        .sw-shell{min-height:100vh;padding:clamp(76px,8vw,116px) var(--gutter-fluid);background:radial-gradient(circle at 8% 0%,rgba(212,160,23,.18),transparent 32%),linear-gradient(180deg,#101010,#050505 46%,#030303);color:var(--c-text)}.sw-wrap{max-width:var(--layout-max);margin:0 auto}.sw-back{display:inline-flex;color:var(--c-epl);text-decoration:none;font-family:var(--ff-label);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:var(--s-5)}.sw-hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr);gap:var(--s-6);align-items:end;border-bottom:1px solid var(--c-border);padding-bottom:var(--s-6);margin-bottom:var(--s-5)}.sw-label,.sw-panel-head span,.sw-detail span,.sw-status span,.sw-nav a,.sw-flag{font-family:var(--ff-label);font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--c-epl)}.sw-hero h1{font-family:var(--ff-display);font-size:clamp(60px,10vw,138px);line-height:.78;letter-spacing:var(--ls-display);margin:var(--s-3) 0}.sw-hero p{font-size:var(--t-body-l);color:var(--c-text-muted);line-height:var(--lh-base)}.sw-health{border:1px solid var(--c-epl-line);background:linear-gradient(180deg,rgba(212,160,23,.08),rgba(255,255,255,.016));padding:var(--s-5);display:grid;gap:var(--s-4)}.sw-health strong{font-family:var(--ff-display);font-size:64px;line-height:.85;color:var(--c-epl)}.sw-bar{height:10px;background:rgba(255,255,255,.08);overflow:hidden}.sw-bar i{display:block;height:100%;background:var(--c-epl)}.sw-health p{font-size:14px;color:var(--c-text-dim)}.sw-nav{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:repeat(6,1fr);border:1px solid var(--c-border);background:rgba(5,5,5,.92);backdrop-filter:blur(16px);margin-bottom:var(--s-6)}.sw-nav a{min-height:48px;display:grid;place-items:center;text-decoration:none;color:var(--c-text-muted);border-right:1px solid var(--c-border)}.sw-nav a:last-child{border-right:0}.sw-nav a:hover{background:var(--c-epl);color:#050505}.sw-main{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(340px,.9fr);gap:var(--s-6);align-items:start}.sw-column{display:grid;gap:var(--s-6)}.sw-panel{border:1px solid var(--c-border);background:rgba(255,255,255,.018);padding:var(--s-5)}.sw-panel-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:var(--s-4)}.sw-panel h2,.sw-panel h1{font-family:var(--ff-display);font-size:var(--t-h2);line-height:.9;letter-spacing:var(--ls-display)}.sw-data-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--c-border);border:1px solid var(--c-border)}.sw-detail{background:#070707;padding:14px;min-height:86px;display:grid;align-content:end}.sw-detail strong{color:var(--c-text-muted);line-height:var(--lh-snug);overflow-wrap:anywhere}.sw-status-board{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.sw-status{border:1px solid var(--c-border);background:#070707;padding:14px;min-height:92px;display:grid;align-content:end}.sw-status strong{color:var(--c-text-muted);margin-top:7px}.sw-done{border-color:var(--c-epl-line);background:rgba(212,160,23,.06)}.sw-flags{display:flex;flex-wrap:wrap;gap:8px}.sw-flag{display:inline-flex;border:1px solid var(--c-epl-line);background:rgba(212,160,23,.08);padding:8px 10px}.sw-empty{color:var(--c-text-muted);border:1px dashed var(--c-border);padding:var(--s-4);line-height:var(--lh-base)}.sw-mobile-actions{display:none;position:sticky;bottom:0;z-index:10;margin:var(--s-6) calc(var(--gutter-fluid) * -1) 0;background:rgba(5,5,5,.95);border-top:1px solid var(--c-border);backdrop-filter:blur(16px);grid-template-columns:repeat(4,1fr)}.sw-mobile-actions a{min-height:54px;display:grid;place-items:center;color:var(--c-text-muted);text-decoration:none;font-family:var(--ff-label);font-size:10px;letter-spacing:.12em;text-transform:uppercase;border-right:1px solid var(--c-border)}.sw-mobile-actions a:first-child{color:var(--c-epl)}@media(max-width:1050px){.sw-hero,.sw-main{grid-template-columns:1fr}.sw-nav{grid-template-columns:repeat(3,1fr)}}@media(max-width:700px){.sw-shell{padding:70px var(--gutter-fluid) 0}.sw-hero h1{font-size:clamp(56px,19vw,92px)}.sw-nav{display:none}.sw-panel{padding:var(--s-4);margin-left:calc(var(--gutter-fluid) * -.25);margin-right:calc(var(--gutter-fluid) * -.25)}.sw-data-grid,.sw-status-board{grid-template-columns:1fr}.sw-mobile-actions{display:grid}}
+      `}</style>
+      <div className="sw-wrap">
+        <a className="sw-back" href="/admin">← Command Center</a>
+        <header className="sw-hero">
+          <div><span className="sw-label">Show Workspace</span><h1>{show.band}</h1><p>{show.venue} · {show.dateLabel} · {show.startTime}</p></div>
+          <aside className="sw-health"><span className="sw-label">Show Health</span><strong>{ready}%</strong><div className="sw-bar"><i style={{ width: `${ready}%` }} /></div><p>{show.status} · {show.missingFlags.length} open item{show.missingFlags.length === 1 ? '' : 's'}</p></aside>
         </header>
 
-        {show.missingFlags.length > 0 && (
-          <section style={{
-            border: '1px solid var(--c-epl-line)',
-            background: 'rgba(212, 160, 23, 0.06)',
-            padding: 'var(--s-5)',
-            marginBottom: 'var(--s-6)',
-          }}>
-            <div className="section-label" style={{ marginBottom: 'var(--s-3)' }}>Needs Attention</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--s-2)' }}>
-              {show.missingFlags.map(flag => <StatusPill key={flag} active>{flag}</StatusPill>)}
-            </div>
-          </section>
-        )}
+        <nav className="sw-nav"><a href="#overview">Overview</a><a href="#advance">Advance</a><a href="#updates">Updates</a><a href="#specialists">Specialists</a><a href="#promo">Promo</a><a href="#finance">Finance</a></nav>
 
-        <div style={{ display: 'grid', gap: 'var(--s-6)' }}>
-          <Section eyebrow="Phase 4" title="Specialist Work Lanes">
-            <WorkLaneRunner showId={show.id} />
-          </Section>
-
-          <Section eyebrow="Phase 1.4" title="Manual Airtable Updates">
-            <ShowControls showId={show.id} notes={show.editableNotes} checklist={show.checklist} />
-          </Section>
-
-          <Section eyebrow="Phase 1.6–1.7" title="Show Campaign Agent Draft">
-            <CampaignDraftPanel showId={show.id} />
-          </Section>
-
-          <Section eyebrow="Status" title="Workflow Checklist">
-            <Checklist items={show.checklist} />
-          </Section>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 480px), 1fr))', gap: 'var(--s-6)' }}>
-            <Section eyebrow="Advance" title="Logistics">
-              <DetailGrid rows={show.logistics} />
-            </Section>
-
-            <Section eyebrow="Booking" title="Deal Snapshot">
-              <DetailGrid rows={show.deal} />
-            </Section>
+        <section className="sw-main">
+          <div className="sw-column">
+            <section id="overview" className="sw-panel"><div className="sw-panel-head"><div><span>Progress</span><h2>Checklist</h2></div></div><StatusBoard items={show.checklist} /></section>
+            {show.missingFlags.length > 0 && <section className="sw-panel"><div className="sw-panel-head"><div><span>Needs attention</span><h2>Open items</h2></div></div><div className="sw-flags">{show.missingFlags.map(flag => <MissingFlag key={flag} flag={flag} />)}</div></section>}
+            <section id="updates" className="sw-panel"><div className="sw-panel-head"><div><span>Write to Airtable</span><h2>Actions + notes</h2></div></div><ShowControls showId={show.id} notes={show.editableNotes} checklist={show.checklist} /></section>
+            <section id="specialists" className="sw-panel"><div className="sw-panel-head"><div><span>AI work lanes</span><h2>Specialists</h2></div></div><WorkLaneRunner showId={show.id} /></section>
+            <section id="promo" className="sw-panel"><div className="sw-panel-head"><div><span>Campaign</span><h2>Drafts</h2></div></div><CampaignDraftPanel showId={show.id} /></section>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 480px), 1fr))', gap: 'var(--s-6)' }}>
-            <Section eyebrow="Team" title="People">
-              <DetailGrid rows={show.people} />
-            </Section>
-
-            <Section eyebrow="Files" title="Assets & Publishing">
-              <DetailGrid rows={show.assets} />
-            </Section>
-          </div>
-
-          <Section eyebrow="Internal" title="Notes Snapshot">
-            <DetailGrid rows={show.notes} />
-          </Section>
-        </div>
-      </section>
+          <aside className="sw-column">
+            <DataPanel eyebrow="Advance" title="Logistics" rows={show.logistics} />
+            <DataPanel eyebrow="Team" title="People" rows={show.people} />
+            <DataPanel eyebrow="Files" title="Assets" rows={show.assets} />
+            <div id="finance"><DataPanel eyebrow="Finance" title="Deal" rows={show.deal} /></div>
+            <DataPanel eyebrow="Internal" title="Notes" rows={show.notes} />
+          </aside>
+        </section>
+        <nav className="sw-mobile-actions"><a href="#overview">Status</a><a href="#updates">Update</a><a href="#specialists">AI</a><a href="#finance">Deal</a></nav>
+      </div>
     </main>
   )
 }
