@@ -12,36 +12,15 @@ const CHECKBOX_FIELDS = [
   ['Ads Running', 'Ads Running'],
 ]
 
-function ControlButton({ children, disabled, onClick }) {
-  return (
-    <button onClick={onClick} disabled={disabled} style={{
-      border: '1px solid var(--c-epl-line)',
-      color: disabled ? 'var(--c-text-faint)' : 'var(--c-epl)',
-      padding: '10px 14px',
-      fontFamily: 'var(--ff-label)',
-      fontSize: '11px',
-      letterSpacing: '0.14em',
-      textTransform: 'uppercase',
-      background: disabled ? 'var(--c-surface-2)' : 'rgba(212, 160, 23, 0.06)',
-      cursor: disabled ? 'not-allowed' : 'pointer',
-    }}>
-      {children}
-    </button>
-  )
-}
+const NOTE_FIELDS = [
+  ['Show Notes', 'Show', 'General context, venue notes, or internal reminders.'],
+  ['Sound Notes', 'Sound', 'Production notes, sound provider, stage, input, and load-in context.'],
+  ['Merch Notes', 'Merch', 'Merch table, staffing, inventory, settlement, or post-show notes.'],
+]
 
 function Message({ message }) {
   if (!message) return null
-
-  return (
-    <p style={{
-      color: message.type === 'error' ? '#f3a6a6' : 'var(--c-epl)',
-      lineHeight: 'var(--lh-base)',
-      marginTop: 'var(--s-3)',
-    }}>
-      {message.text}
-    </p>
-  )
+  return <p className={`sc-message ${message.type === 'error' ? 'sc-error' : ''}`}>{message.text}</p>
 }
 
 export default function ShowControls({ showId, notes, checklist }) {
@@ -76,11 +55,7 @@ export default function ShowControls({ showId, notes, checklist }) {
         body: JSON.stringify({ fields }),
       })
       const data = await response.json()
-
-      if (!response.ok || !data.ok) {
-        throw new Error(data.error || 'Show update failed.')
-      }
-
+      if (!response.ok || !data.ok) throw new Error(data.error || 'Show update failed.')
       setMessage({ type: 'success', text: successText })
     } catch (error) {
       setMessage({ type: 'error', text: error?.message || 'Show update failed.' })
@@ -89,8 +64,12 @@ export default function ShowControls({ showId, notes, checklist }) {
     }
   }
 
-  async function saveNotes() {
-    await saveFields(form, 'Notes saved to Airtable.')
+  async function saveNote(fieldName) {
+    await saveFields({ [fieldName]: form[fieldName] }, `${fieldName} saved.`)
+  }
+
+  async function saveAllNotes() {
+    await saveFields(form, 'All notes saved to Airtable.')
   }
 
   async function toggleCheckbox(fieldName) {
@@ -100,61 +79,38 @@ export default function ShowControls({ showId, notes, checklist }) {
   }
 
   return (
-    <div style={{ display: 'grid', gap: 'var(--s-5)' }}>
-      <div style={{ display: 'grid', gap: 'var(--s-4)' }}>
-        {Object.entries(form).map(([fieldName, value]) => (
-          <label key={fieldName} style={{ display: 'grid', gap: 'var(--s-2)' }}>
-            <span style={{
-              fontFamily: 'var(--ff-label)',
-              fontSize: '10px',
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: 'var(--c-text-faint)',
-            }}>
-              {fieldName}
-            </span>
-            <textarea
-              value={value}
-              onChange={event => updateText(fieldName, event.target.value)}
-              rows={4}
-              style={{
-                width: '100%',
-                border: '1px solid var(--c-border)',
-                background: 'var(--c-bg)',
-                color: 'var(--c-text-muted)',
-                padding: 'var(--s-3)',
-                font: 'inherit',
-                lineHeight: 'var(--lh-base)',
-              }}
-            />
-          </label>
-        ))}
-        <ControlButton onClick={saveNotes} disabled={saving}>Save Notes</ControlButton>
-      </div>
+    <div className="sc-shell">
+      <style>{`
+        .sc-shell{display:grid;gap:var(--s-5)}.sc-status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.sc-check{border:1px solid var(--c-border);background:#070707;color:var(--c-text-muted);padding:14px;text-align:left;display:grid;gap:10px;min-height:92px;cursor:pointer;transition:border-color .18s ease,background .18s ease,color .18s ease}.sc-check:hover{border-color:var(--c-epl-line)}.sc-check-active{border-color:var(--c-epl-line);background:rgba(212,160,23,.07);color:var(--c-epl)}.sc-check span,.sc-label,.sc-save,.sc-message{font-family:var(--ff-label);font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.sc-check strong{font-size:14px;color:inherit}.sc-note-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.sc-note{border:1px solid var(--c-border);background:#070707;padding:14px;display:grid;gap:10px}.sc-note-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.sc-label{color:var(--c-epl)}.sc-note-head p{color:var(--c-text-faint);font-size:12px;line-height:var(--lh-snug);font-family:var(--ff-body);letter-spacing:0;text-transform:none;font-weight:400}.sc-note textarea{width:100%;min-height:148px;border:1px solid var(--c-border);background:#050505;color:var(--c-text-muted);padding:12px;font:inherit;line-height:var(--lh-base);resize:vertical}.sc-save{border:1px solid var(--c-epl-line);background:rgba(212,160,23,.06);color:var(--c-epl);padding:11px 13px;cursor:pointer}.sc-save:hover{background:var(--c-epl);color:#050505}.sc-save:disabled,.sc-check:disabled{opacity:.48;cursor:not-allowed}.sc-actions{display:flex;gap:10px;flex-wrap:wrap}.sc-message{color:var(--c-epl);line-height:var(--lh-base)}.sc-error{color:#f3a6a6}@media(max-width:920px){.sc-note-grid{grid-template-columns:1fr}.sc-note textarea{min-height:120px}}@media(max-width:620px){.sc-status-grid{grid-template-columns:1fr}.sc-actions{display:grid}.sc-save{width:100%}}
+      `}</style>
 
-      <div style={{ borderTop: '1px solid var(--c-border-subtle)', paddingTop: 'var(--s-5)' }}>
-        <div className="section-label" style={{ marginBottom: 'var(--s-3)' }}>
-          Manual Status Toggles
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--s-2)' }}>
+      <section>
+        <div className="sc-label" style={{ marginBottom: 10 }}>Show status toggles</div>
+        <div className="sc-status-grid">
           {CHECKBOX_FIELDS.map(([fieldName, label]) => (
-            <button key={fieldName} onClick={() => toggleCheckbox(fieldName)} disabled={saving} style={{
-              border: `1px solid ${checkboxes[fieldName] ? 'var(--c-epl-line)' : 'var(--c-border)'}`,
-              background: checkboxes[fieldName] ? 'rgba(212, 160, 23, 0.08)' : 'var(--c-surface-2)',
-              color: checkboxes[fieldName] ? 'var(--c-epl)' : 'var(--c-text-dim)',
-              padding: '8px 10px',
-              fontFamily: 'var(--ff-label)',
-              fontSize: '10px',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              cursor: saving ? 'not-allowed' : 'pointer',
-            }}>
-              {checkboxes[fieldName] ? '✓ ' : ''}{label}
+            <button key={fieldName} onClick={() => toggleCheckbox(fieldName)} disabled={saving} className={`sc-check ${checkboxes[fieldName] ? 'sc-check-active' : ''}`}>
+              <span>{checkboxes[fieldName] ? 'Complete' : 'Open'}</span>
+              <strong>{label}</strong>
             </button>
           ))}
         </div>
-      </div>
+      </section>
 
+      <section>
+        <div className="sc-label" style={{ marginBottom: 10 }}>Notes</div>
+        <div className="sc-note-grid">
+          {NOTE_FIELDS.map(([fieldName, label, helper]) => (
+            <label key={fieldName} className="sc-note">
+              <div className="sc-note-head"><span className="sc-label">{label}</span></div>
+              <p>{helper}</p>
+              <textarea value={form[fieldName]} onChange={event => updateText(fieldName, event.target.value)} />
+              <button type="button" className="sc-save" onClick={() => saveNote(fieldName)} disabled={saving}>Save {label}</button>
+            </label>
+          ))}
+        </div>
+      </section>
+
+      <div className="sc-actions"><button className="sc-save" onClick={saveAllNotes} disabled={saving}>Save all notes</button></div>
       <Message message={message} />
     </div>
   )
