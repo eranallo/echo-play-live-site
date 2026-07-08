@@ -1,3 +1,4 @@
+import AdminNav from '@/components/admin/AdminNav'
 import ChiefOfStaffConsole from '@/components/admin/ChiefOfStaffConsole'
 import { generateChiefOfStaffBrief } from '@/lib/admin/chiefOfStaff'
 
@@ -10,14 +11,12 @@ export default async function ChiefOfStaffPage() {
   return (
     <main style={{
       minHeight: '100vh',
-      padding: 'clamp(96px, 10vw, 140px) var(--gutter-fluid)',
+      padding: 'clamp(82px, 8vw, 122px) var(--gutter-fluid)',
+      paddingBottom: 'clamp(88px, 8vw, 122px)',
       background: 'radial-gradient(ellipse 80% 60% at 50% 0%, var(--c-epl-soft) 0%, transparent 60%), var(--c-bg)',
     }}>
+      <AdminNav contextLabel="Chief of Staff" backHref="/admin" backLabel="Command Center" />
       <section style={{ maxWidth: 'var(--layout-max)', margin: '0 auto' }}>
-        <a href="/admin" style={{ color: 'var(--c-epl)', textDecoration: 'none', fontFamily: 'var(--ff-label)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-          ← Back to Command Center
-        </a>
-
         <header style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -26,7 +25,6 @@ export default async function ChiefOfStaffPage() {
           flexWrap: 'wrap',
           borderBottom: '1px solid var(--c-border)',
           paddingBottom: 'var(--s-7)',
-          marginTop: 'var(--s-6)',
           marginBottom: 'var(--s-7)',
         }}>
           <div style={{ maxWidth: '860px' }}>
