@@ -1,0 +1,44 @@
+.cinematic-journey{height:430vh!important;background:#000!important}
+.cinematic-intro{position:absolute;inset:0;overflow:hidden;background:#000;isolation:isolate}
+.cinematic-base{position:absolute;inset:0;background:radial-gradient(circle at 50% 52%,#101010 0%,#050505 28%,#000 72%);z-index:0}
+.cinematic-band{position:absolute;inset:-3%;z-index:2;opacity:var(--scene);transform:scale(calc(1.08 - var(--scene)*.035));filter:saturate(.72) contrast(1.15) brightness(calc(.34 + var(--scene)*.34));will-change:opacity,transform,clip-path;transition:none}
+.cinematic-band img{filter:contrast(1.12) saturate(.76)}
+.cinematic-band-right{clip-path:inset(0 calc((1 - var(--scene))*100%) 0 0 round 0)}
+.cinematic-band-left{clip-path:inset(0 0 0 calc((1 - var(--scene))*100%) round 0)}
+.cinematic-band-grade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.82),transparent 30%,transparent 68%,rgba(0,0,0,.88)),linear-gradient(180deg,rgba(0,0,0,.48),transparent 34%,rgba(0,0,0,.7) 100%),radial-gradient(circle at 50% 42%,transparent 20%,rgba(0,0,0,.68) 78%)}
+.cinematic-smoke{position:absolute;z-index:5;border-radius:50%;filter:blur(42px);opacity:.38;mix-blend-mode:screen;will-change:transform,opacity;background:radial-gradient(ellipse at center,rgba(255,255,255,.13) 0%,rgba(202,185,148,.08) 28%,transparent 72%)}
+.cinematic-smoke-a{width:72vw;height:32vh;left:-20vw;bottom:8vh;transform:translate3d(calc(var(--progress)*32vw),calc(var(--progress)*-5vh),0) rotate(-8deg)}
+.cinematic-smoke-b{width:68vw;height:38vh;right:-24vw;top:20vh;transform:translate3d(calc(var(--progress)*-28vw),calc(var(--progress)*6vh),0) rotate(12deg);opacity:.26}
+.cinematic-smoke-c{width:90vw;height:30vh;left:5vw;bottom:-4vh;transform:translate3d(calc(var(--progress)*-12vw),calc(var(--progress)*-9vh),0);opacity:.3}
+.cinematic-light-bloom{position:absolute;z-index:4;width:34vw;height:70vh;top:8vh;filter:blur(54px);opacity:calc(.02 + var(--progress)*.2);mix-blend-mode:screen;background:radial-gradient(ellipse at 50% 0%,rgba(255,244,211,.34),rgba(212,160,23,.08) 34%,transparent 74%)}
+.cinematic-light-bloom-left{left:-8vw;transform:rotate(14deg) translateY(calc(var(--progress)*8vh))}
+.cinematic-light-bloom-right{right:-8vw;transform:rotate(-14deg) translateY(calc(var(--progress)*8vh))}
+.cinematic-logo-stage{position:absolute;inset:0;z-index:7;display:grid;place-items:center;opacity:var(--logo);transform:scale(calc(.86 + var(--logo)*.14));will-change:opacity,transform}
+.cinematic-logo{position:relative;width:min(54vw,620px);aspect-ratio:1;filter:drop-shadow(0 0 24px rgba(212,160,23,calc(var(--logo)*.34))) drop-shadow(0 0 70px rgba(255,255,255,calc(var(--logo)*.16)))}
+.cinematic-logo-glow{position:absolute;width:min(72vw,820px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(212,160,23,calc(var(--logo)*.18)),rgba(255,255,255,calc(var(--logo)*.05)) 28%,transparent 68%);filter:blur(26px);transform:scale(calc(.78 + var(--logo)*.22))}
+.cinematic-blackout{position:absolute;inset:0;z-index:10;background:#000;opacity:var(--blackout);pointer-events:none}
+.cinematic-grain{position:absolute;inset:0;z-index:11;opacity:.12;mix-blend-mode:soft-light;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.46'/%3E%3C/svg%3E")}
+.cinematic-vignette{position:absolute;inset:0;z-index:12;pointer-events:none;background:radial-gradient(circle at 50% 46%,transparent 18%,rgba(0,0,0,.3) 48%,rgba(0,0,0,.92) 100%),linear-gradient(180deg,rgba(0,0,0,.38),transparent 34%,rgba(0,0,0,.62))}
+.cinematic-cue{position:absolute;z-index:14;left:50%;bottom:clamp(38px,7vh,72px);transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:12px;color:rgba(255,255,255,.66);font:800 10px/1 var(--ff-label);letter-spacing:.24em;text-transform:uppercase}
+.cinematic-cue i{display:block;width:1px;height:42px;background:linear-gradient(#d4a017,transparent);animation:cinematicCue 1.8s ease-in-out infinite}
+.ep-progress{z-index:20!important}
+@keyframes cinematicCue{0%,100%{transform:scaleY(.35);transform-origin:top;opacity:.45}50%{transform:scaleY(1);transform-origin:top;opacity:1}}
+@media(max-width:740px){
+  .cinematic-journey{height:500vh!important}
+  .cinematic-band{inset:-8%;transform:scale(calc(1.16 - var(--scene)*.05))}
+  .cinematic-band img{object-position:center}
+  .cinematic-band-grade{background:linear-gradient(90deg,rgba(0,0,0,.78),transparent 22%,transparent 70%,rgba(0,0,0,.84)),linear-gradient(180deg,rgba(0,0,0,.42),transparent 28%,rgba(0,0,0,.76)),radial-gradient(circle at 50% 42%,transparent 12%,rgba(0,0,0,.72) 76%)}
+  .cinematic-smoke{filter:blur(28px)}
+  .cinematic-smoke-a{width:110vw;height:28vh;left:-42vw;bottom:13vh}
+  .cinematic-smoke-b{width:100vw;height:32vh;right:-48vw;top:22vh}
+  .cinematic-smoke-c{width:120vw;height:24vh;left:-10vw;bottom:2vh}
+  .cinematic-light-bloom{width:52vw;height:58vh;filter:blur(38px)}
+  .cinematic-logo{width:min(68vw,430px)}
+  .cinematic-logo-glow{width:min(88vw,540px)}
+}
+@media(prefers-reduced-motion:reduce){
+  .cinematic-journey{height:110svh!important}
+  .cinematic-band,.cinematic-smoke,.cinematic-light-bloom,.cinematic-cue{display:none!important}
+  .cinematic-logo-stage{opacity:1!important;transform:none!important}
+  .cinematic-blackout{opacity:0!important}
+}
