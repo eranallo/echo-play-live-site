@@ -7,8 +7,14 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { bandsList } from '@/lib/bands'
 import './HomeExperience.css'
+import './CinematicIntro.css'
 
 const clamp = value => Math.max(0, Math.min(1, value))
+const windowed = (progress, start, peak, end) => {
+  if (progress <= start || progress >= end) return 0
+  if (progress < peak) return clamp((progress - start) / (peak - start))
+  return clamp(1 - (progress - peak) / (end - peak))
+}
 
 function useJourneyController(ref) {
   const [state, setState] = useState({ progress: 0, phase: 'before' })
@@ -40,40 +46,39 @@ function useJourneyController(ref) {
   return state
 }
 
-function MovingHead({ position, index }) {
-  return <div className={`ep-fixture ep-fixture-${position}`} style={{ '--fixture': index }}>
-    <span className="ep-fixture-clamp" />
-    <span className="ep-fixture-yoke"><i className="ep-fixture-body"><b className="ep-fixture-lens" /></i></span>
-  </div>
-}
+function CinematicIntro({ progress, bands }) {
+  const scenes = [
+    { band: bands[0], opacity: windowed(progress, .08, .17, .27), direction: 'right' },
+    { band: bands[1], opacity: windowed(progress, .24, .34, .44), direction: 'left' },
+    { band: bands[2], opacity: windowed(progress, .41, .51, .61), direction: 'right' },
+    { band: bands[3], opacity: windowed(progress, .58, .68, .77), direction: 'left' },
+  ]
+  const logo = clamp((progress - .75) / .17)
+  const blackout = clamp(1 - progress / .09)
+  const cue = clamp(1 - progress / .08)
 
-function StageWorld({ progress, heroImage, objectPosition }) {
-  const power = clamp((progress - .08) / .28)
-  const sweep = clamp((progress - .18) / .42)
-  const logo = clamp((progress - .48) / .28)
-  const finale = clamp((progress - .72) / .18)
-  return <div className="ep-stage-world" style={{ '--power': power, '--sweep': sweep, '--logo': logo, '--finale': finale, '--camera': clamp(progress / .88) }} aria-hidden="true">
-    <div className="ep-stage-photo">{heroImage && <Image src={heroImage} alt="" fill priority sizes="100vw" style={{ objectFit:'cover', objectPosition:objectPosition || 'center' }} />}</div>
-    <div className="ep-stage-roof" />
-    <div className="ep-truss ep-truss-main"><span/><span/><span/><span/><span/><span/><span/><span/></div>
-    <div className="ep-truss ep-truss-left"><span/><span/><span/><span/><span/></div>
-    <div className="ep-truss ep-truss-right"><span/><span/><span/><span/><span/></div>
-    <div className="ep-fixtures">
-      <MovingHead position="one" index={0}/><MovingHead position="two" index={1}/><MovingHead position="three" index={2}/><MovingHead position="four" index={3}/><MovingHead position="five" index={4}/>
+  return <div className="cinematic-intro" style={{ '--progress': progress, '--logo': logo, '--blackout': blackout }} aria-hidden="true">
+    <div className="cinematic-base" />
+    {scenes.map(({ band, opacity, direction }, index) => {
+      const image = band?.featurePhoto || band?.heroPhoto || band?.crowdPhoto
+      return <div key={band?.slug || index} className={`cinematic-band cinematic-band-${direction}`} style={{ '--scene': opacity, '--scene-index': index }}>
+        {image && <Image src={image} alt="" fill priority={index === 0} sizes="100vw" style={{ objectFit:'cover', objectPosition:band?.heroObjectPosition || 'center' }} />}
+        <div className="cinematic-band-grade" />
+      </div>
+    })}
+    <div className="cinematic-smoke cinematic-smoke-a" />
+    <div className="cinematic-smoke cinematic-smoke-b" />
+    <div className="cinematic-smoke cinematic-smoke-c" />
+    <div className="cinematic-light-bloom cinematic-light-bloom-left" />
+    <div className="cinematic-light-bloom cinematic-light-bloom-right" />
+    <div className="cinematic-logo-stage">
+      <div className="cinematic-logo-glow" />
+      <div className="cinematic-logo"><Image src="/logo.png" alt="" fill sizes="(max-width:740px) 62vw, 34vw" style={{ objectFit:'contain' }} /></div>
     </div>
-    <div className="ep-beam ep-beam-one"/><div className="ep-beam ep-beam-two"/><div className="ep-beam ep-beam-three"/><div className="ep-beam ep-beam-four"/><div className="ep-beam ep-beam-five"/>
-    <div className="ep-stage-wall">
-      <div className="ep-led-grid" />
-      <div className="ep-logo-aura" />
-      <div className="ep-logo-mark"><Image src="/logo.png" alt="" fill sizes="(max-width:740px) 48vw, 28vw" style={{ objectFit:'contain' }} /></div>
-      <div className="ep-wordmark">Echo Play Live</div>
-    </div>
-    <div className="ep-side-screen ep-side-screen-left"/><div className="ep-side-screen ep-side-screen-right"/>
-    <div className="ep-stage-deck"><span/><span/><span/></div>
-    <div className="ep-stage-floor"/>
-    <div className="ep-crowd">{Array.from({ length: 42 }, (_, i) => <i key={i} style={{ '--i': i }}/>)}</div>
-    <div className="ep-atmosphere ep-atmosphere-one"/><div className="ep-atmosphere ep-atmosphere-two"/>
-    <div className="ep-grain"/><div className="ep-vignette"/>
+    <div className="cinematic-blackout" />
+    <div className="cinematic-grain" />
+    <div className="cinematic-vignette" />
+    <div className="cinematic-cue" style={{ opacity: cue }}><span>Scroll to begin</span><i /></div>
   </div>
 }
 
@@ -101,18 +106,15 @@ export default function HomeExperience({ shows = [] }) {
   const journeyRef = useRef(null)
   const { progress, phase } = useJourneyController(journeyRef)
   const featured = useMemo(() => bandsList.find(b => b.slug === 'so-long-goodnight') || bandsList[0], [])
+  const introBands = useMemo(() => ['so-long-goodnight','the-dick-beldings','jambi','elite'].map(slug => bandsList.find(b => b.slug === slug)).filter(Boolean), [])
   const heroImage = featured?.heroPhoto || featured?.featurePhoto || featured?.crowdPhoto
-  const cue = clamp(1 - progress / .16)
-  const finale = clamp((progress - .72) / .18)
   const upcoming = shows.slice(0,4)
   return <>
     <Nav />
     <main className="ep-home">
-      <section className="ep-journey" ref={journeyRef}>
+      <section className="ep-journey cinematic-journey" ref={journeyRef}>
         <div className={`ep-sticky ep-pin-${phase}`}>
-          <StageWorld progress={progress} heroImage={heroImage} objectPosition={featured?.heroObjectPosition}/>
-          <div className="ep-entry-cue" style={{ opacity:cue }}><span>Echo Play Live</span><h1>The room is waiting.</h1><p>Scroll to enter</p></div>
-          <div className="ep-reveal-copy" style={{ opacity:finale, transform:`translate3d(-50%,${(1-finale)*22}px,0)` }}><p>Live music. Real nostalgia.</p><div className="ep-actions"><Link href="/shows" className="ep-btn ep-primary">Get tickets</Link><Link href="/contact" className="ep-btn">Book a band</Link></div></div>
+          <CinematicIntro progress={progress} bands={introBands}/>
           <div className="ep-progress"><i style={{ transform:`scaleY(${progress})` }}/></div>
         </div>
       </section>
