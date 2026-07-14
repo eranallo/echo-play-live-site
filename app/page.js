@@ -5,93 +5,121 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import StageExperience from '@/components/StageExperience'
 import { bandsList } from '@/lib/bands'
 
-const pillars = [
-  ['01', 'Professional production', 'A polished, venue-ready experience from advance through show day.'],
-  ['02', 'Crowd-first shows', 'Every set is built around recognition, momentum, and participation.'],
-  ['03', 'Regional touring acts', 'A focused roster built to travel across Texas and surrounding markets.'],
-  ['04', 'Easy booking', 'Clear communication, organized assets, and a straightforward path to contract.'],
-]
-
-function useReveal() {
-  const root = useRef(null)
-  useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => entry.isIntersecting && entry.target.classList.add('is-visible'))
-    }, { threshold: 0.12, rootMargin: '0px 0px -56px' })
-    root.current?.querySelectorAll('.cin-reveal').forEach(node => observer.observe(node))
-    return () => observer.disconnect()
-  }, [])
-  return root
-}
+const clamp = value => Math.min(1, Math.max(0, value))
 
 function Poster({ band, index }) {
   const image = band.featurePhoto || band.heroPhoto || band.crowdPhoto
   return (
-    <Link href={`/bands/${band.slug}`} className="cin-poster cin-reveal" style={{ '--accent': band.color || '#d4a017', '--delay': `${index * 70}ms` }}>
-      <div className="cin-poster-image">{image && <Image src={image} alt={`${band.name} live`} fill sizes="(max-width: 760px) 86vw, 30vw" style={{ objectFit: 'cover', objectPosition: band.heroObjectPosition || 'center' }} />}</div>
-      <div className="cin-poster-shine" />
-      <div className="cin-poster-top"><span>{String(index + 1).padStart(2, '0')}</span><span>{band.genre?.[0] || 'Live'}</span></div>
-      <div className="cin-poster-copy"><small>Echo Play Live presents</small><h3>{band.name}</h3><span>Enter the room →</span></div>
+    <Link href={`/bands/${band.slug}`} className="world-poster" style={{ '--accent': band.color || '#d4a017', '--i': index }}>
+      <div className="world-poster-image">{image && <Image src={image} alt={`${band.name} live`} fill sizes="(max-width: 760px) 82vw, 29vw" style={{ objectFit: 'cover', objectPosition: band.heroObjectPosition || 'center' }} />}</div>
+      <div className="world-poster-glass" />
+      <div className="world-poster-meta"><span>{String(index + 1).padStart(2, '0')}</span><span>{band.genre?.[0] || 'Live'}</span></div>
+      <div className="world-poster-copy"><small>Echo Play Live presents</small><h3>{band.name}</h3><b>Enter the room →</b></div>
     </Link>
   )
 }
 
 export default function Home() {
-  const root = useReveal()
-  const [pointer, setPointer] = useState({ x: 50, y: 42 })
+  const journeyRef = useRef(null)
+  const [progress, setProgress] = useState(0)
   const featured = useMemo(() => bandsList.find(b => b.slug === 'so-long-goodnight') || bandsList[0], [])
-  const heroImage = featured?.heroPhoto || featured?.featurePhoto || featured?.crowdPhoto
+
+  useEffect(() => {
+    let ticking = false
+    const update = () => {
+      ticking = false
+      const section = journeyRef.current
+      if (!section) return
+      const rect = section.getBoundingClientRect()
+      const travel = Math.max(section.offsetHeight - window.innerHeight, 1)
+      setProgress(clamp(-rect.top / travel))
+    }
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true
+        requestAnimationFrame(update)
+      }
+    }
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', update)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', update)
+    }
+  }, [])
 
   return (
     <>
       <Nav />
-      <main ref={root} className="cin-site" onPointerMove={event => {
-        const rect = event.currentTarget.getBoundingClientRect()
-        setPointer({ x: ((event.clientX - rect.left) / rect.width) * 100, y: Math.min(100, Math.max(0, (event.clientY / window.innerHeight) * 100)) })
-      }} style={{ '--mx': `${pointer.x}%`, '--my': `${pointer.y}%` }}>
-        <section className="cin-hero">
-          <div className="cin-hero-bg">{heroImage && <Image src={heroImage} alt="Echo Play Live concert" fill priority sizes="100vw" style={{ objectFit: 'cover', objectPosition: featured.heroObjectPosition || 'center' }} />}</div>
-          <div className="cin-noise" /><div className="cin-beam cin-beam-a" /><div className="cin-beam cin-beam-b" /><div className="cin-haze" />
-          <div className="cin-hero-inner">
-            <p className="cin-kicker cin-reveal">Fort Worth / DFW — Live entertainment</p>
-            <h1 className="cin-title cin-reveal"><span>Feel it</span><strong>before</strong><span>the lights</span><em>go down.</em></h1>
-            <div className="cin-hero-bottom cin-reveal">
-              <p>Premium tribute bands, nostalgia-driven cover acts, and themed live experiences built for nights people remember.</p>
-              <div className="cin-actions"><Link href="/shows" className="cin-btn cin-primary">Get tickets</Link><Link href="/contact" className="cin-btn">Book a band</Link></div>
+      <main className="world-site">
+        <section ref={journeyRef} className="world-journey" aria-label="Enter the Echo Play Live venue">
+          <div className="world-sticky">
+            <StageExperience progress={progress} />
+            <div className="world-vignette" />
+            <div className="world-grain" />
+
+            <div className={`world-beat beat-one ${progress < .23 ? 'is-active' : ''}`}>
+              <p>Fort Worth / DFW</p>
+              <h1>The room<br />is waiting.</h1>
+              <span>Scroll to enter</span>
+            </div>
+
+            <div className={`world-beat beat-two ${progress >= .22 && progress < .5 ? 'is-active' : ''}`}>
+              <p>Live music / real nostalgia</p>
+              <h2>Walk toward<br />the lights.</h2>
+            </div>
+
+            <div className={`world-beat beat-three ${progress >= .5 && progress < .76 ? 'is-active' : ''}`}>
+              <p>Echo Play Live</p>
+              <h2>Feel it before<br />the lights go down.</h2>
+            </div>
+
+            <div className={`world-beat beat-four ${progress >= .75 ? 'is-active' : ''}`}>
+              <p>Premium live entertainment</p>
+              <h2>Your next great<br />night starts here.</h2>
+              <div className="world-actions"><Link href="/shows">Get tickets</Link><Link href="/contact">Book a band</Link></div>
+            </div>
+
+            <div className="world-progress"><span style={{ transform: `scaleX(${progress})` }} /></div>
+          </div>
+        </section>
+
+        <section className="world-transition">
+          <div className="world-marquee">THE LIGHTS ARE UP · THE ROOM IS OPEN · ECHO PLAY LIVE · THE LIGHTS ARE UP · THE ROOM IS OPEN ·</div>
+        </section>
+
+        <section className="world-feature">
+          <div className="world-wrap world-feature-grid">
+            <div className="world-copy">
+              <span>Featured experience</span>
+              <h2>{featured?.name}</h2>
+              <p>{featured?.tagline || 'A crowd-first live show built around the songs and memories that pull a room together.'}</p>
+              <Link href={`/bands/${featured?.slug}`}>Explore the band →</Link>
+            </div>
+            <div className="world-stage-card">
+              {(featured?.heroPhoto || featured?.featurePhoto) && <Image src={featured.heroPhoto || featured.featurePhoto} alt={`${featured.name} performing`} fill sizes="(max-width: 900px) 100vw, 58vw" style={{ objectFit: 'cover', objectPosition: featured.heroObjectPosition || 'center' }} />}
+              <div className="world-stage-frame" />
+              <strong>Now entering</strong>
             </div>
           </div>
-          <div className="cin-scroll">Scroll to enter <span>↓</span></div>
         </section>
 
-        <section className="cin-marquee">
-          <div className="cin-marquee-track">LIVE MUSIC · REAL NOSTALGIA · ECHO PLAY LIVE · LIVE MUSIC · REAL NOSTALGIA · ECHO PLAY LIVE ·</div>
+        <section className="world-roster">
+          <div className="world-wrap world-heading"><span>The roster</span><h2>Every door opens<br />to a different night.</h2><p>Seven acts. Seven atmospheres. One standard for the room.</p></div>
+          <div className="world-poster-rail">{bandsList.slice(0, 7).map((band, index) => <Poster key={band.slug} band={band} index={index} />)}</div>
         </section>
 
-        <section className="cin-section cin-featured">
-          <div className="cin-wrap cin-feature-grid">
-            <div className="cin-feature-copy cin-reveal"><span className="cin-eyebrow">Featured experience</span><h2>{featured?.name}</h2><p>{featured?.tagline || 'A live show designed around the songs, energy, and memories that bring a room together.'}</p><Link href={`/bands/${featured?.slug}`} className="cin-text-link">Explore the band →</Link></div>
-            <div className="cin-feature-card cin-reveal">{heroImage && <Image src={heroImage} alt={`${featured?.name} performing`} fill sizes="(max-width: 900px) 100vw, 55vw" style={{ objectFit: 'cover', objectPosition: featured.heroObjectPosition || 'center' }} />}<div className="cin-feature-frame" /><span>Now entering</span></div>
-          </div>
-        </section>
-
-        <section className="cin-section cin-roster" id="bands">
-          <div className="cin-wrap"><div className="cin-heading cin-reveal"><span className="cin-eyebrow">The roster</span><h2>Seven rooms.<br />Seven reasons to stay.</h2><p>Each act has its own atmosphere, audience, and point of view.</p></div></div>
-          <div className="cin-poster-rail">{bandsList.slice(0, 7).map((band, index) => <Poster key={band.slug} band={band} index={index} />)}</div>
-        </section>
-
-        <section className="cin-section cin-trust">
-          <div className="cin-wrap"><div className="cin-heading cin-reveal"><span className="cin-eyebrow">Why Echo Play</span><h2>The show starts<br />before showtime.</h2></div><div className="cin-pillars">{pillars.map(([n, title, copy], i) => <article key={title} className="cin-pillar cin-reveal" style={{ '--delay': `${i * 70}ms` }}><span>{n}</span><h3>{title}</h3><p>{copy}</p></article>)}</div></div>
-        </section>
-
-        <section className="cin-book">
-          <div className="cin-book-glow" /><div className="cin-wrap cin-book-inner cin-reveal"><span className="cin-eyebrow">Bring the room to life</span><h2>Send the date.<br />We’ll build the night.</h2><p>Tell us the venue, city, audience, and experience you want to create.</p><div className="cin-actions"><Link href="/contact" className="cin-btn cin-primary">Start a booking</Link><Link href="/bands" className="cin-btn">View the roster</Link></div></div>
+        <section className="world-book">
+          <div className="world-book-light" />
+          <div className="world-wrap world-book-inner"><span>Bring the room to life</span><h2>Send the date.<br />We’ll build the night.</h2><p>Tell us the venue, city, crowd, and experience you want to create.</p><div className="world-actions"><Link href="/contact">Start a booking</Link><Link href="/bands">View the roster</Link></div></div>
         </section>
 
         <style>{`
-          .cin-site{--gold:#d4a017;--cream:#f3ead8;--line:rgba(243,234,216,.16);background:#050505;color:var(--cream);overflow:hidden}.cin-wrap{width:min(1480px,calc(100vw - clamp(28px,7vw,112px)));margin:auto}.cin-hero{min-height:100svh;position:relative;display:grid;align-items:end;isolation:isolate;background:#070707}.cin-hero-bg{position:absolute;inset:0;z-index:-5;overflow:hidden}.cin-hero-bg img{filter:saturate(.55) contrast(1.22) brightness(.55);transform:scale(1.07)}.cin-hero-bg:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.35) 52%,rgba(0,0,0,.62)),linear-gradient(180deg,rgba(0,0,0,.28),rgba(0,0,0,.88))}.cin-noise{position:absolute;inset:0;z-index:-1;opacity:.14;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E")}.cin-haze{position:absolute;inset:0;z-index:-2;background:radial-gradient(circle at var(--mx) var(--my),rgba(212,160,23,.18),transparent 25rem);transition:background .2s linear}.cin-beam{position:absolute;top:-25%;width:14vw;height:125%;z-index:-2;background:linear-gradient(180deg,rgba(243,234,216,.16),transparent 74%);filter:blur(20px);transform-origin:top;opacity:.55;animation:beam 9s ease-in-out infinite alternate}.cin-beam-a{left:18%;transform:rotate(-14deg)}.cin-beam-b{right:16%;transform:rotate(16deg);animation-delay:-4s}.cin-hero-inner{width:min(1480px,calc(100vw - clamp(28px,7vw,112px)));margin:auto;padding:150px 0 84px}.cin-kicker,.cin-eyebrow{font:900 10px/1 var(--ff-label);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}.cin-title{font-family:var(--ff-display);font-size:clamp(72px,12.6vw,210px);line-height:.72;letter-spacing:-.02em;text-transform:uppercase;margin:20px 0 34px;max-width:1250px}.cin-title span,.cin-title strong,.cin-title em{display:block}.cin-title strong{font-weight:inherit;color:var(--gold);padding-left:12vw}.cin-title em{font-style:normal;color:transparent;-webkit-text-stroke:1px rgba(243,234,216,.72);padding-left:23vw}.cin-hero-bottom{display:grid;grid-template-columns:minmax(260px,620px) auto;gap:40px;align-items:end}.cin-hero-bottom p,.cin-feature-copy p,.cin-heading p,.cin-pillar p,.cin-book p{color:rgba(243,234,216,.68);font-size:clamp(16px,1.35vw,20px);line-height:1.65}.cin-actions{display:flex;gap:1px;border:1px solid var(--line);width:max-content;max-width:100%}.cin-btn{min-height:54px;padding:0 20px;display:grid;place-items:center;color:var(--cream);text-decoration:none;background:rgba(5,5,5,.72);font:900 10px/1 var(--ff-label);letter-spacing:.18em;text-transform:uppercase;transition:.25s}.cin-btn+.cin-btn{border-left:1px solid var(--line)}.cin-btn:hover,.cin-primary{background:var(--gold);color:#050505}.cin-scroll{position:absolute;right:28px;bottom:26px;font:900 9px/1 var(--ff-label);letter-spacing:.18em;text-transform:uppercase;color:rgba(243,234,216,.5);writing-mode:vertical-rl}.cin-scroll span{color:var(--gold);margin-top:10px}.cin-marquee{border-block:1px solid var(--line);overflow:hidden;background:#080808}.cin-marquee-track{width:max-content;padding:17px 0;font:900 11px/1 var(--ff-label);letter-spacing:.24em;color:rgba(243,234,216,.66);animation:marquee 28s linear infinite}.cin-section{padding:clamp(72px,10vw,150px) 0;border-bottom:1px solid var(--line)}.cin-feature-grid{display:grid;grid-template-columns:.75fr 1.25fr;gap:clamp(30px,7vw,110px);align-items:center}.cin-feature-copy h2,.cin-heading h2,.cin-book h2{font-family:var(--ff-display);font-size:clamp(58px,9vw,138px);line-height:.76;text-transform:uppercase;margin:18px 0 24px}.cin-text-link{display:inline-block;margin-top:26px;color:var(--cream);text-decoration:none;font:900 10px/1 var(--ff-label);letter-spacing:.18em;text-transform:uppercase}.cin-feature-card{position:relative;min-height:clamp(500px,68vw,820px);overflow:hidden;background:#111;box-shadow:0 40px 100px rgba(0,0,0,.55);transform:perspective(1200px) rotateY(-3deg)}.cin-feature-card img{filter:saturate(.72) contrast(1.18)}.cin-feature-card:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.8))}.cin-feature-frame{position:absolute;inset:18px;border:1px solid rgba(243,234,216,.32);z-index:2}.cin-feature-card>span{position:absolute;z-index:3;left:34px;bottom:32px;font:900 10px/1 var(--ff-label);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}.cin-heading{display:grid;grid-template-columns:1fr minmax(260px,390px);gap:40px;align-items:end;margin-bottom:52px}.cin-heading .cin-eyebrow{grid-column:1/-1}.cin-heading h2{margin:0}.cin-poster-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(300px,28vw);gap:18px;overflow-x:auto;padding:0 max(14px,calc((100vw - 1480px)/2)) 34px;scroll-snap-type:x mandatory}.cin-poster{position:relative;min-height:620px;overflow:hidden;color:var(--cream);text-decoration:none;scroll-snap-align:center;background:#111;transform:perspective(1100px) rotateY(0deg);transition:transform .5s ease,box-shadow .5s ease;opacity:0}.cin-poster.is-visible{opacity:1;animation:posterIn .75s ease var(--delay) both}.cin-poster:hover{transform:perspective(1100px) rotateY(-5deg) translateY(-10px);box-shadow:0 36px 80px rgba(0,0,0,.55)}.cin-poster-image{position:absolute;inset:0}.cin-poster-image img{filter:saturate(.62) contrast(1.18);transition:transform .9s ease,filter .6s ease}.cin-poster:hover img{transform:scale(1.055);filter:saturate(.88) contrast(1.22)}.cin-poster:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.38),transparent 33%,rgba(0,0,0,.9))}.cin-poster-shine{position:absolute;inset:-30%;z-index:2;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.13),transparent 60%);transform:translateX(-70%);transition:transform .8s ease}.cin-poster:hover .cin-poster-shine{transform:translateX(65%)}.cin-poster-top,.cin-poster-copy{position:absolute;z-index:3;left:0;right:0}.cin-poster-top{top:0;display:flex;justify-content:space-between;padding:18px;border-bottom:1px solid rgba(255,255,255,.18);font:900 9px/1 var(--ff-label);letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}.cin-poster-copy{bottom:0;padding:28px}.cin-poster-copy small,.cin-poster-copy>span{font:900 9px/1 var(--ff-label);letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}.cin-poster-copy h3{font-family:var(--ff-display);font-size:clamp(48px,5.8vw,86px);line-height:.76;text-transform:uppercase;margin:15px 0 24px}.cin-pillars{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line)}.cin-pillar{min-height:340px;padding:28px;display:grid;align-content:end;border-right:1px solid var(--line);opacity:0;transform:translateY(22px);transition:.7s var(--delay)}.cin-pillar:last-child{border-right:0}.cin-pillar.is-visible{opacity:1;transform:none}.cin-pillar>span{color:var(--gold);font:900 10px/1 var(--ff-label);letter-spacing:.18em}.cin-pillar h3{font-family:var(--ff-display);font-size:clamp(34px,3.4vw,54px);line-height:.85;text-transform:uppercase;margin:24px 0 14px}.cin-pillar p{font-size:15px}.cin-book{position:relative;min-height:78svh;display:grid;place-items:center;background:radial-gradient(circle at 50% 100%,rgba(212,160,23,.16),transparent 42%),#050505}.cin-book-inner{text-align:center;padding:110px 0;position:relative}.cin-book h2{font-size:clamp(68px,11vw,170px)}.cin-book p{max-width:620px;margin:0 auto 34px}.cin-book .cin-actions{margin:auto}.cin-reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}.cin-reveal.is-visible{opacity:1;transform:none}.cin-site :focus-visible{outline:2px solid var(--gold);outline-offset:4px}@keyframes beam{to{transform:rotate(8deg) translateX(8vw);opacity:.32}}@keyframes marquee{to{transform:translateX(-50%)}}@keyframes posterIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}@media(max-width:900px){.cin-hero-bottom,.cin-feature-grid,.cin-heading{grid-template-columns:1fr}.cin-title strong{padding-left:6vw}.cin-title em{padding-left:12vw}.cin-feature-card{transform:none}.cin-pillars{grid-template-columns:repeat(2,1fr)}.cin-pillar:nth-child(2){border-right:0}.cin-pillar:nth-child(-n+2){border-bottom:1px solid var(--line)}}@media(max-width:640px){.cin-hero-inner{padding:118px 0 54px}.cin-title{font-size:clamp(66px,24vw,116px)}.cin-title strong{padding-left:0}.cin-title em{padding-left:0}.cin-hero-bottom{gap:26px}.cin-actions{width:100%}.cin-btn{flex:1;padding:0 14px}.cin-scroll{display:none}.cin-marquee-track{font-size:9px}.cin-section{padding:64px 0}.cin-feature-copy h2,.cin-heading h2,.cin-book h2{font-size:clamp(54px,18vw,92px)}.cin-feature-card{min-height:470px;margin-inline:-14px}.cin-heading{margin-bottom:28px}.cin-poster-rail{grid-auto-columns:86vw;gap:12px}.cin-poster{min-height:540px}.cin-pillars{grid-template-columns:1fr}.cin-pillar{min-height:235px;border-right:0;border-bottom:1px solid var(--line)}.cin-pillar:last-child{border-bottom:0}.cin-book{min-height:72svh}}
-          @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+          .world-site{--gold:#d4a017;--cream:#f3ead8;--line:rgba(243,234,216,.16);background:#030303;color:var(--cream);overflow:hidden}.world-wrap{width:min(1480px,calc(100vw - clamp(28px,7vw,112px)));margin:auto}.world-journey{height:440vh;position:relative;background:#020202}.world-sticky{position:sticky;top:0;height:100svh;overflow:hidden;isolation:isolate}.stage-webgl{position:absolute;inset:0;opacity:0;transition:opacity 1.2s ease;background:#020202}.stage-webgl.is-ready{opacity:1}.stage-webgl canvas{display:block;width:100%;height:100%}.stage-loading{position:absolute;inset:0;display:grid;place-items:center;color:rgba(243,234,216,.42);font:900 9px/1 var(--ff-label);letter-spacing:.22em;text-transform:uppercase}.stage-webgl.is-ready .stage-loading{display:none}.world-vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at center,transparent 30%,rgba(0,0,0,.42) 75%,rgba(0,0,0,.9));z-index:2}.world-grain{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.11;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.48'/%3E%3C/svg%3E")}.world-beat{position:absolute;z-index:4;inset:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;padding:clamp(100px,12vw,170px) clamp(20px,7vw,112px) clamp(58px,7vw,92px);opacity:0;transform:translateY(28px);pointer-events:none;transition:opacity .65s ease,transform .75s cubic-bezier(.22,1,.36,1)}.world-beat.is-active{opacity:1;transform:none;pointer-events:auto}.world-beat p,.world-copy>span,.world-heading>span,.world-book-inner>span{font:900 10px/1 var(--ff-label);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}.world-beat h1,.world-beat h2{font-family:var(--ff-display);font-size:clamp(72px,12vw,196px);line-height:.74;letter-spacing:-.018em;text-transform:uppercase;max-width:1250px;text-shadow:0 12px 60px rgba(0,0,0,.85)}.world-beat span{margin-top:24px;font:900 9px/1 var(--ff-label);letter-spacing:.2em;text-transform:uppercase;color:rgba(243,234,216,.55)}.beat-two,.beat-three{justify-content:center}.beat-two{align-items:flex-end;text-align:right}.beat-three h2{color:transparent;-webkit-text-stroke:1px rgba(243,234,216,.82)}.beat-four{background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.74))}.world-actions{display:flex;width:max-content;max-width:100%;border:1px solid var(--line);margin-top:30px}.world-actions a{min-height:54px;padding:0 20px;display:grid;place-items:center;color:var(--cream);background:rgba(5,5,5,.76);text-decoration:none;font:900 10px/1 var(--ff-label);letter-spacing:.17em;text-transform:uppercase}.world-actions a+a{border-left:1px solid var(--line)}.world-actions a:first-child,.world-actions a:hover{background:var(--gold);color:#050505}.world-progress{position:absolute;z-index:5;left:0;right:0;bottom:0;height:2px;background:rgba(255,255,255,.08)}.world-progress span{display:block;height:100%;transform-origin:left;background:var(--gold)}.world-transition{border-block:1px solid var(--line);overflow:hidden;background:#080808}.world-marquee{width:max-content;padding:18px 0;font:900 11px/1 var(--ff-label);letter-spacing:.24em;color:rgba(243,234,216,.66);animation:worldMarquee 26s linear infinite}.world-feature,.world-roster{padding:clamp(84px,11vw,160px) 0;border-bottom:1px solid var(--line)}.world-feature-grid{display:grid;grid-template-columns:.68fr 1.32fr;gap:clamp(34px,7vw,110px);align-items:center}.world-copy h2,.world-heading h2,.world-book h2{font-family:var(--ff-display);font-size:clamp(60px,9vw,140px);line-height:.76;text-transform:uppercase;margin:18px 0 24px}.world-copy p,.world-heading p,.world-book p{color:rgba(243,234,216,.66);font-size:clamp(16px,1.35vw,20px);line-height:1.65}.world-copy>a{display:inline-block;margin-top:28px;color:var(--cream);text-decoration:none;font:900 10px/1 var(--ff-label);letter-spacing:.18em;text-transform:uppercase}.world-stage-card{position:relative;min-height:clamp(520px,68vw,850px);overflow:hidden;transform:perspective(1300px) rotateY(-4deg);box-shadow:0 50px 110px rgba(0,0,0,.6)}.world-stage-card img{filter:saturate(.72) contrast(1.2)}.world-stage-card:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.82))}.world-stage-frame{position:absolute;inset:18px;border:1px solid rgba(243,234,216,.32);z-index:2}.world-stage-card strong{position:absolute;z-index:3;left:34px;bottom:32px;font:900 10px/1 var(--ff-label);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}.world-heading{display:grid;grid-template-columns:1fr minmax(250px,390px);gap:40px;align-items:end;margin-bottom:54px}.world-heading>span{grid-column:1/-1}.world-heading h2{margin:0}.world-poster-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(300px,28vw);gap:22px;overflow-x:auto;padding:0 max(14px,calc((100vw - 1480px)/2)) 36px;scroll-snap-type:x mandatory;perspective:1500px}.world-poster{position:relative;min-height:640px;overflow:hidden;color:var(--cream);text-decoration:none;scroll-snap-align:center;background:#111;transform:rotateY(calc((var(--i) - 3) * 1.2deg));transition:transform .6s cubic-bezier(.22,1,.36,1),box-shadow .6s ease}.world-poster:hover{transform:rotateY(-7deg) translateY(-14px) scale(1.02);box-shadow:0 42px 90px rgba(0,0,0,.62)}.world-poster-image{position:absolute;inset:0}.world-poster-image img{filter:saturate(.6) contrast(1.18);transition:transform .9s ease,filter .6s ease}.world-poster:hover img{transform:scale(1.07);filter:saturate(.9) contrast(1.22)}.world-poster:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.42),transparent 35%,rgba(0,0,0,.92))}.world-poster-glass{position:absolute;z-index:2;inset:-35%;background:linear-gradient(108deg,transparent 34%,rgba(255,255,255,.13),transparent 58%);transform:translateX(-70%);transition:transform .9s ease}.world-poster:hover .world-poster-glass{transform:translateX(65%)}.world-poster-meta,.world-poster-copy{position:absolute;z-index:3;left:0;right:0}.world-poster-meta{top:0;display:flex;justify-content:space-between;padding:18px;border-bottom:1px solid rgba(255,255,255,.18);font:900 9px/1 var(--ff-label);letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}.world-poster-copy{bottom:0;padding:28px}.world-poster-copy small,.world-poster-copy b{display:block;font:900 9px/1 var(--ff-label);letter-spacing:.18em;text-transform:uppercase}.world-poster-copy small{color:var(--accent)}.world-poster-copy h3{font-family:var(--ff-display);font-size:clamp(54px,6vw,94px);line-height:.76;text-transform:uppercase;margin:15px 0 22px}.world-poster-copy b{color:rgba(243,234,216,.72)}.world-book{position:relative;min-height:92svh;display:grid;align-items:center;overflow:hidden;background:#050505}.world-book-light{position:absolute;inset:-20%;background:radial-gradient(circle at 50% 45%,rgba(212,160,23,.22),transparent 30rem);animation:worldPulse 6s ease-in-out infinite}.world-book-inner{position:relative;z-index:2;text-align:center;display:grid;justify-items:center;padding:110px 0}.world-book h2{font-size:clamp(68px,11vw,176px);margin:22px 0}.world-book p{max-width:620px}.world-book .world-actions{margin-top:34px}@keyframes worldMarquee{to{transform:translateX(-50%)}}@keyframes worldPulse{50%{transform:scale(1.15);opacity:.7}}@media(max-width:900px){.world-feature-grid,.world-heading{grid-template-columns:1fr}.world-stage-card{transform:none;min-height:600px}.world-heading>span{grid-column:auto}.world-poster-rail{grid-auto-columns:82vw}.world-poster{min-height:560px}}@media(max-width:680px){.world-journey{height:390vh}.world-beat{padding:100px 18px 62px}.world-beat h1,.world-beat h2{font-size:clamp(62px,20vw,108px)}.beat-two{align-items:flex-start;text-align:left}.world-actions{width:100%}.world-actions a{flex:1;padding:0 12px}.world-feature,.world-roster{padding:72px 0}.world-wrap{width:calc(100vw - 28px)}.world-stage-card{min-height:470px}.world-heading{margin-bottom:34px}.world-poster-rail{grid-auto-columns:86vw;gap:14px}.world-poster{min-height:530px}.world-book-inner{padding:88px 0}.world-book h2{font-size:clamp(64px,19vw,104px)}}@media(prefers-reduced-motion:reduce){.world-marquee,.world-book-light{animation:none}.world-beat{transition:none}.world-poster,.world-poster img{transition:none}}
         `}</style>
       </main>
       <Footer />
