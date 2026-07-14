@@ -1,120 +1,98 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { bandsList } from '@/lib/bands'
 
-const rooms = [
-  ['Clubs', 'late-night rooms, bars, music venues'],
-  ['Theaters', 'ticketed stages and larger productions'],
-  ['Festivals', 'themed lineups and outdoor events'],
-  ['Private', 'parties, community events, corporate nights'],
+const pillars = [
+  ['01', 'Professional production', 'A polished, venue-ready experience from advance through show day.'],
+  ['02', 'Crowd-first shows', 'Every set is built around recognition, momentum, and participation.'],
+  ['03', 'Regional touring acts', 'A focused roster built to travel across Texas and surrounding markets.'],
+  ['04', 'Easy booking', 'Clear communication, organized assets, and a straightforward path to contract.'],
 ]
 
 function useReveal() {
-  const ref = useRef(null)
-
+  const root = useRef(null)
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('is-visible')
-      })
-    }, { threshold: 0.14, rootMargin: '0px 0px -48px 0px' })
-
-    ref.current?.querySelectorAll('.ed-reveal').forEach(el => observer.observe(el))
+      entries.forEach(entry => entry.isIntersecting && entry.target.classList.add('is-visible'))
+    }, { threshold: 0.12, rootMargin: '0px 0px -56px' })
+    root.current?.querySelectorAll('.cin-reveal').forEach(node => observer.observe(node))
     return () => observer.disconnect()
   }, [])
-
-  return ref
+  return root
 }
 
-function BandPanel({ band, index }) {
+function Poster({ band, index }) {
   const image = band.featurePhoto || band.heroPhoto || band.crowdPhoto
-
   return (
-    <Link className="ed-artist ed-reveal" href={`/bands/${band.slug}`} style={{ '--band': band.color, '--delay': `${index * 70}ms` }}>
-      <div className="ed-artist-meta">
-        <span>{String(index + 1).padStart(2, '0')}</span>
-        <b>{band.genre?.[0]}</b>
-      </div>
-      <div className="ed-artist-name">
-        <h3>{band.name}</h3>
-      </div>
-      <div className="ed-artist-image">
-        {image && <Image src={image} alt={`${band.name} live`} fill sizes="(max-width: 900px) 100vw, 46vw" style={{ objectFit: 'cover', objectPosition: band.heroObjectPosition || 'center' }} />}
-      </div>
-      <div className="ed-artist-enter">Open</div>
+    <Link href={`/bands/${band.slug}`} className="cin-poster cin-reveal" style={{ '--accent': band.color || '#d4a017', '--delay': `${index * 70}ms` }}>
+      <div className="cin-poster-image">{image && <Image src={image} alt={`${band.name} live`} fill sizes="(max-width: 760px) 86vw, 30vw" style={{ objectFit: 'cover', objectPosition: band.heroObjectPosition || 'center' }} />}</div>
+      <div className="cin-poster-shine" />
+      <div className="cin-poster-top"><span>{String(index + 1).padStart(2, '0')}</span><span>{band.genre?.[0] || 'Live'}</span></div>
+      <div className="cin-poster-copy"><small>Echo Play Live presents</small><h3>{band.name}</h3><span>Enter the room →</span></div>
     </Link>
   )
 }
 
-function Room({ item, index }) {
-  return (
-    <article className="ed-room ed-reveal" style={{ '--delay': `${index * 60}ms` }}>
-      <span>{String(index + 1).padStart(2, '0')}</span>
-      <h3>{item[0]}</h3>
-      <p>{item[1]}</p>
-    </article>
-  )
-}
-
 export default function Home() {
-  const pageRef = useReveal()
-  const jambi = bandsList.find(band => band.slug === 'jambi') || bandsList[2]
-  const slg = bandsList.find(band => band.slug === 'so-long-goodnight') || bandsList[0]
-  const db = bandsList.find(band => band.slug === 'the-dick-beldings') || bandsList[1]
-  const leadImage = jambi.heroPhoto || jambi.featurePhoto || slg.heroPhoto
-  const secondImage = db.featurePhoto || db.crowdPhoto || db.heroPhoto
+  const root = useReveal()
+  const [pointer, setPointer] = useState({ x: 50, y: 42 })
+  const featured = useMemo(() => bandsList.find(b => b.slug === 'so-long-goodnight') || bandsList[0], [])
+  const heroImage = featured?.heroPhoto || featured?.featurePhoto || featured?.crowdPhoto
 
   return (
     <>
       <Nav />
-      <main ref={pageRef} className="ed-site">
+      <main ref={root} className="cin-site" onPointerMove={event => {
+        const rect = event.currentTarget.getBoundingClientRect()
+        setPointer({ x: ((event.clientX - rect.left) / rect.width) * 100, y: Math.min(100, Math.max(0, (event.clientY / window.innerHeight) * 100)) })
+      }} style={{ '--mx': `${pointer.x}%`, '--my': `${pointer.y}%` }}>
+        <section className="cin-hero">
+          <div className="cin-hero-bg">{heroImage && <Image src={heroImage} alt="Echo Play Live concert" fill priority sizes="100vw" style={{ objectFit: 'cover', objectPosition: featured.heroObjectPosition || 'center' }} />}</div>
+          <div className="cin-noise" /><div className="cin-beam cin-beam-a" /><div className="cin-beam cin-beam-b" /><div className="cin-haze" />
+          <div className="cin-hero-inner">
+            <p className="cin-kicker cin-reveal">Fort Worth / DFW — Live entertainment</p>
+            <h1 className="cin-title cin-reveal"><span>Feel it</span><strong>before</strong><span>the lights</span><em>go down.</em></h1>
+            <div className="cin-hero-bottom cin-reveal">
+              <p>Premium tribute bands, nostalgia-driven cover acts, and themed live experiences built for nights people remember.</p>
+              <div className="cin-actions"><Link href="/shows" className="cin-btn cin-primary">Get tickets</Link><Link href="/contact" className="cin-btn">Book a band</Link></div>
+            </div>
+          </div>
+          <div className="cin-scroll">Scroll to enter <span>↓</span></div>
+        </section>
+
+        <section className="cin-marquee">
+          <div className="cin-marquee-track">LIVE MUSIC · REAL NOSTALGIA · ECHO PLAY LIVE · LIVE MUSIC · REAL NOSTALGIA · ECHO PLAY LIVE ·</div>
+        </section>
+
+        <section className="cin-section cin-featured">
+          <div className="cin-wrap cin-feature-grid">
+            <div className="cin-feature-copy cin-reveal"><span className="cin-eyebrow">Featured experience</span><h2>{featured?.name}</h2><p>{featured?.tagline || 'A live show designed around the songs, energy, and memories that bring a room together.'}</p><Link href={`/bands/${featured?.slug}`} className="cin-text-link">Explore the band →</Link></div>
+            <div className="cin-feature-card cin-reveal">{heroImage && <Image src={heroImage} alt={`${featured?.name} performing`} fill sizes="(max-width: 900px) 100vw, 55vw" style={{ objectFit: 'cover', objectPosition: featured.heroObjectPosition || 'center' }} />}<div className="cin-feature-frame" /><span>Now entering</span></div>
+          </div>
+        </section>
+
+        <section className="cin-section cin-roster" id="bands">
+          <div className="cin-wrap"><div className="cin-heading cin-reveal"><span className="cin-eyebrow">The roster</span><h2>Seven rooms.<br />Seven reasons to stay.</h2><p>Each act has its own atmosphere, audience, and point of view.</p></div></div>
+          <div className="cin-poster-rail">{bandsList.slice(0, 7).map((band, index) => <Poster key={band.slug} band={band} index={index} />)}</div>
+        </section>
+
+        <section className="cin-section cin-trust">
+          <div className="cin-wrap"><div className="cin-heading cin-reveal"><span className="cin-eyebrow">Why Echo Play</span><h2>The show starts<br />before showtime.</h2></div><div className="cin-pillars">{pillars.map(([n, title, copy], i) => <article key={title} className="cin-pillar cin-reveal" style={{ '--delay': `${i * 70}ms` }}><span>{n}</span><h3>{title}</h3><p>{copy}</p></article>)}</div></div>
+        </section>
+
+        <section className="cin-book">
+          <div className="cin-book-glow" /><div className="cin-wrap cin-book-inner cin-reveal"><span className="cin-eyebrow">Bring the room to life</span><h2>Send the date.<br />We’ll build the night.</h2><p>Tell us the venue, city, audience, and experience you want to create.</p><div className="cin-actions"><Link href="/contact" className="cin-btn cin-primary">Start a booking</Link><Link href="/bands" className="cin-btn">View the roster</Link></div></div>
+        </section>
+
         <style>{`
-          .ed-site{--paper:#f3ead8;--ink:#050505;--line:rgba(243,234,216,.14);--line-strong:rgba(243,234,216,.28);--muted:rgba(243,234,216,.62);min-height:100vh;background:#050505;color:var(--paper);overflow:hidden}.ed-site:before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(90deg,rgba(243,234,216,.025) 1px,transparent 1px),linear-gradient(rgba(243,234,216,.02) 1px,transparent 1px);background-size:24px 24px;opacity:.38}.ed-site:after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 84% 8%,rgba(212,160,23,.12),transparent 30rem),linear-gradient(180deg,transparent,rgba(0,0,0,.55));}.ed-wrap{width:min(1520px,calc(100vw - clamp(28px,7vw,112px)));margin:0 auto;position:relative;z-index:2}.ed-label{font-family:var(--ff-label);font-size:11px;font-weight:900;letter-spacing:.22em;text-transform:uppercase;color:var(--c-epl)}.ed-hero{position:relative;min-height:100svh;display:grid;align-items:end;border-bottom:1px solid var(--line);padding:clamp(114px,12vw,176px) 0 clamp(34px,5vw,64px)}.ed-hero-grid{display:grid;grid-template-columns:minmax(0,.94fr) minmax(360px,1.06fr);gap:clamp(24px,5vw,78px);align-items:end}.ed-hero-copy{padding-bottom:clamp(8px,3vw,34px)}.ed-title{font-family:var(--ff-display);font-size:clamp(88px,15vw,246px);line-height:.72;letter-spacing:-.012em;text-transform:uppercase;margin:18px 0 18px;max-width:980px}.ed-title span{display:block;color:var(--c-epl)}.ed-copy{max-width:560px;color:var(--muted);font-size:clamp(16px,1.35vw,20px);line-height:1.58}.ed-actions{display:flex;flex-wrap:wrap;gap:1px;margin-top:28px;width:max-content;max-width:100%;border:1px solid var(--line-strong)}.ed-btn{min-height:50px;display:inline-flex;align-items:center;justify-content:center;padding:0 18px;background:#070707;color:var(--paper);text-decoration:none;font-family:var(--ff-label);font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;border-right:1px solid var(--line-strong);transition:background .18s ease,color .18s ease}.ed-btn:last-child{border-right:0}.ed-btn:hover,.ed-btn-primary{background:var(--c-epl);color:#050505}.ed-hero-media{display:grid;grid-template-columns:1fr .62fr;gap:10px;min-height:clamp(520px,70vh,760px)}.ed-frame{position:relative;overflow:hidden;background:#111;border:1px solid var(--line);min-height:100%}.ed-frame-large{grid-row:span 2}.ed-frame-small{min-height:0}.ed-frame:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.62));}.ed-frame img{filter:saturate(.78) contrast(1.12);transform:scale(1.01);transition:transform 1.2s ease,filter .8s ease}.ed-frame:hover img{transform:scale(1.055);filter:saturate(.95) contrast(1.18)}.ed-image-label{position:absolute;z-index:2;left:14px;bottom:14px;font-family:var(--ff-label);font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.72)}.ed-side-index{position:absolute;z-index:3;left:0;right:0;bottom:0;border-top:1px solid var(--line);background:rgba(5,5,5,.92);backdrop-filter:blur(14px)}.ed-side-index .ed-wrap{display:grid;grid-template-columns:repeat(4,1fr)}.ed-side-index a{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:58px;padding:0 18px;border-right:1px solid var(--line);color:var(--paper);text-decoration:none;font-family:var(--ff-label);font-size:10px;font-weight:900;letter-spacing:.16em;text-transform:uppercase}.ed-side-index a:last-child{border-right:0}.ed-side-index span{color:var(--c-epl)}.ed-side-index a:hover{background:var(--c-epl);color:#050505}.ed-side-index a:hover span{color:#050505}.ed-section{position:relative;z-index:2;padding:clamp(58px,8vw,108px) 0;border-bottom:1px solid var(--line)}.ed-section-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,380px);gap:clamp(22px,5vw,74px);align-items:end;margin-bottom:clamp(26px,5vw,56px)}.ed-section-head h2,.ed-book h2{font-family:var(--ff-display);font-size:clamp(58px,9vw,136px);line-height:.76;letter-spacing:-.01em;text-transform:uppercase}.ed-section-head p,.ed-book p,.ed-room p{color:var(--muted);line-height:1.62}.ed-artists{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}.ed-artist{min-height:clamp(410px,54vw,660px);position:relative;overflow:hidden;text-decoration:none;color:var(--paper);background:#050505;opacity:0;transform:translateY(22px);transition:opacity .7s ease var(--delay),transform .7s ease var(--delay)}.ed-artist.is-visible{opacity:1;transform:none}.ed-artist-meta{position:absolute;z-index:3;top:0;left:0;right:0;display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(255,255,255,.14);padding:16px 18px;background:rgba(0,0,0,.52);font-family:var(--ff-label);font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--band)}.ed-artist-name{position:absolute;z-index:3;left:0;right:0;bottom:0;padding:clamp(22px,4vw,42px)}.ed-artist-name h3{font-family:var(--ff-display);font-size:clamp(54px,7.6vw,116px);line-height:.74;letter-spacing:-.01em;text-transform:uppercase;max-width:780px}.ed-artist-image{position:absolute;inset:0;opacity:.72;transition:opacity .7s ease,transform .9s ease;transform:scale(1.02)}.ed-artist-image:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.84))}.ed-artist:hover .ed-artist-image{opacity:.9;transform:scale(1.06)}.ed-artist-enter{position:absolute;z-index:4;right:18px;bottom:18px;border:1px solid var(--band);color:var(--band);padding:10px 12px;font-family:var(--ff-label);font-size:10px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;background:rgba(0,0,0,.45)}.ed-tour-board{display:grid;grid-template-columns:.62fr 1.38fr;border:1px solid var(--line);background:#070707}.ed-tour-cell{padding:clamp(26px,4vw,48px);border-right:1px solid var(--line);display:grid;align-content:end;min-height:330px}.ed-tour-cell h3{font-family:var(--ff-display);font-size:clamp(48px,7vw,104px);line-height:.76;text-transform:uppercase}.ed-tour-cell p{margin-top:18px;color:var(--muted);line-height:1.62;max-width:420px}.ed-tour-list{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line)}.ed-room{background:#050505;min-height:165px;padding:24px;display:grid;align-content:end;opacity:0;transform:translateY(18px);transition:opacity .65s ease var(--delay),transform .65s ease var(--delay)}.ed-room.is-visible{opacity:1;transform:none}.ed-room span{font-family:var(--ff-label);font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--c-epl)}.ed-room h3{font-family:var(--ff-display);font-size:clamp(34px,4vw,58px);line-height:.84;text-transform:uppercase;margin:18px 0 8px}.ed-book{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}.ed-book-media{position:relative;min-height:500px;background:#111;overflow:hidden}.ed-book-media:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 38%,rgba(0,0,0,.72))}.ed-book-card{padding:clamp(32px,6vw,72px);background:#070707;display:grid;align-content:center}.ed-book-card h2{margin:16px 0 20px}.ed-reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}.ed-reveal.is-visible{opacity:1;transform:none}.ed-mobile-quick{display:none}.ed-site :focus-visible{outline:2px solid var(--c-epl);outline-offset:4px}@media(max-width:1020px){.ed-hero-grid,.ed-section-head,.ed-tour-board,.ed-book{grid-template-columns:1fr}.ed-hero-media{min-height:420px}.ed-tour-cell{border-right:0;border-bottom:1px solid var(--line);min-height:240px}.ed-tour-list{grid-template-columns:repeat(2,1fr)}}@media(max-width:740px){.ed-wrap{width:min(100% - 26px,1520px)}.ed-hero{min-height:auto;padding:104px 0 0;border-bottom:0}.ed-hero-grid{gap:28px}.ed-title{font-size:clamp(70px,24vw,132px);margin:14px 0 16px}.ed-copy{font-size:16px;max-width:34rem}.ed-actions{display:none}.ed-hero-media{display:grid;grid-template-columns:1fr;gap:1px;min-height:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-left:-13px;margin-right:-13px}.ed-frame{aspect-ratio:1.04;min-height:0;border-left:0;border-right:0}.ed-frame-small{display:none}.ed-side-index{position:sticky;top:0}.ed-side-index .ed-wrap{width:100%;grid-template-columns:repeat(4,1fr)}.ed-side-index a{min-height:52px;padding:0 8px;justify-content:center;border-right:1px solid var(--line);font-size:9px}.ed-side-index a span{display:none}.ed-mobile-quick{display:grid;grid-template-columns:1fr 1fr;gap:1px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--line);margin-top:24px}.ed-mobile-quick a{min-height:48px;display:grid;place-items:center;background:#070707;color:var(--paper);text-decoration:none;font-family:var(--ff-label);font-size:10px;font-weight:900;letter-spacing:.16em;text-transform:uppercase}.ed-mobile-quick a:first-child{background:var(--c-epl);color:#050505}.ed-section{padding:48px 0}.ed-section-head{gap:14px;margin-bottom:24px}.ed-section-head h2,.ed-book h2{font-size:clamp(50px,17vw,90px)}.ed-artists{grid-template-columns:1fr;margin-left:-13px;margin-right:-13px;border-left:0;border-right:0}.ed-artist{min-height:380px}.ed-artist-name h3{font-size:clamp(48px,16vw,78px)}.ed-artist-enter{display:none}.ed-tour-list{grid-template-columns:1fr}.ed-tour-cell{min-height:220px;padding:28px}.ed-room{min-height:138px;padding:24px}.ed-book{margin-left:-13px;margin-right:-13px;border-left:0;border-right:0}.ed-book-media{min-height:0;aspect-ratio:1.05}.ed-book-card{padding:32px 26px}.ed-book .ed-actions{display:grid;width:100%;grid-template-columns:1fr}.ed-btn{width:100%;border-right:0;border-bottom:1px solid var(--line-strong)}.ed-btn:last-child{border-bottom:0}}@media(prefers-reduced-motion:reduce){.ed-reveal,.ed-artist,.ed-room{opacity:1;transform:none;transition:none}.ed-frame img,.ed-artist-image{transition:none}}
+          .cin-site{--gold:#d4a017;--cream:#f3ead8;--line:rgba(243,234,216,.16);background:#050505;color:var(--cream);overflow:hidden}.cin-wrap{width:min(1480px,calc(100vw - clamp(28px,7vw,112px)));margin:auto}.cin-hero{min-height:100svh;position:relative;display:grid;align-items:end;isolation:isolate;background:#070707}.cin-hero-bg{position:absolute;inset:0;z-index:-5;overflow:hidden}.cin-hero-bg img{filter:saturate(.55) contrast(1.22) brightness(.55);transform:scale(1.07)}.cin-hero-bg:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.35) 52%,rgba(0,0,0,.62)),linear-gradient(180deg,rgba(0,0,0,.28),rgba(0,0,0,.88))}.cin-noise{position:absolute;inset:0;z-index:-1;opacity:.14;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E")}.cin-haze{position:absolute;inset:0;z-index:-2;background:radial-gradient(circle at var(--mx) var(--my),rgba(212,160,23,.18),transparent 25rem);transition:background .2s linear}.cin-beam{position:absolute;top:-25%;width:14vw;height:125%;z-index:-2;background:linear-gradient(180deg,rgba(243,234,216,.16),transparent 74%);filter:blur(20px);transform-origin:top;opacity:.55;animation:beam 9s ease-in-out infinite alternate}.cin-beam-a{left:18%;transform:rotate(-14deg)}.cin-beam-b{right:16%;transform:rotate(16deg);animation-delay:-4s}.cin-hero-inner{width:min(1480px,calc(100vw - clamp(28px,7vw,112px)));margin:auto;padding:150px 0 84px}.cin-kicker,.cin-eyebrow{font:900 10px/1 var(--ff-label);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}.cin-title{font-family:var(--ff-display);font-size:clamp(72px,12.6vw,210px);line-height:.72;letter-spacing:-.02em;text-transform:uppercase;margin:20px 0 34px;max-width:1250px}.cin-title span,.cin-title strong,.cin-title em{display:block}.cin-title strong{font-weight:inherit;color:var(--gold);padding-left:12vw}.cin-title em{font-style:normal;color:transparent;-webkit-text-stroke:1px rgba(243,234,216,.72);padding-left:23vw}.cin-hero-bottom{display:grid;grid-template-columns:minmax(260px,620px) auto;gap:40px;align-items:end}.cin-hero-bottom p,.cin-feature-copy p,.cin-heading p,.cin-pillar p,.cin-book p{color:rgba(243,234,216,.68);font-size:clamp(16px,1.35vw,20px);line-height:1.65}.cin-actions{display:flex;gap:1px;border:1px solid var(--line);width:max-content;max-width:100%}.cin-btn{min-height:54px;padding:0 20px;display:grid;place-items:center;color:var(--cream);text-decoration:none;background:rgba(5,5,5,.72);font:900 10px/1 var(--ff-label);letter-spacing:.18em;text-transform:uppercase;transition:.25s}.cin-btn+.cin-btn{border-left:1px solid var(--line)}.cin-btn:hover,.cin-primary{background:var(--gold);color:#050505}.cin-scroll{position:absolute;right:28px;bottom:26px;font:900 9px/1 var(--ff-label);letter-spacing:.18em;text-transform:uppercase;color:rgba(243,234,216,.5);writing-mode:vertical-rl}.cin-scroll span{color:var(--gold);margin-top:10px}.cin-marquee{border-block:1px solid var(--line);overflow:hidden;background:#080808}.cin-marquee-track{width:max-content;padding:17px 0;font:900 11px/1 var(--ff-label);letter-spacing:.24em;color:rgba(243,234,216,.66);animation:marquee 28s linear infinite}.cin-section{padding:clamp(72px,10vw,150px) 0;border-bottom:1px solid var(--line)}.cin-feature-grid{display:grid;grid-template-columns:.75fr 1.25fr;gap:clamp(30px,7vw,110px);align-items:center}.cin-feature-copy h2,.cin-heading h2,.cin-book h2{font-family:var(--ff-display);font-size:clamp(58px,9vw,138px);line-height:.76;text-transform:uppercase;margin:18px 0 24px}.cin-text-link{display:inline-block;margin-top:26px;color:var(--cream);text-decoration:none;font:900 10px/1 var(--ff-label);letter-spacing:.18em;text-transform:uppercase}.cin-feature-card{position:relative;min-height:clamp(500px,68vw,820px);overflow:hidden;background:#111;box-shadow:0 40px 100px rgba(0,0,0,.55);transform:perspective(1200px) rotateY(-3deg)}.cin-feature-card img{filter:saturate(.72) contrast(1.18)}.cin-feature-card:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.8))}.cin-feature-frame{position:absolute;inset:18px;border:1px solid rgba(243,234,216,.32);z-index:2}.cin-feature-card>span{position:absolute;z-index:3;left:34px;bottom:32px;font:900 10px/1 var(--ff-label);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}.cin-heading{display:grid;grid-template-columns:1fr minmax(260px,390px);gap:40px;align-items:end;margin-bottom:52px}.cin-heading .cin-eyebrow{grid-column:1/-1}.cin-heading h2{margin:0}.cin-poster-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(300px,28vw);gap:18px;overflow-x:auto;padding:0 max(14px,calc((100vw - 1480px)/2)) 34px;scroll-snap-type:x mandatory}.cin-poster{position:relative;min-height:620px;overflow:hidden;color:var(--cream);text-decoration:none;scroll-snap-align:center;background:#111;transform:perspective(1100px) rotateY(0deg);transition:transform .5s ease,box-shadow .5s ease;opacity:0}.cin-poster.is-visible{opacity:1;animation:posterIn .75s ease var(--delay) both}.cin-poster:hover{transform:perspective(1100px) rotateY(-5deg) translateY(-10px);box-shadow:0 36px 80px rgba(0,0,0,.55)}.cin-poster-image{position:absolute;inset:0}.cin-poster-image img{filter:saturate(.62) contrast(1.18);transition:transform .9s ease,filter .6s ease}.cin-poster:hover img{transform:scale(1.055);filter:saturate(.88) contrast(1.22)}.cin-poster:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.38),transparent 33%,rgba(0,0,0,.9))}.cin-poster-shine{position:absolute;inset:-30%;z-index:2;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.13),transparent 60%);transform:translateX(-70%);transition:transform .8s ease}.cin-poster:hover .cin-poster-shine{transform:translateX(65%)}.cin-poster-top,.cin-poster-copy{position:absolute;z-index:3;left:0;right:0}.cin-poster-top{top:0;display:flex;justify-content:space-between;padding:18px;border-bottom:1px solid rgba(255,255,255,.18);font:900 9px/1 var(--ff-label);letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}.cin-poster-copy{bottom:0;padding:28px}.cin-poster-copy small,.cin-poster-copy>span{font:900 9px/1 var(--ff-label);letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}.cin-poster-copy h3{font-family:var(--ff-display);font-size:clamp(48px,5.8vw,86px);line-height:.76;text-transform:uppercase;margin:15px 0 24px}.cin-pillars{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line)}.cin-pillar{min-height:340px;padding:28px;display:grid;align-content:end;border-right:1px solid var(--line);opacity:0;transform:translateY(22px);transition:.7s var(--delay)}.cin-pillar:last-child{border-right:0}.cin-pillar.is-visible{opacity:1;transform:none}.cin-pillar>span{color:var(--gold);font:900 10px/1 var(--ff-label);letter-spacing:.18em}.cin-pillar h3{font-family:var(--ff-display);font-size:clamp(34px,3.4vw,54px);line-height:.85;text-transform:uppercase;margin:24px 0 14px}.cin-pillar p{font-size:15px}.cin-book{position:relative;min-height:78svh;display:grid;place-items:center;background:radial-gradient(circle at 50% 100%,rgba(212,160,23,.16),transparent 42%),#050505}.cin-book-inner{text-align:center;padding:110px 0;position:relative}.cin-book h2{font-size:clamp(68px,11vw,170px)}.cin-book p{max-width:620px;margin:0 auto 34px}.cin-book .cin-actions{margin:auto}.cin-reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}.cin-reveal.is-visible{opacity:1;transform:none}.cin-site :focus-visible{outline:2px solid var(--gold);outline-offset:4px}@keyframes beam{to{transform:rotate(8deg) translateX(8vw);opacity:.32}}@keyframes marquee{to{transform:translateX(-50%)}}@keyframes posterIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}@media(max-width:900px){.cin-hero-bottom,.cin-feature-grid,.cin-heading{grid-template-columns:1fr}.cin-title strong{padding-left:6vw}.cin-title em{padding-left:12vw}.cin-feature-card{transform:none}.cin-pillars{grid-template-columns:repeat(2,1fr)}.cin-pillar:nth-child(2){border-right:0}.cin-pillar:nth-child(-n+2){border-bottom:1px solid var(--line)}}@media(max-width:640px){.cin-hero-inner{padding:118px 0 54px}.cin-title{font-size:clamp(66px,24vw,116px)}.cin-title strong{padding-left:0}.cin-title em{padding-left:0}.cin-hero-bottom{gap:26px}.cin-actions{width:100%}.cin-btn{flex:1;padding:0 14px}.cin-scroll{display:none}.cin-marquee-track{font-size:9px}.cin-section{padding:64px 0}.cin-feature-copy h2,.cin-heading h2,.cin-book h2{font-size:clamp(54px,18vw,92px)}.cin-feature-card{min-height:470px;margin-inline:-14px}.cin-heading{margin-bottom:28px}.cin-poster-rail{grid-auto-columns:86vw;gap:12px}.cin-poster{min-height:540px}.cin-pillars{grid-template-columns:1fr}.cin-pillar{min-height:235px;border-right:0;border-bottom:1px solid var(--line)}.cin-pillar:last-child{border-bottom:0}.cin-book{min-height:72svh}}
+          @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
         `}</style>
-
-        <section className="ed-hero">
-          <div className="ed-wrap ed-hero-grid">
-            <div className="ed-hero-copy">
-              <div className="ed-label ed-reveal">Fort Worth / DFW</div>
-              <h1 className="ed-title ed-reveal">Echo Play <span>Live</span></h1>
-              <p className="ed-copy ed-reveal">A live-music house for tribute and cover bands with real rooms, real crowds, and a roster built for nights people remember.</p>
-              <div className="ed-actions ed-reveal"><Link className="ed-btn ed-btn-primary" href="/shows">Shows</Link><Link className="ed-btn" href="/contact">Booking</Link></div>
-              <div className="ed-mobile-quick ed-reveal"><Link href="/shows">Shows</Link><Link href="/contact">Booking</Link></div>
-            </div>
-            <div className="ed-hero-media ed-reveal" aria-label="Echo Play Live show photography">
-              <div className="ed-frame ed-frame-large">{leadImage && <Image src={leadImage} alt="Echo Play Live band on stage" fill priority sizes="(max-width: 900px) 100vw, 48vw" style={{ objectFit: 'cover', objectPosition: jambi.heroObjectPosition || 'center' }} />}<span className="ed-image-label">Live room</span></div>
-              <div className="ed-frame ed-frame-small">{secondImage && <Image src={secondImage} alt="Echo Play Live crowd" fill sizes="24vw" style={{ objectFit: 'cover', objectPosition: db.heroObjectPosition || 'center' }} />}<span className="ed-image-label">Crowd</span></div>
-              <div className="ed-frame ed-frame-small">{slg.featurePhoto && <Image src={slg.featurePhoto} alt="So Long Goodnight performing" fill sizes="24vw" style={{ objectFit: 'cover', objectPosition: slg.heroObjectPosition || 'center' }} />}<span className="ed-image-label">Roster</span></div>
-            </div>
-          </div>
-          <nav className="ed-side-index" aria-label="Homepage sections"><div className="ed-wrap"><Link href="#roster"><span>01</span>Roster</Link><Link href="/shows"><span>02</span>Shows</Link><Link href="#rooms"><span>03</span>Rooms</Link><Link href="#booking"><span>04</span>Booking</Link></div></nav>
-        </section>
-
-        <section className="ed-section" id="roster">
-          <div className="ed-wrap">
-            <div className="ed-section-head ed-reveal"><h2>Roster</h2><p>Each band has its own lane, audience, and reason to be on the bill.</p></div>
-            <div className="ed-artists">{bandsList.slice(0, 4).map((band, index) => <BandPanel key={band.slug} band={band} index={index} />)}</div>
-          </div>
-        </section>
-
-        <section className="ed-section" id="rooms">
-          <div className="ed-wrap ed-tour-board">
-            <div className="ed-tour-cell ed-reveal"><div className="ed-label">Rooms</div><h3>Fit the night.</h3><p>Start with the room, the crowd, and the feeling you want. Then choose the act.</p></div>
-            <div className="ed-tour-list">{rooms.map((item, index) => <Room key={item[0]} item={item} index={index} />)}</div>
-          </div>
-        </section>
-
-        <section className="ed-section" id="booking">
-          <div className="ed-wrap ed-book">
-            <div className="ed-book-media ed-reveal">{secondImage && <Image src={secondImage} alt="Echo Play Live audience" fill sizes="(max-width: 900px) 100vw, 50vw" style={{ objectFit: 'cover', objectPosition: db.heroObjectPosition || 'center' }} />}</div>
-            <article className="ed-book-card ed-reveal"><div className="ed-label">Booking</div><h2>Send the date.</h2><p>Tell us the venue, date, event type, and expected crowd. We’ll help point the night in the right direction.</p><div className="ed-actions"><Link className="ed-btn ed-btn-primary" href="/contact">Contact</Link><Link className="ed-btn" href="/shows">Shows</Link></div></article>
-          </div>
-        </section>
       </main>
       <Footer />
     </>
