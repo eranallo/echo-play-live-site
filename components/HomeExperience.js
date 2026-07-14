@@ -46,35 +46,67 @@ function useJourneyController(ref) {
   return state
 }
 
-function CinematicIntro({ progress, bands }) {
-  const scenes = [
-    { band: bands[0], opacity: windowed(progress, .08, .17, .27), direction: 'right' },
-    { band: bands[1], opacity: windowed(progress, .24, .34, .44), direction: 'left' },
-    { band: bands[2], opacity: windowed(progress, .41, .51, .61), direction: 'right' },
-    { band: bands[3], opacity: windowed(progress, .58, .68, .77), direction: 'left' },
+function MontageFrame({ band, index, progress }) {
+  const image = band?.featurePhoto || band?.heroPhoto || band?.crowdPhoto
+  const windows = [
+    [.09, .24, .55],
+    [.18, .36, .64],
+    [.30, .49, .72],
+    [.42, .61, .78],
   ]
-  const logo = clamp((progress - .75) / .17)
-  const blackout = clamp(1 - progress / .09)
-  const cue = clamp(1 - progress / .08)
+  const [start, peak, end] = windows[index]
+  const visibility = windowed(progress, start, peak, end)
+  const enter = clamp((progress - start) / Math.max(peak - start, .001))
+  const exit = clamp((progress - peak) / Math.max(end - peak, .001))
 
-  return <div className="cinematic-intro" style={{ '--progress': progress, '--logo': logo, '--blackout': blackout }} aria-hidden="true">
+  return <div
+    className={`montage-frame montage-frame-${index + 1}`}
+    style={{ '--visible': visibility, '--enter': enter, '--exit': exit, '--index': index }}
+  >
+    {image && <Image
+      src={image}
+      alt=""
+      fill
+      priority={index < 2}
+      sizes="(max-width: 740px) 92vw, 58vw"
+      style={{ objectFit: 'cover', objectPosition: band?.heroObjectPosition || 'center' }}
+    />}
+    <div className="montage-frame-grade" />
+    <div className="montage-frame-edge" />
+  </div>
+}
+
+function CinematicIntro({ progress, bands }) {
+  const montage = clamp((progress - .06) / .62)
+  const collapse = clamp((progress - .68) / .13)
+  const logo = clamp((progress - .79) / .14)
+  const blackout = clamp(1 - progress / .07)
+  const cue = clamp(1 - progress / .07)
+
+  return <div
+    className="cinematic-intro"
+    style={{ '--progress': progress, '--montage': montage, '--collapse': collapse, '--logo': logo, '--blackout': blackout }}
+    aria-hidden="true"
+  >
     <div className="cinematic-base" />
-    {scenes.map(({ band, opacity, direction }, index) => {
-      const image = band?.featurePhoto || band?.heroPhoto || band?.crowdPhoto
-      return <div key={band?.slug || index} className={`cinematic-band cinematic-band-${direction}`} style={{ '--scene': opacity, '--scene-index': index }}>
-        {image && <Image src={image} alt="" fill priority={index === 0} sizes="100vw" style={{ objectFit:'cover', objectPosition:band?.heroObjectPosition || 'center' }} />}
-        <div className="cinematic-band-grade" />
-      </div>
-    })}
-    <div className="cinematic-smoke cinematic-smoke-a" />
-    <div className="cinematic-smoke cinematic-smoke-b" />
-    <div className="cinematic-smoke cinematic-smoke-c" />
-    <div className="cinematic-light-bloom cinematic-light-bloom-left" />
-    <div className="cinematic-light-bloom cinematic-light-bloom-right" />
+
+    <div className="montage-world">
+      <div className="montage-backdrop" />
+      {bands.slice(0, 4).map((band, index) => <MontageFrame key={band.slug} band={band} index={index} progress={progress} />)}
+      <div className="montage-glow montage-glow-left" />
+      <div className="montage-glow montage-glow-right" />
+      <div className="montage-smoke montage-smoke-1" />
+      <div className="montage-smoke montage-smoke-2" />
+      <div className="montage-smoke montage-smoke-3" />
+      <div className="montage-smoke montage-smoke-4" />
+      <div className="montage-flare" />
+    </div>
+
     <div className="cinematic-logo-stage">
       <div className="cinematic-logo-glow" />
-      <div className="cinematic-logo"><Image src="/logo.png" alt="" fill sizes="(max-width:740px) 62vw, 34vw" style={{ objectFit:'contain' }} /></div>
+      <div className="cinematic-logo"><Image src="/logo.png" alt="" fill sizes="(max-width:740px) 64vw, 34vw" style={{ objectFit:'contain' }} /></div>
     </div>
+
     <div className="cinematic-blackout" />
     <div className="cinematic-grain" />
     <div className="cinematic-vignette" />
