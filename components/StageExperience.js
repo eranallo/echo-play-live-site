@@ -38,33 +38,23 @@ export default function StageExperience({ progress = 0 }) {
       const world = new THREE.Group()
       scene.add(world)
 
-      const floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(70, 85),
-        new THREE.MeshStandardMaterial({ color: '#070707', roughness: 0.78, metalness: 0.22 })
-      )
+      const floor = new THREE.Mesh(new THREE.PlaneGeometry(70, 85), new THREE.MeshStandardMaterial({ color: '#070707', roughness: 0.78, metalness: 0.22 }))
       floor.rotation.x = -Math.PI / 2
       floor.position.y = -3.5
       floor.receiveShadow = true
       world.add(floor)
 
-      const stage = new THREE.Mesh(
-        new THREE.BoxGeometry(18, 1.2, 8),
-        new THREE.MeshStandardMaterial({ color: '#0a0a0a', roughness: 0.6, metalness: 0.5 })
-      )
+      const stage = new THREE.Mesh(new THREE.BoxGeometry(18, 1.2, 8), new THREE.MeshStandardMaterial({ color: '#0a0a0a', roughness: 0.6, metalness: 0.5 }))
       stage.position.set(0, -2.9, -7)
       stage.receiveShadow = true
       world.add(stage)
 
-      const backWall = new THREE.Mesh(
-        new THREE.BoxGeometry(20, 12, 0.45),
-        new THREE.MeshStandardMaterial({ color: '#050505', roughness: 0.92 })
-      )
+      const backWall = new THREE.Mesh(new THREE.BoxGeometry(20, 12, 0.45), new THREE.MeshStandardMaterial({ color: '#050505', roughness: 0.92 }))
       backWall.position.set(0, 2.4, -11)
       world.add(backWall)
 
       const trussMaterial = new THREE.MeshStandardMaterial({ color: '#343434', roughness: 0.28, metalness: 0.88 })
       const truss = new THREE.Group()
-      const beamGeo = new THREE.BoxGeometry(0.16, 0.16, 1)
       for (let x = -8; x <= 8; x += 2) {
         const vertical = new THREE.Mesh(new THREE.BoxGeometry(0.15, 8, 0.15), trussMaterial)
         vertical.position.set(x, 4.8, -8.7)
@@ -85,14 +75,17 @@ export default function StageExperience({ progress = 0 }) {
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.fillStyle = '#f3ead8'
+      ctx.shadowColor = 'rgba(212,160,23,.55)'
+      ctx.shadowBlur = 28
       ctx.font = '900 240px Arial Narrow, Impact, sans-serif'
       ctx.fillText('ECHO PLAY', 900, 285)
       ctx.fillStyle = '#d4a017'
+      ctx.shadowBlur = 42
       ctx.font = '900 185px Arial Narrow, Impact, sans-serif'
       ctx.fillText('LIVE', 900, 510)
       const logoTexture = new THREE.CanvasTexture(logoCanvas)
       logoTexture.colorSpace = THREE.SRGBColorSpace
-      const logoMaterial = new THREE.MeshBasicMaterial({ map: logoTexture, transparent: true, opacity: 0 })
+      const logoMaterial = new THREE.MeshBasicMaterial({ map: logoTexture, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false })
       const logo = new THREE.Mesh(new THREE.PlaneGeometry(12.4, 4.8), logoMaterial)
       logo.position.set(0, 2.25, -10.7)
       world.add(logo)
@@ -105,7 +98,7 @@ export default function StageExperience({ progress = 0 }) {
       scene.add(key)
 
       const lights = []
-      const beamMaterial = (color) => new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.07, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending })
+      const beamMaterial = color => new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.07, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending })
       const fixtureXs = [-7, -3.5, 0, 3.5, 7]
       fixtureXs.forEach((x, i) => {
         const color = i % 2 ? cream : amber
@@ -165,14 +158,16 @@ export default function StageExperience({ progress = 0 }) {
         const t = clock.getElapsedTime()
         const p = Math.min(1, Math.max(0, progressRef.current))
         const eased = p * p * (3 - 2 * p)
+        const logoReveal = THREE.MathUtils.smoothstep(p, 0.34, 0.68)
+        const finalPush = THREE.MathUtils.smoothstep(p, 0.74, 1)
 
-        camera.position.z = THREE.MathUtils.lerp(27, 11.8, eased)
-        camera.position.y = THREE.MathUtils.lerp(4.2, 1.4, eased)
+        camera.position.z = THREE.MathUtils.lerp(27, 11.8, eased) + finalPush * 1.6
+        camera.position.y = THREE.MathUtils.lerp(4.2, 1.4, eased) - finalPush * 0.25
         camera.position.x = reduced ? 0 : Math.sin(t * 0.17) * 0.32 * (1 - p)
         camera.lookAt(0, THREE.MathUtils.lerp(1.9, 0.7, p), -7.4)
 
-        logoMaterial.opacity = THREE.MathUtils.smoothstep(p, 0.28, 0.67)
-        logo.scale.setScalar(THREE.MathUtils.lerp(0.82, 1, THREE.MathUtils.smoothstep(p, 0.28, 0.7)))
+        logoMaterial.opacity = logoReveal * (1 - finalPush * 0.42)
+        logo.scale.setScalar(THREE.MathUtils.lerp(0.76, 1.04, logoReveal))
         backWall.material.color.setScalar(THREE.MathUtils.lerp(0.012, 0.055, p))
 
         lights.forEach((item, i) => {
@@ -187,6 +182,7 @@ export default function StageExperience({ progress = 0 }) {
         dust.rotation.y = t * 0.012
         dust.position.y = Math.sin(t * 0.2) * 0.15
         world.rotation.y = reduced ? 0 : Math.sin(t * 0.12) * 0.008
+        renderer.toneMappingExposure = 0.82 + logoReveal * 0.42
 
         renderer.render(scene, camera)
         frame = requestAnimationFrame(animate)
