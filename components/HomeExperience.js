@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { bandsList } from '@/lib/bands'
+import './HomeExperience.css'
 
 const clamp = value => Math.max(0, Math.min(1, value))
 
@@ -21,7 +22,7 @@ function useJourneyController(ref) {
       if (!node) return
 
       const rect = node.getBoundingClientRect()
-      const viewport = window.innerHeight
+      const viewport = window.visualViewport?.height || window.innerHeight
       const distance = Math.max(node.offsetHeight - viewport, 1)
       const progress = clamp(-rect.top / distance)
 
@@ -39,11 +40,6 @@ function useJourneyController(ref) {
       if (!raf) raf = requestAnimationFrame(update)
     }
 
-    const previousHtmlOverflow = document.documentElement.style.overflowX
-    const previousBodyOverflow = document.body.style.overflowX
-    document.documentElement.style.overflowX = 'clip'
-    document.body.style.overflowX = 'clip'
-
     update()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
@@ -54,21 +50,25 @@ function useJourneyController(ref) {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
       window.visualViewport?.removeEventListener('resize', onScroll)
-      document.documentElement.style.overflowX = previousHtmlOverflow
-      document.body.style.overflowX = previousBodyOverflow
     }
   }, [ref])
 
   return state
 }
 
+function formatShowTime(value) {
+  if (!value) return 'Showtime TBA'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return String(value)
+  return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(date)
+}
+
 function StageWorld({ progress, heroImage, objectPosition }) {
   const push = clamp(progress / .72)
   const reveal = clamp((progress - .16) / .42)
-  const finale = clamp((progress - .62) / .25)
   const beamSweep = `${-16 + progress * 31}deg`
   return (
-    <div className="ep-stage-world" style={{ '--push': push, '--reveal': reveal, '--finale': finale, '--beam-sweep': beamSweep }} aria-hidden="true">
+    <div className="ep-stage-world" style={{ '--push': push, '--reveal': reveal, '--beam-sweep': beamSweep }} aria-hidden="true">
       <div className="ep-stage-photo">{heroImage && <Image src={heroImage} alt="" fill priority sizes="100vw" style={{ objectFit:'cover', objectPosition: objectPosition || 'center' }} />}</div>
       <div className="ep-stage-ceiling"><i/><i/><i/><i/><i/></div>
       <div className="ep-stage-beam ep-beam-one"/><div className="ep-stage-beam ep-beam-two"/><div className="ep-stage-beam ep-beam-three"/>
@@ -98,7 +98,7 @@ function ShowCard({ show, index }) {
   return (
     <article className="ep-show-card" style={{ '--accent': show.bandColor || '#d4a017', '--i': index }}>
       <div className="ep-show-image">{image && <Image src={image} alt={`${show.bandName} live`} fill sizes="(max-width:760px) 100vw, 40vw" style={{ objectFit:'cover', objectPosition: band?.heroObjectPosition || 'center' }} />}</div>
-      <div className="ep-show-date"><strong>{show.dateLabel || 'Date TBA'}</strong><span>{show.startTime || 'Showtime TBA'}</span></div>
+      <div className="ep-show-date"><strong>{show.dateLabel || 'Date TBA'}</strong><span>{formatShowTime(show.startTime)}</span></div>
       <div className="ep-show-copy"><span>Upcoming show</span><h3>{show.billLabel || show.bandName}</h3><p>{show.venueName || 'Venue announcement coming soon'}</p><a href={action} target={show.ticketUrl ? '_blank' : undefined} rel={show.ticketUrl ? 'noreferrer' : undefined}>{show.ticketUrl ? 'Get tickets' : 'View show'} →</a></div>
     </article>
   )
@@ -146,13 +146,5 @@ export default function HomeExperience({ shows = [] }) {
       <section className="ep-book"><div className="ep-book-bg">{heroImage && <Image src={heroImage} alt="Echo Play Live performance" fill sizes="100vw" style={{ objectFit:'cover', objectPosition:featured.heroObjectPosition || 'center' }} />}</div><div className="ep-wrap ep-book-inner"><span className="ep-label">Book Echo Play Live</span><h2>Give the room<br/>a reason to show up.</h2><p>Tell us the date, venue, city, budget, and crowd. We’ll help match the right act to the night.</p><div className="ep-actions"><Link href="/contact" className="ep-btn ep-primary">Start a booking</Link><Link href="/bands" className="ep-btn">View the roster</Link></div></div></section>
     </main>
     <Footer />
-    <style jsx global>{`
-      .ep-home{overflow:visible!important}
-      .ep-journey{position:relative!important;isolation:isolate}
-      .ep-sticky{position:absolute!important;top:0;left:0;right:0;width:100%;height:100svh;height:100dvh}
-      .ep-sticky.ep-pin-pinned{position:fixed!important;top:0;bottom:auto;left:0;right:0;width:100%;height:100svh;height:100dvh;z-index:40}
-      .ep-sticky.ep-pin-after{position:absolute!important;top:auto;bottom:0;left:0;right:0;width:100%;height:100svh;height:100dvh}
-      @supports not (height:100dvh){.ep-sticky,.ep-sticky.ep-pin-pinned,.ep-sticky.ep-pin-after{height:100vh}}
-    `}</style>
   </>
 }
