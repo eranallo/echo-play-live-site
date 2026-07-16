@@ -147,8 +147,14 @@ function HomeShowRow({ show, index }) {
   const dateParts = show.dateLabel?.replace(/,/g, '').split(' ') || []
   const day = show.dateLabel?.split(',')[0] || 'Date'
   const date = dateParts.slice(1).join(' ') || 'TBD'
+  const band = bandsList.find(item => item.slug === show.bandSlug) || bandsList.find(item => item.name === show.bandName)
+  const image = band?.heroPhoto || band?.featurePhoto || band?.crowdPhoto
 
   return <article className="home-show-row" style={{ '--accent':color, '--row':index }}>
+    {image && <div className="home-show-bg" aria-hidden="true">
+      <Image src={image} alt="" fill sizes="(max-width:900px) 100vw, 65vw" style={{ objectFit:'cover', objectPosition:band?.heroObjectPosition || 'center' }} />
+      <div className="home-show-bg-grade" />
+    </div>}
     <div className="home-show-date"><span>{day}</span><strong>{date}</strong>{time && <em>{time}</em>}</div>
     <div className="home-show-main">
       <div className="home-show-billing">{show.bandSlug ? <Link href={`/bands/${show.bandSlug}`}>{show.bandName}</Link> : <span>{show.bandName}</span>}{support && <small>with {support}</small>}</div>
