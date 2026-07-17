@@ -24,6 +24,7 @@ export default async function PortalShowPage({ params, searchParams }) {
   const mapHref = show.venueAddress ? `https://maps.apple.com/?q=${encodeURIComponent(show.venueAddress)}` : null
   const backHref = BackHref({ searchParams: resolvedSearch })
   const ticketLabel = show.ticketPrice || (show.ticketUrl ? 'Ticket link available' : 'TBD')
+  const trailerLoadIn = show.trailerLoadIn || show.raw?.['Trailer Load-In Time']
 
   return (
     <PortalShell>
@@ -45,7 +46,8 @@ export default async function PortalShowPage({ params, searchParams }) {
 
       <Card accent>
         <div className="portal-time-grid" style={{ marginTop: 0 }}>
-          <TimeBlock label="Load" value={show.loadIn} />
+          <TimeBlock label="Trailer Load" value={trailerLoadIn} />
+          <TimeBlock label="Venue Load" value={show.loadIn} />
           <TimeBlock label="Start" value={show.start} />
           <TimeBlock label="End" value={show.end} />
         </div>
