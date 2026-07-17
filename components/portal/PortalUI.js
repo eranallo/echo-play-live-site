@@ -121,6 +121,7 @@ export function ShowCard({ show, href, roleLabels = [] }) {
   const days = show.daysUntil
   const dayLabel = days === null ? '—' : days === 0 ? 'Today' : `${days}d`
   const urgent = days !== null && days <= 7
+  const trailerLoadIn = show.trailerLoadIn || show.raw?.['Trailer Load-In Time']
 
   return (
     <Card href={href} accent={urgent}>
@@ -141,7 +142,8 @@ export function ShowCard({ show, href, roleLabels = [] }) {
         </div>
       </div>
       <div className="portal-time-grid">
-        <TimeBlock label="Load" value={show.loadIn} />
+        <TimeBlock label="Trailer Load" value={trailerLoadIn} />
+        <TimeBlock label="Venue Load" value={show.loadIn} />
         <TimeBlock label="Start" value={show.start} />
         <TimeBlock label="End" value={show.end} />
       </div>
