@@ -115,6 +115,18 @@ function CinematicIntro({ progress, bands }) {
   </div>
 }
 
+function CinematicJourney({ bands }) {
+  const journeyRef = useRef(null)
+  const { progress, phase } = useJourneyController(journeyRef)
+
+  return <section className="ep-journey cinematic-journey" ref={journeyRef}>
+    <div className={`ep-sticky ep-pin-${phase}`}>
+      <CinematicIntro progress={progress} bands={bands} />
+      <div className="ep-progress" aria-hidden="true"><i style={{ transform:`scaleY(${progress})` }} /></div>
+    </div>
+  </section>
+}
+
 function BandCard({ band, index }) {
   const image = band.featurePhoto || band.heroPhoto || band.crowdPhoto
   return <Link href={`/bands/${band.slug}`} className="ep-band-card" style={{ '--accent':band.color || '#d4a017' }}>
@@ -166,21 +178,15 @@ function HomeShowRow({ show, index }) {
 }
 
 export default function HomeExperience({ shows = [] }) {
-  const journeyRef = useRef(null)
-  const { progress, phase } = useJourneyController(journeyRef)
   const featured = useMemo(() => bandsList.find(b => b.slug === 'so-long-goodnight') || bandsList[0], [])
   const introBands = useMemo(() => ['so-long-goodnight','the-dick-beldings','jambi','elite'].map(slug => bandsList.find(b => b.slug === slug)).filter(Boolean), [])
   const heroImage = featured?.heroPhoto || featured?.featurePhoto || featured?.crowdPhoto
   const upcoming = shows.slice(0,4)
   return <>
     <Nav />
-    <main className="ep-home">
-      <section className="ep-journey cinematic-journey" ref={journeyRef}>
-        <div className={`ep-sticky ep-pin-${phase}`}>
-          <CinematicIntro progress={progress} bands={introBands}/>
-          <div className="ep-progress"><i style={{ transform:`scaleY(${progress})` }}/></div>
-        </div>
-      </section>
+    <main className="ep-home" id="main-content">
+      <h1 className="ep-sr-only">Echo Play Live — DFW tribute and cover band management</h1>
+      <CinematicJourney bands={introBands} />
       <section className="ep-ticker"><div>LIVE MUSIC · REAL NOSTALGIA · ECHO PLAY LIVE · LIVE MUSIC · REAL NOSTALGIA · ECHO PLAY LIVE ·</div></section>
       <section className="ep-section home-shows-section">
         <div className="ep-wrap home-shows-head"><div><span className="ep-label">On the calendar</span><h2>Your next night out.</h2></div><p>Announced public dates from the Echo Play Live roster.</p></div>
@@ -188,7 +194,7 @@ export default function HomeExperience({ shows = [] }) {
         <div className="ep-wrap ep-section-link"><Link href="/shows">See every upcoming show <span>↗</span></Link></div>
       </section>
       <section className="ep-section ep-roster"><div className="ep-wrap ep-section-head"><div><span className="ep-label">The roster</span><h2>Pick your era.<br/>Find your sound.</h2></div><p>From emo and 90s alternative to Tool, Deftones, Linkin Park, Breaking Benjamin, and metalcore.</p></div><div className="ep-band-rail">{bandsList.slice(0,7).map((band,index)=><BandCard key={band.slug} band={band} index={index}/>)}</div></section>
-      <section className="ep-book"><div className="ep-book-bg">{heroImage && <Image src={heroImage} alt="Echo Play Live performance" fill sizes="100vw" style={{ objectFit:'cover', objectPosition:featured.heroObjectPosition || 'center' }} />}</div><div className="ep-wrap ep-book-inner"><span className="ep-label">Book Echo Play Live</span><h2>Give the room<br/>a reason to show up.</h2><p>Tell us the date, venue, city, budget, and crowd. We’ll help match the right act to the night.</p><div className="ep-actions"><Link href="/contact" className="ep-btn ep-primary">Start a booking</Link><Link href="/bands" className="ep-btn">View the roster</Link></div></div></section>
+      <section className="ep-book"><div className="ep-book-bg">{heroImage && <Image src={heroImage} alt="Echo Play Live performance" fill sizes="100vw" style={{ objectFit:'cover', objectPosition:featured.heroObjectPosition || 'center' }} />}</div><div className="ep-wrap ep-book-inner"><span className="ep-label">Book Echo Play Live</span><h2>Give the room<br/>a reason to show up.</h2><p>Tell us the date, venue, city, budget, and crowd. We’ll help match the right act to the night.</p><div className="ep-actions"><Link href="/contact" className="ep-btn ep-primary">Start a booking</Link><Link href="/musicians" className="ep-btn">View the roster</Link></div></div></section>
     </main>
     <Footer />
   </>

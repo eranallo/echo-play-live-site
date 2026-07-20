@@ -8,7 +8,7 @@ import Footer from '@/components/Footer'
 import { bandsList } from '@/lib/bands'
 import './ShowsExperience.css'
 
-function useReveal() {
+function useReveal(dependency) {
   const ref = useRef(null)
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
@@ -16,7 +16,7 @@ function useReveal() {
     }, { threshold: 0.1, rootMargin: '0px 0px -48px 0px' })
     ref.current?.querySelectorAll('.ps-reveal').forEach(el => observer.observe(el))
     return () => observer.disconnect()
-  }, [])
+  }, [dependency])
   return ref
 }
 
@@ -75,8 +75,8 @@ function EventCard({ show, index }) {
 }
 
 export default function ShowsClient({ shows = [] }) {
-  const ref = useReveal()
   const [filter, setFilter] = useState('all')
+  const ref = useReveal(filter)
   const filteredShows = filter === 'all' ? shows : shows.filter(show => Array.isArray(show.bandSlugs) && show.bandSlugs.includes(filter))
   const nextShow = filteredShows[0]
   const nextBand = bandsList.find(item => item.slug === nextShow?.bandSlug) || bandsList.find(item => item.name === nextShow?.bandName)
@@ -93,7 +93,7 @@ export default function ShowsClient({ shows = [] }) {
         </div>
       </section>
 
-      <nav className="ps-filter" aria-label="Show filters"><div className="ps-wrap ps-filter-scroll">{['all', ...bandsList.map(band => band.slug)].map(slug => { const band = slug === 'all' ? null : bandsList.find(item => item.slug === slug); const color = band?.color || '#D4A017'; return <button className={filter === slug ? 'active' : ''} style={{ '--filter': color }} key={slug} onClick={() => setFilter(slug)}>{slug === 'all' ? 'All' : band.shortName || band.name}</button> })}</div></nav>
+      <nav className="ps-filter" aria-label="Show filters"><div className="ps-wrap ps-filter-scroll">{['all', ...bandsList.map(band => band.slug)].map(slug => { const band = slug === 'all' ? null : bandsList.find(item => item.slug === slug); const color = band?.color || '#D4A017'; return <button className={filter === slug ? 'active' : ''} style={{ '--filter': color }} key={slug} aria-pressed={filter === slug} onClick={() => setFilter(slug)}>{slug === 'all' ? 'All' : band.shortName || band.name}</button> })}</div></nav>
 
       <section className="ps-list"><div className="ps-wrap"><div className="ps-list-head ps-reveal"><h2>{filteredShows.length || 'No'} {filteredShows.length === 1 ? 'date' : 'dates'}</h2><p>{filter === 'all' ? 'All currently announced public dates.' : filterName(filter)}</p></div>{filteredShows.length ? <div className="ps-events">{filteredShows.map((show, index) => <EventCard key={show.id} show={show} index={index} />)}</div> : <div className="ps-empty">No announced dates for {filterName(filter)} yet.</div>}</div></section>
 

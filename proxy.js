@@ -14,7 +14,7 @@ function unauthorized() {
   })
 }
 
-export function middleware(request) {
+export function proxy(request) {
   const pathname = request.nextUrl.pathname
 
   if (!PROTECTED_PREFIXES.some(prefix => pathname.startsWith(prefix))) {
