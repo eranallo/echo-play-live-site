@@ -1,18 +1,16 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { bandsList } from '@/lib/bands'
-
-// Phase 1: refactored to use design tokens (see app/globals.css and site-audit/design-system.md).
-// Visual output is identical to the previous version.
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [bandsOpen, setBandsOpen] = useState(false)
   const pathname = usePathname()
+  const menuButtonRef = useRef(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -27,7 +25,17 @@ export default function Nav() {
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    const onKeyDown = event => {
+      if (event.key === 'Escape') {
+        setOpen(false)
+        menuButtonRef.current?.focus()
+      }
+    }
+    if (open) document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = ''
+      document.removeEventListener('keydown', onKeyDown)
+    }
   }, [open])
 
   return (
@@ -71,19 +79,33 @@ export default function Nav() {
             <Link href="/" className="nav-link" style={{ textDecoration: 'none' }}>Home</Link>
 
             {/* Bands Dropdown */}
-            <div style={{ position: 'relative' }} onMouseEnter={() => setBandsOpen(true)} onMouseLeave={() => setBandsOpen(false)}>
-              <span className="nav-link" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 'var(--s-1)' }}>
+            <div
+              style={{ position: 'relative' }}
+              onMouseEnter={() => setBandsOpen(true)}
+              onMouseLeave={() => setBandsOpen(false)}
+              onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setBandsOpen(false) }}
+            >
+              <button
+                type="button"
+                className="nav-link"
+                aria-expanded={bandsOpen}
+                aria-haspopup="true"
+                aria-controls="desktop-bands-menu"
+                onClick={() => setBandsOpen(value => !value)}
+                style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 'var(--s-1)', background: 'none', border: 0, padding: 0, font: 'inherit' }}
+              >
                 Bands
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ opacity: 0.5, transition: 'transform var(--d-fast) var(--ease-in-out)', transform: bandsOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
                   <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                 </svg>
-              </span>
-              <div style={{
+              </button>
+              <div id="desktop-bands-menu" aria-hidden={!bandsOpen} style={{
                 position: 'absolute',
                 top: '100%',
                 left: '-20px',
                 paddingTop: 'var(--s-3)',
                 opacity: bandsOpen ? 1 : 0,
+                visibility: bandsOpen ? 'visible' : 'hidden',
                 pointerEvents: bandsOpen ? 'all' : 'none',
                 transform: bandsOpen ? 'translateY(0)' : 'translateY(-8px)',
                 transition: 'opacity var(--d-fast) var(--ease-in-out), transform var(--d-fast) var(--ease-in-out)',
@@ -159,10 +181,14 @@ export default function Nav() {
 
           {/* Mobile Hamburger */}
           <button
+            ref={menuButtonRef}
+            type="button"
             onClick={() => setOpen(!open)}
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '6px', display: 'none' }}
             className="mobile-menu-btn"
-            aria-label="Toggle menu"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            aria-controls="mobile-site-menu"
           >
             <div style={{ width: '24px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
               <span style={{
@@ -186,7 +212,7 @@ export default function Nav() {
       </nav>
 
       {/* Mobile Menu */}
-      <div style={{
+      <div id="mobile-site-menu" aria-hidden={!open} style={{
         position: 'fixed',
         inset: 0,
         zIndex: 999,
@@ -196,6 +222,7 @@ export default function Nav() {
         justifyContent: 'center',
         padding: '40px',
         opacity: open ? 1 : 0,
+        visibility: open ? 'visible' : 'hidden',
         pointerEvents: open ? 'all' : 'none',
         transition: 'opacity 300ms var(--ease-in-out)',
       }}>

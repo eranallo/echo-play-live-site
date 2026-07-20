@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@vercel/analytics": "^1.4.1",
@@ -14,12 +14,14 @@
     "@vercel/speed-insights": "^1.1.0",
     "next": "^16.2.6",
     "pdf-lib": "^1.17.1",
+    "qrcode": "^1.5.4",
     "react": "^18",
-    "react-dom": "^18",
-    "qrcode": "^1.5.4"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.2.9",
     "postcss": "^8",
     "tailwindcss": "^3.4.1"
   }

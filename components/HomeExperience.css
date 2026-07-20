@@ -1,0 +1,340 @@
+.ep-home {
+  --gold: #d4a017;
+  --cream: #f3ead8;
+  --line: rgba(243, 234, 216, 0.16);
+  position: relative;
+  background: #030303;
+  color: var(--cream);
+  overflow: visible;
+}
+
+.ep-wrap {
+  width: min(1480px, calc(100vw - clamp(28px, 7vw, 112px)));
+  margin: auto;
+}
+
+.ep-journey {
+  position: relative;
+  height: 360vh;
+  isolation: isolate;
+  background: #020202;
+}
+
+.ep-sticky {
+  position: absolute;
+  inset: 0 0 auto;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background: #020202;
+  isolation: isolate;
+}
+
+.ep-sticky.ep-pin-pinned {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100svh;
+  z-index: 900;
+}
+
+.ep-sticky.ep-pin-after {
+  position: absolute;
+  inset: auto 0 0;
+  width: 100%;
+  height: 100svh;
+}
+
+.ep-progress {
+  position: absolute;
+  z-index: 22;
+  right: 18px;
+  top: 40%;
+  height: 180px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.ep-progress i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--gold);
+  transform-origin: top;
+}
+
+.ep-ticker {
+  overflow: hidden;
+  border-block: 1px solid var(--line);
+  background: #080808;
+}
+
+.ep-ticker div {
+  width: max-content;
+  padding: 18px 0;
+  font: 900 10px/1 var(--ff-label);
+  letter-spacing: 0.24em;
+  color: rgba(243, 234, 216, 0.62);
+  animation: epTicker 32s linear infinite;
+}
+
+.ep-section {
+  padding: clamp(78px, 10vw, 150px) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.ep-section-head {
+  display: grid;
+  grid-template-columns: 1fr minmax(280px, 430px);
+  gap: 50px;
+  align-items: end;
+  margin-bottom: 52px;
+}
+
+.ep-label {
+  display: block;
+  color: var(--gold);
+  font: 900 10px/1 var(--ff-label);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.ep-section h2,
+.ep-book h2 {
+  font-family: var(--ff-display);
+  font-size: clamp(62px, 9vw, 142px);
+  line-height: 0.76;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.ep-section-head p,
+.ep-book p {
+  color: rgba(243, 234, 216, 0.66);
+  font-size: clamp(15px, 1.25vw, 19px);
+  line-height: 1.7;
+}
+
+.ep-section-link {
+  margin-top: 34px;
+}
+
+.ep-section-link a {
+  display: flex;
+  justify-content: space-between;
+  padding: 18px 0;
+  border-block: 1px solid var(--line);
+  color: var(--cream);
+  text-decoration: none;
+  font: 900 10px/1 var(--ff-label);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.ep-band-rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(300px, 28vw);
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 0 max(14px, calc((100vw - 1480px) / 2)) 34px;
+}
+
+.ep-band-card {
+  position: relative;
+  min-height: 620px;
+  overflow: hidden;
+  scroll-snap-align: center;
+  color: var(--cream);
+  text-decoration: none;
+  background: #111;
+}
+
+.ep-band-image {
+  position: absolute;
+  inset: 0;
+}
+
+.ep-band-image img {
+  filter: saturate(0.55) contrast(1.2);
+}
+
+.ep-band-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.45), transparent 35%, rgba(0, 0, 0, 0.94));
+}
+
+.ep-band-top {
+  position: absolute;
+  z-index: 2;
+  inset: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  padding: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--accent);
+  font: 900 10px/1 var(--ff-label);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.ep-band-copy {
+  position: absolute;
+  z-index: 2;
+  inset: auto 0 0;
+  padding: 30px;
+}
+
+.ep-band-copy small {
+  color: var(--accent);
+  font: 900 9px/1 var(--ff-label);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.ep-band-copy h3 {
+  font-family: var(--ff-display);
+  font-size: clamp(48px, 6vw, 90px);
+  line-height: 0.78;
+  text-transform: uppercase;
+  margin: 14px 0;
+}
+
+.ep-band-copy b {
+  color: var(--cream);
+  font: 900 10px/1 var(--ff-label);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.ep-book {
+  position: relative;
+  min-height: 92svh;
+  display: grid;
+  align-items: end;
+  overflow: hidden;
+}
+
+.ep-book-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.ep-book-bg img {
+  filter: saturate(0.42) contrast(1.2) brightness(0.42);
+}
+
+.ep-book-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.25)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.9));
+}
+
+.ep-book-inner {
+  position: relative;
+  z-index: 2;
+  padding-bottom: clamp(70px, 10vw, 130px);
+}
+
+.ep-book p {
+  max-width: 620px;
+}
+
+.ep-actions {
+  display: flex;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  border: 1px solid var(--line);
+  margin: 22px auto 0;
+  background: rgba(3, 3, 3, 0.82);
+  backdrop-filter: blur(14px);
+}
+
+.ep-btn {
+  min-height: 54px;
+  padding: 0 20px;
+  display: grid;
+  place-items: center;
+  color: var(--cream);
+  text-decoration: none;
+  font: 900 10px/1 var(--ff-label);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.ep-btn + .ep-btn {
+  border-left: 1px solid var(--line);
+}
+
+.ep-primary {
+  background: var(--gold);
+  color: #030303;
+}
+
+@keyframes epTicker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 900px) {
+  .ep-section-head {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 740px) {
+  .ep-journey {
+    height: 330vh;
+  }
+
+  .ep-sticky,
+  .ep-sticky.ep-pin-pinned,
+  .ep-sticky.ep-pin-after {
+    height: 100dvh;
+  }
+
+  .ep-actions {
+    width: calc(100vw - 32px);
+  }
+
+  .ep-btn {
+    flex: 1;
+    padding: 0 12px;
+  }
+
+  .ep-progress {
+    right: 7px;
+    height: 130px;
+  }
+
+  .ep-section {
+    padding: 64px 0;
+  }
+
+  .ep-section h2,
+  .ep-book h2 {
+    font-size: clamp(54px, 16vw, 88px);
+  }
+
+  .ep-band-rail {
+    grid-auto-columns: 84vw;
+    padding-left: 14px;
+  }
+
+  .ep-band-card {
+    min-height: 560px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ep-ticker div {
+    animation: none;
+  }
+}
