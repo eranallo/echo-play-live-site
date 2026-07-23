@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
 import { generateShowCampaignDraft } from '@/lib/admin/campaign'
+import { adminUnauthorized, isAdminAuthorized } from '@/lib/admin/auth'
 
 export const dynamic = 'force-dynamic'
 
-export async function POST(_request, { params }) {
+export async function POST(request, { params }) {
+  if (!isAdminAuthorized(request)) return adminUnauthorized()
   try {
     const resolvedParams = await params
     const showId = resolvedParams?.id

@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { completeAdminTask, updateAdminTask } from '@/lib/admin/airtable'
+import { adminUnauthorized, isAdminAuthorized } from '@/lib/admin/auth'
 
 export const dynamic = 'force-dynamic'
 
 export async function PATCH(request, { params }) {
+  if (!isAdminAuthorized(request)) return adminUnauthorized()
   try {
     const resolvedParams = await params
     const taskId = resolvedParams?.id
@@ -18,6 +21,7 @@ export async function PATCH(request, { params }) {
     const task = action === 'complete'
       ? await completeAdminTask(taskId)
       : await updateAdminTask(taskId, body?.fields || body || {})
+    revalidateTag('admin-ops', { expire: 0 })
 
     return NextResponse.json({ ok: true, task })
   } catch (error) {

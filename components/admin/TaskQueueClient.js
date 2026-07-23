@@ -100,17 +100,23 @@ export default function TaskQueueClient({ airtableTasks = [], inferredTasks = []
       owner: form.owner,
       notes: form.notes,
       source: 'Manual',
-      status: 'Todo',
+      status: 'To Do',
     })
   }
 
   async function createFromInferred(task) {
+    const source = task.type === 'Approval'
+      ? 'Approval'
+      : task.type === 'Show Gap'
+        ? 'Show Readiness'
+        : 'Manual'
+
     await createTask({
       title: task.title,
       priority: task.priority || 'Normal',
       notes: buildSourceNotes(task),
-      source: task.type || 'Inferred',
-      status: 'Todo',
+      source,
+      status: 'To Do',
     }, task.id)
   }
 

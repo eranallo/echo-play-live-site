@@ -6,7 +6,7 @@ import { useState } from 'react'
 const PRIMARY_LINKS = [
   ['Today', '/admin'],
   ['Tasks', '/admin/tasks'],
-  ['Shows', '/admin#shows'],
+  ['Shows', '/admin/shows'],
   ['Chief', '/admin/chief-of-staff'],
   ['Specialists', '/admin/specialists'],
   ['Approvals', '/admin/approvals'],
@@ -90,7 +90,7 @@ export default function AdminNav({ contextLabel = 'Echo Play OS', backHref = '',
       <nav className="an-bottom" aria-label="Mobile quick navigation">
         <NavLink href="/admin">Today</NavLink>
         <NavLink href="/admin/tasks">Tasks</NavLink>
-        <NavLink href="/admin#shows">Shows</NavLink>
+        <NavLink href="/admin/shows">Shows</NavLink>
         <NavLink href="/admin/specialists">Agents</NavLink>
         <NavLink href="/admin/approvals">Review</NavLink>
       </nav>
