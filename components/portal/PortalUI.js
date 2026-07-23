@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 export function PortalShell({ children, active = 'portal', showDock = true }) {
   return (
     <main className="portal-app">
@@ -38,7 +40,7 @@ export function PortalTopBar({ title, subtitle, backHref = '/portal' }) {
         <strong>{title}</strong>
         {subtitle && <span>{subtitle}</span>}
       </div>
-      <img className="portal-logo-mark" src="/logo.png" alt="" />
+      <Image className="portal-logo-mark" src="/logo.png" alt="" width={42} height={42} />
     </div>
   )
 }
@@ -47,7 +49,7 @@ export function PortalHero({ eyebrow, title, subtitle, children }) {
   return (
     <section className="portal-hero">
       <div className="portal-hero-logo-wrap">
-        <img className="portal-hero-logo" src="/logo.png" alt="Echo Play Live" />
+        <Image className="portal-hero-logo" src="/logo.png" alt="Echo Play Live" width={68} height={68} priority />
       </div>
       {eyebrow && <div className="portal-eyebrow">{eyebrow}</div>}
       <h1 className="portal-hero-title">{title}</h1>
@@ -79,7 +81,7 @@ export function PersonRow({ person, href }) {
   return (
     <a className="portal-person-row" href={href}>
       {person.photo ? (
-        <img className="portal-avatar" src={person.photo} alt="" />
+        <Image className="portal-avatar" src={person.photo} alt="" width={50} height={50} unoptimized />
       ) : (
         <div className="portal-avatar-fallback">
           {initials}
@@ -98,8 +100,12 @@ export function SectionLabel({ children }) {
   return <div className="portal-section-label">{children}</div>
 }
 
-export function Pill({ children, accent = false }) {
-  return <span className={`portal-pill ${accent ? 'portal-pill-accent' : ''}`}>{children}</span>
+export function Pill({ children, accent = false, tone = '' }) {
+  return (
+    <span className={`portal-pill ${accent ? 'portal-pill-accent' : ''} ${tone ? `portal-pill-${tone}` : ''}`.trim()}>
+      {children}
+    </span>
+  )
 }
 
 export function MetricGrid({ items }) {
@@ -124,6 +130,9 @@ export function ShowCard({ show, href, roleLabels = [] }) {
   const trailerLoadIn = show.trailerLoadIn || show.raw?.['Trailer Load-In Time']
   const query = href?.includes('?') ? href.slice(href.indexOf('?')) : ''
   const runOfShowHref = `/portal/shows/${show.id}/run-of-show${query}`
+  const roles = roleLabels.length ? roleLabels : show.roles || []
+  const acknowledgment = show.acknowledgment
+  const readiness = show.readiness
 
   return (
     <Card accent={urgent}>
@@ -132,7 +141,7 @@ export function ShowCard({ show, href, roleLabels = [] }) {
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="portal-show-kicker">
               {show.bandNames.map(name => <Pill key={name} accent>{name}</Pill>)}
-              {roleLabels.map(label => <Pill key={label}>{label}</Pill>)}
+              {roles.map(label => <Pill key={label}>{label}</Pill>)}
             </div>
             <div className="portal-show-title">{show.venueName}</div>
             <div className="portal-show-date">{show.dateLabel}</div>
@@ -152,6 +161,18 @@ export function ShowCard({ show, href, roleLabels = [] }) {
           <TimeBlock label="End" value={show.end} />
         </div>
         {show.venueAddress && <div className="portal-location"><span>📍</span><span>{show.venueAddress}</span></div>}
+        {(acknowledgment || readiness) && (
+          <div className="portal-show-status">
+            {acknowledgment && (
+              <Pill tone={acknowledgment.current ? 'success' : 'warning'}>
+                {acknowledgment.current ? 'Reviewed' : 'Review required'}
+              </Pill>
+            )}
+            {readiness && (
+              <Pill tone={readiness.needsAttention ? 'muted' : 'success'}>{readiness.label}</Pill>
+            )}
+          </div>
+        )}
       </a>
       <div className="portal-show-card-actions">
         <a href={href}>Show Details</a>
@@ -181,6 +202,91 @@ export function InfoRow({ label, value, href }) {
   return href ? <a className="portal-info-link" href={href} style={{ textDecoration: 'none' }}>{content}</a> : content
 }
 
+export function ReadinessCard({ readiness }) {
+  if (!readiness) return null
+
+  return (
+    <Card accent={readiness.critical.length > 0}>
+      <div className="portal-readiness-head">
+        <div>
+          <div className="portal-eyebrow">
+            {readiness.count ? 'Information pending' : 'Show ready'}
+          </div>
+          <div className="portal-card-heading">
+            {readiness.count ? readiness.label : 'Core details are filled in'}
+          </div>
+        </div>
+        <div className={`portal-readiness-count ${readiness.count ? '' : 'portal-readiness-count-ready'}`}>
+          {readiness.count || '✓'}
+        </div>
+      </div>
+      {readiness.count > 0 && (
+        <div className="portal-readiness-groups">
+          {readiness.critical.length > 0 && (
+            <div>
+              <strong>Needed</strong>
+              <div>{readiness.critical.map(item => <Pill key={item} tone="warning">{item}</Pill>)}</div>
+            </div>
+          )}
+          {readiness.pending.length > 0 && (
+            <div>
+              <strong>Still open</strong>
+              <div>{readiness.pending.map(item => <Pill key={item} tone="muted">{item}</Pill>)}</div>
+            </div>
+          )}
+        </div>
+      )}
+    </Card>
+  )
+}
+
+export function ContactCard({ contact }) {
+  const initials = contact.name.split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase()
+  return (
+    <div className="portal-contact-card">
+      {contact.photo ? (
+        <Image className="portal-contact-avatar" src={contact.photo} alt="" width={50} height={50} unoptimized />
+      ) : (
+        <div className="portal-contact-avatar portal-avatar-fallback">{initials}</div>
+      )}
+      <div className="portal-contact-copy">
+        <Pill accent={contact.type === 'Crew'}>{contact.type}</Pill>
+        <strong>{contact.name}</strong>
+        {contact.role && <span>{contact.role}</span>}
+        {contact.company && <small>{contact.company}</small>}
+      </div>
+      <div className="portal-contact-actions">
+        {contact.phone && <a href={`tel:${contact.phone}`}>Call</a>}
+        {contact.phone && <a href={`sms:${contact.phone}`}>Text</a>}
+        {contact.email && <a href={`mailto:${contact.email}`}>Email</a>}
+      </div>
+    </div>
+  )
+}
+
+export function BlackoutList({ items = [] }) {
+  if (!items.length) {
+    return <span className="portal-muted-copy">No unavailable dates on record.</span>
+  }
+
+  return (
+    <div className="portal-blackout-list">
+      {items.map(item => (
+        <div className="portal-blackout-row" key={item.id}>
+          <div>
+            <strong>
+              {item.dateLabel}
+              {item.endDateLabel && item.endDate !== item.date ? ` – ${item.endDateLabel}` : ''}
+            </strong>
+            {item.notes && <span>{item.notes}</span>}
+          </div>
+          <Pill>{item.reason || 'Unavailable'}</Pill>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function InlineActions({ actions }) {
   return (
     <div className="portal-inline-actions">
@@ -197,7 +303,7 @@ export function PersonHeader({ person, type = 'Member' }) {
   return (
     <section style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24 }}>
       {person.photo ? (
-        <img className="portal-avatar" src={person.photo} alt="" style={{ width: 64, height: 64, borderRadius: 22 }} />
+        <Image className="portal-avatar" src={person.photo} alt="" width={64} height={64} unoptimized style={{ width: 64, height: 64, borderRadius: 22 }} />
       ) : (
         <div className="portal-avatar-fallback" style={{ width: 64, height: 64, borderRadius: 22 }}>
           {initials}

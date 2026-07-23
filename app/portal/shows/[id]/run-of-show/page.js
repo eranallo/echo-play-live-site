@@ -9,8 +9,9 @@ export const dynamic = 'force-dynamic'
 function backHref(searchParams, showId) {
   const from = searchParams?.from
   const person = searchParams?.person
-  if (from === 'member' && person) return `/portal/member/${person}`
-  if (from === 'crew' && person) return `/portal/crew/${person}`
+  if (['member', 'crew'].includes(from) && person) {
+    return `/portal/shows/${showId}?from=${encodeURIComponent(from)}&person=${encodeURIComponent(person)}`
+  }
   return `/portal/shows/${showId}`
 }
 

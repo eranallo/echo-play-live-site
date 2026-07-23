@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "validate:phase-3": "node scripts/validate-phase-3.mjs",
     "validate:run-of-show": "node scripts/validate-run-of-show.mjs",
     "render:run-of-show-fixture": "node scripts/render-run-of-show-fixture.mjs"
   },

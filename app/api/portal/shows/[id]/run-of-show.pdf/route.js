@@ -1,38 +1,12 @@
-import { timingSafeEqual } from 'node:crypto'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { NextResponse } from 'next/server'
 import { getPortalRunOfShow } from '@/lib/portal/airtable'
+import { isPortalAuthorized, portalUnauthorized } from '@/lib/portal/auth'
 import { renderRunOfShowPdf } from '@/lib/portal/runOfShowPdf.mjs'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
-
-function safeEqual(actual, expected) {
-  const actualBuffer = Buffer.from(actual)
-  const expectedBuffer = Buffer.from(expected)
-  return actualBuffer.length === expectedBuffer.length
-    && timingSafeEqual(actualBuffer, expectedBuffer)
-}
-
-function isAuthorized(request) {
-  const expectedUsername = process.env.ADMIN_USERNAME
-  const expectedPassword = process.env.ADMIN_PASSWORD
-  const header = request.headers.get('authorization') || ''
-
-  if (!expectedUsername || !expectedPassword || !header.startsWith('Basic ')) return false
-
-  try {
-    const decoded = Buffer.from(header.slice(6), 'base64').toString('utf8')
-    const separator = decoded.indexOf(':')
-    if (separator < 0) return false
-
-    return safeEqual(decoded.slice(0, separator), expectedUsername)
-      && safeEqual(decoded.slice(separator + 1), expectedPassword)
-  } catch {
-    return false
-  }
-}
 
 function filenameFor(show) {
   const venue = String(show.venueName || 'show')
@@ -44,16 +18,7 @@ function filenameFor(show) {
 }
 
 export async function GET(request, { params }) {
-  if (!isAuthorized(request)) {
-    return new NextResponse('Authentication required.', {
-      status: 401,
-      headers: {
-        'WWW-Authenticate': 'Basic realm="Echo Play Live Portal", charset="UTF-8"',
-        'Cache-Control': 'no-store',
-        'X-Robots-Tag': 'noindex, nofollow',
-      },
-    })
-  }
+  if (!isPortalAuthorized(request)) return portalUnauthorized()
 
   const { id } = await params
   const detail = await getPortalRunOfShow(id)
