@@ -122,32 +122,41 @@ export function ShowCard({ show, href, roleLabels = [] }) {
   const dayLabel = days === null ? '—' : days === 0 ? 'Today' : `${days}d`
   const urgent = days !== null && days <= 7
   const trailerLoadIn = show.trailerLoadIn || show.raw?.['Trailer Load-In Time']
+  const query = href?.includes('?') ? href.slice(href.indexOf('?')) : ''
+  const runOfShowHref = `/portal/shows/${show.id}/run-of-show${query}`
 
   return (
-    <Card href={href} accent={urgent}>
-      <div className="portal-show-card-head">
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div className="portal-show-kicker">
-            {show.bandNames.map(name => <Pill key={name} accent>{name}</Pill>)}
-            {roleLabels.map(label => <Pill key={label}>{label}</Pill>)}
+    <Card accent={urgent}>
+      <a className="portal-show-card-primary" href={href}>
+        <div className="portal-show-card-head">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="portal-show-kicker">
+              {show.bandNames.map(name => <Pill key={name} accent>{name}</Pill>)}
+              {roleLabels.map(label => <Pill key={label}>{label}</Pill>)}
+            </div>
+            <div className="portal-show-title">{show.venueName}</div>
+            <div className="portal-show-date">{show.dateLabel}</div>
           </div>
-          <div className="portal-show-title">{show.venueName}</div>
-          <div className="portal-show-date">{show.dateLabel}</div>
-        </div>
-        <div className="portal-countdown">
-          <div>
-            <strong>{dayLabel}</strong>
-            <span>{days === 0 ? 'show day' : 'away'}</span>
+          <div className="portal-countdown">
+            <div>
+              <strong>{dayLabel}</strong>
+              <span>{days === 0 ? 'show day' : 'away'}</span>
+            </div>
           </div>
         </div>
+        <div className="portal-time-grid portal-time-grid-show-summary">
+          <TimeBlock label="Trailer" value={trailerLoadIn} />
+          <TimeBlock label="Venue" value={show.loadIn} />
+          <TimeBlock label="Sound" value={show.soundCheck} />
+          <TimeBlock label="Start" value={show.start} />
+          <TimeBlock label="End" value={show.end} />
+        </div>
+        {show.venueAddress && <div className="portal-location"><span>📍</span><span>{show.venueAddress}</span></div>}
+      </a>
+      <div className="portal-show-card-actions">
+        <a href={href}>Show Details</a>
+        <a href={runOfShowHref}>View Run of Show</a>
       </div>
-      <div className="portal-time-grid">
-        <TimeBlock label="Trailer Load" value={trailerLoadIn} />
-        <TimeBlock label="Venue Load" value={show.loadIn} />
-        <TimeBlock label="Start" value={show.start} />
-        <TimeBlock label="End" value={show.end} />
-      </div>
-      {show.venueAddress && <div className="portal-location"><span>📍</span><span>{show.venueAddress}</span></div>}
     </Card>
   )
 }
