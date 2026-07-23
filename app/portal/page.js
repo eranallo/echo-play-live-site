@@ -35,7 +35,7 @@ export default async function PortalPage() {
       <PortalHero
         eyebrow="Echo Play Live"
         title="Showday Portal"
-        subtitle="Fast, phone-first show information for the people actually loading gear, playing the set, running merch, and getting through the night."
+        subtitle="Your assignments, call times, run of show, setlists, contacts, documents, availability, and important updates in one phone-first workspace."
       >
         <InlineActions actions={[
           { href: '#members', label: 'I’m Band' },
@@ -52,8 +52,8 @@ export default async function PortalPage() {
         <div className="portal-card-heading">How to use this</div>
         <div className="portal-steps">
           <PortalStep number="1" title="Tap your name" body="Start from your member or crew profile." />
-          <PortalStep number="2" title="Open next show" body="Check load-in, start time, venue, notes, and setlist." />
-          <PortalStep number="3" title="Use it day-of" body="Pull up maps, details, and assignments when things are moving." />
+          <PortalStep number="2" title="Review next show" body="Check your role, schedule, venue, notes, contacts, setlists, and files." />
+          <PortalStep number="3" title="Confirm updates" body="Acknowledge the latest details and add blackout dates from your dashboard." />
         </div>
       </Card>
 
