@@ -25,6 +25,10 @@ export default async function PortalShowPage({ params, searchParams }) {
   const backHref = BackHref({ searchParams: resolvedSearch })
   const ticketLabel = show.ticketPrice || (show.ticketUrl ? 'Ticket link available' : 'TBD')
   const trailerLoadIn = show.trailerLoadIn || show.raw?.['Trailer Load-In Time']
+  const runContext = resolvedSearch?.from && resolvedSearch?.person
+    ? `?from=${encodeURIComponent(resolvedSearch.from)}&person=${encodeURIComponent(resolvedSearch.person)}`
+    : ''
+  const runOfShowHref = `/portal/shows/${show.id}/run-of-show${runContext}`
 
   return (
     <PortalShell>
@@ -39,20 +43,21 @@ export default async function PortalShowPage({ params, searchParams }) {
         <h1 className="portal-hero-title" style={{ marginBottom: 8 }}>{show.venueName}</h1>
         <p className="portal-hero-subtitle" style={{ marginTop: 0 }}>{show.dateLabel}</p>
         <InlineActions actions={[
+          { href: runOfShowHref, label: 'View Run of Show' },
           mapHref ? { href: mapHref, label: 'Open Map' } : null,
           show.ticketUrl ? { href: show.ticketUrl, label: 'Tickets' } : null,
         ]} />
       </section>
 
       <Card accent>
-        <div className="portal-time-grid" style={{ marginTop: 0 }}>
-          <TimeBlock label="Trailer Load" value={trailerLoadIn} />
-          <TimeBlock label="Venue Load" value={show.loadIn} />
-          <TimeBlock label="Start" value={show.start} />
-          <TimeBlock label="End" value={show.end} />
+        <div className="portal-time-grid portal-time-grid-run-summary" style={{ marginTop: 0 }}>
+          <TimeBlock label="Trailer Load-In" value={trailerLoadIn} />
+          <TimeBlock label="Venue Load-In" value={show.loadIn} />
+          <TimeBlock label="Soundcheck" value={show.soundCheck} />
+          <TimeBlock label="Show Start" value={show.start} />
+          <TimeBlock label="Show End" value={show.end} />
         </div>
         <div className="portal-time-grid">
-          <TimeBlock label="Sound" value={show.soundCheck} />
           <TimeBlock label="Age" value={show.ageRestriction} />
           <TimeBlock label="Ticket" value={ticketLabel} />
         </div>
