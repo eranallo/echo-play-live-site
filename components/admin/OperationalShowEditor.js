@@ -65,6 +65,7 @@ export default function OperationalShowEditor({ showId, initial, options }) {
     trailerLoadIn: toLocalInput(initial.trailerLoadIn),
     loadIn: toLocalInput(initial.loadIn),
     soundCheck: toLocalInput(initial.soundCheck),
+    doorsTime: toLocalInput(initial.doorsTime),
     startTime: toLocalInput(initial.startTime),
     endTime: toLocalInput(initial.endTime),
   }))
@@ -98,6 +99,7 @@ export default function OperationalShowEditor({ showId, initial, options }) {
         'Trailer Load-In Time': toIso(form.trailerLoadIn),
         'Load-In Time': toIso(form.loadIn),
         'Sound Check Time': toIso(form.soundCheck),
+        'Doors Time': toIso(form.doorsTime),
         'Start Time': toIso(form.startTime),
         'End Time': toIso(form.endTime),
         'Publish Date': form.publishDate,
@@ -109,6 +111,15 @@ export default function OperationalShowEditor({ showId, initial, options }) {
         'Ticket Price': form.ticketPrice,
         'Ticket URL': form.ticketUrl,
         'Production Notes': form.productionNotes,
+        'Advance Notes': form.advanceNotes,
+        'Event Contact Name': form.eventContactName,
+        'Event Contact Phone': form.eventContactPhone,
+        'Event Contact Email': form.eventContactEmail,
+        'Actual Attendance': form.actualAttendance,
+        'Gross Ticket Revenue': form.grossTicketRevenue,
+        'Settlement Notes': form.settlementNotes,
+        'Show Recap': form.showRecap,
+        'Lessons Learned': form.lessonsLearned,
         'Show Notes': form.showNotes,
         'Sound Notes': form.soundNotes,
         'Merch Notes': form.merchNotes,
@@ -155,6 +166,7 @@ export default function OperationalShowEditor({ showId, initial, options }) {
           <label className="ose-field"><span>Trailer load-in</span><input type="datetime-local" value={form.trailerLoadIn} onChange={event => update('trailerLoadIn', event.target.value)} /></label>
           <label className="ose-field"><span>Venue load-in</span><input type="datetime-local" value={form.loadIn} onChange={event => update('loadIn', event.target.value)} /></label>
           <label className="ose-field"><span>Soundcheck</span><input type="datetime-local" value={form.soundCheck} onChange={event => update('soundCheck', event.target.value)} /></label>
+          <label className="ose-field"><span>Doors</span><input type="datetime-local" value={form.doorsTime} onChange={event => update('doorsTime', event.target.value)} /></label>
           <label className="ose-field"><span>Show start</span><input type="datetime-local" value={form.startTime} onChange={event => update('startTime', event.target.value)} /></label>
           <label className="ose-field"><span>Show end</span><input type="datetime-local" value={form.endTime} onChange={event => update('endTime', event.target.value)} /></label>
           <label className="ose-field"><span>Publish date</span><input type="date" value={form.publishDate} onChange={event => update('publishDate', event.target.value)} /></label>
@@ -186,11 +198,26 @@ export default function OperationalShowEditor({ showId, initial, options }) {
         <h3>Documents + notes</h3>
         <div className="ose-grid">
           <label className="ose-field ose-wide"><span>Drive folder</span><input type="url" value={form.driveFolder} onChange={event => update('driveFolder', event.target.value)} /></label>
+          <label className="ose-field"><span>Event contact name</span><input value={form.eventContactName} onChange={event => update('eventContactName', event.target.value)} /></label>
+          <label className="ose-field"><span>Event contact phone</span><input type="tel" value={form.eventContactPhone} onChange={event => update('eventContactPhone', event.target.value)} /></label>
+          <label className="ose-field ose-wide"><span>Event contact email</span><input type="email" value={form.eventContactEmail} onChange={event => update('eventContactEmail', event.target.value)} /></label>
           <CheckGroup label="Setlists" options={options.setlists} selected={form.setlistIds} onChange={value => update('setlistIds', value)} />
           <label className="ose-field"><span>Production notes</span><textarea value={form.productionNotes} onChange={event => update('productionNotes', event.target.value)} /></label>
+          <label className="ose-field ose-wide"><span>Advance notes</span><textarea value={form.advanceNotes} onChange={event => update('advanceNotes', event.target.value)} /></label>
           <label className="ose-field"><span>Show notes</span><textarea value={form.showNotes} onChange={event => update('showNotes', event.target.value)} /></label>
           <label className="ose-field"><span>Sound notes</span><textarea value={form.soundNotes} onChange={event => update('soundNotes', event.target.value)} /></label>
           <label className="ose-field"><span>Merch notes</span><textarea value={form.merchNotes} onChange={event => update('merchNotes', event.target.value)} /></label>
+        </div>
+      </section>
+
+      <section className="ose-section">
+        <h3>Settlement + recap</h3>
+        <div className="ose-grid">
+          <label className="ose-field"><span>Actual attendance</span><input type="number" min="0" step="1" value={form.actualAttendance} onChange={event => update('actualAttendance', event.target.value)} /></label>
+          <label className="ose-field"><span>Gross ticket revenue</span><input type="number" min="0" step="0.01" value={form.grossTicketRevenue} onChange={event => update('grossTicketRevenue', event.target.value)} /></label>
+          <label className="ose-field ose-wide"><span>Settlement notes</span><textarea value={form.settlementNotes} onChange={event => update('settlementNotes', event.target.value)} /></label>
+          <label className="ose-field ose-wide"><span>Show recap</span><textarea value={form.showRecap} onChange={event => update('showRecap', event.target.value)} /></label>
+          <label className="ose-field ose-wide"><span>Lessons learned</span><textarea value={form.lessonsLearned} onChange={event => update('lessonsLearned', event.target.value)} /></label>
         </div>
       </section>
 
