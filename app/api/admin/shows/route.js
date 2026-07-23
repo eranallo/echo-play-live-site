@@ -1,23 +1,22 @@
+import { revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
-import { askChiefOfStaff } from '@/lib/admin/chiefOfStaff'
+import { createAdminShow } from '@/lib/admin/airtable'
 import { adminUnauthorized, isAdminAuthorized } from '@/lib/admin/auth'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request) {
   if (!isAdminAuthorized(request)) return adminUnauthorized()
+
   try {
     const body = await request.json()
-    const question = body?.question
-    const history = Array.isArray(body?.history) ? body.history : []
-
-    const result = await askChiefOfStaff({ question, history, logRun: true })
-
-    return NextResponse.json(result)
+    const show = await createAdminShow(body?.fields || body || {})
+    revalidateTag('admin-shows', { expire: 0 })
+    return NextResponse.json({ ok: true, show })
   } catch (error) {
     return NextResponse.json({
       ok: false,
-      error: error?.message || 'Chief of Staff chat failed.',
-    }, { status: 500 })
+      error: error?.message || 'Unknown show creation error.',
+    }, { status: 400 })
   }
 }

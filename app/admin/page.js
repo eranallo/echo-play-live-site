@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 
 const WORK_AREAS = [
   { label: 'Chief', href: '/admin/chief-of-staff', body: 'Ask what matters today, route work, and generate a brief.' },
-  { label: 'Shows', href: '/admin#shows', body: 'Upcoming dates, missing details, show health, and actions.' },
+  { label: 'Shows', href: '/admin/shows', body: 'Full schedule, filters, readiness, staffing, timelines, and actions.' },
   { label: 'Tasks', href: '/admin/tasks', body: 'Hard-data work queue from tasks, approvals, and show gaps.' },
   { label: 'Specialists', href: '/admin/specialists', body: 'Guided agents for show ops, promo, finance, web, merch, booking.' },
   { label: 'Approvals', href: '/admin/approvals', body: 'Review public, external, financial, and booking-sensitive work.' },
@@ -42,7 +42,7 @@ function dueText(days) {
 }
 
 function taskIsOpen(task) {
-  return !['Done', 'Complete', 'Completed'].includes(task.status)
+  return !['Done', 'Complete', 'Completed', 'Cancelled'].includes(task.status)
 }
 
 function buildQueue(shows, approvals, tasks) {
@@ -91,8 +91,7 @@ function QueueItem({ item, index }) {
 
 function ShowCard({ show }) {
   const days = daysUntil(show.date)
-  const completeCount = [show.contractSigned, show.graphicCreated, show.facebookEventCreated, show.bandsintownPosted, show.promotionReleased].filter(Boolean).length
-  const progress = Math.round((completeCount / 5) * 100)
+  const progress = show.readiness?.score || 0
   return <a className="cv-show" href={`/admin/shows/${show.id}`}><div className="cv-show-top"><span>{dueText(days)}</span><em>{show.status}</em></div><h3>{show.band}</h3><p>{show.venue} · {show.dateLabel} · {show.startTime}</p><div className="cv-progress"><i style={{ width: `${progress}%` }} /></div><div className="cv-show-foot"><span>{progress}% ready</span><b>{show.missingFlags.length ? `${show.missingFlags.length} open` : 'On track'}</b></div></a>
 }
 
@@ -129,7 +128,7 @@ export default async function AdminPage() {
       `}</style>
       <div className="cv-wrap">
         <header className="cv-hero">
-          <div><span className="cv-label">Today</span><h1>Run the day.</h1><p>Your command center should show the work, not make you hunt for it. Use the menu for global navigation and the panels below for quick inspection.</p><div className="cv-hero-actions"><a href="/admin/chief-of-staff">Ask Chief</a><a href="/admin/tasks">Open Tasks</a></div></div>
+          <div><span className="cv-label">Today</span><h1>Run the day.</h1><p>Your command center should show the work, not make you hunt for it. Use the menu for global navigation and the panels below for quick inspection.</p><div className="cv-hero-actions"><a href="/admin/shows/new">Create Show</a><a href="/admin/tasks">Open Tasks</a></div></div>
           <aside className="cv-status"><span className="cv-label">Next show</span><h2>{nextShow ? nextShow.band : 'No show loaded'}</h2><p>{nextShow ? `${nextShow.venue} · ${nextShow.dateLabel} · ${nextShow.startTime}` : 'Add shows in Airtable to populate this workspace.'}</p></aside>
         </header>
 
@@ -145,7 +144,7 @@ export default async function AdminPage() {
         <section className="cv-main">
           <div className="cv-lower">
             <section className="cv-panel"><div className="cv-panel-head"><div><span className="cv-label">Work Queue</span><h2>Needs action</h2><p>Prioritized from Airtable show health, approvals, and the task table when available.</p></div><a className="cv-tool" href="/admin/tasks">View all</a></div><div className="cv-queue-list">{queue.length ? queue.map((item, index) => <QueueItem key={`${item.type}-${item.title}-${index}`} item={item} index={index} />) : <div className="cv-empty">No urgent items loaded.</div>}</div></section>
-            <section id="shows" className="cv-panel"><div className="cv-panel-head"><div><span className="cv-label">Shows</span><h2>Upcoming</h2><p>Every show is a project workspace with status, details, specialists, notes, and actions.</p></div></div><div className="cv-show-grid">{shows.slice(0, 6).map(show => <ShowCard key={show.id} show={show} />)}</div></section>
+            <section id="shows" className="cv-panel"><div className="cv-panel-head"><div><span className="cv-label">Shows</span><h2>Upcoming</h2><p>Every show is a project workspace with status, details, specialists, notes, and actions.</p></div><a className="cv-tool" href="/admin/shows">View all + filters</a></div><div className="cv-show-grid">{shows.slice(0, 6).map(show => <ShowCard key={show.id} show={show} />)}</div></section>
           </div>
           <aside className="cv-side">
             <section className="cv-panel"><div className="cv-panel-head"><div><span className="cv-label">Work Areas</span><h2>Navigate</h2></div></div><div className="cv-mini-grid">{WORK_AREAS.map(area => <SmallCard key={area.label} href={area.href} label="Open" title={area.label} body={area.body} />)}</div></section>

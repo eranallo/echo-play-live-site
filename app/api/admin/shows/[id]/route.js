@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { ADMIN_SHOW_UPDATE_FIELDS, updateAdminShowFields } from '@/lib/admin/airtable'
+import { adminUnauthorized, isAdminAuthorized } from '@/lib/admin/auth'
 
 export const dynamic = 'force-dynamic'
 
 export async function PATCH(request, { params }) {
+  if (!isAdminAuthorized(request)) return adminUnauthorized()
   try {
     const resolvedParams = await params
     const showId = resolvedParams?.id
@@ -24,6 +27,8 @@ export async function PATCH(request, { params }) {
     }
 
     const updated = await updateAdminShowFields(showId, fields)
+    revalidateTag('admin-shows', { expire: 0 })
+    revalidateTag('admin-show-detail', { expire: 0 })
 
     return NextResponse.json({ ok: true, updated })
   } catch (error) {

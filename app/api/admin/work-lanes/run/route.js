@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
 import { runWorkLane } from '@/lib/admin/specialistPlaceholder'
+import { adminUnauthorized, isAdminAuthorized } from '@/lib/admin/auth'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request) {
+  if (!isAdminAuthorized(request)) return adminUnauthorized()
   try {
     const body = await request.json()
     const kind = body?.kind

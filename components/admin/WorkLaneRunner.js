@@ -57,7 +57,7 @@ function SpecialistTasks({ output }) {
             output.show?.title ? `Show: ${output.show.title}` : '',
             output.show?.showId ? `Show ID: ${output.show.showId}` : '',
           ].filter(Boolean).join('\n'),
-          status: 'Todo',
+          status: 'To Do',
         }),
       })
       const data = await response.json()
