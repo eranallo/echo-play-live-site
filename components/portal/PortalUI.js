@@ -1,10 +1,10 @@
 import Image from 'next/image'
 import { groupShowsByYear } from '@/lib/portal/showNavigation.mjs'
 
-export function PortalShell({ children, active = 'portal', showDock = true }) {
+export function PortalShell({ children, active = 'portal', showDock = true, wide = false }) {
   return (
     <main className="portal-app">
-      <div className="portal-frame portal-fade-in">
+      <div className={`portal-frame portal-fade-in ${wide ? 'portal-frame-wide' : ''}`.trim()}>
         {children}
       </div>
       {showDock && <PortalDock active={active} />}
@@ -15,6 +15,7 @@ export function PortalShell({ children, active = 'portal', showDock = true }) {
 export function PortalDock({ active = 'portal' }) {
   const items = [
     { key: 'portal', href: '/portal', icon: '⌂', label: 'Portal' },
+    { key: 'calendar', href: '/portal/calendar', icon: '▦', label: 'Calendar' },
     { key: 'site', href: '/', icon: '★', label: 'Site' },
     { key: 'admin', href: '/admin', icon: '⚙', label: 'Admin' },
   ]
