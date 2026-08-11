@@ -8,6 +8,7 @@ import {
   shiftCalendarMonth,
   showsInCalendarMonth,
 } from '../lib/portal/calendar.mjs'
+import { namesForLinkedRecords } from '../lib/portal/model.mjs'
 
 const shows = [
   { id: 'past', date: '2026-08-10', bandNames: ['Jambi'], venueName: 'Haltom Theater', lifecycle: 'Completed', start: '8:00 PM' },
@@ -16,6 +17,20 @@ const shows = [
   { id: 'future-2', date: '2027-01-15', bandNames: ['Session'], venueName: 'The Revel', lifecycle: 'Confirmed', start: '10:00 PM' },
   { id: 'undated', date: '', bandNames: ['Corestalgia'], venueName: 'Venue TBD', lifecycle: 'Inquiry', start: '' },
 ]
+
+assert.deepEqual(
+  namesForLinkedRecords(['rec-member'], undefined, record => record?.fields?.Name),
+  [],
+  'Calendar show normalization must tolerate member and crew maps that were not loaded.'
+)
+assert.deepEqual(
+  namesForLinkedRecords(
+    ['rec-member'],
+    new Map([['rec-member', { fields: { Name: 'Evan' } }]]),
+    record => record?.fields?.Name
+  ),
+  ['Evan']
+)
 
 assert.equal(calendarMonthKey('2027-01-15'), '2027-01')
 assert.equal(shiftCalendarMonth('2026-12', 1), '2027-01')
