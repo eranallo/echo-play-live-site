@@ -21,6 +21,12 @@ function backHref(searchParams) {
   const person = searchParams?.person
   if (from === 'member' && person) return `/portal/member/${person}`
   if (from === 'crew' && person) return `/portal/crew/${person}`
+  if (from === 'calendar') {
+    const month = /^\d{4}-(0[1-9]|1[0-2])$/.test(searchParams?.month || '')
+      ? `?month=${encodeURIComponent(searchParams.month)}`
+      : ''
+    return `/portal/calendar${month}`
+  }
   return '/portal'
 }
 
@@ -87,7 +93,9 @@ export default async function PortalShowPage({ params, searchParams }) {
     : show.ticketPrice || (show.ticketUrl ? 'Ticket link available' : 'TBD')
   const runContext = context.personType && context.personId
     ? `?from=${encodeURIComponent(context.personType)}&person=${encodeURIComponent(context.personId)}`
-    : ''
+    : resolvedSearch?.from === 'calendar'
+      ? `?from=calendar${/^\d{4}-(0[1-9]|1[0-2])$/.test(resolvedSearch?.month || '') ? `&month=${encodeURIComponent(resolvedSearch.month)}` : ''}`
+      : ''
   const runOfShowHref = `/portal/shows/${show.id}/run-of-show${runContext}`
   const pdfHref = `/api/portal/shows/${show.id}/run-of-show.pdf`
 

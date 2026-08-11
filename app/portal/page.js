@@ -48,6 +48,18 @@ export default async function PortalPage() {
         <RoleCard title="Crew" count={directory.crew.length} body="Find your assignments, call times, notes, and venue details." href="#crew" />
       </div>
 
+      <a className="portal-calendar-cta" href="/portal/calendar">
+        <div>
+          <span>Company-wide schedule</span>
+          <strong>Master Calendar</strong>
+          <p>See every show across every band, venue, month, and year.</p>
+        </div>
+        <div className="portal-calendar-cta-count">
+          <strong>{directory.counts.upcomingShows}</strong>
+          <span>upcoming</span>
+        </div>
+      </a>
+
       <Card accent>
         <div className="portal-card-heading">How to use this</div>
         <div className="portal-steps">

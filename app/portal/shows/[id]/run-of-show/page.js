@@ -12,6 +12,12 @@ function backHref(searchParams, showId) {
   if (['member', 'crew'].includes(from) && person) {
     return `/portal/shows/${showId}?from=${encodeURIComponent(from)}&person=${encodeURIComponent(person)}`
   }
+  if (from === 'calendar') {
+    const month = /^\d{4}-(0[1-9]|1[0-2])$/.test(searchParams?.month || '')
+      ? `&month=${encodeURIComponent(searchParams.month)}`
+      : ''
+    return `/portal/shows/${showId}?from=calendar${month}`
+  }
   return `/portal/shows/${showId}`
 }
 
