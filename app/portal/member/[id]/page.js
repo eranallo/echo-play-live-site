@@ -1,5 +1,6 @@
 import AvailabilityForm from '@/components/portal/AvailabilityForm'
 import {
+  AssignmentShowList,
   BlackoutList,
   Card,
   EmptyState,
@@ -9,6 +10,7 @@ import {
   Pill,
   PortalShell,
   PortalTopBar,
+  PreviousShows,
   SectionLabel,
   ShowCard,
 } from '@/components/portal/PortalUI'
@@ -70,18 +72,13 @@ export default async function MemberPortalPage({ params }) {
       )}
 
       <SectionLabel>Upcoming Shows</SectionLabel>
-      <div className="portal-stagger" style={{ display: 'grid', gap: 12 }}>
-        {portal.shows.length > 0 ? portal.shows.map(show => (
-          <ShowCard
-            key={show.id}
-            show={show}
-            roleLabels={show.roles}
-            href={`/portal/shows/${show.id}?from=member&person=${person.id}`}
-          />
-        )) : (
+      {portal.shows.length > 0 ? (
+        <AssignmentShowList shows={portal.shows} personType="member" personId={person.id} />
+      ) : (
           <EmptyState title="No shows found" body="Assigned shows will appear here once they are attached to your member record." />
-        )}
-      </div>
+      )}
+
+      <PreviousShows shows={portal.previousShows} personType="member" personId={person.id} />
 
       <SectionLabel>Blackout Dates</SectionLabel>
       <Card>
