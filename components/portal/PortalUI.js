@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { groupShowsByYear } from '@/lib/portal/showNavigation.mjs'
 
 export function PortalShell({ children, active = 'portal', showDock = true }) {
   return (
@@ -123,10 +124,12 @@ export function MetricGrid({ items }) {
   )
 }
 
-export function ShowCard({ show, href, roleLabels = [] }) {
+export function ShowCard({ show, href, roleLabels = [], historical = false }) {
   const days = show.daysUntil
-  const dayLabel = days === null ? '—' : days === 0 ? 'Today' : `${days}d`
-  const urgent = days !== null && days <= 7
+  const isPast = historical || (days !== null && days < 0)
+  const dayLabel = isPast ? 'Past' : days === null ? 'TBD' : days === 0 ? 'Today' : `${days}d`
+  const daySubLabel = isPast ? 'show' : days === 0 ? 'show day' : days === null ? 'date' : 'away'
+  const urgent = !isPast && days !== null && days <= 7
   const trailerLoadIn = show.trailerLoadIn || show.raw?.['Trailer Load-In Time']
   const query = href?.includes('?') ? href.slice(href.indexOf('?')) : ''
   const runOfShowHref = `/portal/shows/${show.id}/run-of-show${query}`
@@ -149,7 +152,7 @@ export function ShowCard({ show, href, roleLabels = [] }) {
           <div className="portal-countdown">
             <div>
               <strong>{dayLabel}</strong>
-              <span>{days === 0 ? 'show day' : 'away'}</span>
+              <span>{daySubLabel}</span>
             </div>
           </div>
         </div>
@@ -161,7 +164,7 @@ export function ShowCard({ show, href, roleLabels = [] }) {
           <TimeBlock label="End" value={show.end} />
         </div>
         {show.venueAddress && <div className="portal-location"><span>📍</span><span>{show.venueAddress}</span></div>}
-        {(acknowledgment || readiness) && (
+        {!isPast && (acknowledgment || readiness) && (
           <div className="portal-show-status">
             {acknowledgment && (
               <Pill tone={acknowledgment.current ? 'success' : 'warning'}>
@@ -179,6 +182,66 @@ export function ShowCard({ show, href, roleLabels = [] }) {
         <a href={runOfShowHref}>View Run of Show</a>
       </div>
     </Card>
+  )
+}
+
+function assignmentHref(showId, personType, personId) {
+  return `/portal/shows/${showId}?from=${personType}&person=${personId}`
+}
+
+export function AssignmentShowList({ shows = [], personType, personId, historical = false }) {
+  return (
+    <div className="portal-show-year-groups">
+      {groupShowsByYear(shows).map(group => {
+        const yearId = `portal-show-year-${personType}-${personId}-${group.year}`.replace(/[^a-zA-Z0-9-_]/g, '-').toLowerCase()
+
+        return (
+          <section className="portal-show-year" key={group.year} aria-labelledby={yearId}>
+            <div className="portal-show-year-heading">
+              <h2 id={yearId}>{group.year}</h2>
+              <span>{group.shows.length} {group.shows.length === 1 ? 'show' : 'shows'}</span>
+            </div>
+            <div className="portal-stagger portal-show-year-list">
+              {group.shows.map(show => (
+                <ShowCard
+                  key={show.id}
+                  show={show}
+                  roleLabels={show.roles}
+                  href={assignmentHref(show.id, personType, personId)}
+                  historical={historical}
+                />
+              ))}
+            </div>
+          </section>
+        )
+      })}
+    </div>
+  )
+}
+
+export function PreviousShows({ shows = [], personType, personId, noun = 'shows' }) {
+  if (!shows.length) return null
+
+  return (
+    <>
+      <SectionLabel>Show History</SectionLabel>
+      <details className="portal-show-history">
+        <summary>
+          <span>
+            <strong>Previous {noun}</strong>
+            <small>{shows.length} {shows.length === 1 ? 'past show' : 'past shows'}</small>
+          </span>
+          <span className="portal-history-toggle" aria-hidden="true">
+            <span className="portal-history-show">Show</span>
+            <span className="portal-history-hide">Hide</span>
+            <span className="portal-history-chevron">⌄</span>
+          </span>
+        </summary>
+        <div className="portal-show-history-body">
+          <AssignmentShowList shows={shows} personType={personType} personId={personId} historical />
+        </div>
+      </details>
+    </>
   )
 }
 

@@ -1,5 +1,6 @@
 import AvailabilityForm from '@/components/portal/AvailabilityForm'
 import {
+  AssignmentShowList,
   BlackoutList,
   Card,
   EmptyState,
@@ -9,6 +10,7 @@ import {
   Pill,
   PortalShell,
   PortalTopBar,
+  PreviousShows,
   SectionLabel,
   ShowCard,
 } from '@/components/portal/PortalUI'
@@ -66,13 +68,13 @@ export default async function CrewPortalPage({ params }) {
       )}
 
       <SectionLabel>Upcoming Assignments</SectionLabel>
-      <div className="portal-stagger" style={{ display: 'grid', gap: 12 }}>
-        {portal.shows.length > 0 ? portal.shows.map(show => (
-          <ShowCard key={show.id} show={show} roleLabels={show.roles} href={`/portal/shows/${show.id}?from=crew&person=${person.id}`} />
-        )) : (
+      {portal.shows.length > 0 ? (
+        <AssignmentShowList shows={portal.shows} personType="crew" personId={person.id} />
+      ) : (
           <EmptyState title="No assignments found" body="Crew assignments will appear here once they are attached to your crew record." />
-        )}
-      </div>
+      )}
+
+      <PreviousShows shows={portal.previousShows} personType="crew" personId={person.id} noun="assignments" />
 
       <SectionLabel>Unavailable Dates</SectionLabel>
       <Card>
