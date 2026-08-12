@@ -26,6 +26,7 @@
 [data-reveal="headline"].is-visible > span:nth-child(3) { animation-delay: .18s; }
 
 .show-rail {
+  --scroll-progress: 0;
   position: fixed;
   z-index: 800;
   top: 50%;

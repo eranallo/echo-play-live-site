@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Nav from '@/components/Nav'
@@ -51,33 +51,6 @@ function useActiveSection() {
   return active
 }
 
-function useScrollProgress() {
-  const [progress, setProgress] = useState(0)
-
-  useEffect(() => {
-    let frame
-    const update = () => {
-      const distance = document.documentElement.scrollHeight - window.innerHeight
-      setProgress(distance > 0 ? Math.min(window.scrollY / distance, 1) : 0)
-      frame = undefined
-    }
-    const onScroll = () => {
-      if (!frame) frame = window.requestAnimationFrame(update)
-    }
-
-    update()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-      if (frame) window.cancelAnimationFrame(frame)
-    }
-  }, [])
-
-  return progress
-}
-
 function useScrollReveal(motionOff) {
   useEffect(() => {
     const nodes = [...document.querySelectorAll('[data-reveal]')]
@@ -99,8 +72,32 @@ function useScrollReveal(motionOff) {
   }, [motionOff])
 }
 
-function ExperienceRail({ active, motionOff, setMotionOff, progress }) {
-  return <aside className="show-rail" aria-label="Homepage sections" style={{ '--scroll-progress': progress }}>
+function ExperienceRail({ active, motionOff, setMotionOff }) {
+  const railRef = useRef(null)
+
+  useEffect(() => {
+    let frame
+    const update = () => {
+      const distance = document.documentElement.scrollHeight - window.innerHeight
+      const progress = distance > 0 ? Math.min(window.scrollY / distance, 1) : 0
+      railRef.current?.style.setProperty('--scroll-progress', progress)
+      frame = undefined
+    }
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update)
+    }
+
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
+  }, [])
+
+  return <aside ref={railRef} className="show-rail" aria-label="Homepage sections">
     <Link href="#top" className="show-rail__mark" aria-label="Back to the opening">EPL</Link>
     <nav>
       {sections.map((section, index) => <Link key={section.id} href={`#${section.id}`} className={active === section.id ? 'is-active' : ''} aria-current={active === section.id ? 'true' : undefined}>
@@ -233,14 +230,13 @@ function BookingSection({ featured }) {
 
 export default function HomeExperience({ shows = [] }) {
   const active = useActiveSection()
-  const progress = useScrollProgress()
   const [motionOff, setMotionOff] = useState(false)
   const featured = useMemo(() => bandsList.find(band => band.slug === 'so-long-goodnight') || bandsList[0], [])
   useScrollReveal(motionOff)
 
   return <>
     <Nav />
-    <ExperienceRail active={active} motionOff={motionOff} setMotionOff={setMotionOff} progress={progress} />
+    <ExperienceRail active={active} motionOff={motionOff} setMotionOff={setMotionOff} />
     <main className={`live-home ${motionOff ? 'motion-off' : ''}`} id="main-content">
       <Hero featured={featured} nextShow={shows[0]} />
       <ExperienceSection />
