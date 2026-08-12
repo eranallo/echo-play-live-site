@@ -70,7 +70,7 @@ export default async function RunOfShowPage({ params, searchParams }) {
 
         <header className="portal-run-header">
           <div className="portal-eyebrow">Echo Play Live • Run of Show</div>
-          <h1>{show.venueName}</h1>
+          <h1 data-echo={show.venueName}>{show.venueName}</h1>
           <p>{bands}</p>
           <div className="portal-run-date">{show.dateLabel}</div>
         </header>

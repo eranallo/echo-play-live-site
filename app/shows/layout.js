@@ -1,3 +1,5 @@
+import EditorialRoute from '@/components/EditorialRoute'
+
 const SITE_URL = 'https://echoplay.live'
 
 export const metadata = {
@@ -17,5 +19,5 @@ export const metadata = {
 }
 
 export default function ShowsLayout({ children }) {
-  return children
+  return <EditorialRoute variant="shows">{children}</EditorialRoute>
 }

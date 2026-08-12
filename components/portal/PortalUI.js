@@ -14,10 +14,10 @@ export function PortalShell({ children, active = 'portal', showDock = true, wide
 
 export function PortalDock({ active = 'portal' }) {
   const items = [
-    { key: 'portal', href: '/portal', icon: '⌂', label: 'Portal' },
-    { key: 'calendar', href: '/portal/calendar', icon: '▦', label: 'Calendar' },
-    { key: 'site', href: '/', icon: '★', label: 'Site' },
-    { key: 'admin', href: '/admin', icon: '⚙', label: 'Admin' },
+    { key: 'portal', href: '/portal', icon: '01', label: 'Portal' },
+    { key: 'calendar', href: '/portal/calendar', icon: '02', label: 'Calendar' },
+    { key: 'site', href: '/', icon: '03', label: 'Site' },
+    { key: 'admin', href: '/admin', icon: '04', label: 'Admin' },
   ]
 
   return (
@@ -36,7 +36,7 @@ export function PortalTopBar({ title, subtitle, backHref = '/portal' }) {
   return (
     <div className="portal-topbar">
       <a className="portal-back" href={backHref} aria-label="Go back">
-        ‹
+        ←
       </a>
       <div className="portal-topbar-title">
         <strong>{title}</strong>
@@ -54,7 +54,7 @@ export function PortalHero({ eyebrow, title, subtitle, children }) {
         <Image className="portal-hero-logo" src="/logo.png" alt="Echo Play Live" width={68} height={68} priority />
       </div>
       {eyebrow && <div className="portal-eyebrow">{eyebrow}</div>}
-      <h1 className="portal-hero-title">{title}</h1>
+      <h1 className="portal-hero-title" data-echo={title}>{title}</h1>
       {subtitle && <p className="portal-hero-subtitle">{subtitle}</p>}
       {children}
     </section>
@@ -113,9 +113,9 @@ export function Pill({ children, accent = false, tone = '' }) {
 export function MetricGrid({ items }) {
   return (
     <div className="portal-metric-grid portal-stagger">
-      {items.map(item => (
+      {items.map((item, index) => (
         <Card key={item.label} href={item.href} accent={item.accent}>
-          <div className="portal-metric-icon">{item.icon}</div>
+          <div className="portal-metric-icon">{String(index + 1).padStart(2, '0')}</div>
           <div className="portal-metric-value">{item.value}</div>
           <div className="portal-metric-label">{item.label}</div>
           <div className="portal-metric-sub">{item.sub}</div>
@@ -164,7 +164,7 @@ export function ShowCard({ show, href, roleLabels = [], historical = false }) {
           <TimeBlock label="Start" value={show.start} />
           <TimeBlock label="End" value={show.end} />
         </div>
-        {show.venueAddress && <div className="portal-location"><span>📍</span><span>{show.venueAddress}</span></div>}
+        {show.venueAddress && <div className="portal-location"><span>Venue /</span><span>{show.venueAddress}</span></div>}
         {!isPast && (acknowledgment || readiness) && (
           <div className="portal-show-status">
             {acknowledgment && (
@@ -365,17 +365,17 @@ export function PersonHeader({ person, type = 'Member' }) {
   const initials = person.name.split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase()
 
   return (
-    <section style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24 }}>
+    <section className="portal-person-header">
       {person.photo ? (
-        <Image className="portal-avatar" src={person.photo} alt="" width={64} height={64} unoptimized style={{ width: 64, height: 64, borderRadius: 22 }} />
+        <Image className="portal-avatar portal-person-header-avatar" src={person.photo} alt="" width={76} height={76} unoptimized />
       ) : (
-        <div className="portal-avatar-fallback" style={{ width: 64, height: 64, borderRadius: 22 }}>
+        <div className="portal-avatar-fallback portal-person-header-avatar">
           {initials}
         </div>
       )}
-      <div style={{ minWidth: 0 }}>
+      <div className="portal-person-header-copy">
         <div className="portal-eyebrow">{type}</div>
-        <h1 style={{ fontFamily: 'var(--ff-display)', fontSize: 52, lineHeight: 0.86, letterSpacing: 'var(--ls-display)', margin: '6px 0 0' }}>{person.name}</h1>
+        <h1 data-echo={person.name}>{person.name}</h1>
         {person.role && <div style={{ marginTop: 10 }}><Pill accent>{person.role}</Pill></div>}
       </div>
     </section>

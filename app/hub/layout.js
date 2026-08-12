@@ -1,5 +1,7 @@
 // Phase 34 — EPL Hub QR landing metadata. noindex to avoid competing with homepage.
 
+import EditorialRoute from '@/components/EditorialRoute'
+
 const SITE_URL = 'https://echoplay.live'
 
 export const metadata = {
@@ -15,5 +17,5 @@ export const metadata = {
 }
 
 export default function HubLayout({ children }) {
-  return children
+  return <EditorialRoute variant="landing">{children}</EditorialRoute>
 }

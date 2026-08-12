@@ -7,194 +7,242 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { bandsList } from '@/lib/bands'
 import './HomeExperience.css'
-import './CinematicIntro.css'
-import './HomepageShows.css'
 
-const clamp = value => Math.max(0, Math.min(1, value))
-const windowed = (progress, start, peak, end) => {
-  if (progress <= start || progress >= end) return 0
-  if (progress < peak) return clamp((progress - start) / (peak - start))
-  return clamp(1 - (progress - peak) / (end - peak))
+const sections = [
+  { id: 'top', label: 'Opening' },
+  { id: 'experience', label: 'The feeling' },
+  { id: 'roster', label: 'The roster' },
+  { id: 'shows', label: 'The calendar' },
+  { id: 'book', label: 'Book the night' },
+]
+
+const pad = value => String(value + 1).padStart(2, '0')
+
+function formatTime(value) {
+  if (!value || value === 'TBD' || value === 'Time TBD') return 'Time TBD'
+  const text = String(value).trim()
+  const parsed = new Date(text)
+  if (text.includes('T') && !Number.isNaN(parsed.getTime())) {
+    return new Intl.DateTimeFormat('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZone: 'America/Chicago',
+    }).format(parsed)
+  }
+  return text
 }
 
-function useJourneyController(ref) {
-  const [state, setState] = useState({ progress: 0, phase: 'before' })
+function useActiveSection() {
+  const [active, setActive] = useState('top')
+
   useEffect(() => {
-    let raf = 0
-    const update = () => {
-      raf = 0
-      const node = ref.current
-      if (!node) return
-      const rect = node.getBoundingClientRect()
-      const viewport = window.visualViewport?.height || window.innerHeight
-      const distance = Math.max(node.offsetHeight - viewport, 1)
-      const progress = clamp(-rect.top / distance)
-      const phase = rect.top > 0 ? 'before' : rect.bottom > viewport ? 'pinned' : 'after'
-      setState(previous => Math.abs(previous.progress - progress) < .001 && previous.phase === phase ? previous : { progress, phase })
+    const nodes = sections.map(section => document.getElementById(section.id)).filter(Boolean)
+    const observer = new IntersectionObserver(entries => {
+      const visible = entries
+        .filter(entry => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+      if (visible[0]) setActive(visible[0].target.id)
+    }, { rootMargin: '-28% 0px -48% 0px', threshold: [0, .15, .45] })
+
+    nodes.forEach(node => observer.observe(node))
+    return () => observer.disconnect()
+  }, [])
+
+  return active
+}
+
+function useScrollReveal(motionOff) {
+  useEffect(() => {
+    const nodes = [...document.querySelectorAll('[data-reveal]')]
+    if (motionOff) {
+      nodes.forEach(node => node.classList.add('is-visible'))
+      return undefined
     }
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return
+        entry.target.classList.add('is-visible')
+        observer.unobserve(entry.target)
+      })
+    }, { rootMargin: '0px 0px -12% 0px', threshold: .08 })
+
+    nodes.forEach(node => observer.observe(node))
+    return () => observer.disconnect()
+  }, [motionOff])
+}
+
+function ExperienceRail({ active, motionOff, setMotionOff }) {
+  const railRef = useRef(null)
+
+  useEffect(() => {
+    let frame
+    const update = () => {
+      const distance = document.documentElement.scrollHeight - window.innerHeight
+      const progress = distance > 0 ? Math.min(window.scrollY / distance, 1) : 0
+      railRef.current?.style.setProperty('--scroll-progress', progress)
+      frame = undefined
+    }
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update)
+    }
+
     update()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
-    window.visualViewport?.addEventListener('resize', onScroll)
     return () => {
-      cancelAnimationFrame(raf)
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
-      window.visualViewport?.removeEventListener('resize', onScroll)
+      if (frame) window.cancelAnimationFrame(frame)
     }
-  }, [ref])
-  return state
+  }, [])
+
+  return <aside ref={railRef} className="show-rail" aria-label="Homepage sections">
+    <Link href="#top" className="show-rail__mark" aria-label="Back to the opening">EPL</Link>
+    <nav>
+      {sections.map((section, index) => <Link key={section.id} href={`#${section.id}`} className={active === section.id ? 'is-active' : ''} aria-current={active === section.id ? 'true' : undefined}>
+        <i />
+        <span>{pad(index)} / {section.label}</span>
+      </Link>)}
+    </nav>
+    <button type="button" onClick={() => setMotionOff(value => !value)} aria-pressed={motionOff}>Motion {motionOff ? 'off' : 'on'}</button>
+  </aside>
 }
 
-function MontageFrame({ band, index, progress }) {
-  const image = band?.featurePhoto || band?.heroPhoto || band?.crowdPhoto
-  const windows = [
-    [.09, .24, .55],
-    [.18, .36, .64],
-    [.30, .49, .72],
-    [.42, .61, .78],
-  ]
-  const [start, peak, end] = windows[index]
-  const visibility = windowed(progress, start, peak, end)
-  const enter = clamp((progress - start) / Math.max(peak - start, .001))
-  const exit = clamp((progress - peak) / Math.max(end - peak, .001))
+function Hero({ featured, nextShow }) {
+  const image = featured?.heroPhoto || featured?.featurePhoto
 
-  return <div
-    className={`montage-frame montage-frame-${index + 1}`}
-    style={{ '--visible': visibility, '--enter': enter, '--exit': exit, '--index': index }}
-  >
-    <div className="montage-image-shell">
-      {image && <Image
-        src={image}
-        alt=""
-        fill
-        priority={index < 2}
-        sizes="(max-width: 740px) 120vw, 72vw"
-        style={{ objectFit: 'cover', objectPosition: band?.heroObjectPosition || 'center' }}
-      />}
-      <div className="montage-frame-grade" />
+  return <section className="show-hero" id="top" aria-labelledby="home-title">
+    <div className="show-hero__image">
+      {image && <Image src={image} alt={`${featured.name} performing for a live crowd`} fill priority sizes="100vw" style={{ objectFit: 'cover', objectPosition: 'center' }} />}
     </div>
-    <div className="montage-smoke-edge montage-smoke-edge-a" />
-    <div className="montage-smoke-edge montage-smoke-edge-b" />
-  </div>
+    <div className="show-hero__wash" />
+    <div className="show-light-sweep" aria-hidden="true" />
+    <div className="show-hero__meta"><span>Independent live entertainment</span><span>Fort Worth, Texas / Est. 2023</span></div>
+    <div className="show-hero__content">
+      <div className="show-hero__brand">Echo Play Live</div>
+      <h1 id="home-title">
+        <span className="show-echo-line" data-echo="The songs">The songs</span>
+        <span className="show-echo-line" data-echo="still know">still know</span>
+        <span className="show-echo-line" data-echo="every word."><em>every</em> word.</span>
+      </h1>
+      <p>Live tribute and era-defining cover shows built for the moment a room stops watching and starts singing.</p>
+      <div className="show-hero__actions"><Link href="#shows">Find your next show <b>↓</b></Link><Link href="/contact">Book a band <b>↗</b></Link></div>
+    </div>
+    <div className="show-hero__cue"><span>Scroll to enter the room</span><i /></div>
+    {nextShow && <Link className="next-up" href="#shows"><span>Next up</span><strong>{nextShow.dateLabel}</strong><b>{nextShow.bandName}</b><em>{nextShow.venueName || 'Venue TBD'}</em><i>↘</i></Link>}
+  </section>
 }
 
-function CinematicIntro({ progress, bands }) {
-  const montage = clamp((progress - .06) / .62)
-  const collapse = clamp((progress - .68) / .13)
-  const logo = clamp((progress - .79) / .14)
-  const blackout = clamp(1 - progress / .07)
-  const cue = clamp(1 - progress / .07)
-
-  return <div
-    className="cinematic-intro"
-    style={{ '--progress': progress, '--montage': montage, '--collapse': collapse, '--logo': logo, '--blackout': blackout }}
-    aria-hidden="true"
-  >
-    <div className="cinematic-base" />
-    <div className="montage-world">
-      <div className="montage-backdrop" />
-      {bands.slice(0, 4).map((band, index) => <MontageFrame key={band.slug} band={band} index={index} progress={progress} />)}
-      <div className="montage-glow montage-glow-left" />
-      <div className="montage-glow montage-glow-right" />
-      <div className="montage-smoke montage-smoke-1" />
-      <div className="montage-smoke montage-smoke-2" />
-      <div className="montage-smoke montage-smoke-3" />
-      <div className="montage-smoke montage-smoke-4" />
-      <div className="montage-flare" />
+function ExperienceSection() {
+  return <section className="show-experience" id="experience">
+    <div className="show-section-index" data-reveal><span>01</span><p>The feeling</p></div>
+    <div className="show-experience__statement">
+      <span className="show-kicker" data-reveal>This is not background music.</span>
+      <h2 data-reveal="headline"><span>The room</span><span><i>remembers.</i></span></h2>
+      <p data-reveal>It starts with four notes. Someone turns toward the stage. Someone else is already singing. Then the whole room becomes one voice.</p>
     </div>
-    <div className="cinematic-logo-stage">
-      <div className="cinematic-logo-glow" />
-      <div className="cinematic-logo"><Image src="/logo.png" alt="" fill sizes="(max-width:740px) 64vw, 34vw" style={{ objectFit:'contain' }} /></div>
+    <div className="show-experience__proof" data-reveal>
+      <blockquote>“The best live shows do not recreate the past. They make it present again.”</blockquote>
+      <dl>
+        <div><dt>100+</dt><dd>Songs ready for the room</dd></div>
+        <div><dt>3 hrs</dt><dd>Full-night experiences</dd></div>
+        <div><dt>DFW+</dt><dd>Texas and regional dates</dd></div>
+      </dl>
     </div>
-    <div className="cinematic-blackout" />
-    <div className="cinematic-grain" />
-    <div className="cinematic-vignette" />
-    <div className="cinematic-cue" style={{ opacity: cue }}><span>Scroll to begin</span><i /></div>
-  </div>
+    <div className="show-experience__ticker" aria-hidden="true"><div>THE FIRST NOTE · THE WHOLE ROOM · THE LAST CHORUS · THE DRIVE HOME · THE ECHO AFTER · THE FIRST NOTE · THE WHOLE ROOM · THE LAST CHORUS · THE DRIVE HOME · THE ECHO AFTER ·</div></div>
+  </section>
 }
 
-function CinematicJourney({ bands }) {
-  const journeyRef = useRef(null)
-  const { progress, phase } = useJourneyController(journeyRef)
+function RosterSection() {
+  const [activeSlug, setActiveSlug] = useState(bandsList[0]?.slug)
+  const activeBand = bandsList.find(band => band.slug === activeSlug) || bandsList[0]
+  const image = activeBand?.featurePhoto || activeBand?.heroPhoto || activeBand?.crowdPhoto
 
-  return <section className="ep-journey cinematic-journey" ref={journeyRef}>
-    <div className={`ep-sticky ep-pin-${phase}`}>
-      <CinematicIntro progress={progress} bands={bands} />
-      <div className="ep-progress" aria-hidden="true"><i style={{ transform:`scaleY(${progress})` }} /></div>
+  return <section className="show-roster" id="roster">
+    <header className="show-section-header">
+      <div className="show-section-index" data-reveal><span>02</span><p>The roster</p></div>
+      <div><span className="show-kicker" data-reveal>One company. Distinct worlds.</span><h2 data-reveal="headline"><span>Choose the</span><span>night you want.</span></h2></div>
+      <p data-reveal>Every act has its own visual identity, catalog, and crowd. The standard underneath them never changes.</p>
+    </header>
+    <div className="show-roster__stage" style={{ '--band': activeBand.color || '#d4a017' }} data-reveal>
+      <div className="show-roster__image" key={`image-${activeBand.slug}`}>{image && <Image src={image} alt={`${activeBand.name} performing live`} fill sizes="(max-width: 820px) 100vw, 68vw" style={{ objectFit: 'cover', objectPosition: activeBand.heroObjectPosition || 'center' }} />}</div>
+      <div className="show-roster__echoes" key={`echo-${activeBand.slug}`} aria-hidden="true"><span>{activeBand.shortName || activeBand.name}</span><span>{activeBand.shortName || activeBand.name}</span><span>{activeBand.shortName || activeBand.name}</span></div>
+      <div className="show-roster__copy" aria-live="polite">
+        <span>{activeBand.era}</span>
+        <h3>{activeBand.name}</h3>
+        <p>{activeBand.tagline}</p>
+        <p className="show-roster__genres">{activeBand.genre?.slice(0, 3).join(' / ')}</p>
+        <Link href={`/bands/${activeBand.slug}`}>Enter this world <b>↗</b></Link>
+      </div>
+    </div>
+    <div className="show-roster__selector" role="list" aria-label="Select a band">
+      {bandsList.map((band, index) => <button key={band.slug} type="button" onClick={() => setActiveSlug(band.slug)} className={activeBand.slug === band.slug ? 'is-active' : ''} style={{ '--band': band.color || '#d4a017' }} aria-pressed={activeBand.slug === band.slug}>
+        <span>{pad(index)}</span><strong>{band.name}</strong><em>{band.era}</em><i>↗</i>
+      </button>)}
     </div>
   </section>
 }
 
-function BandCard({ band, index }) {
-  const image = band.featurePhoto || band.heroPhoto || band.crowdPhoto
-  return <Link href={`/bands/${band.slug}`} className="ep-band-card" style={{ '--accent':band.color || '#d4a017' }}>
-    <div className="ep-band-image">{image && <Image src={image} alt={`${band.name} performing live`} fill sizes="(max-width:760px) 82vw, 30vw" style={{ objectFit:'cover', objectPosition:band.heroObjectPosition || 'center' }} />}</div>
-    <div className="ep-band-top"><span>{String(index + 1).padStart(2,'0')}</span><span>{band.genre?.[0] || 'Live'}</span></div>
-    <div className="ep-band-copy"><small>Echo Play Live</small><h3>{band.name}</h3><b>Explore the band →</b></div>
-  </Link>
-}
-
-function showTime(value) {
-  if (!value || value === 'Time TBD' || value === 'TBD') return ''
-  const text = String(value).trim()
-  const date = new Date(text)
-  if (text.includes('T') && !Number.isNaN(date.getTime())) return new Intl.DateTimeFormat('en-US', { hour:'numeric', minute:'2-digit', timeZone:'America/Chicago' }).format(date)
-  return text
-}
-
-function showDetails(show) {
-  const ticket = show.ticketLabel ? String(show.ticketLabel).trim() : ''
-  const status = show.publicStatus || ''
-  if (!ticket) return status
-  if (!status || ticket.toLowerCase() === status.toLowerCase()) return ticket
-  return `${ticket} · ${status}`
-}
-
-function HomeShowRow({ show, index }) {
-  const color = show.bandColor || '#D4A017'
-  const time = showTime(show.startTime)
-  const support = Array.isArray(show.supportNames) && show.supportNames.length ? show.supportNames.join(' + ') : ''
-  const dateParts = show.dateLabel?.replace(/,/g, '').split(' ') || []
-  const day = show.dateLabel?.split(',')[0] || 'Date'
-  const date = dateParts.slice(1).join(' ') || 'TBD'
+function ShowRow({ show, index }) {
   const band = bandsList.find(item => item.slug === show.bandSlug) || bandsList.find(item => item.name === show.bandName)
-  const image = band?.heroPhoto || band?.featurePhoto || band?.crowdPhoto
+  const image = band?.featurePhoto || band?.heroPhoto
 
-  return <article className="home-show-row" style={{ '--accent':color, '--row':index }}>
-    {image && <div className="home-show-bg" aria-hidden="true">
-      <Image src={image} alt="" fill sizes="(max-width:900px) 100vw, 65vw" style={{ objectFit:'cover', objectPosition:band?.heroObjectPosition || 'center' }} />
-      <div className="home-show-bg-grade" />
-    </div>}
-    <div className="home-show-date"><span>{day}</span><strong>{date}</strong>{time && <em>{time}</em>}</div>
-    <div className="home-show-main">
-      <div className="home-show-billing">{show.bandSlug ? <Link href={`/bands/${show.bandSlug}`}>{show.bandName}</Link> : <span>{show.bandName}</span>}{support && <small>with {support}</small>}</div>
-      <h3>{show.venueName || 'Venue announcement coming soon'}</h3>
-      <p>{showDetails(show)}</p>
-    </div>
-    <div className="home-show-action">{show.ticketUrl ? <a href={show.ticketUrl} target="_blank" rel="noopener noreferrer">Tickets</a> : <Link href="/shows">Details</Link>}</div>
+  return <article className="calendar-row" style={{ '--band': show.bandColor || band?.color || '#d4a017', '--row-delay': `${Math.min(index * 70, 280)}ms` }} data-reveal="row">
+    <span className="calendar-row__number">({pad(index)})</span>
+    <div className="calendar-row__date"><strong>{show.dateLabel || 'Date TBD'}</strong><span>{formatTime(show.startTime)}</span></div>
+    <div className="calendar-row__bill"><small>{show.supportNames?.length ? `with ${show.supportNames.join(' + ')}` : 'Echo Play Live presents'}</small><h3>{show.bandName}</h3><p>{[show.venueName || 'Venue announcement coming soon', show.ticketLabel].filter(Boolean).join(' · ')}</p></div>
+    <div className="calendar-row__image" aria-hidden="true">{image && <Image src={image} alt="" fill sizes="320px" style={{ objectFit: 'cover', objectPosition: band?.heroObjectPosition || 'center' }} />}</div>
+    <div className="calendar-row__action">{show.ticketUrl ? <a href={show.ticketUrl} target="_blank" rel="noopener noreferrer">Tickets ↗</a> : <Link href="/shows">Details →</Link>}</div>
   </article>
 }
 
+function ShowsSection({ shows }) {
+  const upcoming = shows.slice(0, 5)
+
+  return <section className="show-calendar" id="shows">
+    <header className="show-section-header show-section-header--calendar">
+      <div className="show-section-index" data-reveal><span>03</span><p>The calendar</p></div>
+      <div><span className="show-kicker" data-reveal>Pick a date. Bring your voice.</span><h2 data-reveal="headline"><span>Go hear</span><span><i>it live.</i></span></h2></div>
+      <p data-reveal>Real announced dates, updated from the same calendar our artists and crew use.</p>
+    </header>
+    <div className="show-calendar__list">{upcoming.length ? upcoming.map((show, index) => <ShowRow key={show.id || index} show={show} index={index} />) : <div className="show-calendar__empty"><strong>The room is quiet for a minute.</strong><span>New dates are on the way.</span></div>}</div>
+    <Link className="show-wide-link" href="/shows" data-reveal><span>See the complete calendar</span><b>All shows ↗</b></Link>
+  </section>
+}
+
+function BookingSection({ featured }) {
+  const image = featured?.heroPhoto || featured?.crowdPhoto || featured?.featurePhoto
+
+  return <section className="show-booking" id="book">
+    <div className="show-booking__image">{image && <Image src={image} alt="An Echo Play Live crowd during a performance" fill sizes="100vw" style={{ objectFit: 'cover', objectPosition: 'center' }} />}</div>
+    <div className="show-light-sweep show-light-sweep--booking" aria-hidden="true" />
+    <div className="show-booking__content">
+      <div className="show-section-index" data-reveal><span>04</span><p>Book the night</p></div>
+      <span className="show-kicker" data-reveal>Venues · festivals · private events</span>
+      <h2 data-reveal="headline"><span className="show-echo-line" data-echo="Give the room">Give the room</span><span>a reason to</span><span className="show-echo-line" data-echo="show up."><i>show up.</i></span></h2>
+      <p data-reveal>Tell us the date, city, room, and crowd. We will match the right act and help shape a night people actually remember.</p>
+      <div data-reveal><Link href="/contact">Start a booking <b>↗</b></Link><Link href="/press">Press kits <b>→</b></Link></div>
+    </div>
+    <div className="show-booking__footer"><span>Echo Play Live / Fort Worth, TX</span><span>Quality · Hustle · Love for the show</span></div>
+  </section>
+}
+
 export default function HomeExperience({ shows = [] }) {
-  const featured = useMemo(() => bandsList.find(b => b.slug === 'so-long-goodnight') || bandsList[0], [])
-  const introBands = useMemo(() => ['so-long-goodnight','the-dick-beldings','jambi','elite'].map(slug => bandsList.find(b => b.slug === slug)).filter(Boolean), [])
-  const heroImage = featured?.heroPhoto || featured?.featurePhoto || featured?.crowdPhoto
-  const upcoming = shows.slice(0,4)
+  const active = useActiveSection()
+  const [motionOff, setMotionOff] = useState(false)
+  const featured = useMemo(() => bandsList.find(band => band.slug === 'so-long-goodnight') || bandsList[0], [])
+  useScrollReveal(motionOff)
+
   return <>
     <Nav />
-    <main className="ep-home" id="main-content">
-      <h1 className="ep-sr-only">Echo Play Live — DFW tribute and cover band management</h1>
-      <CinematicJourney bands={introBands} />
-      <section className="ep-ticker"><div>LIVE MUSIC · REAL NOSTALGIA · ECHO PLAY LIVE · LIVE MUSIC · REAL NOSTALGIA · ECHO PLAY LIVE ·</div></section>
-      <section className="ep-section home-shows-section">
-        <div className="ep-wrap home-shows-head"><div><span className="ep-label">On the calendar</span><h2>Your next night out.</h2></div><p>Announced public dates from the Echo Play Live roster.</p></div>
-        {upcoming.length ? <div className="ep-wrap home-show-list">{upcoming.map((show,index)=><HomeShowRow key={show.id || index} show={show} index={index}/>)}</div> : null}
-        <div className="ep-wrap ep-section-link"><Link href="/shows">See every upcoming show <span>↗</span></Link></div>
-      </section>
-      <section className="ep-section ep-roster"><div className="ep-wrap ep-section-head"><div><span className="ep-label">The roster</span><h2>Pick your era.<br/>Find your sound.</h2></div><p>From emo and 90s alternative to Tool, Deftones, Linkin Park, Breaking Benjamin, and metalcore.</p></div><div className="ep-band-rail">{bandsList.slice(0,7).map((band,index)=><BandCard key={band.slug} band={band} index={index}/>)}</div></section>
-      <section className="ep-book"><div className="ep-book-bg">{heroImage && <Image src={heroImage} alt="Echo Play Live performance" fill sizes="100vw" style={{ objectFit:'cover', objectPosition:featured.heroObjectPosition || 'center' }} />}</div><div className="ep-wrap ep-book-inner"><span className="ep-label">Book Echo Play Live</span><h2>Give the room<br/>a reason to show up.</h2><p>Tell us the date, venue, city, budget, and crowd. We’ll help match the right act to the night.</p><div className="ep-actions"><Link href="/contact" className="ep-btn ep-primary">Start a booking</Link><Link href="/musicians" className="ep-btn">View the roster</Link></div></div></section>
+    <ExperienceRail active={active} motionOff={motionOff} setMotionOff={setMotionOff} />
+    <main className={`live-home ${motionOff ? 'motion-off' : ''}`} id="main-content">
+      <Hero featured={featured} nextShow={shows[0]} />
+      <ExperienceSection />
+      <RosterSection />
+      <ShowsSection shows={shows} />
+      <BookingSection featured={featured} />
     </main>
     <Footer />
   </>

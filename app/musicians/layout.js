@@ -1,5 +1,7 @@
 // Static metadata for the /musicians roster index page.
 
+import EditorialRoute from '@/components/EditorialRoute'
+
 const SITE_URL = 'https://echoplay.live'
 
 export const metadata = {
@@ -21,5 +23,5 @@ export const metadata = {
 }
 
 export default function MusiciansLayout({ children }) {
-  return children
+  return <EditorialRoute>{children}</EditorialRoute>
 }

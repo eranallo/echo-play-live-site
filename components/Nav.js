@@ -1,9 +1,21 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
-import Link from 'next/link'
+
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { bandsList } from '@/lib/bands'
+
+const navItems = [
+  { href: '/', label: 'Home' },
+  { href: '/shows', label: 'Shows' },
+  { href: '/musicians', label: 'Roster' },
+  { href: '/podcast', label: 'Podcast' },
+  { href: '/press', label: 'Press' },
+  { href: '/about', label: 'About' },
+]
+
+const pad = value => String(value + 1).padStart(2, '0')
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
@@ -13,7 +25,8 @@ export default function Nav() {
   const menuButtonRef = useRef(null)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
+    const onScroll = () => setScrolled(window.scrollY > 36)
+    onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
@@ -26,270 +39,102 @@ export default function Nav() {
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
     const onKeyDown = event => {
-      if (event.key === 'Escape') {
-        setOpen(false)
-        menuButtonRef.current?.focus()
-      }
+      if (event.key !== 'Escape') return
+      setOpen(false)
+      setBandsOpen(false)
+      menuButtonRef.current?.focus()
     }
-    if (open) document.addEventListener('keydown', onKeyDown)
+    if (open || bandsOpen) document.addEventListener('keydown', onKeyDown)
     return () => {
       document.body.style.overflow = ''
       document.removeEventListener('keydown', onKeyDown)
     }
-  }, [open])
+  }, [open, bandsOpen])
+
+  const isActive = href => href === '/' ? pathname === '/' : pathname.startsWith(href)
 
   return (
     <>
-      <nav
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1000,
-          transition: 'background var(--d-base) var(--ease-in-out), padding var(--d-base) var(--ease-in-out), border-color var(--d-base) var(--ease-in-out)',
-          background: scrolled ? 'rgba(8,8,8,0.95)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(12px)' : 'none',
-          borderBottom: scrolled ? '1px solid var(--c-border)' : '1px solid transparent',
-          padding: scrolled ? '14px 0' : '22px 0',
-        }}
-      >
-        <div style={{ maxWidth: 'var(--layout-max)', margin: '0 auto', padding: '0 var(--gutter-d)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          {/* Logo: badge mark + Bebas wordmark */}
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 'var(--s-3)', minHeight: '44px' }} aria-label="Echo Play Live home">
-            <Image
-              src="/logo.png"
-              alt=""
-              width={40}
-              height={40}
-              priority
-              style={{ display: 'block', flexShrink: 0 }}
-            />
-            <span style={{
-              fontFamily: 'var(--ff-display)',
-              fontSize: '22px',
-              letterSpacing: '0.08em',
-              color: 'var(--c-epl)',
-              lineHeight: 1,
-            }}>ECHO PLAY LIVE</span>
+      <nav className={`site-nav ${scrolled ? 'is-scrolled' : ''} ${open ? 'is-open' : ''}`} aria-label="Main navigation">
+        <div className="site-nav__inner">
+          <Link className="site-nav__brand" href="/" aria-label="Echo Play Live home">
+            <Image src="/logo.png" alt="" width={34} height={34} priority />
+            <span>
+              <strong>Echo Play Live</strong>
+              <small>Independent live entertainment</small>
+            </span>
           </Link>
 
-          {/* Desktop Nav */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '36px' }} className="desktop-nav">
-            <Link href="/" className="nav-link" style={{ textDecoration: 'none' }}>Home</Link>
+          <div className="site-nav__desktop">
+            <Link className="site-nav__link" href="/" aria-current={isActive('/') ? 'page' : undefined}>Home</Link>
 
-            {/* Bands Dropdown */}
             <div
-              style={{ position: 'relative' }}
+              className="site-nav__bands"
               onMouseEnter={() => setBandsOpen(true)}
               onMouseLeave={() => setBandsOpen(false)}
               onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setBandsOpen(false) }}
             >
               <button
+                className="site-nav__bands-button"
                 type="button"
-                className="nav-link"
                 aria-expanded={bandsOpen}
-                aria-haspopup="true"
-                aria-controls="desktop-bands-menu"
+                aria-controls="site-nav-bands"
                 onClick={() => setBandsOpen(value => !value)}
-                style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 'var(--s-1)', background: 'none', border: 0, padding: 0, font: 'inherit' }}
               >
                 Bands
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ opacity: 0.5, transition: 'transform var(--d-fast) var(--ease-in-out)', transform: bandsOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
-                  <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
               </button>
-              <div id="desktop-bands-menu" aria-hidden={!bandsOpen} style={{
-                position: 'absolute',
-                top: '100%',
-                left: '-20px',
-                paddingTop: 'var(--s-3)',
-                opacity: bandsOpen ? 1 : 0,
-                visibility: bandsOpen ? 'visible' : 'hidden',
-                pointerEvents: bandsOpen ? 'all' : 'none',
-                transform: bandsOpen ? 'translateY(0)' : 'translateY(-8px)',
-                transition: 'opacity var(--d-fast) var(--ease-in-out), transform var(--d-fast) var(--ease-in-out)',
-                zIndex: 100,
-              }}>
-                <div style={{
-                  background: 'rgba(12,12,12,0.98)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  backdropFilter: 'blur(20px)',
-                  minWidth: '200px',
-                  padding: 'var(--s-2) 0',
-                }}>
-                  {bandsList.map(band => (
-                    <Link
-                      key={band.slug}
-                      href={`/bands/${band.slug}`}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        padding: '10px 20px',
-                        textDecoration: 'none',
-                        transition: 'background 150ms var(--ease-in-out)',
-                      }}
-                      className="dropdown-item"
-                      onMouseEnter={e => e.currentTarget.style.background = 'var(--c-surface-3)'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                    >
-                      <span style={{
-                        width: '6px',
-                        height: '6px',
-                        borderRadius: '50%',
-                        background: band.color,
-                        flexShrink: 0,
-                      }} />
-                      <span style={{
-                        fontFamily: 'var(--ff-label)',
-                        fontSize: 'var(--t-body-s)',
-                        fontWeight: 500,
-                        letterSpacing: '0.08em',
-                        textTransform: 'uppercase',
-                        color: 'rgba(255,255,255,0.8)',
-                      }}>{band.name}</span>
-                    </Link>
-                  ))}
-                </div>
+              <div id="site-nav-bands" className={`site-nav__dropdown ${bandsOpen ? 'is-open' : ''}`} aria-hidden={!bandsOpen}>
+                {bandsList.map((band, index) => (
+                  <Link key={band.slug} href={`/bands/${band.slug}`}>
+                    <small>{pad(index)}</small>
+                    <span>{band.name}</span>
+                    <i style={{ '--band': band.color }} />
+                  </Link>
+                ))}
               </div>
             </div>
 
-            <Link href="/shows" className="nav-link" style={{ textDecoration: 'none' }}>Shows</Link>
-            <Link href="/musicians" className="nav-link" style={{ textDecoration: 'none' }}>Roster</Link>
-            <Link href="/podcast" className="nav-link" style={{ textDecoration: 'none' }}>Podcast</Link>
-            <Link href="/press" className="nav-link" style={{ textDecoration: 'none' }}>Press</Link>
-            <Link href="/about" className="nav-link" style={{ textDecoration: 'none' }}>About</Link>
-            <Link href="/contact" style={{
-              textDecoration: 'none',
-              fontFamily: 'var(--ff-label)',
-              fontSize: '12px',
-              fontWeight: 600,
-              letterSpacing: 'var(--ls-label-tight)',
-              textTransform: 'uppercase',
-              color: 'var(--c-bg)',
-              background: 'var(--c-epl)',
-              padding: '9px 20px',
-              transition: 'opacity var(--d-fast) var(--ease-in-out)',
-            }}
-              onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-              onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-            >
-              Book Now
-            </Link>
+            {navItems.slice(1).map(item => (
+              <Link key={item.href} className="site-nav__link" href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</Link>
+            ))}
+            <Link className="site-nav__book" href="/contact">Book a band</Link>
           </div>
 
-          {/* Mobile Hamburger */}
           <button
             ref={menuButtonRef}
+            className={`site-nav__menu-button ${open ? 'is-open' : ''}`}
             type="button"
-            onClick={() => setOpen(!open)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '6px', display: 'none' }}
-            className="mobile-menu-btn"
+            onClick={() => setOpen(value => !value)}
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
             aria-controls="mobile-site-menu"
           >
-            <div style={{ width: '24px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
-              <span style={{
-                display: 'block', height: '1.5px', background: 'var(--c-text)',
-                transition: 'transform 300ms var(--ease-in-out), opacity 300ms var(--ease-in-out)',
-                transform: open ? 'rotate(45deg) translate(4px, 5px)' : 'none',
-              }} />
-              <span style={{
-                display: 'block', height: '1.5px', background: 'var(--c-text)',
-                opacity: open ? 0 : 1,
-                transition: 'opacity 300ms var(--ease-in-out)',
-              }} />
-              <span style={{
-                display: 'block', height: '1.5px', background: 'var(--c-text)',
-                transition: 'transform 300ms var(--ease-in-out)',
-                transform: open ? 'rotate(-45deg) translate(4px, -5px)' : 'none',
-              }} />
-            </div>
+            <span /><span /><span />
           </button>
         </div>
       </nav>
 
-      {/* Mobile Menu */}
-      <div id="mobile-site-menu" aria-hidden={!open} style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 999,
-        background: 'var(--c-bg)',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: '40px',
-        opacity: open ? 1 : 0,
-        visibility: open ? 'visible' : 'hidden',
-        pointerEvents: open ? 'all' : 'none',
-        transition: 'opacity 300ms var(--ease-in-out)',
-      }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s-1)' }}>
-          {[
-            { href: '/', label: 'Home' },
-            { href: '/shows', label: 'Shows' },
-            { href: '/musicians', label: 'Roster' },
-            { href: '/podcast', label: 'Podcast' },
-            { href: '/press', label: 'Press' },
-            { href: '/about', label: 'About' },
-            { href: '/contact', label: 'Book Now' },
-          ].map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              style={{
-                fontFamily: 'var(--ff-display)',
-                fontSize: 'clamp(40px, 10vw, 72px)',
-                letterSpacing: '0.04em',
-                color: 'var(--c-text)',
-                textDecoration: 'none',
-                lineHeight: 'var(--lh-tight)',
-                transition: 'color var(--d-fast) var(--ease-in-out)',
-              }}
-              onMouseEnter={e => e.currentTarget.style.color = 'var(--c-epl)'}
-              onMouseLeave={e => e.currentTarget.style.color = 'var(--c-text)'}
-            >
-              {label}
+      <div id="mobile-site-menu" className={`site-nav__mobile ${open ? 'is-open' : ''}`} aria-hidden={!open}>
+        <div className="site-nav__mobile-main">
+          {[...navItems, { href: '/contact', label: 'Book a band' }].map((item, index) => (
+            <Link key={item.href} href={item.href} style={{ '--i': index }}>
+              <span>{pad(index)}</span>
+              <strong>{item.label}</strong>
+              <small>{isActive(item.href) ? 'Now' : 'Open'}</small>
             </Link>
           ))}
-          <div style={{ marginTop: 'var(--s-4)', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '20px' }}>
-            {bandsList.map(band => (
-              <Link
-                key={band.slug}
-                href={`/bands/${band.slug}`}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontFamily: 'var(--ff-label)',
-                  fontSize: '16px',
-                  fontWeight: 500,
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.5)',
-                  textDecoration: 'none',
-                  padding: 'var(--s-2) 0',
-                  transition: 'color var(--d-fast) var(--ease-in-out)',
-                }}
-                onMouseEnter={e => e.currentTarget.style.color = band.color}
-                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
-              >
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: band.color }} />
-                {band.name}
-              </Link>
-            ))}
-          </div>
+        </div>
+        <div className="site-nav__mobile-bands" aria-label="Bands">
+          <span>Roster / direct</span>
+          {bandsList.map((band, index) => (
+            <Link key={band.slug} href={`/bands/${band.slug}`} style={{ '--i': index + navItems.length + 1, '--band': band.color }}>
+              <span>{pad(index)}</span>
+              <strong>{band.name}</strong>
+              <small style={{ color: band.color }}>Band</small>
+            </Link>
+          ))}
         </div>
       </div>
-
-      <style jsx global>{`
-        @media (max-width: 768px) {
-          .desktop-nav { display: none !important; }
-          .mobile-menu-btn { display: flex !important; }
-        }
-      `}</style>
     </>
   )
 }
