@@ -110,7 +110,7 @@ export default async function PortalShowPage({ params, searchParams }) {
           {show.indoorOutdoor && <Pill>{show.indoorOutdoor}</Pill>}
           {show.ageRestriction && <Pill>{show.ageRestriction}</Pill>}
         </div>
-        <h1 className="portal-hero-title">{show.venueName}</h1>
+        <h1 className="portal-hero-title" data-echo={show.venueName}>{show.venueName}</h1>
         <p className="portal-hero-subtitle">{show.dateLabel}</p>
         <InlineActions actions={[
           { href: runOfShowHref, label: 'Run of Show' },

@@ -2,6 +2,7 @@
 
 import { faqPage, breadcrumbList, JsonLd } from '@/lib/jsonld'
 import { FAQ_CONTACT } from '@/lib/faqs'
+import EditorialRoute from '@/components/EditorialRoute'
 
 const SITE_URL = 'https://echoplay.live'
 
@@ -26,7 +27,7 @@ export default function ContactLayout({ children }) {
   return (
     <>
       <JsonLd data={[faqLd, breadcrumbLd]} />
-      {children}
+      <EditorialRoute>{children}</EditorialRoute>
     </>
   )
 }

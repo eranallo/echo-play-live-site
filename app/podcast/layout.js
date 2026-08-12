@@ -1,6 +1,7 @@
 // Phase 15: Metadata + PodcastSeries JSON-LD for the podcast page.
 
 import { podcast } from '@/lib/podcast'
+import EditorialRoute from '@/components/EditorialRoute'
 
 const SITE_URL = 'https://echoplay.live'
 
@@ -59,7 +60,7 @@ export default function PodcastLayout({ children }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(podcastLd) }}
       />
-      {children}
+      <EditorialRoute>{children}</EditorialRoute>
     </>
   )
 }

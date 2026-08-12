@@ -22,7 +22,7 @@ export default async function PortalCalendarPage({ searchParams }) {
       <PortalTopBar title="Master Calendar" subtitle="All Echo Play Live shows" />
       <header className="portal-calendar-header">
         <div className="portal-eyebrow">Every band. Every venue.</div>
-        <h1>All Shows</h1>
+        <h1 data-echo="All Shows">All Shows</h1>
         <p>
           The complete Echo Play Live schedule, including future years, tentative dates,
           show times, and direct access to show-day details.

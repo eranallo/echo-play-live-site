@@ -5,6 +5,7 @@
 // page instead.
 
 import { getBand, bandsList } from '@/lib/bands'
+import EditorialRoute from '@/components/EditorialRoute'
 
 const SITE_URL = 'https://echoplay.live'
 
@@ -32,5 +33,5 @@ export async function generateMetadata({ params }) {
 }
 
 export default function BandLandingLayout({ children }) {
-  return children
+  return <EditorialRoute variant="landing">{children}</EditorialRoute>
 }

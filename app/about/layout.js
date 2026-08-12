@@ -1,6 +1,8 @@
 // Server-component layout. Provides per-route metadata since the page itself
 // is a 'use client' component and can't export metadata directly.
 
+import EditorialRoute from '@/components/EditorialRoute'
+
 export const metadata = {
   title: 'About',
   description: 'Echo Play Live was founded in 2023 by Evan Ranallo as a band management company for tribute and cover bands across the DFW Metroplex. Quality, hustle, and love for the show.',
@@ -13,5 +15,5 @@ export const metadata = {
 }
 
 export default function AboutLayout({ children }) {
-  return children
+  return <EditorialRoute>{children}</EditorialRoute>
 }

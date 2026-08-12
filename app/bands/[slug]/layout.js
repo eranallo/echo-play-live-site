@@ -2,6 +2,7 @@
 
 import { getBand, bandsList, allBandsList } from '@/lib/bands'
 import { breadcrumbList, JsonLd } from '@/lib/jsonld'
+import EditorialRoute from '@/components/EditorialRoute'
 
 const SITE_URL = 'https://echoplay.live'
 
@@ -60,7 +61,7 @@ export default async function BandLayout({ children, params }) {
   return (
     <>
       {breadcrumb && <JsonLd data={breadcrumb} />}
-      {children}
+      <EditorialRoute variant="band">{children}</EditorialRoute>
     </>
   )
 }
