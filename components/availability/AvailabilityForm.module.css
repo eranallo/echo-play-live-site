@@ -78,24 +78,35 @@
 }
 
 .progressBadge strong,
-.progressBadge span {
+.progressBadge span,
+.bandProgress strong,
+.bandProgress span {
   display: block;
 }
 
-.progressBadge strong {
+.progressBadge strong,
+.bandProgress strong {
   font-family: var(--ff-display);
   font-size: 30px;
   font-weight: 400;
   line-height: 0.9;
 }
 
-.progressBadge span {
+.progressBadge span,
+.bandProgress span {
   margin-top: 5px;
   color: var(--c-text-dim);
   font-family: var(--ff-label);
   font-size: 10px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+
+.bandSummary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
 }
 
 .metaRow {
@@ -140,6 +151,53 @@
   border: 1px solid rgba(212, 160, 23, 0.25);
   background: rgba(212, 160, 23, 0.07);
   color: rgba(255, 255, 255, 0.78);
+}
+
+.bandList {
+  display: grid;
+  gap: 18px;
+}
+
+.bandSection {
+  border: 1px solid var(--c-border);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(157, 78, 221, 0.08), transparent 34%),
+    rgba(255, 255, 255, 0.012);
+  padding: clamp(16px, 3.5vw, 24px);
+}
+
+.bandSectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 4px 4px 20px;
+}
+
+.bandSectionHeader h2 {
+  margin-top: 7px;
+  font-family: var(--ff-display);
+  font-size: clamp(38px, 8vw, 58px);
+  font-weight: 400;
+  letter-spacing: var(--ls-display);
+  line-height: 0.92;
+}
+
+.bandSectionHeader p {
+  margin-top: 8px;
+  color: var(--c-text-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.bandProgress {
+  min-width: 82px;
+  padding: 12px 14px;
+  border: 1px solid var(--c-border-strong);
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.025);
+  text-align: center;
 }
 
 .optionList {
@@ -408,13 +466,23 @@
 }
 
 @media (max-width: 640px) {
-  .introTopline {
+  .introTopline,
+  .bandSectionHeader {
     align-items: stretch;
   }
 
-  .progressBadge {
+  .progressBadge,
+  .bandProgress {
     min-width: 74px;
     padding: 11px 12px;
+  }
+
+  .bandSection {
+    padding: 12px;
+  }
+
+  .bandSectionHeader {
+    padding: 8px 8px 18px;
   }
 
   .choiceGrid {
