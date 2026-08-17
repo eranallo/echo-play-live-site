@@ -1,0 +1,436 @@
+.form {
+  display: grid;
+  gap: 18px;
+  padding-bottom: 48px;
+}
+
+.introCard,
+.optionCard,
+.submitCard,
+.completeCard {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--c-border);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.24);
+}
+
+.introCard {
+  padding: clamp(22px, 5vw, 38px);
+  border-color: rgba(157, 78, 221, 0.32);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(157, 78, 221, 0.22), transparent 42%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
+}
+
+.introTopline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.eyebrow {
+  color: var(--c-epl);
+  font-family: var(--ff-label);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+.introCard h1,
+.completeCard h1 {
+  margin-top: 6px;
+  font-family: var(--ff-display);
+  font-size: clamp(50px, 11vw, 82px);
+  font-weight: 400;
+  letter-spacing: var(--ls-display);
+  line-height: 0.9;
+}
+
+.introCard h2,
+.submitCard h2 {
+  margin-top: 28px;
+  font-family: var(--ff-display);
+  font-size: clamp(30px, 6vw, 44px);
+  font-weight: 400;
+  letter-spacing: var(--ls-display);
+  line-height: 0.95;
+}
+
+.introCard p,
+.submitCard p,
+.completeCard p {
+  margin-top: 10px;
+  color: var(--c-text-muted);
+  line-height: 1.55;
+}
+
+.progressBadge {
+  min-width: 86px;
+  padding: 13px 16px;
+  border: 1px solid rgba(157, 78, 221, 0.35);
+  border-radius: 18px;
+  background: rgba(157, 78, 221, 0.11);
+  text-align: center;
+}
+
+.progressBadge strong,
+.progressBadge span {
+  display: block;
+}
+
+.progressBadge strong {
+  font-family: var(--ff-display);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 0.9;
+}
+
+.progressBadge span {
+  margin-top: 5px;
+  color: var(--c-text-dim);
+  font-family: var(--ff-label);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+  color: var(--c-text-muted);
+  font-size: 13px;
+}
+
+.previewPill,
+.bandPill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid rgba(157, 78, 221, 0.38);
+  border-radius: 999px;
+  background: rgba(157, 78, 221, 0.12);
+  color: #d8b4fe;
+  font-family: var(--ff-label);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  line-height: 1;
+  padding: 7px 10px;
+  text-transform: uppercase;
+}
+
+.previewNote,
+.conflictNote,
+.errorMessage {
+  margin-top: 18px;
+  border-radius: 16px;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.previewNote {
+  border: 1px solid rgba(212, 160, 23, 0.25);
+  background: rgba(212, 160, 23, 0.07);
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.optionList {
+  display: grid;
+  gap: 14px;
+}
+
+.optionCard {
+  padding: clamp(20px, 4vw, 30px);
+}
+
+.optionNumber {
+  position: absolute;
+  top: 12px;
+  right: 20px;
+  color: rgba(255, 255, 255, 0.06);
+  font-family: var(--ff-display);
+  font-size: clamp(76px, 15vw, 112px);
+  line-height: 0.85;
+  pointer-events: none;
+}
+
+.optionHeader {
+  position: relative;
+  z-index: 1;
+  padding-right: 70px;
+}
+
+.optionHeader h3 {
+  margin-top: 12px;
+  font-family: var(--ff-display);
+  font-size: clamp(34px, 7vw, 52px);
+  font-weight: 400;
+  letter-spacing: var(--ls-display);
+  line-height: 0.95;
+}
+
+.optionDetails {
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+  color: var(--c-text-muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.conflictNote {
+  display: grid;
+  gap: 4px;
+  border: 1px solid rgba(230, 57, 70, 0.28);
+  background: rgba(230, 57, 70, 0.08);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.conflictNote span {
+  color: var(--c-text-muted);
+}
+
+.choiceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.choiceButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 56px;
+  border: 1px solid var(--c-border-strong);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--c-text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 750;
+  transition: border-color 180ms ease, background 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.choiceButton:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--c-text);
+  transform: translateY(-1px);
+}
+
+.choiceSelected {
+  border-color: rgba(157, 78, 221, 0.68);
+  background: rgba(157, 78, 221, 0.18);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(157, 78, 221, 0.16);
+}
+
+.choiceIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.followupGrid {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--c-border);
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field > span {
+  color: var(--c-text-muted);
+  font-family: var(--ff-label);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.field em {
+  color: var(--c-text-dim);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.field select,
+.field textarea {
+  width: 100%;
+  border: 1px solid var(--c-border-strong);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--c-text);
+  font: inherit;
+  outline: none;
+  padding: 13px 14px;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.field textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.field select:focus,
+.field textarea:focus {
+  border-color: rgba(157, 78, 221, 0.72);
+  box-shadow: 0 0 0 3px rgba(157, 78, 221, 0.12);
+}
+
+.blackoutToggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid rgba(230, 57, 70, 0.24);
+  border-radius: 16px;
+  background: rgba(230, 57, 70, 0.055);
+  cursor: pointer;
+  padding: 15px;
+}
+
+.blackoutToggle input {
+  width: 19px;
+  height: 19px;
+  margin-top: 2px;
+  accent-color: var(--c-elite);
+}
+
+.blackoutToggle span {
+  display: grid;
+  gap: 4px;
+}
+
+.blackoutToggle strong {
+  font-size: 14px;
+}
+
+.blackoutToggle small {
+  color: var(--c-text-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.submitCard {
+  display: grid;
+  gap: 18px;
+  margin-top: 4px;
+  padding: clamp(22px, 5vw, 34px);
+}
+
+.submitCard h2 {
+  margin-top: 8px;
+}
+
+.errorMessage {
+  margin-top: 0;
+  border: 1px solid rgba(230, 57, 70, 0.35);
+  background: rgba(230, 57, 70, 0.1);
+  color: #ffffff;
+}
+
+.submitButton {
+  min-height: 58px;
+  border: 0;
+  border-radius: 17px;
+  background: linear-gradient(135deg, var(--c-epl), #f0c14b);
+  color: #090909;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  padding: 16px 24px;
+  transition: opacity 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.submitButton:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 34px rgba(212, 160, 23, 0.23);
+}
+
+.submitButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.36;
+}
+
+.completeCard {
+  display: grid;
+  justify-items: center;
+  min-height: 420px;
+  align-content: center;
+  padding: clamp(30px, 7vw, 64px);
+  text-align: center;
+  border-color: rgba(212, 160, 23, 0.34);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(212, 160, 23, 0.16), transparent 45%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+}
+
+.completeIcon {
+  display: grid;
+  width: 70px;
+  height: 70px;
+  place-items: center;
+  margin-bottom: 22px;
+  border: 1px solid rgba(212, 160, 23, 0.48);
+  border-radius: 24px;
+  background: rgba(212, 160, 23, 0.12);
+  color: var(--c-epl);
+  font-size: 34px;
+}
+
+.completeNote {
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+  padding: 11px 14px;
+}
+
+@media (max-width: 640px) {
+  .introTopline {
+    align-items: stretch;
+  }
+
+  .progressBadge {
+    min-width: 74px;
+    padding: 11px 12px;
+  }
+
+  .choiceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .choiceButton {
+    justify-content: flex-start;
+    padding-inline: 18px;
+  }
+
+  .optionHeader {
+    padding-right: 50px;
+  }
+
+  .optionNumber {
+    right: 14px;
+  }
+}
