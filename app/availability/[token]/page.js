@@ -5,7 +5,7 @@ import { getAvailabilityByToken } from '@/lib/availability/airtable'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  title: 'Monthly Availability | Echo Play Live',
+  title: 'Practice Availability | Echo Play Live',
   robots: {
     index: false,
     follow: false,
@@ -20,11 +20,11 @@ export default async function AvailabilityPage({ params }) {
   if (!result.ok) {
     return (
       <PortalShell showDock={false}>
-        <PortalTopBar title="Monthly Availability" subtitle="Echo Play Live" backHref="/" />
+        <PortalTopBar title="Practice Availability" subtitle="Echo Play Live" backHref="/" />
         <PortalHero
           eyebrow="Availability"
-          title="This link is not available"
-          subtitle={result.error || 'The link may be invalid, expired, or closed.'}
+          title="This dashboard is not available"
+          subtitle={result.error || 'The private link may be invalid or unavailable.'}
         />
         <Card>
           <p style={{ color: 'var(--c-text-muted)', lineHeight: 1.6 }}>
@@ -37,7 +37,7 @@ export default async function AvailabilityPage({ params }) {
 
   return (
     <PortalShell showDock={false}>
-      <PortalTopBar title="Monthly Availability" subtitle="Echo Play Live" backHref="/" />
+      <PortalTopBar title="Practice Availability" subtitle="Echo Play Live" backHref="/" />
       <AvailabilityForm data={result.data} token={token} />
     </PortalShell>
   )

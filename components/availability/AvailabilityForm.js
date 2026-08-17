@@ -3,6 +3,8 @@
 import { useMemo, useRef, useState } from 'react'
 import styles from './AvailabilityForm.module.css'
 
+const TIME_ZONE = 'America/Chicago'
+
 const CHOICES = [
   { value: 'Available', label: 'Available', icon: '✓' },
   { value: 'Maybe', label: 'Maybe', icon: '?' },
@@ -20,7 +22,7 @@ function initialAnswer(item) {
   }
 }
 
-function complete(answer) {
+function answerComplete(answer) {
   if (!answer?.response) return false
   return !(
     (answer.response === 'Maybe' || answer.response === 'Unavailable')
@@ -34,71 +36,328 @@ function groupByBand(items) {
 
   for (const item of items) {
     const key = item.bandId || item.bandName
+
     if (!map.has(key)) {
-      const group = { key, bandName: item.bandName, items: [] }
+      const group = {
+        key,
+        bandName: item.bandName,
+        items: [],
+      }
       map.set(key, group)
       groups.push(group)
     }
+
     map.get(key).items.push(item)
   }
 
   return groups
 }
 
-function statusStyle(status) {
-  const base = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 7,
-    borderRadius: 999,
-    padding: '7px 10px',
-    fontFamily: 'var(--ff-label)',
-    fontSize: 10,
-    fontWeight: 800,
-    letterSpacing: '0.12em',
-    textTransform: 'uppercase',
-  }
+function dateParts(item) {
+  const date = new Date(item.start)
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: TIME_ZONE,
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  }).formatToParts(date)
+  const values = Object.fromEntries(parts.map(part => [part.type, part.value]))
 
-  if (status === 'saving') {
-    return { ...base, color: '#d8b4fe', background: 'rgba(157, 78, 221, 0.12)' }
+  return {
+    weekday: values.weekday || '',
+    month: values.month || '',
+    day: values.day || '',
   }
-  if (status === 'saved') {
-    return { ...base, color: '#8ee0b6', background: 'rgba(42, 196, 119, 0.10)' }
+}
+
+function statusLabel(status) {
+  if (status?.state === 'saving') return 'Saving...'
+  if (status?.state === 'saved') return 'Saved'
+  if (status?.state === 'needsReason') return 'Choose a reason'
+  if (status?.state === 'error') return status.message || 'Save failed'
+  return 'Not answered'
+}
+
+function monthSummary(month, answers) {
+  const answered = month.items.filter(item => answerComplete(answers[item.responseId])).length
+  const unavailable = month.items.filter(item => (
+    answers[item.responseId]?.response === 'Unavailable'
+  )).length
+  const maybe = month.items.filter(item => (
+    answers[item.responseId]?.response === 'Maybe'
+  )).length
+
+  return {
+    answered,
+    pending: Math.max(0, month.items.length - answered),
+    unavailable,
+    maybe,
   }
-  if (status === 'needsReason') {
-    return { ...base, color: '#f3cc66', background: 'rgba(212, 160, 23, 0.10)' }
-  }
-  if (status === 'error') {
-    return { ...base, color: '#ffb3ba', background: 'rgba(230, 57, 70, 0.11)' }
-  }
-  return { ...base, color: 'var(--c-text-dim)', background: 'rgba(255, 255, 255, 0.035)' }
+}
+
+function DateRow({
+  item,
+  answer,
+  status,
+  onUpdate,
+  onSave,
+  readOnly = false,
+}) {
+  const date = dateParts(item)
+  const needsReason = answer.response === 'Maybe' || answer.response === 'Unavailable'
+  const disabled = readOnly || item.editable === false
+
+  return (
+    <article
+      className={`${styles.dateRow} ${disabled ? styles.dateRowReadOnly : ''}`}
+      id={`date-${item.responseId}`}
+    >
+      <div className={styles.dateIdentity}>
+        <div className={styles.dateBadge} aria-hidden="true">
+          <span>{date.month}</span>
+          <strong>{date.day}</strong>
+          <small>{date.weekday}</small>
+        </div>
+
+        <div className={styles.dateCopy}>
+          <div className={styles.dateTopline}>
+            <span className={styles.bandPill}>{item.bandName}</span>
+            <span className={styles.eventPill}>{item.eventType}</span>
+            {item.isPastDate && <span className={styles.pastPill}>Past</span>}
+          </div>
+          <h4>{item.dateLabel}</h4>
+          <p>{item.timeLabel}</p>
+          {item.location && <small>{item.location}</small>}
+        </div>
+      </div>
+
+      {item.existingBlackout && (
+        <div className={styles.conflictNote}>
+          <strong>Blackout already on file:</strong> {item.existingBlackout.reason}
+          {item.existingBlackout.notes && <span>{item.existingBlackout.notes}</span>}
+        </div>
+      )}
+
+      <div className={styles.choiceGrid} role="group" aria-label={`${item.bandName} availability for ${item.dateLabel}`}>
+        {CHOICES.map(choice => (
+          <button
+            className={`${styles.choiceButton} ${answer.response === choice.value ? styles.choiceSelected : ''}`}
+            key={choice.value}
+            type="button"
+            aria-pressed={answer.response === choice.value}
+            disabled={disabled}
+            onClick={() => onUpdate(item, { response: choice.value })}
+          >
+            <span className={styles.choiceIcon}>{choice.icon}</span>
+            <span>{choice.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {needsReason && (
+        <div className={styles.followupGrid}>
+          <label className={styles.field}>
+            <span>Reason</span>
+            <select
+              value={answer.reason}
+              disabled={disabled}
+              onChange={event => onUpdate(item, { reason: event.target.value })}
+              required
+            >
+              <option value="">Choose a reason</option>
+              {REASONS.map(reason => <option key={reason} value={reason}>{reason}</option>)}
+            </select>
+          </label>
+
+          <label className={styles.field}>
+            <span>Note <em>optional</em></span>
+            <textarea
+              rows="2"
+              maxLength="500"
+              value={answer.notes}
+              disabled={disabled}
+              placeholder="Add context only when it helps with scheduling."
+              onChange={event => onUpdate(item, { notes: event.target.value }, false)}
+              onBlur={() => onSave(item, answer)}
+            />
+          </label>
+
+          {answer.response === 'Unavailable' && (
+            <label className={styles.blackoutToggle}>
+              <input
+                type="checkbox"
+                checked={answer.hardBlackout}
+                disabled={disabled}
+                onChange={event => onUpdate(item, { hardBlackout: event.target.checked })}
+              />
+              <span>
+                <strong>Add this as a {item.bandName} blackout</strong>
+                <small>Use this when the conflict should block other scheduling for this band.</small>
+              </span>
+            </label>
+          )}
+        </div>
+      )}
+
+      <div className={styles.saveLine}>
+        {disabled ? (
+          <span className={styles.readOnlyStatus}>
+            {item.response === 'Pending' ? 'No answer recorded' : item.response}
+          </span>
+        ) : (
+          <span className={`${styles.saveStatus} ${styles[`saveStatus_${status?.state || 'idle'}`]}`}>
+            {statusLabel(status)}
+          </span>
+        )}
+
+        {status?.state === 'error' && !disabled && (
+          <button
+            className={styles.retryButton}
+            type="button"
+            onClick={() => onSave(item, answer)}
+          >
+            Retry
+          </button>
+        )}
+      </div>
+    </article>
+  )
+}
+
+function MonthSection({
+  month,
+  answers,
+  statuses,
+  expanded,
+  onToggle,
+  onUpdate,
+  onSave,
+  readOnly = false,
+}) {
+  const summary = monthSummary(month, answers)
+  const groups = groupByBand(month.items)
+
+  return (
+    <section
+      className={`${styles.monthSection} ${month.isCurrent ? styles.monthSectionCurrent : ''}`}
+      id={`month-${month.key}`}
+    >
+      <button
+        className={styles.monthHeader}
+        type="button"
+        aria-expanded={expanded}
+        onClick={onToggle}
+      >
+        <div>
+          <div className={styles.monthEyebrow}>
+            {month.isCurrent ? 'Current month' : readOnly ? 'Past month' : 'Rolling schedule'}
+          </div>
+          <h2>{month.label}</h2>
+          <p>
+            {month.itemCount} practice {month.itemCount === 1 ? 'date' : 'dates'}
+            {summary.unavailable > 0 ? ` · ${summary.unavailable} unavailable` : ''}
+            {summary.maybe > 0 ? ` · ${summary.maybe} maybe` : ''}
+          </p>
+        </div>
+
+        <div className={styles.monthHeaderRight}>
+          <div className={styles.monthProgress}>
+            <strong>{summary.answered}/{month.itemCount}</strong>
+            <span>answered</span>
+          </div>
+          <span className={`${styles.monthChevron} ${expanded ? styles.monthChevronOpen : ''}`} aria-hidden="true">⌄</span>
+        </div>
+      </button>
+
+      {expanded && (
+        <div className={styles.monthBody}>
+          {groups.length > 0 ? groups.map(group => (
+            <section className={styles.bandGroup} key={group.key}>
+              <div className={styles.bandGroupHeader}>
+                <h3>{group.bandName}</h3>
+                <span>{group.items.length} {group.items.length === 1 ? 'date' : 'dates'}</span>
+              </div>
+
+              <div className={styles.dateList}>
+                {group.items.map(item => (
+                  <DateRow
+                    key={item.responseId}
+                    item={item}
+                    answer={answers[item.responseId]}
+                    status={statuses[item.responseId]}
+                    onUpdate={onUpdate}
+                    onSave={(row, currentAnswer) => onSave(row, currentAnswer || answers[row.responseId])}
+                    readOnly={readOnly}
+                  />
+                ))}
+              </div>
+            </section>
+          )) : (
+            <div className={styles.emptyMonth}>
+              No practice dates are scheduled for your bands this month.
+            </div>
+          )}
+        </div>
+      )}
+    </section>
+  )
 }
 
 export default function AvailabilityForm({ data, token }) {
+  const rollingItems = useMemo(
+    () => data.months.flatMap(month => month.items),
+    [data.months]
+  )
+  const historyItems = useMemo(
+    () => data.historyMonths.flatMap(month => month.items),
+    [data.historyMonths]
+  )
+  const allItems = useMemo(
+    () => [...rollingItems, ...historyItems],
+    [rollingItems, historyItems]
+  )
+
   const [answers, setAnswers] = useState(() => Object.fromEntries(
-    data.items.map(item => [item.responseId, initialAnswer(item)])
+    allItems.map(item => [item.responseId, initialAnswer(item)])
   ))
   const [statuses, setStatuses] = useState(() => Object.fromEntries(
-    data.items.map(item => [
+    allItems.map(item => [
       item.responseId,
       item.response === 'Pending' ? { state: 'idle' } : { state: 'saved' },
     ])
   ))
+  const [expandedMonths, setExpandedMonths] = useState(() => new Set(
+    data.months.slice(0, 2).map(month => month.key)
+  ))
+  const [historyMonthKey, setHistoryMonthKey] = useState('')
 
   const answersRef = useRef(answers)
   const requestVersion = useRef({})
-  const groups = useMemo(() => groupByBand(data.items), [data.items])
-  const answered = data.items.filter(item => complete(answers[item.responseId])).length
-  const saving = Object.values(statuses).filter(item => item.state === 'saving').length
-  const errors = Object.values(statuses).filter(item => item.state === 'error').length
-  const remaining = data.totalCount - answered
+
+  const answeredCount = rollingItems.filter(item => (
+    answerComplete(answers[item.responseId])
+  )).length
+  const unavailableCount = rollingItems.filter(item => (
+    answers[item.responseId]?.response === 'Unavailable'
+  )).length
+  const savingCount = Object.values(statuses).filter(item => item.state === 'saving').length
+  const errorCount = Object.values(statuses).filter(item => item.state === 'error').length
+  const pendingCount = Math.max(0, rollingItems.length - answeredCount)
+
+  const selectedHistoryMonth = data.historyMonths.find(month => (
+    month.key === historyMonthKey
+  )) || null
 
   function setStatus(id, state, message = '') {
     setStatuses(current => ({ ...current, [id]: { state, message } }))
   }
 
-  async function save(item, answer) {
-    if (!complete(answer)) {
+  async function save(item, providedAnswer) {
+    const answer = providedAnswer || answersRef.current[item.responseId]
+
+    if (!item.editable) return
+
+    if (!answerComplete(answer)) {
       setStatus(item.responseId, answer.response ? 'needsReason' : 'idle')
       return
     }
@@ -115,7 +374,10 @@ export default function AvailabilityForm({ data, token }) {
         body: JSON.stringify({ answer: { responseId: id, ...answer } }),
       })
       const body = await response.json().catch(() => ({}))
-      if (!response.ok) throw new Error(body.error || 'This change could not be saved.')
+
+      if (!response.ok) {
+        throw new Error(body.error || 'This change could not be saved.')
+      }
 
       if (requestVersion.current[id] === version) {
         setStatus(id, 'saved')
@@ -128,6 +390,8 @@ export default function AvailabilityForm({ data, token }) {
   }
 
   function update(item, changes, shouldSave = true) {
+    if (!item.editable) return
+
     const current = answersRef.current[item.responseId]
     const next = { ...current, ...changes }
 
@@ -135,6 +399,7 @@ export default function AvailabilityForm({ data, token }) {
       next.reason = ''
       next.hardBlackout = false
     }
+
     if (changes.response === 'Maybe') {
       next.hardBlackout = false
     }
@@ -146,244 +411,165 @@ export default function AvailabilityForm({ data, token }) {
     if (shouldSave) save(item, next)
   }
 
-  function saveLabel(item) {
-    const status = statuses[item.responseId] || { state: 'idle' }
-
-    if (status.state === 'saving') return 'Saving change...'
-    if (status.state === 'saved') return '✓ Saved'
-    if (status.state === 'needsReason') return 'Choose a reason to save'
-    if (status.state === 'error') return status.message || 'Save failed'
-    return 'Not answered yet'
+  function toggleMonth(monthKey) {
+    setExpandedMonths(current => {
+      const next = new Set(current)
+      if (next.has(monthKey)) next.delete(monthKey)
+      else next.add(monthKey)
+      return next
+    })
   }
 
-  const dashboardStatus = errors > 0
-    ? `${errors} change${errors === 1 ? '' : 's'} need attention`
-    : saving > 0
-      ? `Saving ${saving} change${saving === 1 ? '' : 's'}...`
-      : remaining > 0
-        ? `${remaining} date${remaining === 1 ? '' : 's'} not answered yet`
-        : 'All current changes are saved'
+  function goToMonth(monthKey) {
+    setExpandedMonths(current => new Set(current).add(monthKey))
+
+    window.requestAnimationFrame(() => {
+      document.getElementById(`month-${monthKey}`)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    })
+  }
+
+  const liveStatus = errorCount > 0
+    ? `${errorCount} change${errorCount === 1 ? '' : 's'} need attention`
+    : savingCount > 0
+      ? `Saving ${savingCount} change${savingCount === 1 ? '' : 's'}...`
+      : pendingCount > 0
+        ? `${pendingCount} future date${pendingCount === 1 ? '' : 's'} not answered`
+        : 'All future dates are answered'
 
   return (
     <div className={styles.form}>
       <section className={styles.introCard}>
         <div className={styles.introTopline}>
           <div>
-            <div className={styles.eyebrow}>Live availability dashboard</div>
+            <div className={styles.eyebrow}>Master practice availability</div>
             <h1>{data.memberName}</h1>
           </div>
+
           <div className={styles.progressBadge}>
-            <strong>{answered}/{data.totalCount}</strong>
+            <strong>{answeredCount}/{rollingItems.length}</strong>
             <span>answered</span>
           </div>
         </div>
 
-        <h2>{data.cycleName}</h2>
+        <h2>{data.rangeLabel}</h2>
         <p>
-          Update any date whenever plans change. Completed answers save automatically,
-          and this page remains editable while the monthly check is open.
+          This permanent page always shows the current month plus the next 11 months.
+          Update any future practice date whenever your plans change.
         </p>
 
-        <div className={styles.bandSummary}>
-          {groups.map(group => (
-            <span className={styles.bandPill} key={group.key}>{group.bandName}</span>
-          ))}
-        </div>
-
-        <div
-          style={{
-            display: 'flex',
-            gap: 13,
-            alignItems: 'center',
-            marginTop: 22,
-            border: '1px solid rgba(42, 196, 119, 0.26)',
-            borderRadius: 17,
-            background: 'rgba(42, 196, 119, 0.065)',
-            padding: '14px 16px',
-          }}
-        >
-          <span
-            aria-hidden="true"
-            style={{
-              width: 10,
-              height: 10,
-              flex: '0 0 auto',
-              borderRadius: 999,
-              background: '#2ac477',
-              boxShadow: '0 0 0 6px rgba(42, 196, 119, 0.10)',
-            }}
-          />
-          <div style={{ display: 'grid', gap: 3 }}>
-            <strong style={{ fontSize: 14 }}>{dashboardStatus}</strong>
-            <span style={{ color: 'var(--c-text-muted)', fontSize: 12 }}>
-              Keep this private link and return whenever your availability changes.
+        <div className={styles.liveStatus}>
+          <span className={styles.liveDot} aria-hidden="true" />
+          <div>
+            <strong>{liveStatus}</strong>
+            <span>
+              Changes save automatically. Keep this private link and use it all year.
             </span>
           </div>
         </div>
 
-        <div className={styles.metaRow}>
-          {data.dueLabel && <span><strong>Initial responses due:</strong> {data.dueLabel}</span>}
-          {data.isPreview && <span className={styles.previewPill}>Test mode</span>}
+        <div className={styles.metricStrip}>
+          <div>
+            <strong>{rollingItems.length}</strong>
+            <span>rolling dates</span>
+          </div>
+          <div>
+            <strong>{pendingCount}</strong>
+            <span>not answered</span>
+          </div>
+          <div>
+            <strong>{unavailableCount}</strong>
+            <span>unavailable</span>
+          </div>
         </div>
 
         {data.isPreview && (
           <div className={styles.previewNote}>
-            This is the private test version. No musician email has been sent.
+            Test mode: this preview uses the permanent-dashboard structure, but no musician reminder email has been sent.
           </div>
         )}
       </section>
 
-      <div className={styles.bandList}>
-        {groups.map(group => {
-          const bandAnswered = group.items.filter(item => complete(answers[item.responseId])).length
+      <section className={styles.historyControls}>
+        <div>
+          <div className={styles.eyebrow}>History</div>
+          <h2>Past months</h2>
+          <p>Completed months stay available for reference without cluttering the rolling schedule.</p>
+        </div>
 
+        <label className={styles.historySelect}>
+          <span>View a past month</span>
+          <select
+            value={historyMonthKey}
+            disabled={data.historyMonths.length === 0}
+            onChange={event => setHistoryMonthKey(event.target.value)}
+          >
+            <option value="">
+              {data.historyMonths.length === 0 ? 'No past months yet' : 'Choose a month'}
+            </option>
+            {data.historyMonths.map(month => (
+              <option key={month.key} value={month.key}>{month.label}</option>
+            ))}
+          </select>
+        </label>
+      </section>
+
+      {selectedHistoryMonth && (
+        <div className={styles.historyPanel}>
+          <MonthSection
+            month={selectedHistoryMonth}
+            answers={answers}
+            statuses={statuses}
+            expanded
+            onToggle={() => setHistoryMonthKey('')}
+            onUpdate={update}
+            onSave={save}
+            readOnly
+          />
+        </div>
+      )}
+
+      <nav className={styles.monthRail} aria-label="Rolling availability months">
+        {data.months.map(month => {
+          const summary = monthSummary(month, answers)
           return (
-            <section className={styles.bandSection} key={group.key}>
-              <div className={styles.bandSectionHeader}>
-                <div>
-                  <div className={styles.eyebrow}>Your schedule</div>
-                  <h2>{group.bandName}</h2>
-                  <p>{group.items.length} practice {group.items.length === 1 ? 'date' : 'dates'} this month</p>
-                </div>
-                <div className={styles.bandProgress}>
-                  <strong>{bandAnswered}/{group.items.length}</strong>
-                  <span>answered</span>
-                </div>
-              </div>
-
-              <div className={styles.optionList}>
-                {group.items.map((item, index) => {
-                  const answer = answers[item.responseId]
-                  const needsReason = answer.response === 'Maybe' || answer.response === 'Unavailable'
-                  const status = statuses[item.responseId] || { state: 'idle' }
-
-                  return (
-                    <article className={styles.optionCard} key={item.responseId}>
-                      <div className={styles.optionNumber}>{String(index + 1).padStart(2, '0')}</div>
-
-                      <div className={styles.optionHeader}>
-                        <div>
-                          <div className={styles.bandPill}>{item.eventType}</div>
-                          <h3>{item.dateLabel}</h3>
-                          <div className={styles.optionDetails}>
-                            <span>{item.timeLabel}</span>
-                            {item.location && <span>{item.location}</span>}
-                          </div>
-                        </div>
-                      </div>
-
-                      {item.existingBlackout && (
-                        <div className={styles.conflictNote}>
-                          <strong>Blackout already on file:</strong> {item.existingBlackout.reason}
-                          {item.existingBlackout.notes && <span>{item.existingBlackout.notes}</span>}
-                        </div>
-                      )}
-
-                      <div className={styles.choiceGrid} role="group" aria-label={`${item.bandName} availability for ${item.dateLabel}`}>
-                        {CHOICES.map(choice => (
-                          <button
-                            className={`${styles.choiceButton} ${answer.response === choice.value ? styles.choiceSelected : ''}`}
-                            key={choice.value}
-                            type="button"
-                            aria-pressed={answer.response === choice.value}
-                            onClick={() => update(item, { response: choice.value })}
-                          >
-                            <span className={styles.choiceIcon}>{choice.icon}</span>
-                            <span>{choice.label}</span>
-                          </button>
-                        ))}
-                      </div>
-
-                      {needsReason && (
-                        <div className={styles.followupGrid}>
-                          <label className={styles.field}>
-                            <span>Reason</span>
-                            <select
-                              value={answer.reason}
-                              onChange={event => update(item, { reason: event.target.value })}
-                              required
-                            >
-                              <option value="">Choose a reason</option>
-                              {REASONS.map(reason => <option key={reason} value={reason}>{reason}</option>)}
-                            </select>
-                          </label>
-
-                          <label className={styles.field}>
-                            <span>Note <em>optional</em></span>
-                            <textarea
-                              rows="3"
-                              maxLength="500"
-                              value={answer.notes}
-                              placeholder="Add context only when it helps with scheduling."
-                              onChange={event => update(item, { notes: event.target.value }, false)}
-                              onBlur={() => save(item, answersRef.current[item.responseId])}
-                            />
-                          </label>
-
-                          {answer.response === 'Unavailable' && (
-                            <label className={styles.blackoutToggle}>
-                              <input
-                                type="checkbox"
-                                checked={answer.hardBlackout}
-                                onChange={event => update(item, { hardBlackout: event.target.checked })}
-                              />
-                              <span>
-                                <strong>Add this as a {item.bandName} blackout date</strong>
-                                <small>Use this when the conflict should also block other scheduling for this band.</small>
-                              </span>
-                            </label>
-                          )}
-                        </div>
-                      )}
-
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'flex-end',
-                          marginTop: 18,
-                          paddingTop: 15,
-                          borderTop: '1px solid var(--c-border)',
-                        }}
-                      >
-                        <div style={statusStyle(status.state)}>
-                          {saveLabel(item)}
-                          {status.state === 'error' && (
-                            <button
-                              type="button"
-                              onClick={() => save(item, answersRef.current[item.responseId])}
-                              style={{
-                                border: '1px solid rgba(255,255,255,0.16)',
-                                borderRadius: 999,
-                                background: 'rgba(255,255,255,0.06)',
-                                color: '#fff',
-                                cursor: 'pointer',
-                                font: 'inherit',
-                                padding: '4px 8px',
-                              }}
-                            >
-                              Retry
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </article>
-                  )
-                })}
-              </div>
-            </section>
+            <button
+              className={`${styles.monthChip} ${month.isCurrent ? styles.monthChipCurrent : ''}`}
+              key={month.key}
+              type="button"
+              onClick={() => goToMonth(month.key)}
+            >
+              <span>{month.shortLabel}</span>
+              <strong>{summary.answered}/{month.itemCount}</strong>
+            </button>
           )
         })}
+      </nav>
+
+      <div className={styles.monthList}>
+        {data.months.map(month => (
+          <MonthSection
+            key={month.key}
+            month={month}
+            answers={answers}
+            statuses={statuses}
+            expanded={expandedMonths.has(month.key)}
+            onToggle={() => toggleMonth(month.key)}
+            onUpdate={update}
+            onSave={save}
+          />
+        ))}
       </div>
 
-      <section className={styles.submitCard}>
-        <div>
-          <div className={styles.eyebrow}>Always editable</div>
-          <h2>No final submit button</h2>
-          <p>
-            Your latest saved answer is the answer Echo Play Live will use. Reopen this page
-            whenever work, family, health, or another booking changes your plans.
-          </p>
-        </div>
+      <section className={styles.footerCard}>
+        <div className={styles.eyebrow}>How this stays current</div>
+        <h2>A rolling 12-month window</h2>
+        <p>
+          When a month ends, it moves into Past Months and a new future month appears automatically.
+          Reminder emails always return you to this same private page.
+        </p>
       </section>
     </div>
   )
