@@ -20,6 +20,30 @@ function initialAnswer(item) {
   }
 }
 
+function groupItemsByBand(items) {
+  const groups = []
+  const byBand = new Map()
+
+  for (const item of items) {
+    const key = item.bandId || item.bandName
+
+    if (!byBand.has(key)) {
+      const group = {
+        key,
+        bandId: item.bandId,
+        bandName: item.bandName,
+        items: [],
+      }
+      byBand.set(key, group)
+      groups.push(group)
+    }
+
+    byBand.get(key).items.push(item)
+  }
+
+  return groups
+}
+
 export default function AvailabilityForm({ data, token }) {
   const [answers, setAnswers] = useState(() => Object.fromEntries(
     data.items.map(item => [item.responseId, initialAnswer(item)])
@@ -27,6 +51,8 @@ export default function AvailabilityForm({ data, token }) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(null)
+
+  const bandGroups = useMemo(() => groupItemsByBand(data.items), [data.items])
 
   const answeredCount = useMemo(() => data.items.filter(item => {
     const answer = answers[item.responseId]
@@ -98,7 +124,7 @@ export default function AvailabilityForm({ data, token }) {
         <div className={styles.eyebrow}>Complete</div>
         <h1>Availability saved</h1>
         <p>
-          Thanks, {data.memberName}. Your responses for {data.cycleName} are now in Airtable.
+          Thanks, {data.memberName}. Your responses for every included band are now in Airtable.
         </p>
         {success.blackoutCount > 0 && (
           <p className={styles.completeNote}>
@@ -124,7 +150,15 @@ export default function AvailabilityForm({ data, token }) {
         </div>
 
         <h2>{data.cycleName}</h2>
-        <p>Choose Available, Maybe, or Unavailable for every date below.</p>
+        <p>One check covers every included band you play in. Answer each date below.</p>
+
+        <div className={styles.bandSummary} aria-label="Bands included in this availability check">
+          {bandGroups.map(group => (
+            <span className={styles.bandPill} key={group.key}>
+              {group.bandName}
+            </span>
+          ))}
+        </div>
 
         <div className={styles.metaRow}>
           {data.dueLabel && <span><strong>Due:</strong> {data.dueLabel}</span>}
@@ -138,89 +172,111 @@ export default function AvailabilityForm({ data, token }) {
         )}
       </section>
 
-      <div className={styles.optionList}>
-        {data.items.map((item, index) => {
-          const answer = answers[item.responseId]
-          const needsReason = answer.response === 'Maybe' || answer.response === 'Unavailable'
+      <div className={styles.bandList}>
+        {bandGroups.map(group => {
+          const bandAnswered = group.items.filter(item => Boolean(answers[item.responseId]?.response)).length
 
           return (
-            <article className={styles.optionCard} key={item.responseId}>
-              <div className={styles.optionNumber}>{String(index + 1).padStart(2, '0')}</div>
-
-              <div className={styles.optionHeader}>
+            <section className={styles.bandSection} key={group.key}>
+              <div className={styles.bandSectionHeader}>
                 <div>
-                  <div className={styles.bandPill}>{item.bandName}</div>
-                  <h3>{item.dateLabel}</h3>
-                  <div className={styles.optionDetails}>
-                    <span>{item.timeLabel}</span>
-                    {item.location && <span>{item.location}</span>}
-                  </div>
+                  <div className={styles.eyebrow}>Your schedule</div>
+                  <h2>{group.bandName}</h2>
+                  <p>{group.items.length} practice {group.items.length === 1 ? 'date' : 'dates'} this month</p>
+                </div>
+                <div className={styles.bandProgress}>
+                  <strong>{bandAnswered}/{group.items.length}</strong>
+                  <span>answered</span>
                 </div>
               </div>
 
-              {item.existingBlackout && (
-                <div className={styles.conflictNote}>
-                  <strong>Blackout already on file:</strong> {item.existingBlackout.reason}
-                  {item.existingBlackout.notes && <span>{item.existingBlackout.notes}</span>}
-                </div>
-              )}
+              <div className={styles.optionList}>
+                {group.items.map((item, index) => {
+                  const answer = answers[item.responseId]
+                  const needsReason = answer.response === 'Maybe' || answer.response === 'Unavailable'
 
-              <div className={styles.choiceGrid} role="group" aria-label={`Availability for ${item.dateLabel}`}>
-                {CHOICES.map(choice => (
-                  <button
-                    className={`${styles.choiceButton} ${answer.response === choice.value ? styles.choiceSelected : ''}`}
-                    key={choice.value}
-                    type="button"
-                    aria-pressed={answer.response === choice.value}
-                    onClick={() => updateAnswer(item.responseId, { response: choice.value })}
-                  >
-                    <span className={styles.choiceIcon}>{choice.icon}</span>
-                    <span>{choice.label}</span>
-                  </button>
-                ))}
+                  return (
+                    <article className={styles.optionCard} key={item.responseId}>
+                      <div className={styles.optionNumber}>{String(index + 1).padStart(2, '0')}</div>
+
+                      <div className={styles.optionHeader}>
+                        <div>
+                          <div className={styles.bandPill}>{item.eventType}</div>
+                          <h3>{item.dateLabel}</h3>
+                          <div className={styles.optionDetails}>
+                            <span>{item.timeLabel}</span>
+                            {item.location && <span>{item.location}</span>}
+                          </div>
+                        </div>
+                      </div>
+
+                      {item.existingBlackout && (
+                        <div className={styles.conflictNote}>
+                          <strong>Blackout already on file:</strong> {item.existingBlackout.reason}
+                          {item.existingBlackout.notes && <span>{item.existingBlackout.notes}</span>}
+                        </div>
+                      )}
+
+                      <div className={styles.choiceGrid} role="group" aria-label={`${item.bandName} availability for ${item.dateLabel}`}>
+                        {CHOICES.map(choice => (
+                          <button
+                            className={`${styles.choiceButton} ${answer.response === choice.value ? styles.choiceSelected : ''}`}
+                            key={choice.value}
+                            type="button"
+                            aria-pressed={answer.response === choice.value}
+                            onClick={() => updateAnswer(item.responseId, { response: choice.value })}
+                          >
+                            <span className={styles.choiceIcon}>{choice.icon}</span>
+                            <span>{choice.label}</span>
+                          </button>
+                        ))}
+                      </div>
+
+                      {needsReason && (
+                        <div className={styles.followupGrid}>
+                          <label className={styles.field}>
+                            <span>Reason</span>
+                            <select
+                              value={answer.reason}
+                              onChange={event => updateAnswer(item.responseId, { reason: event.target.value })}
+                              required
+                            >
+                              <option value="">Choose a reason</option>
+                              {REASONS.map(reason => <option key={reason} value={reason}>{reason}</option>)}
+                            </select>
+                          </label>
+
+                          <label className={styles.field}>
+                            <span>Note <em>optional</em></span>
+                            <textarea
+                              rows="3"
+                              maxLength="500"
+                              value={answer.notes}
+                              placeholder="Add context only when it helps with scheduling."
+                              onChange={event => updateAnswer(item.responseId, { notes: event.target.value })}
+                            />
+                          </label>
+
+                          {answer.response === 'Unavailable' && (
+                            <label className={styles.blackoutToggle}>
+                              <input
+                                type="checkbox"
+                                checked={answer.hardBlackout}
+                                onChange={event => updateAnswer(item.responseId, { hardBlackout: event.target.checked })}
+                              />
+                              <span>
+                                <strong>Add this as a {item.bandName} blackout date</strong>
+                                <small>Use this only when the date is a firm conflict, not just a rehearsal preference.</small>
+                              </span>
+                            </label>
+                          )}
+                        </div>
+                      )}
+                    </article>
+                  )
+                })}
               </div>
-
-              {needsReason && (
-                <div className={styles.followupGrid}>
-                  <label className={styles.field}>
-                    <span>Reason</span>
-                    <select
-                      value={answer.reason}
-                      onChange={event => updateAnswer(item.responseId, { reason: event.target.value })}
-                      required
-                    >
-                      <option value="">Choose a reason</option>
-                      {REASONS.map(reason => <option key={reason} value={reason}>{reason}</option>)}
-                    </select>
-                  </label>
-
-                  <label className={styles.field}>
-                    <span>Note <em>optional</em></span>
-                    <textarea
-                      rows="3"
-                      maxLength="500"
-                      value={answer.notes}
-                      placeholder="Add context only when it helps with scheduling."
-                      onChange={event => updateAnswer(item.responseId, { notes: event.target.value })}
-                    />
-                  </label>
-
-                  {answer.response === 'Unavailable' && (
-                    <label className={styles.blackoutToggle}>
-                      <input
-                        type="checkbox"
-                        checked={answer.hardBlackout}
-                        onChange={event => updateAnswer(item.responseId, { hardBlackout: event.target.checked })}
-                      />
-                      <span>
-                        <strong>Add this as a Jambi blackout date</strong>
-                        <small>Use this only when the date is a firm conflict, not just a rehearsal preference.</small>
-                      </span>
-                    </label>
-                  )}
-                </div>
-              )}
-            </article>
+            </section>
           )
         })}
       </div>
@@ -229,7 +285,7 @@ export default function AvailabilityForm({ data, token }) {
         <div>
           <div className={styles.eyebrow}>Review</div>
           <h2>{invalidItems.length === 0 ? 'Ready to submit' : `${invalidItems.length} date${invalidItems.length === 1 ? '' : 's'} still need attention`}</h2>
-          <p>You can change any answer above before submitting.</p>
+          <p>One submission saves your answers for every band shown above.</p>
         </div>
 
         {error && <div className={styles.errorMessage} role="alert">{error}</div>}
@@ -239,7 +295,7 @@ export default function AvailabilityForm({ data, token }) {
           type="submit"
           disabled={invalidItems.length > 0 || submitting}
         >
-          {submitting ? 'Saving...' : 'Submit availability'}
+          {submitting ? 'Saving...' : 'Submit monthly availability'}
         </button>
       </section>
     </form>
