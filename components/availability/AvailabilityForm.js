@@ -304,9 +304,16 @@ function MonthSection({
 }
 
 export default function AvailabilityForm({ data, token }) {
-  const rollingItems = useMemo(
-    () => data.months.flatMap(month => month.items),
+  const visibleMonths = useMemo(
+    () => data.months.map(month => {
+      const items = month.items.filter(item => !item.isPastDate)
+      return { ...month, items, itemCount: items.length }
+    }),
     [data.months]
+  )
+  const rollingItems = useMemo(
+    () => visibleMonths.flatMap(month => month.items),
+    [visibleMonths]
   )
   const historyItems = useMemo(
     () => data.historyMonths.flatMap(month => month.items),
@@ -327,7 +334,7 @@ export default function AvailabilityForm({ data, token }) {
     ])
   ))
   const [expandedMonths, setExpandedMonths] = useState(() => new Set(
-    data.months.slice(0, 2).map(month => month.key)
+    visibleMonths.slice(0, 2).map(month => month.key)
   ))
   const [historyMonthKey, setHistoryMonthKey] = useState('')
 
@@ -532,7 +539,7 @@ export default function AvailabilityForm({ data, token }) {
       )}
 
       <nav className={styles.monthRail} aria-label="Rolling availability months">
-        {data.months.map(month => {
+        {visibleMonths.map(month => {
           const summary = monthSummary(month, answers)
           return (
             <button
@@ -549,7 +556,7 @@ export default function AvailabilityForm({ data, token }) {
       </nav>
 
       <div className={styles.monthList}>
-        {data.months.map(month => (
+        {visibleMonths.map(month => (
           <MonthSection
             key={month.key}
             month={month}
