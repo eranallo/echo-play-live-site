@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import styles from './AvailabilityForm.module.css'
 
 const CHOICES = [
@@ -20,148 +20,209 @@ function initialAnswer(item) {
   }
 }
 
-function groupItemsByBand(items) {
+function complete(answer) {
+  if (!answer?.response) return false
+  return !(
+    (answer.response === 'Maybe' || answer.response === 'Unavailable')
+    && !answer.reason
+  )
+}
+
+function groupByBand(items) {
   const groups = []
-  const byBand = new Map()
+  const map = new Map()
 
   for (const item of items) {
     const key = item.bandId || item.bandName
-
-    if (!byBand.has(key)) {
-      const group = {
-        key,
-        bandId: item.bandId,
-        bandName: item.bandName,
-        items: [],
-      }
-      byBand.set(key, group)
+    if (!map.has(key)) {
+      const group = { key, bandName: item.bandName, items: [] }
+      map.set(key, group)
       groups.push(group)
     }
-
-    byBand.get(key).items.push(item)
+    map.get(key).items.push(item)
   }
 
   return groups
+}
+
+function statusStyle(status) {
+  const base = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 7,
+    borderRadius: 999,
+    padding: '7px 10px',
+    fontFamily: 'var(--ff-label)',
+    fontSize: 10,
+    fontWeight: 800,
+    letterSpacing: '0.12em',
+    textTransform: 'uppercase',
+  }
+
+  if (status === 'saving') {
+    return { ...base, color: '#d8b4fe', background: 'rgba(157, 78, 221, 0.12)' }
+  }
+  if (status === 'saved') {
+    return { ...base, color: '#8ee0b6', background: 'rgba(42, 196, 119, 0.10)' }
+  }
+  if (status === 'needsReason') {
+    return { ...base, color: '#f3cc66', background: 'rgba(212, 160, 23, 0.10)' }
+  }
+  if (status === 'error') {
+    return { ...base, color: '#ffb3ba', background: 'rgba(230, 57, 70, 0.11)' }
+  }
+  return { ...base, color: 'var(--c-text-dim)', background: 'rgba(255, 255, 255, 0.035)' }
 }
 
 export default function AvailabilityForm({ data, token }) {
   const [answers, setAnswers] = useState(() => Object.fromEntries(
     data.items.map(item => [item.responseId, initialAnswer(item)])
   ))
-  const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(null)
+  const [statuses, setStatuses] = useState(() => Object.fromEntries(
+    data.items.map(item => [
+      item.responseId,
+      item.response === 'Pending' ? { state: 'idle' } : { state: 'saved' },
+    ])
+  ))
 
-  const bandGroups = useMemo(() => groupItemsByBand(data.items), [data.items])
+  const answersRef = useRef(answers)
+  const requestVersion = useRef({})
+  const groups = useMemo(() => groupByBand(data.items), [data.items])
+  const answered = data.items.filter(item => complete(answers[item.responseId])).length
+  const saving = Object.values(statuses).filter(item => item.state === 'saving').length
+  const errors = Object.values(statuses).filter(item => item.state === 'error').length
+  const remaining = data.totalCount - answered
 
-  const answeredCount = useMemo(() => data.items.filter(item => {
-    const answer = answers[item.responseId]
-    return Boolean(answer?.response)
-  }).length, [answers, data.items])
-
-  const invalidItems = useMemo(() => data.items.filter(item => {
-    const answer = answers[item.responseId]
-    if (!answer?.response) return true
-    if ((answer.response === 'Maybe' || answer.response === 'Unavailable') && !answer.reason) return true
-    return false
-  }), [answers, data.items])
-
-  function updateAnswer(responseId, changes) {
-    setAnswers(current => {
-      const next = { ...current[responseId], ...changes }
-
-      if (changes.response === 'Available') {
-        next.reason = ''
-        next.hardBlackout = false
-      }
-
-      if (changes.response === 'Maybe') {
-        next.hardBlackout = false
-      }
-
-      return { ...current, [responseId]: next }
-    })
-    setError('')
+  function setStatus(id, state, message = '') {
+    setStatuses(current => ({ ...current, [id]: { state, message } }))
   }
 
-  async function submitAvailability(event) {
-    event.preventDefault()
-    if (invalidItems.length > 0 || submitting) return
+  async function save(item, answer) {
+    if (!complete(answer)) {
+      setStatus(item.responseId, answer.response ? 'needsReason' : 'idle')
+      return
+    }
 
-    setSubmitting(true)
-    setError('')
+    const id = item.responseId
+    const version = (requestVersion.current[id] || 0) + 1
+    requestVersion.current[id] = version
+    setStatus(id, 'saving')
 
     try {
       const response = await fetch(`/api/availability/${encodeURIComponent(token)}`, {
-        method: 'POST',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          answers: data.items.map(item => ({
-            responseId: item.responseId,
-            ...answers[item.responseId],
-          })),
-        }),
+        body: JSON.stringify({ answer: { responseId: id, ...answer } }),
       })
-
       const body = await response.json().catch(() => ({}))
-      if (!response.ok) {
-        throw new Error(body.error || 'Your availability could not be saved.')
-      }
+      if (!response.ok) throw new Error(body.error || 'This change could not be saved.')
 
-      setSuccess({ blackoutCount: body.blackoutCount || 0 })
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    } catch (submissionError) {
-      setError(submissionError.message || 'Your availability could not be saved.')
-    } finally {
-      setSubmitting(false)
+      if (requestVersion.current[id] === version) {
+        setStatus(id, 'saved')
+      }
+    } catch (error) {
+      if (requestVersion.current[id] === version) {
+        setStatus(id, 'error', error.message || 'This change could not be saved.')
+      }
     }
   }
 
-  if (success) {
-    return (
-      <section className={styles.completeCard} aria-live="polite">
-        <div className={styles.completeIcon}>✓</div>
-        <div className={styles.eyebrow}>Complete</div>
-        <h1>Availability saved</h1>
-        <p>
-          Thanks, {data.memberName}. Your responses for every included band are now in Airtable.
-        </p>
-        {success.blackoutCount > 0 && (
-          <p className={styles.completeNote}>
-            {success.blackoutCount} blackout {success.blackoutCount === 1 ? 'date was' : 'dates were'} also added.
-          </p>
-        )}
-      </section>
-    )
+  function update(item, changes, shouldSave = true) {
+    const current = answersRef.current[item.responseId]
+    const next = { ...current, ...changes }
+
+    if (changes.response === 'Available') {
+      next.reason = ''
+      next.hardBlackout = false
+    }
+    if (changes.response === 'Maybe') {
+      next.hardBlackout = false
+    }
+
+    const nextAnswers = { ...answersRef.current, [item.responseId]: next }
+    answersRef.current = nextAnswers
+    setAnswers(nextAnswers)
+
+    if (shouldSave) save(item, next)
   }
 
+  function saveLabel(item) {
+    const status = statuses[item.responseId] || { state: 'idle' }
+
+    if (status.state === 'saving') return 'Saving change...'
+    if (status.state === 'saved') return '✓ Saved'
+    if (status.state === 'needsReason') return 'Choose a reason to save'
+    if (status.state === 'error') return status.message || 'Save failed'
+    return 'Not answered yet'
+  }
+
+  const dashboardStatus = errors > 0
+    ? `${errors} change${errors === 1 ? '' : 's'} need attention`
+    : saving > 0
+      ? `Saving ${saving} change${saving === 1 ? '' : 's'}...`
+      : remaining > 0
+        ? `${remaining} date${remaining === 1 ? '' : 's'} not answered yet`
+        : 'All current changes are saved'
+
   return (
-    <form className={styles.form} onSubmit={submitAvailability}>
+    <div className={styles.form}>
       <section className={styles.introCard}>
         <div className={styles.introTopline}>
           <div>
-            <div className={styles.eyebrow}>Monthly availability</div>
+            <div className={styles.eyebrow}>Live availability dashboard</div>
             <h1>{data.memberName}</h1>
           </div>
           <div className={styles.progressBadge}>
-            <strong>{answeredCount}/{data.totalCount}</strong>
+            <strong>{answered}/{data.totalCount}</strong>
             <span>answered</span>
           </div>
         </div>
 
         <h2>{data.cycleName}</h2>
-        <p>One check covers every included band you play in. Answer each date below.</p>
+        <p>
+          Update any date whenever plans change. Completed answers save automatically,
+          and this page remains editable while the monthly check is open.
+        </p>
 
-        <div className={styles.bandSummary} aria-label="Bands included in this availability check">
-          {bandGroups.map(group => (
-            <span className={styles.bandPill} key={group.key}>
-              {group.bandName}
-            </span>
+        <div className={styles.bandSummary}>
+          {groups.map(group => (
+            <span className={styles.bandPill} key={group.key}>{group.bandName}</span>
           ))}
         </div>
 
+        <div
+          style={{
+            display: 'flex',
+            gap: 13,
+            alignItems: 'center',
+            marginTop: 22,
+            border: '1px solid rgba(42, 196, 119, 0.26)',
+            borderRadius: 17,
+            background: 'rgba(42, 196, 119, 0.065)',
+            padding: '14px 16px',
+          }}
+        >
+          <span
+            aria-hidden="true"
+            style={{
+              width: 10,
+              height: 10,
+              flex: '0 0 auto',
+              borderRadius: 999,
+              background: '#2ac477',
+              boxShadow: '0 0 0 6px rgba(42, 196, 119, 0.10)',
+            }}
+          />
+          <div style={{ display: 'grid', gap: 3 }}>
+            <strong style={{ fontSize: 14 }}>{dashboardStatus}</strong>
+            <span style={{ color: 'var(--c-text-muted)', fontSize: 12 }}>
+              Keep this private link and return whenever your availability changes.
+            </span>
+          </div>
+        </div>
+
         <div className={styles.metaRow}>
-          {data.dueLabel && <span><strong>Due:</strong> {data.dueLabel}</span>}
+          {data.dueLabel && <span><strong>Initial responses due:</strong> {data.dueLabel}</span>}
           {data.isPreview && <span className={styles.previewPill}>Test mode</span>}
         </div>
 
@@ -173,8 +234,8 @@ export default function AvailabilityForm({ data, token }) {
       </section>
 
       <div className={styles.bandList}>
-        {bandGroups.map(group => {
-          const bandAnswered = group.items.filter(item => Boolean(answers[item.responseId]?.response)).length
+        {groups.map(group => {
+          const bandAnswered = group.items.filter(item => complete(answers[item.responseId])).length
 
           return (
             <section className={styles.bandSection} key={group.key}>
@@ -194,6 +255,7 @@ export default function AvailabilityForm({ data, token }) {
                 {group.items.map((item, index) => {
                   const answer = answers[item.responseId]
                   const needsReason = answer.response === 'Maybe' || answer.response === 'Unavailable'
+                  const status = statuses[item.responseId] || { state: 'idle' }
 
                   return (
                     <article className={styles.optionCard} key={item.responseId}>
@@ -224,7 +286,7 @@ export default function AvailabilityForm({ data, token }) {
                             key={choice.value}
                             type="button"
                             aria-pressed={answer.response === choice.value}
-                            onClick={() => updateAnswer(item.responseId, { response: choice.value })}
+                            onClick={() => update(item, { response: choice.value })}
                           >
                             <span className={styles.choiceIcon}>{choice.icon}</span>
                             <span>{choice.label}</span>
@@ -238,7 +300,7 @@ export default function AvailabilityForm({ data, token }) {
                             <span>Reason</span>
                             <select
                               value={answer.reason}
-                              onChange={event => updateAnswer(item.responseId, { reason: event.target.value })}
+                              onChange={event => update(item, { reason: event.target.value })}
                               required
                             >
                               <option value="">Choose a reason</option>
@@ -253,7 +315,8 @@ export default function AvailabilityForm({ data, token }) {
                               maxLength="500"
                               value={answer.notes}
                               placeholder="Add context only when it helps with scheduling."
-                              onChange={event => updateAnswer(item.responseId, { notes: event.target.value })}
+                              onChange={event => update(item, { notes: event.target.value }, false)}
+                              onBlur={() => save(item, answersRef.current[item.responseId])}
                             />
                           </label>
 
@@ -262,16 +325,47 @@ export default function AvailabilityForm({ data, token }) {
                               <input
                                 type="checkbox"
                                 checked={answer.hardBlackout}
-                                onChange={event => updateAnswer(item.responseId, { hardBlackout: event.target.checked })}
+                                onChange={event => update(item, { hardBlackout: event.target.checked })}
                               />
                               <span>
                                 <strong>Add this as a {item.bandName} blackout date</strong>
-                                <small>Use this only when the date is a firm conflict, not just a rehearsal preference.</small>
+                                <small>Use this when the conflict should also block other scheduling for this band.</small>
                               </span>
                             </label>
                           )}
                         </div>
                       )}
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'flex-end',
+                          marginTop: 18,
+                          paddingTop: 15,
+                          borderTop: '1px solid var(--c-border)',
+                        }}
+                      >
+                        <div style={statusStyle(status.state)}>
+                          {saveLabel(item)}
+                          {status.state === 'error' && (
+                            <button
+                              type="button"
+                              onClick={() => save(item, answersRef.current[item.responseId])}
+                              style={{
+                                border: '1px solid rgba(255,255,255,0.16)',
+                                borderRadius: 999,
+                                background: 'rgba(255,255,255,0.06)',
+                                color: '#fff',
+                                cursor: 'pointer',
+                                font: 'inherit',
+                                padding: '4px 8px',
+                              }}
+                            >
+                              Retry
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </article>
                   )
                 })}
@@ -283,21 +377,14 @@ export default function AvailabilityForm({ data, token }) {
 
       <section className={styles.submitCard}>
         <div>
-          <div className={styles.eyebrow}>Review</div>
-          <h2>{invalidItems.length === 0 ? 'Ready to submit' : `${invalidItems.length} date${invalidItems.length === 1 ? '' : 's'} still need attention`}</h2>
-          <p>One submission saves your answers for every band shown above.</p>
+          <div className={styles.eyebrow}>Always editable</div>
+          <h2>No final submit button</h2>
+          <p>
+            Your latest saved answer is the answer Echo Play Live will use. Reopen this page
+            whenever work, family, health, or another booking changes your plans.
+          </p>
         </div>
-
-        {error && <div className={styles.errorMessage} role="alert">{error}</div>}
-
-        <button
-          className={styles.submitButton}
-          type="submit"
-          disabled={invalidItems.length > 0 || submitting}
-        >
-          {submitting ? 'Saving...' : 'Submit monthly availability'}
-        </button>
       </section>
-    </form>
+    </div>
   )
 }
