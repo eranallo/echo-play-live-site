@@ -1,11 +1,11 @@
-import AvailabilityForm from '@/components/availability/AvailabilityForm'
+import MasterAvailabilityCalendar from '@/components/availability/MasterAvailabilityCalendar'
 import { Card, PortalHero, PortalShell, PortalTopBar } from '@/components/portal/PortalUI'
-import { getAvailabilityByToken } from '@/lib/availability/airtable'
+import { getMasterAvailabilityByToken } from '@/lib/availability/masterCalendar'
 
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  title: 'Practice Availability | Echo Play Live',
+  title: 'EPL Availability | Echo Play Live',
   robots: {
     index: false,
     follow: false,
@@ -15,12 +15,12 @@ export const metadata = {
 export default async function AvailabilityPage({ params }) {
   const resolvedParams = await params
   const token = resolvedParams?.token || ''
-  const result = await getAvailabilityByToken(token)
+  const result = await getMasterAvailabilityByToken(token)
 
   if (!result.ok) {
     return (
       <PortalShell showDock={false}>
-        <PortalTopBar title="Practice Availability" subtitle="Echo Play Live" backHref="/" />
+        <PortalTopBar title="EPL Availability" subtitle="Echo Play Live" backHref="/" />
         <PortalHero
           eyebrow="Availability"
           title="This dashboard is not available"
@@ -37,8 +37,8 @@ export default async function AvailabilityPage({ params }) {
 
   return (
     <PortalShell showDock={false}>
-      <PortalTopBar title="Practice Availability" subtitle="Echo Play Live" backHref="/" />
-      <AvailabilityForm data={result.data} token={token} />
+      <PortalTopBar title="EPL Availability" subtitle="Echo Play Live" backHref="/" />
+      <MasterAvailabilityCalendar data={result.data} token={token} />
     </PortalShell>
   )
 }
