@@ -12,13 +12,13 @@ Evan approved the first recommended package: band-page upcoming shows, fan signu
 - Press adds text bios and original curated JPEG downloads. Current technical files, additional logos, and photographer credits are requested through booking; unverified historical stage plots are not presented as current assets.
 - Ticket, calendar, share, follow, and press actions have minimal Vercel events using only public band/show identifiers. An outbound ticket click does not claim a sale. No personal/form data is included.
 
-## Fan signup dependency
+## Fan signup
 
-The Mailchimp connector cannot inspect audiences/forms, and the available browser was signed out. Evan was asked for the existing signup-form URL or account sign-in. `lib/public/newsletter-config.mjs` deliberately keeps `newsletterForm = null` until the real destination and fields are verified.
+Mailchimp access became available during implementation. The existing Echo Play Live audience was verified and given an optional `CITY` field and a four-choice “Your bands” interest group. A website embed named “Echoplay.live — Fan signup” was generated in that audience. Its public action, form identifier, email/city names and honeypot were copied from Mailchimp’s generated embed; interest field names and selected values were verified against the live hosted form. No API key is used.
 
-The fan section currently provides working, band-specific Bandsintown follow links. It does not collect email or claim a subscription. Once verified, the native Mailchimp form can replace those links with email, existing band-interest fields, optional city, and the actual audience honeypot field. A public form configuration must contain `action`, `honeypot`, optional `bands` mapping of public band slug to `{ name, value }`, and optional `cityField`, copied from the actual existing form. No API key or invented group ID is permitted. Its exact origin is added to form-action at build time. Mailchimp handles validation, confirmation, and subscription state; no local success is faked and no signup content is logged.
+Band pages preselect their own band; the Shows page lets visitors choose any combination. The form sends email, optional interests and optional city directly to Mailchimp in a new tab, where the provider handles validation and subscription state. The exact Mailchimp origin is included in the form-action policy. No Mailchimp scripts, tracking popup or local success claim is added. The privacy page describes the collection. Existing single opt-in settings and contact history are preserved.
 
-This release does not send a campaign, import subscribers, subscribe booking contacts, create an audience, change billing, or promise confirmed email signup before the dependency is resolved.
+This release does not send a campaign, import subscribers, subscribe booking contacts, create an audience, or change billing. Rendering, required-email validation and integration fields are verified without creating a test subscriber; actual delivery to an inbox is not claimed as tested.
 
 ## Verification
 

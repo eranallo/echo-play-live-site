@@ -31,6 +31,7 @@ export default function FanSignup({ bandSlug = '', compact = false }) {
             action={newsletterForm.action}
             method="post"
             target="_blank"
+            rel="noopener noreferrer"
             className="fan-signup-form"
           >
             <label htmlFor={`${id}-email`}>Email address</label>
