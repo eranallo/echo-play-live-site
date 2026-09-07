@@ -1,5 +1,6 @@
 import './globals.css'
 import './design.css'
+import localFont from 'next/font/local'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
@@ -7,6 +8,13 @@ import { bands, bandsList } from '@/lib/bands'
 import VendorTags from '@/components/VendorTags'
 
 const SITE_URL = 'https://echoplay.live'
+const gotham = localFont({
+  src: './fonts/Gotham-Bold.ttf',
+  variable: '--font-gotham',
+  weight: '700',
+  style: 'normal',
+  display: 'swap',
+})
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -111,7 +119,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={gotham.variable}>
       <head>
         <script
           type="application/ld+json"

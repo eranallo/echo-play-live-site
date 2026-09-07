@@ -45,26 +45,25 @@ export default function PressPage() {
       <section className="shell section-bottom">
         <h2 className="section-title">The Echo Play Live identity.</h2>
         <p className="text-body" style={{ marginBottom: 30 }}>
-          Company logos in vector and PNG formats.
+          The official seal, in black and white. Keep its proportions and leave clear space around it.
         </p>
-        <div className="three-columns">
+        <div className="two-columns">
           {[
             ['white', 'White', true],
             ['black', 'Black', false],
-            ['gold', 'Gold', true],
           ].map(([color, label, dark]) => (
             <article key={color} className="content-panel">
               <div
                 style={{
                   height: 180,
                   position: 'relative',
-                  background: dark ? '#1d1d1f' : '#f5f5f7',
+                  background: dark ? '#000000' : '#ffffff',
                   borderRadius: 14,
                   marginBottom: 22,
                 }}
               >
                 <Image
-                  src={`/press/epl-logo-${color}.svg`}
+                  src={`/brand/epl-seal-${color}.svg`}
                   alt={`Echo Play Live ${label.toLowerCase()} logo`}
                   fill
                   sizes="300px"
@@ -73,16 +72,19 @@ export default function PressPage() {
               </div>
               <h2>{label}</h2>
               <div className="inline-links">
-                <a href={`/press/epl-logo-${color}.svg`} download>
+                <a href={`/brand/epl-seal-${color}.svg`} download>
                   SVG ↓
                 </a>
-                <a href={`/press/epl-logo-${color}-1024.png`} download>
+                <a href={`/brand/epl-seal-${color}.png`} download>
                   PNG ↓
                 </a>
               </div>
             </article>
           ))}
         </div>
+        <a className="text-link" href="/brand/epl-logo-master.svg" download style={{ marginTop: 24 }}>
+          Download original vector artwork · SVG ↓
+        </a>
       </section>
       <section className="shell section-bottom">
         <h2 className="section-title">Need something else?</h2>

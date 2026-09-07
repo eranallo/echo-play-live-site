@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import BrandLogo from '@/components/BrandLogo'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 const links = [
@@ -48,16 +49,7 @@ export default function Nav() {
     <header className="site-header" ref={nav}>
       <nav className="nav-inner" aria-label="Main navigation">
         <Link className="wordmark" href="/" aria-label="Echo Play Live home">
-          <span className="echo-mark" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-          </span>
-          <span>
-            echo play<span className="wordmark-live"> live</span>
-          </span>
+          <BrandLogo />
         </Link>
         <div className="desktop-links">{items}</div>
         <div className="nav-actions">

@@ -11,6 +11,7 @@
 import { NextResponse } from 'next/server'
 import { PDFDocument, StandardFonts, rgb, pushGraphicsState, popGraphicsState, rectangle, clip, endPath } from 'pdf-lib'
 import { getBand } from '@/lib/bands'
+import fontkit from '@pdf-lib/fontkit'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
@@ -27,7 +28,7 @@ const COL_W = PAGE_W - MARGIN * 2
 const C_BG = rgb(0.031, 0.031, 0.031)     // #080808 — EPL background
 const C_TEXT = rgb(1, 1, 1)               // white
 const C_DIM = rgb(0.7, 0.7, 0.7)          // soft gray
-const C_GOLD = rgb(0.831, 0.627, 0.090)   // #D4A017 — brand gold
+const C_BRAND = rgb(1, 1, 1)
 
 function hexToRgb(hex) {
   const h = hex.replace('#', '')
@@ -146,13 +147,16 @@ export async function GET(request, { params }) {
 
   // Standard fonts (built into pdf-lib).
   const helv = await pdf.embedFont(StandardFonts.Helvetica)
-  const helvBold = await pdf.embedFont(StandardFonts.HelveticaBold)
+  pdf.registerFontkit(fontkit)
+  const gothamBytes = await fs.readFile(path.join(process.cwd(), 'app/fonts/Gotham-Bold.ttf'))
+  // The supplied font specifies no subsetting; embed the complete font.
+  const helvBold = await pdf.embedFont(gothamBytes, { subset: false })
   const helvObl = await pdf.embedFont(StandardFonts.HelveticaOblique)
 
-  // Built-in fonts keep downloads independent of third-party font services.
+  // Brand font is bundled locally; no third-party font request.
   const display = helvBold
 
-  const accent = band.color ? hexToRgb(band.color) : C_GOLD
+  const accent = band.color ? hexToRgb(band.color) : C_BRAND
 
   const page = pdf.addPage([PAGE_W, PAGE_H])
 
@@ -163,7 +167,7 @@ export async function GET(request, { params }) {
 
   // ── Top gold accent bar ───────────────────────────────────────
   page.drawRectangle({
-    x: 0, y: PAGE_H - 6, width: PAGE_W, height: 6, color: C_GOLD,
+    x: 0, y: PAGE_H - 6, width: PAGE_W, height: 6, color: C_BRAND,
   })
 
   // ── Hero banner (Phase 25) ────────────────────────────────────
@@ -199,7 +203,7 @@ export async function GET(request, { params }) {
   // ── Header: EPL wordmark + section label (overlaid on banner) ─
   const headerY = BANNER_TOP - 20
   page.drawText('ECHO PLAY LIVE', {
-    x: MARGIN, y: headerY, size: 11, font: display, color: C_GOLD,
+    x: MARGIN, y: headerY, size: 11, font: display, color: C_BRAND,
     characterSpacing: 2,
   })
   const rightLabel = 'PRESS ONE-PAGER'
@@ -262,12 +266,12 @@ export async function GET(request, { params }) {
   cursorY -= 30
   // Section label
   page.drawText('ABOUT', {
-    x: MARGIN, y: cursorY, size: 9, font: helvBold, color: C_GOLD,
+    x: MARGIN, y: cursorY, size: 9, font: helvBold, color: C_BRAND,
     characterSpacing: 2,
   })
   // Underline
   page.drawRectangle({
-    x: MARGIN, y: cursorY - 6, width: 24, height: 1, color: C_GOLD,
+    x: MARGIN, y: cursorY - 6, width: 24, height: 1, color: C_BRAND,
   })
   cursorY -= 20
 
@@ -300,10 +304,10 @@ export async function GET(request, { params }) {
   if (milestones.length && cursorY > BIO_BOTTOM_Y + 80) {
     cursorY -= 20
     page.drawText('RECENT MILESTONES', {
-      x: MARGIN, y: cursorY, size: 9, font: helvBold, color: C_GOLD, characterSpacing: 2,
+      x: MARGIN, y: cursorY, size: 9, font: helvBold, color: C_BRAND, characterSpacing: 2,
     })
     page.drawRectangle({
-      x: MARGIN, y: cursorY - 6, width: 24, height: 1, color: C_GOLD,
+      x: MARGIN, y: cursorY - 6, width: 24, height: 1, color: C_BRAND,
     })
     cursorY -= 20
 
@@ -383,8 +387,10 @@ export async function GET(request, { params }) {
   page.drawRectangle({
     x: MARGIN, y: FOOTER_RULE_Y, width: COL_W, height: 1, color: rgb(0.2, 0.2, 0.2),
   })
+  const logo = await pdf.embedPng(await fs.readFile(path.join(process.cwd(), 'public/brand/epl-seal-white.png')))
+  page.drawImage(logo, { x: MARGIN, y: FOOTER_Y - 21, width: 36, height: 36 })
   page.drawText('echoplay.live', {
-    x: MARGIN, y: FOOTER_Y - 6, size: 9, font: helvBold, color: C_DIM,
+    x: MARGIN + 48, y: FOOTER_Y - 6, size: 9, font: helvBold, color: C_DIM,
     characterSpacing: 1,
   })
   const url = `echoplay.live/bands/${band.slug}`

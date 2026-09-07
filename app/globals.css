@@ -13,9 +13,9 @@
    ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ── Fonts ──────────────────────────────────────────── */
-  --ff-display: var(--font-bebas), 'Bebas Neue', cursive;
-  --ff-body: var(--font-barlow), 'Barlow', sans-serif;
-  --ff-label: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
+  --ff-display: var(--font-gotham), 'Arial Black', sans-serif;
+  --ff-body: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  --ff-label: var(--ff-display);
 
   /* ── Colors: surfaces ───────────────────────────────── */
   --c-bg: #080808;
@@ -34,10 +34,10 @@
   --c-text-dim: rgba(255, 255, 255, 0.45);
   --c-text-faint: rgba(255, 255, 255, 0.25);
 
-  /* ── Colors: accent (EPL gold) ──────────────────────── */
-  --c-epl: #D4A017;
-  --c-epl-soft: rgba(212, 160, 23, 0.08);
-  --c-epl-line: rgba(212, 160, 23, 0.4);
+  /* Company identity: black and white; band colors remain independent. */
+  --c-epl: #ffffff;
+  --c-epl-soft: rgba(255, 255, 255, 0.08);
+  --c-epl-line: rgba(255, 255, 255, 0.4);
 
   /* ── Colors: bands ──────────────────────────────────── */
   --c-slgn: #00B4D8;

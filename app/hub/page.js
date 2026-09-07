@@ -7,10 +7,11 @@ import Hero from '@/components/landing/Hero'
 import RosterGrid from '@/components/landing/RosterGrid'
 import BookingCTA from '@/components/landing/BookingCTA'
 import RevealOnView from '@/components/RevealOnView'
+import BrandLogo from '@/components/BrandLogo'
 
 export const revalidate = 1800
 
-const ACCENT = '#D4A017'
+const ACCENT = '#ffffff'
 
 export default async function HubPage() {
   const data = await getHubData()
@@ -120,8 +121,8 @@ export default async function HubPage() {
             borderTop: '1px solid rgba(255,255,255,0.05)',
           }}
         >
-          <a href="/" style={{ color: 'inherit', textDecoration: 'none' }}>
-            echoplay.live
+          <a href="/" aria-label="Echo Play Live home" style={{ display: 'inline-flex' }}>
+            <BrandLogo variant="white" size={88} />
           </a>
         </footer>
       </main>

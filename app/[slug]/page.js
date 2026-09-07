@@ -7,6 +7,7 @@
 // added subtle band-color tinted background gradient at the bottom.
 
 import { notFound } from 'next/navigation'
+import BrandLogo from '@/components/BrandLogo'
 import { getBandLandingData, inquirySourceLabelFor } from '@/lib/qr-landing'
 import { bandsList } from '@/lib/bands'
 import Hero from '@/components/landing/Hero'
@@ -88,8 +89,8 @@ export default async function BandLandingPage({ params }) {
             borderTop: '1px solid rgba(255,255,255,0.05)',
           }}
         >
-          <a href="/" style={{ color: 'inherit', textDecoration: 'none' }}>
-            Echo Play Live
+          <a href="/" aria-label="Echo Play Live home" style={{ display: 'inline-flex' }}>
+            <BrandLogo variant="white" size={88} />
           </a>
         </footer>
       </main>

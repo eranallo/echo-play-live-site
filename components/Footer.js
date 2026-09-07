@@ -1,12 +1,13 @@
 import Link from 'next/link'
+import BrandLogo from '@/components/BrandLogo'
 import { publicBandPresentation } from '@/lib/public/bands-presentation'
 export default function Footer() {
   return (
     <footer className="site-footer">
       <div className="shell footer-top">
         <div>
-          <Link className="wordmark" href="/">
-            echo play live
+          <Link className="wordmark" href="/" aria-label="Echo Play Live home">
+            <BrandLogo size={112} />
           </Link>
           <p>
             Good music. Great people.

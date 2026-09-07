@@ -1,20 +1,22 @@
 /* Public design: neutral surfaces, generous type, real performance photography. */
 :root {
-  --ff-display: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-  --ff-body: var(--ff-display);
+  --ff-display: var(--font-gotham), 'Arial Black', sans-serif;
+  --ff-body: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
   --ff-label: var(--ff-display);
   --c-bg: #f5f5f7;
-  --c-text: #1d1d1f;
+  --c-text: #000;
   --c-text-muted: #626267;
   --c-text-dim: #6e6e73;
   --c-border: rgba(0, 0, 0, 0.12);
   --c-surface: #fff;
-  --c-epl: #977010;
-  --ink: #1d1d1f;
+  --c-epl: #000;
+  --c-epl-soft: rgba(0, 0, 0, 0.06);
+  --c-epl-line: rgba(0, 0, 0, 0.3);
+  --ink: #000;
   --muted: #6e6e73;
   --paper: #f5f5f7;
   --line: #dcdce0;
-  --gold: #b18b35;
+  --brand-accent: #000;
   --layout-max: 1200px;
 }
 html {
@@ -64,14 +66,29 @@ summary:focus-visible {
   outline-offset: 5px;
 }
 ::selection {
-  background: #e7c563;
-  color: #111;
+  background: #000;
+  color: #fff;
 }
 h1,
 h2,
 h3,
 p {
   margin: 0;
+}
+h1,
+h2,
+h3,
+.eyebrow,
+.button,
+.desktop-links a,
+.mobile-navigation a {
+  font-family: var(--ff-display);
+  font-synthesis: none;
+}
+.brand-logo {
+  display: block;
+  flex: none;
+  object-fit: contain;
 }
 img {
   max-width: 100%;
@@ -117,43 +134,17 @@ img {
   max-width: 1320px;
   margin: auto;
   padding: 0 40px;
-  min-height: 70px;
+  min-height: 92px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
 }
 .wordmark {
-  font-size: 23px;
-  font-weight: 750;
-  letter-spacing: -1px;
   display: inline-flex;
-  gap: 10px;
   align-items: center;
-  white-space: nowrap;
-}
-.wordmark-live {
-  font-weight: 400;
-}
-.echo-mark {
-  display: flex;
-  gap: 3px;
-  align-items: center;
-  height: 26px;
-}
-.echo-mark i {
-  display: block;
-  width: 3px;
-  border-radius: 3px;
-  background: currentColor;
-  height: 12px;
-}
-.echo-mark i:nth-child(2),
-.echo-mark i:nth-child(4) {
-  height: 20px;
-}
-.echo-mark i:nth-child(3) {
-  height: 28px;
+  flex-shrink: 0;
+  padding-block: 10px;
 }
 .desktop-links {
   display: flex;
@@ -276,7 +267,7 @@ img {
 .live-dot {
   width: 7px;
   height: 7px;
-  background: var(--gold);
+  background: var(--brand-accent);
   border-radius: 50%;
 }
 .home-intro h1 {
@@ -1390,7 +1381,7 @@ img {
   --c-bg: #0a0a0a;
   --c-text: #fff;
   --c-text-muted: #bbb;
-  --c-epl: #d4a017;
+  --c-epl: #fff;
   --c-border: #ffffff25;
   color: #fff;
 }
