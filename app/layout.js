@@ -1,15 +1,12 @@
 import './globals.css'
+import './design.css'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import { Bebas_Neue, Barlow, Barlow_Condensed } from 'next/font/google'
+
 import { bands, bandsList } from '@/lib/bands'
 import VendorTags from '@/components/VendorTags'
 
 const SITE_URL = 'https://echoplay.live'
-
-const bebas = Bebas_Neue({ weight: '400', subsets: ['latin'], display: 'swap', variable: '--font-bebas' })
-const barlow = Barlow({ weight: ['300','400','500','600','700'], style: ['normal','italic'], subsets: ['latin'], display: 'swap', variable: '--font-barlow' })
-const barlowCondensed = Barlow_Condensed({ weight: ['300','400','500','600','700'], subsets: ['latin'], display: 'swap', variable: '--font-barlow-condensed' })
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -17,7 +14,8 @@ export const metadata = {
     default: 'Echo Play Live | Tribute & Cover Band Management · DFW',
     template: '%s | Echo Play Live',
   },
-  description: 'DFW tribute and cover band management. Home of So Long Goodnight, The Dick Beldings, Jambi, and Elite. Live, full-band performances. Book a band for your venue, festival, or event.',
+  description:
+    'DFW tribute and cover band management. Home of So Long Goodnight, The Dick Beldings, Jambi, and Elite. Live, full-band performances. Book a band for your venue, festival, or event.',
   keywords: [
     'Echo Play Live',
     'DFW band management',
@@ -46,12 +44,14 @@ export const metadata = {
     url: SITE_URL,
     siteName: 'Echo Play Live',
     title: 'Echo Play Live | Tribute & Cover Band Management · DFW',
-    description: 'DFW tribute and cover band management. Live, full-band performances. Book a band for your venue, festival, or event.',
+    description:
+      'DFW tribute and cover band management. Live, full-band performances. Book a band for your venue, festival, or event.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Echo Play Live | Tribute & Cover Band Management · DFW',
-    description: 'DFW tribute and cover band management. Live, full-band performances. Book a band for your venue, festival, or event.',
+    description:
+      'DFW tribute and cover band management. Live, full-band performances. Book a band for your venue, festival, or event.',
   },
   robots: {
     index: true,
@@ -92,7 +92,7 @@ const jsonLd = {
       ],
       makesOffer: { '@type': 'Offer', name: 'Live music booking' },
     },
-    ...bandsList.map(band => ({
+    ...bandsList.map((band) => ({
       '@type': 'MusicGroup',
       '@id': `${SITE_URL}/bands/${band.slug}#group`,
       name: band.name,
@@ -101,11 +101,9 @@ const jsonLd = {
       foundingLocation: { '@type': 'Place', name: 'Fort Worth, TX' },
       genre: band.genre,
       image: band.heroPhoto ? [band.heroPhoto] : undefined,
-      sameAs: [
-        band.social?.facebook,
-        band.social?.instagram,
-        band.social?.bandsintown,
-      ].filter(Boolean),
+      sameAs: [band.social?.facebook, band.social?.instagram, band.social?.bandsintown].filter(
+        Boolean,
+      ),
       email: band.bookingEmail,
     })),
   ],
@@ -113,7 +111,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${bebas.variable} ${barlow.variable} ${barlowCondensed.variable}`}>
+    <html lang="en">
       <head>
         <script
           type="application/ld+json"
@@ -121,6 +119,9 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
+        <a className="skip-link" href="#main-content">
+          Skip to content
+        </a>
         {children}
         <Analytics />
         <SpeedInsights />

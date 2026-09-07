@@ -21,7 +21,7 @@ function fmtDuration(ms) {
 }
 
 export default function TributeDiscographySection({ band }) {
-  const [data, setData] = useState(null)        // { artist, albums, performedCount, totalCount }
+  const [data, setData] = useState(null) // { artist, albums, performedCount, totalCount }
   const [loaded, setLoaded] = useState(false)
   const [error, setError] = useState(null)
   const [requestFor, setRequestFor] = useState(null) // track object pre-filled into modal
@@ -31,8 +31,8 @@ export default function TributeDiscographySection({ band }) {
     if (!band?.slug) return
     let cancelled = false
     fetch(`/api/discography/${band.slug}`)
-      .then(r => r.ok ? r.json() : null)
-      .then(d => {
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
         if (cancelled) return
         if (!d || !d.albums) {
           setError('Discography unavailable')
@@ -48,11 +48,23 @@ export default function TributeDiscographySection({ band }) {
           setLoaded(true)
         }
       })
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [band?.slug])
 
-  if (!loaded) return null
-  if (error || !data || data.albums.length === 0) return null
+  if (!loaded)
+    return (
+      <p role="status" style={{ padding: 24, color: '#ccc' }}>
+        Loading the music…
+      </p>
+    )
+  if (error || !data || data.albums.length === 0)
+    return (
+      <p style={{ padding: 24, color: '#ccc' }}>
+        The discography isn’t available right now. Please check back soon.
+      </p>
+    )
 
   const accent = band.color || 'var(--c-epl)'
 
@@ -65,47 +77,56 @@ export default function TributeDiscographySection({ band }) {
       }}
     >
       <div style={{ maxWidth: 'var(--layout-max)', margin: '0 auto' }}>
-
         {/* Section header */}
         <div style={{ marginBottom: 'var(--s-7)' }}>
           <div className="section-label" style={{ color: accent, marginBottom: 'var(--s-3)' }}>
             The Discography
           </div>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            flexWrap: 'wrap',
-            gap: 'var(--s-4)',
-          }}>
-            <h2 style={{
-              fontFamily: 'var(--ff-display)',
-              fontSize: 'clamp(40px, 6vw, 72px)',
-              letterSpacing: '0.01em',
-              lineHeight: 0.95,
-            }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-end',
+              flexWrap: 'wrap',
+              gap: 'var(--s-4)',
+            }}
+          >
+            <h2
+              style={{
+                fontFamily: 'var(--ff-display)',
+                fontSize: 'clamp(40px, 6vw, 72px)',
+                letterSpacing: '0.01em',
+                lineHeight: 0.95,
+              }}
+            >
               Every {data.artist.name} Album
             </h2>
-            <div style={{
-              fontFamily: 'var(--ff-body)',
-              fontSize: 'clamp(14px, 1.5vw, 16px)',
-              color: 'rgba(255,255,255,0.5)',
-              lineHeight: 1.5,
-            }}>
-              <strong style={{ color: accent, fontWeight: 600 }}>{data.performedCount}</strong>{' '}of{' '}
-              <strong style={{ color: 'var(--c-text)', fontWeight: 600 }}>{data.totalCount}</strong>{' '}tracks
-              currently in {band.shortName}'s set
+            <div
+              style={{
+                fontFamily: 'var(--ff-body)',
+                fontSize: 'clamp(14px, 1.5vw, 16px)',
+                color: 'rgba(255,255,255,0.5)',
+                lineHeight: 1.5,
+              }}
+            >
+              <strong style={{ color: accent, fontWeight: 600 }}>{data.performedCount}</strong> of{' '}
+              <strong style={{ color: 'var(--c-text)', fontWeight: 600 }}>{data.totalCount}</strong>{' '}
+              tracks currently in {band.shortName}'s set
             </div>
           </div>
-          <p style={{
-            fontFamily: 'var(--ff-body)',
-            fontSize: '15px',
-            color: 'rgba(255,255,255,0.55)',
-            lineHeight: 1.6,
-            marginTop: 'var(--s-4)',
-            maxWidth: '640px',
-          }}>
-            Tap any album to see its tracks. Songs we perform are highlighted. Click any of them to open in Spotify. See one we don't play that you want to hear? Tap "Request" to send it to the band.
+          <p
+            style={{
+              fontFamily: 'var(--ff-body)',
+              fontSize: '15px',
+              color: 'rgba(255,255,255,0.55)',
+              lineHeight: 1.6,
+              marginTop: 'var(--s-4)',
+              maxWidth: '640px',
+            }}
+          >
+            Tap any album to see its tracks. Songs we perform are highlighted. Click any of them to
+            open in Spotify. See one we don't play that you want to hear? Tap "Request" to send it
+            to the band.
           </p>
         </div>
 
@@ -113,19 +134,21 @@ export default function TributeDiscographySection({ band }) {
         {/* Phase 48: smaller inter-album gap since each album collapses to a
             compact header row. */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s-3)' }}>
-          {data.albums.map(album => (
+          {data.albums.map((album) => (
             <AlbumBlock
               key={album.id}
               album={album}
               accent={accent}
               band={band}
-              onRequest={(track) => setRequestFor({
-                songTitle: track.title,
-                originalArtist: data.artist.name,
-                album: album.name,
-                spotifyTrackId: track.id,
-                spotifyTrackUrl: track.spotifyUrl,
-              })}
+              onRequest={(track) =>
+                setRequestFor({
+                  songTitle: track.title,
+                  originalArtist: data.artist.name,
+                  album: album.name,
+                  spotifyTrackId: track.id,
+                  spotifyTrackUrl: track.spotifyUrl,
+                })
+              }
             />
           ))}
         </div>
@@ -148,21 +171,20 @@ export default function TributeDiscographySection({ band }) {
 // with songs they recognize from the band's set.
 function AlbumBlock({ album, accent, band, onRequest }) {
   const [isExpanded, setIsExpanded] = useState(false)
-  const performedInAlbum = useMemo(
-    () => album.tracks.filter(t => t.isPerformed).length,
-    [album]
-  )
+  const performedInAlbum = useMemo(() => album.tracks.filter((t) => t.isPerformed).length, [album])
   const panelId = `album-tracks-${album.id}`
 
   return (
-    <article style={{
-      border: '1px solid rgba(255,255,255,0.06)',
-      background: 'var(--c-bg)',
-      overflow: 'hidden',
-    }}>
+    <article
+      style={{
+        border: '1px solid rgba(255,255,255,0.06)',
+        background: 'var(--c-bg)',
+        overflow: 'hidden',
+      }}
+    >
       <button
         type="button"
-        onClick={() => setIsExpanded(v => !v)}
+        onClick={() => setIsExpanded((v) => !v)}
         aria-expanded={isExpanded}
         aria-controls={panelId}
         className="disco-album-header"
@@ -188,7 +210,9 @@ function AlbumBlock({ album, accent, band, onRequest }) {
             alt={`${album.name} cover`}
             loading="lazy"
             style={{
-              width: 80, height: 80, display: 'block',
+              width: 80,
+              height: 80,
+              display: 'block',
               objectFit: 'cover',
             }}
           />
@@ -197,41 +221,56 @@ function AlbumBlock({ album, accent, band, onRequest }) {
         )}
 
         <div style={{ minWidth: 0 }}>
-          <div style={{
-            fontFamily: 'var(--ff-display)',
-            fontSize: 'clamp(18px, 2vw, 22px)',
-            letterSpacing: '0.02em',
-            lineHeight: 1.15,
-            color: 'var(--c-text)',
-            marginBottom: '4px',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}>{album.name}</div>
-          <div style={{
-            fontFamily: 'var(--ff-label)',
-            fontSize: '10px',
-            fontWeight: 600,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.45)',
-          }}>{album.year || '—'} · {album.tracks.length} tracks</div>
+          <div
+            style={{
+              fontFamily: 'var(--ff-display)',
+              fontSize: 'clamp(18px, 2vw, 22px)',
+              letterSpacing: '0.02em',
+              lineHeight: 1.15,
+              color: 'var(--c-text)',
+              marginBottom: '4px',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {album.name}
+          </div>
+          <div
+            style={{
+              fontFamily: 'var(--ff-label)',
+              fontSize: '10px',
+              fontWeight: 600,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.45)',
+            }}
+          >
+            {album.year || '—'} · {album.tracks.length} tracks
+          </div>
         </div>
 
         {performedInAlbum > 0 ? (
-          <div className="disco-album-badge" style={{
-            fontFamily: 'var(--ff-label)',
-            fontSize: '9px',
-            fontWeight: 600,
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            color: accent,
-            background: `${accent}15`,
-            border: `1px solid ${accent}40`,
-            padding: '4px 8px',
-            whiteSpace: 'nowrap',
-          }}>{performedInAlbum} in set</div>
-        ) : <span aria-hidden="true" />}
+          <div
+            className="disco-album-badge"
+            style={{
+              fontFamily: 'var(--ff-label)',
+              fontSize: '9px',
+              fontWeight: 600,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color: accent,
+              background: `${accent}15`,
+              border: `1px solid ${accent}40`,
+              padding: '4px 8px',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {performedInAlbum} in set
+          </div>
+        ) : (
+          <span aria-hidden="true" />
+        )}
 
         <span
           aria-hidden="true"
@@ -239,14 +278,21 @@ function AlbumBlock({ album, accent, band, onRequest }) {
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: 24, height: 24,
+            width: 24,
+            height: 24,
             color: 'rgba(255,255,255,0.5)',
             transition: 'transform 200ms ease',
             transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
           }}
         >
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M3 5l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M3 5l4 4 4-4"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </span>
       </button>
@@ -352,17 +398,22 @@ function TrackRow({ track, accent, onRequest }) {
         >
           <span style={trackNumberStyle}>{track.trackNumber}</span>
           <span style={titleStyle}>{track.title}</span>
-          <span aria-label="Currently in our set" style={{
-            fontFamily: 'var(--ff-label)',
-            fontSize: '9px',
-            fontWeight: 600,
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            color: 'var(--c-bg)',
-            background: accent,
-            padding: '4px 8px',
-            whiteSpace: 'nowrap',
-          }}>Played</span>
+          <span
+            aria-label="Currently in our set"
+            style={{
+              fontFamily: 'var(--ff-label)',
+              fontSize: '9px',
+              fontWeight: 600,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color: 'var(--c-bg)',
+              background: accent,
+              padding: '4px 8px',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Played
+          </span>
           <span style={durationStyle}>{fmtDuration(track.durationMs)}</span>
         </a>
       </li>
@@ -380,30 +431,34 @@ function TrackRow({ track, accent, onRequest }) {
       >
         <span style={trackNumberStyle}>{track.trackNumber}</span>
         <span style={titleStyle}>{track.title}</span>
-        <span style={{
-          fontFamily: 'var(--ff-label)',
-          fontSize: '10px',
-          fontWeight: 600,
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.5)',
-          background: 'transparent',
-          border: '1px solid rgba(255,255,255,0.12)',
-          padding: '4px 8px',
-          whiteSpace: 'nowrap',
-          transition: 'color var(--d-fast) var(--ease-in-out), border-color var(--d-fast) var(--ease-in-out)',
-        }}
+        <span
+          style={{
+            fontFamily: 'var(--ff-label)',
+            fontSize: '10px',
+            fontWeight: 600,
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.5)',
+            background: 'transparent',
+            border: '1px solid rgba(255,255,255,0.12)',
+            padding: '4px 8px',
+            whiteSpace: 'nowrap',
+            transition:
+              'color var(--d-fast) var(--ease-in-out), border-color var(--d-fast) var(--ease-in-out)',
+          }}
           className="disco-request-pill"
-        >+ Request</span>
+        >
+          + Request
+        </span>
         <span style={durationStyle}>{fmtDuration(track.durationMs)}</span>
 
         <style jsx>{`
           .disco-track-row:hover {
-            background: rgba(255,255,255,0.025);
+            background: rgba(255, 255, 255, 0.025);
           }
           .disco-track-row--unplayed:hover :global(.disco-request-pill) {
             color: var(--c-text);
-            border-color: rgba(255,255,255,0.4);
+            border-color: rgba(255, 255, 255, 0.4);
           }
         `}</style>
       </button>

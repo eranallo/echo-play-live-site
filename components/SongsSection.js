@@ -49,7 +49,7 @@ export default function SongsSection({ band, defaultExpanded = false }) {
 
   function handleCardTap(songId) {
     // Only used on touch-only devices; desktop never calls this.
-    setRevealedId(prev => (prev === songId ? songId : songId))
+    setRevealedId((prev) => (prev === songId ? songId : songId))
   }
 
   // Fetch the catalog on mount. The endpoint caches server-side for 1h, so
@@ -60,8 +60,8 @@ export default function SongsSection({ band, defaultExpanded = false }) {
     if (!band?.slug) return
     let cancelled = false
     fetch(`/api/songs/${band.slug}`)
-      .then(r => r.ok ? r.json() : { songs: [] })
-      .then(data => {
+      .then((r) => (r.ok ? r.json() : { songs: [] }))
+      .then((data) => {
         if (!cancelled) {
           setSongs(Array.isArray(data?.songs) ? data.songs : [])
           setLoaded(true)
@@ -70,7 +70,9 @@ export default function SongsSection({ band, defaultExpanded = false }) {
       .catch(() => {
         if (!cancelled) setLoaded(true)
       })
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [band?.slug])
 
   // ─── ALL HOOKS MUST RUN ON EVERY RENDER (Rules of Hooks) ─────────
@@ -79,7 +81,7 @@ export default function SongsSection({ band, defaultExpanded = false }) {
 
   // De-dup artists for the summary line.
   const uniqueArtists = useMemo(() => {
-    const set = new Set(songs.map(s => s.artist?.toLowerCase()).filter(Boolean))
+    const set = new Set(songs.map((s) => s.artist?.toLowerCase()).filter(Boolean))
     return set.size
   }, [songs])
 
@@ -90,7 +92,7 @@ export default function SongsSection({ band, defaultExpanded = false }) {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     if (!q) return songs
-    return songs.filter(s => {
+    return songs.filter((s) => {
       const hay = [s.title, s.artist, s.album].filter(Boolean).join(' ').toLowerCase()
       return hay.includes(q)
     })
@@ -100,8 +102,18 @@ export default function SongsSection({ band, defaultExpanded = false }) {
   // are tagged for this band yet — better to omit than show "0 songs" on the
   // public site. These early returns come AFTER all hooks so the hook count
   // is stable across renders.
-  if (!loaded) return null
-  if (!songs.length) return null
+  if (!loaded)
+    return (
+      <p role="status" style={{ padding: 24, color: '#ccc' }}>
+        Loading the music…
+      </p>
+    )
+  if (!songs.length)
+    return (
+      <p style={{ padding: 24, color: '#ccc' }}>
+        The song library isn’t available right now. Please check back soon.
+      </p>
+    )
 
   const accent = band?.color || 'var(--c-epl)'
   const accentSoft = `${accent}15`
@@ -121,30 +133,38 @@ export default function SongsSection({ band, defaultExpanded = false }) {
           <div className="section-label" style={{ color: accent, marginBottom: 'var(--s-3)' }}>
             Songs We Play
           </div>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            flexWrap: 'wrap',
-            gap: 'var(--s-4)',
-          }}>
-            <h2 style={{
-              fontFamily: 'var(--ff-display)',
-              fontSize: 'clamp(40px, 6vw, 72px)',
-              letterSpacing: '0.01em',
-              lineHeight: 0.95,
-            }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-end',
+              flexWrap: 'wrap',
+              gap: 'var(--s-4)',
+            }}
+          >
+            <h2
+              style={{
+                fontFamily: 'var(--ff-display)',
+                fontSize: 'clamp(40px, 6vw, 72px)',
+                letterSpacing: '0.01em',
+                lineHeight: 0.95,
+              }}
+            >
               The Catalog
             </h2>
             {/* Summary line */}
-            <div style={{
-              fontFamily: 'var(--ff-body)',
-              fontSize: 'clamp(14px, 1.5vw, 16px)',
-              color: 'rgba(255,255,255,0.5)',
-              lineHeight: 1.5,
-            }}>
-              <strong style={{ color: 'var(--c-text)', fontWeight: 600 }}>{songs.length}</strong>{' '}live songs across{' '}
-              <strong style={{ color: 'var(--c-text)', fontWeight: 600 }}>{uniqueArtists}</strong>{' '}artists
+            <div
+              style={{
+                fontFamily: 'var(--ff-body)',
+                fontSize: 'clamp(14px, 1.5vw, 16px)',
+                color: 'rgba(255,255,255,0.5)',
+                lineHeight: 1.5,
+              }}
+            >
+              <strong style={{ color: 'var(--c-text)', fontWeight: 600 }}>{songs.length}</strong>{' '}
+              live songs across{' '}
+              <strong style={{ color: 'var(--c-text)', fontWeight: 600 }}>{uniqueArtists}</strong>{' '}
+              artists
             </div>
           </div>
         </div>
@@ -153,7 +173,7 @@ export default function SongsSection({ band, defaultExpanded = false }) {
         {!expanded && (
           <>
             <div className="songs-preview-grid">
-              {previewSongs.map(song => (
+              {previewSongs.map((song) => (
                 <SongCard
                   key={song.id}
                   song={song}
@@ -166,14 +186,16 @@ export default function SongsSection({ band, defaultExpanded = false }) {
               ))}
             </div>
 
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: 'var(--s-3)',
-              marginTop: 'var(--s-5)',
-              flexWrap: 'wrap',
-            }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 'var(--s-3)',
+                marginTop: 'var(--s-5)',
+                flexWrap: 'wrap',
+              }}
+            >
               <button
                 type="button"
                 onClick={() => setExpanded(true)}
@@ -190,8 +212,8 @@ export default function SongsSection({ band, defaultExpanded = false }) {
                   cursor: 'pointer',
                   transition: 'opacity var(--d-fast) var(--ease-in-out)',
                 }}
-                onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.85')}
+                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
               >
                 Show all {songs.length} songs
               </button>
@@ -204,15 +226,17 @@ export default function SongsSection({ band, defaultExpanded = false }) {
         {expanded && (
           <>
             {/* Search input */}
-            <div style={{
-              position: 'relative',
-              marginBottom: 'var(--s-5)',
-              maxWidth: '520px',
-            }}>
+            <div
+              style={{
+                position: 'relative',
+                marginBottom: 'var(--s-5)',
+                maxWidth: '520px',
+              }}
+            >
               <input
                 type="text"
                 value={query}
-                onChange={e => setQuery(e.target.value)}
+                onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search by song, artist, or album…"
                 aria-label="Search the song catalog"
                 autoFocus
@@ -225,23 +249,30 @@ export default function SongsSection({ band, defaultExpanded = false }) {
                   border: '1px solid rgba(255,255,255,0.1)',
                   padding: '14px 18px 14px 44px',
                   outline: 'none',
-                  transition: 'border-color var(--d-fast) var(--ease-in-out), background var(--d-fast) var(--ease-in-out)',
+                  transition:
+                    'border-color var(--d-fast) var(--ease-in-out), background var(--d-fast) var(--ease-in-out)',
                 }}
-                onFocus={e => {
+                onFocus={(e) => {
                   e.currentTarget.style.borderColor = accent
                   e.currentTarget.style.background = 'rgba(255,255,255,0.05)'
                 }}
-                onBlur={e => {
+                onBlur={(e) => {
                   e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
                   e.currentTarget.style.background = 'rgba(255,255,255,0.03)'
                 }}
               />
               {/* Search icon */}
               <svg
-                width="16" height="16" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" strokeWidth="2"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
                 style={{
-                  position: 'absolute', left: '16px', top: '50%',
+                  position: 'absolute',
+                  left: '16px',
+                  top: '50%',
                   transform: 'translateY(-50%)',
                   color: 'rgba(255,255,255,0.4)',
                   pointerEvents: 'none',
@@ -251,16 +282,20 @@ export default function SongsSection({ band, defaultExpanded = false }) {
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
               {/* Result count */}
-              <div style={{
-                position: 'absolute', right: '14px', top: '50%',
-                transform: 'translateY(-50%)',
-                fontFamily: 'var(--ff-label)',
-                fontSize: '11px',
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.4)',
-                pointerEvents: 'none',
-              }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  right: '14px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontFamily: 'var(--ff-label)',
+                  fontSize: '11px',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255,255,255,0.4)',
+                  pointerEvents: 'none',
+                }}
+              >
                 {filtered.length}/{songs.length}
               </div>
             </div>
@@ -268,7 +303,7 @@ export default function SongsSection({ band, defaultExpanded = false }) {
             {/* Full grid */}
             {filtered.length > 0 ? (
               <div className="songs-full-grid">
-                {filtered.map(song => (
+                {filtered.map((song) => (
                   <SongCard
                     key={song.id}
                     song={song}
@@ -280,13 +315,15 @@ export default function SongsSection({ band, defaultExpanded = false }) {
                 ))}
               </div>
             ) : (
-              <div style={{
-                padding: 'var(--s-7) var(--s-4)',
-                textAlign: 'center',
-                color: 'rgba(255,255,255,0.4)',
-                fontFamily: 'var(--ff-body)',
-                fontSize: '15px',
-              }}>
+              <div
+                style={{
+                  padding: 'var(--s-7) var(--s-4)',
+                  textAlign: 'center',
+                  color: 'rgba(255,255,255,0.4)',
+                  fontFamily: 'var(--ff-body)',
+                  fontSize: '15px',
+                }}
+              >
                 Nothing matches "<strong style={{ color: 'var(--c-text)' }}>{query}</strong>"
                 <span style={{ display: 'block', marginTop: 'var(--s-2)', fontSize: '13px' }}>
                   Try the song title or original artist.
@@ -294,17 +331,23 @@ export default function SongsSection({ band, defaultExpanded = false }) {
               </div>
             )}
 
-            <div style={{
-              display: 'flex', justifyContent: 'center',
-              alignItems: 'center',
-              gap: 'var(--s-3)',
-              marginTop: 'var(--s-6)',
-              flexWrap: 'wrap',
-            }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 'var(--s-3)',
+                marginTop: 'var(--s-6)',
+                flexWrap: 'wrap',
+              }}
+            >
               <RequestButton accent={accent} onClick={() => setRequestOpen(true)} />
               <button
                 type="button"
-                onClick={() => { setExpanded(false); setQuery('') }}
+                onClick={() => {
+                  setExpanded(false)
+                  setQuery('')
+                }}
                 style={{
                   fontFamily: 'var(--ff-label)',
                   fontSize: '11px',
@@ -316,13 +359,14 @@ export default function SongsSection({ band, defaultExpanded = false }) {
                   border: '1px solid rgba(255,255,255,0.1)',
                   padding: '10px 20px',
                   cursor: 'pointer',
-                  transition: 'border-color var(--d-fast) var(--ease-in-out), color var(--d-fast) var(--ease-in-out)',
+                  transition:
+                    'border-color var(--d-fast) var(--ease-in-out), color var(--d-fast) var(--ease-in-out)',
                 }}
-                onMouseEnter={e => {
+                onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = accent
                   e.currentTarget.style.color = 'var(--c-text)'
                 }}
-                onMouseLeave={e => {
+                onMouseLeave={(e) => {
                   e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
                   e.currentTarget.style.color = 'rgba(255,255,255,0.6)'
                 }}
@@ -347,24 +391,34 @@ export default function SongsSection({ band, defaultExpanded = false }) {
           gap: 14px;
         }
         @media (max-width: 1100px) {
-          .songs-preview-grid { grid-template-columns: repeat(6, 1fr); }
-          .songs-full-grid { grid-template-columns: repeat(5, 1fr); }
+          .songs-preview-grid {
+            grid-template-columns: repeat(6, 1fr);
+          }
+          .songs-full-grid {
+            grid-template-columns: repeat(5, 1fr);
+          }
         }
         @media (max-width: 860px) {
-          .songs-preview-grid { grid-template-columns: repeat(4, 1fr); }
-          .songs-full-grid { grid-template-columns: repeat(4, 1fr); }
+          .songs-preview-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+          .songs-full-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
         }
         @media (max-width: 600px) {
-          .songs-preview-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-          .songs-full-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+          .songs-preview-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+          }
+          .songs-full-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+          }
         }
       `}</style>
 
-      <SongRequestModal
-        open={requestOpen}
-        onClose={() => setRequestOpen(false)}
-        band={band}
-      />
+      <SongRequestModal open={requestOpen} onClose={() => setRequestOpen(false)} band={band} />
     </section>
   )
 }
@@ -386,13 +440,14 @@ function RequestButton({ accent, onClick }) {
         border: `1px solid ${accent}`,
         padding: '13px 24px',
         cursor: 'pointer',
-        transition: 'background var(--d-fast) var(--ease-in-out), color var(--d-fast) var(--ease-in-out)',
+        transition:
+          'background var(--d-fast) var(--ease-in-out), color var(--d-fast) var(--ease-in-out)',
       }}
-      onMouseEnter={e => {
+      onMouseEnter={(e) => {
         e.currentTarget.style.background = accent
         e.currentTarget.style.color = 'var(--c-bg)'
       }}
-      onMouseLeave={e => {
+      onMouseLeave={(e) => {
         e.currentTarget.style.background = 'transparent'
         e.currentTarget.style.color = 'var(--c-text)'
       }}
@@ -408,7 +463,14 @@ function RequestButton({ accent, onClick }) {
 // the info overlay and intercepts the Spotify link; a second tap on the same
 // (now-revealed) card follows the link. Desktop with a mouse skips this — the
 // overlay is already visible on hover, so a click navigates immediately.
-function SongCard({ song, accent, compact = false, revealed = false, isHoverCapable = true, onTap }) {
+function SongCard({
+  song,
+  accent,
+  compact = false,
+  revealed = false,
+  isHoverCapable = true,
+  onTap,
+}) {
   const Wrapper = song.spotifyUrl ? 'a' : 'div'
   const linkProps = song.spotifyUrl
     ? { href: song.spotifyUrl, target: '_blank', rel: 'noopener noreferrer' }
@@ -416,8 +478,8 @@ function SongCard({ song, accent, compact = false, revealed = false, isHoverCapa
 
   function handleClick(e) {
     if (!song.spotifyUrl) return
-    if (isHoverCapable) return            // desktop: navigate immediately
-    if (revealed) return                  // touch + already revealed: navigate
+    if (isHoverCapable) return // desktop: navigate immediately
+    if (revealed) return // touch + already revealed: navigate
     // Touch + not yet revealed: show the overlay, swallow this tap.
     e.preventDefault()
     if (typeof onTap === 'function') onTap(song.id)
@@ -449,7 +511,9 @@ function SongCard({ song, accent, compact = false, revealed = false, isHoverCapa
           alt={`${song.album || song.title} cover`}
           loading="lazy"
           style={{
-            width: '100%', height: '100%', objectFit: 'cover',
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
             display: 'block',
             transition: 'transform var(--d-base) var(--ease-in-out)',
           }}
@@ -457,31 +521,44 @@ function SongCard({ song, accent, compact = false, revealed = false, isHoverCapa
       ) : (
         // Placeholder when Spotify didn't resolve — show title + artist over a
         // band-color tinted block so the card still reads as content, not a bug.
-        <div style={{
-          width: '100%', height: '100%',
-          display: 'flex', flexDirection: 'column', justifyContent: 'center',
-          padding: '14px',
-          background: `linear-gradient(135deg, ${accent}22 0%, #0a0a0a 100%)`,
-        }}>
-          <div style={{
-            fontFamily: 'var(--ff-display)',
-            fontSize: compact ? '14px' : '16px',
-            letterSpacing: '0.02em',
-            lineHeight: 1.1,
-            marginBottom: '6px',
-            color: 'var(--c-text)',
-            overflow: 'hidden',
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-          }}>{song.title}</div>
-          <div style={{
-            fontFamily: 'var(--ff-label)',
-            fontSize: '9px',
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            color: accent,
-          }}>{song.artist}</div>
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            padding: '14px',
+            background: `linear-gradient(135deg, ${accent}22 0%, #0a0a0a 100%)`,
+          }}
+        >
+          <div
+            style={{
+              fontFamily: 'var(--ff-display)',
+              fontSize: compact ? '14px' : '16px',
+              letterSpacing: '0.02em',
+              lineHeight: 1.1,
+              marginBottom: '6px',
+              color: 'var(--c-text)',
+              overflow: 'hidden',
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+            }}
+          >
+            {song.title}
+          </div>
+          <div
+            style={{
+              fontFamily: 'var(--ff-label)',
+              fontSize: '9px',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color: accent,
+            }}
+          >
+            {song.artist}
+          </div>
         </div>
       )}
 
@@ -513,7 +590,7 @@ function SongCard({ song, accent, compact = false, revealed = false, isHoverCapa
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
-          background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.85) 100%);
+          background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.85) 100%);
           opacity: 0;
           transition: opacity var(--d-fast) var(--ease-in-out);
           pointer-events: none;
@@ -546,7 +623,7 @@ function SongCard({ song, accent, compact = false, revealed = false, isHoverCapa
         .song-card-year {
           font-family: var(--ff-body);
           font-size: 11px;
-          color: rgba(255,255,255,0.55);
+          color: rgba(255, 255, 255, 0.55);
           margin-top: 4px;
         }
         .song-card-spotify {
@@ -555,12 +632,12 @@ function SongCard({ song, accent, compact = false, revealed = false, isHoverCapa
           right: 8px;
           width: 24px;
           height: 24px;
-          background: rgba(0,0,0,0.65);
+          background: rgba(0, 0, 0, 0.65);
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #1DB954;
+          color: #1db954;
           opacity: 0;
           transition: opacity var(--d-fast) var(--ease-in-out);
         }

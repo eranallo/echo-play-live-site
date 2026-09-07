@@ -20,12 +20,27 @@ const FIELD_STYLE = {
   outline: 'none',
 }
 
-export default function BookingForm({ bandName, bandSlug, bookingEmail, primaryColor = '#D4A017', inquirySource }) {
-  const [state, setState] = useState({ name: '', email: '', date: '', venue: '', message: '', website: '' })
-  const [status, setStatus] = useState('idle')  // idle | submitting | sent | error
+export default function BookingForm({
+  bandName,
+  bandSlug,
+  bookingEmail,
+  primaryColor = '#D4A017',
+  inquirySource,
+}) {
+  const [state, setState] = useState({
+    name: '',
+    email: '',
+    date: '',
+    venue: '',
+    message: '',
+    website: '',
+  })
+  const [status, setStatus] = useState('idle') // idle | submitting | sent | error
   const [errMsg, setErrMsg] = useState('')
 
-  function set(field, value) { setState(s => ({ ...s, [field]: value })) }
+  function set(field, value) {
+    setState((s) => ({ ...s, [field]: value }))
+  }
 
   async function submit(e) {
     e.preventDefault()
@@ -45,7 +60,10 @@ export default function BookingForm({ bandName, bandSlug, bookingEmail, primaryC
         const data = await res.json().catch(() => ({}))
         throw new Error(data.error || `Request failed (${res.status})`)
       }
+      const data = await res.json()
+      if (data.success !== true) throw new Error('We could not confirm delivery.')
       setStatus('sent')
+      window.dispatchEvent(new CustomEvent('epl:inquiry-saved'))
     } catch (err) {
       setStatus('error')
       setErrMsg(err.message || 'Something went wrong. Please try again.')
@@ -76,8 +94,12 @@ export default function BookingForm({ bandName, bandSlug, bookingEmail, primaryC
           We will be in touch within 24 hours.
           {bookingEmail ? (
             <>
-              <br />Or reach us directly at{' '}
-              <a href={`mailto:${bookingEmail}`} style={{ color: primaryColor }}>{bookingEmail}</a>.
+              <br />
+              Or reach us directly at{' '}
+              <a href={`mailto:${bookingEmail}`} style={{ color: primaryColor }}>
+                {bookingEmail}
+              </a>
+              .
             </>
           ) : null}
         </p>
@@ -92,7 +114,7 @@ export default function BookingForm({ bandName, bandSlug, bookingEmail, primaryC
         type="text"
         name="website"
         value={state.website}
-        onChange={e => set('website', e.target.value)}
+        onChange={(e) => set('website', e.target.value)}
         autoComplete="off"
         tabIndex={-1}
         aria-hidden="true"
@@ -105,7 +127,7 @@ export default function BookingForm({ bandName, bandSlug, bookingEmail, primaryC
           required
           placeholder="Your name"
           value={state.name}
-          onChange={e => set('name', e.target.value)}
+          onChange={(e) => set('name', e.target.value)}
           style={FIELD_STYLE}
           maxLength={80}
         />
@@ -114,7 +136,7 @@ export default function BookingForm({ bandName, bandSlug, bookingEmail, primaryC
           required
           placeholder="Email"
           value={state.email}
-          onChange={e => set('email', e.target.value)}
+          onChange={(e) => set('email', e.target.value)}
           style={FIELD_STYLE}
           maxLength={120}
         />
@@ -122,21 +144,21 @@ export default function BookingForm({ bandName, bandSlug, bookingEmail, primaryC
           type="date"
           placeholder="Event date"
           value={state.date}
-          onChange={e => set('date', e.target.value)}
+          onChange={(e) => set('date', e.target.value)}
           style={FIELD_STYLE}
         />
         <input
           type="text"
           placeholder="Venue or event name"
           value={state.venue}
-          onChange={e => set('venue', e.target.value)}
+          onChange={(e) => set('venue', e.target.value)}
           style={FIELD_STYLE}
           maxLength={120}
         />
         <textarea
           placeholder="Tell us about the event"
           value={state.message}
-          onChange={e => set('message', e.target.value)}
+          onChange={(e) => set('message', e.target.value)}
           rows={3}
           style={{ ...FIELD_STYLE, resize: 'vertical', minHeight: '90px' }}
           maxLength={2000}

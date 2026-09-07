@@ -18,6 +18,9 @@ export default async function HubPage() {
   return (
     <RevealOnView>
       <main
+        id="main-content"
+        tabIndex={-1}
+        className="qr-page"
         style={{
           background: `radial-gradient(ellipse at 50% 90%, ${ACCENT}15 0%, transparent 50%), #0a0a0a`,
           minHeight: '100vh',

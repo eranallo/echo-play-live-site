@@ -13,7 +13,7 @@ const CSP = [
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
-  "upgrade-insecure-requests",
+  'upgrade-insecure-requests',
 ].join('; ')
 
 const SECURITY_HEADERS = [
@@ -32,6 +32,9 @@ const SECURITY_HEADERS = [
 ]
 
 const nextConfig = {
+  async redirects() {
+    return [{ source: '/book', destination: '/contact', permanent: true }]
+  },
   images: {
     remotePatterns: [
       {

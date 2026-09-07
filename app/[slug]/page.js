@@ -18,7 +18,7 @@ import RevealOnView from '@/components/RevealOnView'
 export const revalidate = 1800
 
 export async function generateStaticParams() {
-  return bandsList.map(b => ({ slug: b.slug }))
+  return bandsList.map((b) => ({ slug: b.slug }))
 }
 
 export default async function BandLandingPage({ params }) {
@@ -29,6 +29,9 @@ export default async function BandLandingPage({ params }) {
   return (
     <RevealOnView>
       <main
+        id="main-content"
+        tabIndex={-1}
+        className="qr-page"
         style={{
           background: `radial-gradient(ellipse at 50% 90%, ${data.primaryColor}15 0%, transparent 50%), #0a0a0a`,
           minHeight: '100vh',

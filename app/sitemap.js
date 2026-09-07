@@ -7,19 +7,19 @@ import { getMusicians } from '@/lib/musicians'
 const SITE_URL = 'https://echoplay.live'
 
 export default async function sitemap() {
-  const lastModified = new Date()
-
   const staticRoutes = [
-    { url: SITE_URL,                    priority: 1.0,  changeFrequency: 'weekly' },
-    { url: `${SITE_URL}/shows`,         priority: 0.9,  changeFrequency: 'daily' },
-    { url: `${SITE_URL}/musicians`,     priority: 0.8,  changeFrequency: 'weekly' },
-    { url: `${SITE_URL}/podcast`,       priority: 0.7,  changeFrequency: 'weekly' },
-    { url: `${SITE_URL}/press`,         priority: 0.7,  changeFrequency: 'monthly' },
-    { url: `${SITE_URL}/contact`,       priority: 0.8,  changeFrequency: 'monthly' },
-    { url: `${SITE_URL}/about`,         priority: 0.6,  changeFrequency: 'monthly' },
+    { url: SITE_URL, priority: 1.0, changeFrequency: 'weekly' },
+    { url: `${SITE_URL}/bands`, priority: 0.9, changeFrequency: 'monthly' },
+    { url: `${SITE_URL}/privacy`, priority: 0.3, changeFrequency: 'yearly' },
+    { url: `${SITE_URL}/shows`, priority: 0.9, changeFrequency: 'daily' },
+    { url: `${SITE_URL}/musicians`, priority: 0.8, changeFrequency: 'weekly' },
+    { url: `${SITE_URL}/podcast`, priority: 0.7, changeFrequency: 'weekly' },
+    { url: `${SITE_URL}/press`, priority: 0.7, changeFrequency: 'monthly' },
+    { url: `${SITE_URL}/contact`, priority: 0.8, changeFrequency: 'monthly' },
+    { url: `${SITE_URL}/about`, priority: 0.6, changeFrequency: 'monthly' },
   ]
 
-  const bandRoutes = bandsList.map(band => ({
+  const bandRoutes = bandsList.map((band) => ({
     url: `${SITE_URL}/bands/${band.slug}`,
     priority: 0.85,
     changeFrequency: 'weekly',
@@ -28,7 +28,7 @@ export default async function sitemap() {
   let musicianRoutes = []
   try {
     const musicians = await getMusicians()
-    musicianRoutes = musicians.map(m => ({
+    musicianRoutes = musicians.map((m) => ({
       url: `${SITE_URL}/musicians/${m.slug}`,
       priority: 0.6,
       changeFrequency: 'monthly',
@@ -39,8 +39,7 @@ export default async function sitemap() {
     console.warn('[sitemap] musicians fetch failed:', err?.message)
   }
 
-  return [...staticRoutes, ...bandRoutes, ...musicianRoutes].map(route => ({
+  return [...staticRoutes, ...bandRoutes, ...musicianRoutes].map((route) => ({
     ...route,
-    lastModified,
   }))
 }

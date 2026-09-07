@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "test": "node --experimental-default-type=module --test tests/public-shows/*.test.mjs tests/inquiry/*.test.mjs",
+    "check:routes": "node tests/inquiry/route-audit.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^1.4.1",

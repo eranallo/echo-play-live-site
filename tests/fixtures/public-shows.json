@@ -1,0 +1,141 @@
+{
+  "note": "Synthetic Phase 1 fixtures only. IDs and canaries do not identify production records.",
+  "clock": "2026-08-28T17:00:00-05:00",
+  "approvedBands": [
+    {
+      "airtableId": "recAAAAAAAAAAAAAA",
+      "name": "So Long Goodnight",
+      "slug": "so-long-goodnight"
+    },
+    {
+      "airtableId": "recBBBBBBBBBBBBBB",
+      "name": "Jambi",
+      "slug": "jambi"
+    }
+  ],
+  "bandRecords": [
+    {
+      "id": "recAAAAAAAAAAAAAA",
+      "fields": {
+        "fldjFKclWNjTuGOi5": "So Long Goodnight"
+      }
+    },
+    {
+      "id": "recBBBBBBBBBBBBBB",
+      "fields": {
+        "fldjFKclWNjTuGOi5": "Jambi"
+      }
+    }
+  ],
+  "venueRecords": [
+    {
+      "id": "recVVVVVVVVVVVVVV",
+      "fields": {
+        "fldhQR4NRmOtrywrj": "Hurricane Alley"
+      }
+    },
+    {
+      "id": "recWWWWWWWWWWWWWW",
+      "fields": {
+        "fldhQR4NRmOtrywrj": "Haltom Theater"
+      }
+    }
+  ],
+  "sourceRecords": [
+    {
+      "id": "rec00000000000001",
+      "fields": {
+        "fldvzh4YwqSor47Ta": true,
+        "fldFeuTq62vFKhiRf": "2026-08-29",
+        "fld5t4DAMQEDz1k8s": ["recAAAAAAAAAAAAAA"],
+        "fldh5T0QyJF0a7tFH": ["recVVVVVVVVVVVVVV"],
+        "fld0heDE2MEcp9FF1": "Confirmed",
+        "fldzBwLiifwQHk7Xn": "2026-08-30T00:00:00.000Z",
+        "fldXYjjv1978gheNB": "https://tickets.invalid/slgn",
+        "fld8KAW94k2KbuNC4": 0,
+        "fldwgnNNbI7KJv2Yc": ["recAAAAAAAAAAAAAA"],
+        "fld9afSkMjIVGmoOv": "fixture-slgn-event"
+      }
+    },
+    {
+      "id": "rec00000000000002",
+      "fields": {
+        "fldvzh4YwqSor47Ta": true,
+        "fldFeuTq62vFKhiRf": "2026-09-26",
+        "fld5t4DAMQEDz1k8s": ["recBBBBBBBBBBBBBB"],
+        "fldh5T0QyJF0a7tFH": ["recWWWWWWWWWWWWWW"],
+        "fld0heDE2MEcp9FF1": "Confirmed",
+        "fldzBwLiifwQHk7Xn": "2026-09-27T04:00:00.000Z",
+        "fldXYjjv1978gheNB": "https://tickets.invalid/jambi",
+        "fld8KAW94k2KbuNC4": 15,
+        "fldwgnNNbI7KJv2Yc": ["recBBBBBBBBBBBBBB"],
+        "fld9afSkMjIVGmoOv": "fixture-jambi-event"
+      }
+    },
+    {
+      "id": "rec00000000000003",
+      "fields": {
+        "fldvzh4YwqSor47Ta": false,
+        "fldFeuTq62vFKhiRf": "2026-08-30",
+        "fld5t4DAMQEDz1k8s": ["recXXXXXXXXXXXXXX"],
+        "fldh5T0QyJF0a7tFH": ["recVVVVVVVVVVVVVV"],
+        "fld0heDE2MEcp9FF1": "Confirmed",
+        "fldzBwLiifwQHk7Xn": "2026-08-31T00:00:00.000Z",
+        "fldXYjjv1978gheNB": "https://private.invalid/ticket-canary",
+        "fld9afSkMjIVGmoOv": "fixture-group-event",
+        "fldPRIVATECANARY": "PRIVATE_PERSON_CANARY"
+      }
+    },
+    {
+      "id": "rec00000000000004",
+      "fields": {
+        "fldvzh4YwqSor47Ta": true,
+        "fldFeuTq62vFKhiRf": "2026-10-01",
+        "fld5t4DAMQEDz1k8s": ["recAAAAAAAAAAAAAA"],
+        "fldh5T0QyJF0a7tFH": ["recVVVVVVVVVVVVVV"],
+        "fld0heDE2MEcp9FF1": "Cancelled",
+        "fldzBwLiifwQHk7Xn": "2026-10-02T00:00:00.000Z",
+        "fldXYjjv1978gheNB": "https://tickets.invalid/canceled",
+        "fld8KAW94k2KbuNC4": 20,
+        "fld9afSkMjIVGmoOv": "fixture-canceled-event",
+        "fldPRIVATECANARY": "PRIVATE_READINESS_CANARY"
+      }
+    },
+    {
+      "id": "rec00000000000005",
+      "fields": {
+        "fldvzh4YwqSor47Ta": true,
+        "fldFeuTq62vFKhiRf": "2026-10-02",
+        "fld5t4DAMQEDz1k8s": ["recAAAAAAAAAAAAAA"],
+        "fldh5T0QyJF0a7tFH": ["recVVVVVVVVVVVVVV"],
+        "fld0heDE2MEcp9FF1": "Confirmed"
+      }
+    },
+    {
+      "id": "rec00000000000006",
+      "fields": {
+        "fldvzh4YwqSor47Ta": true,
+        "fldFeuTq62vFKhiRf": "2026-10-03",
+        "fld5t4DAMQEDz1k8s": ["recAAAAAAAAAAAAAA"],
+        "fldh5T0QyJF0a7tFH": ["recVVVVVVVVVVVVVV"],
+        "fld0heDE2MEcp9FF1": "Confirmed",
+        "fldzBwLiifwQHk7Xn": "2026-10-04T00:00:00.000Z",
+        "fld9afSkMjIVGmoOv": "fixture-group-event"
+      }
+    },
+    {
+      "id": "rec00000000000007",
+      "fields": {
+        "fldvzh4YwqSor47Ta": true,
+        "fldFeuTq62vFKhiRf": "2026-10-03",
+        "fld5t4DAMQEDz1k8s": ["recBBBBBBBBBBBBBB"],
+        "fldh5T0QyJF0a7tFH": ["recVVVVVVVVVVVVVV"],
+        "fld0heDE2MEcp9FF1": "Confirmed",
+        "fldXYjjv1978gheNB": "https://tickets.invalid/grouped",
+        "fld8KAW94k2KbuNC4": 25,
+        "fldwgnNNbI7KJv2Yc": ["recBBBBBBBBBBBBBB"],
+        "fld9afSkMjIVGmoOv": "fixture-group-event"
+      }
+    }
+  ]
+}

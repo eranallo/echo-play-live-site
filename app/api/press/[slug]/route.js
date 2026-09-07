@@ -45,7 +45,7 @@ async function loadBandHero(pdf, heroPath) {
   try {
     let bytes
     if (/^https?:\/\//i.test(heroPath)) {
-      const res = await fetch(heroPath, { cache: 'no-store' })
+      const res = await fetch(heroPath, { cache: 'no-store', signal: AbortSignal.timeout(8000) })
       if (!res.ok) return null
       bytes = new Uint8Array(await res.arrayBuffer())
     } else {
@@ -81,23 +81,6 @@ function drawCoveredImage(page, image, x, y, w, h) {
   )
   page.drawImage(image, { x: drawX, y: drawY, width: drawW, height: drawH })
   page.pushOperators(popGraphicsState())
-}
-
-// Fetch Bebas Neue once per cold start; cached per Vercel instance.
-async function loadBebasNeue() {
-  try {
-    const cssRes = await fetch(
-      'https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap',
-      { headers: { 'User-Agent': 'Mozilla/5.0' } }
-    )
-    const css = await cssRes.text()
-    const m = css.match(/src:\s*url\(([^)]+)\)\s*format/)
-    if (!m) return null
-    const fontRes = await fetch(m[1])
-    return await fontRes.arrayBuffer()
-  } catch {
-    return null
-  }
 }
 
 // Word-wrap helper — returns array of lines that fit within `maxWidth`.
@@ -166,14 +149,8 @@ export async function GET(request, { params }) {
   const helvBold = await pdf.embedFont(StandardFonts.HelveticaBold)
   const helvObl = await pdf.embedFont(StandardFonts.HelveticaOblique)
 
-  // Bebas Neue — optional, falls back to Helvetica Bold.
-  let display = helvBold
-  const bebasBytes = await loadBebasNeue()
-  if (bebasBytes) {
-    try {
-      display = await pdf.embedFont(bebasBytes, { subset: true })
-    } catch {}
-  }
+  // Built-in fonts keep downloads independent of third-party font services.
+  const display = helvBold
 
   const accent = band.color ? hexToRgb(band.color) : C_GOLD
 
@@ -357,7 +334,8 @@ export async function GET(request, { params }) {
     x: MARGIN, y: STATS_RULE_Y, width: COL_W, height: 1, color: rgb(0.2, 0.2, 0.2),
   })
 
-  const stats = (band.stats || []).slice(0, 4)
+  // Elapsed-year claims in the legacy copy drift as time passes.
+  const stats = (band.stats || []).filter(stat => stat.label !== 'On Stage').slice(0, 4)
   if (stats.length) {
     const colW = COL_W / stats.length
     const colPad = 8
