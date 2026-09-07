@@ -30,6 +30,7 @@ export default function Footer() {
           <Link href="/about">Our story</Link>
           <Link href="/musicians">Meet the musicians</Link>
           <Link href="/podcast">Echo Play Podcast</Link>
+          <Link href="/shows#stay-in-loop">Stay in the loop</Link>
         </div>
         <div>
           <h2>Let’s make a night of it.</h2>

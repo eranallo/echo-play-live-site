@@ -1,13 +1,16 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Suspense } from 'react'
 import { Page, BookingCta } from '@/components/SiteParts'
-import { allBandsList, getBand } from '@/lib/bands'
+import { getBand } from '@/lib/bands'
 import BandExperienceDetails from '@/components/BandExperienceDetails'
 import BandHeaderVideo from '@/components/BandHeaderVideo'
-export function generateStaticParams() {
-  return allBandsList.map((b) => ({ slug: b.slug }))
-}
+import BandUpcomingShows from '@/components/BandUpcomingShows'
+import BookingEssentials from '@/components/BookingEssentials'
+import FanSignup from '@/components/FanSignup'
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 export async function generateMetadata({ params }) {
   const { slug } = await params
   const band = getBand(slug)
@@ -61,7 +64,10 @@ export default async function BandPage({ params }) {
           <h1>{band.name}</h1>
           <p>{band.tagline}</p>
           <div className="button-row">
-            <Link className="button button-light" href={`/shows?band=${band.slug}`}>
+            <Link
+              className="button button-light"
+              href={band.hidden ? `/shows?band=${band.slug}` : '#shows'}
+            >
               Find a show ↗
             </Link>
             <Link className="glass-link" href={`/contact?band=${band.slug}`}>
@@ -72,12 +78,26 @@ export default async function BandPage({ params }) {
       </section>
       <nav className="band-subnav" aria-label={`${band.name} page sections`}>
         <div className="shell">
+          {!band.hidden && <a href="#shows">Upcoming shows</a>}
           <a href="#experience">The experience</a>
           <a href="#music">The music</a>
           <Link href="/musicians">The musicians</Link>
+          {!band.hidden && <a href="#booking">Booking essentials</a>}
           <a href={`/api/press/${band.slug}`}>Download EPK ↗</a>
         </div>
       </nav>
+      {!band.hidden && (
+        <Suspense
+          fallback={
+            <section id="shows" className="section shell" aria-busy="true">
+              <p className="eyebrow">Upcoming shows</p>
+              <h2 className="section-title">Finding your next night.</h2>
+            </section>
+          }
+        >
+          <BandUpcomingShows slug={band.slug} name={band.name} />
+        </Suspense>
+      )}
       <section id="experience" className="section shell band-description">
         <div>
           <p className="eyebrow">A night with {band.name}</p>
@@ -134,6 +154,8 @@ export default async function BandPage({ params }) {
           </div>
         </div>
       </section>
+      {!band.hidden && <BookingEssentials band={band} />}
+      {!band.hidden && <FanSignup bandSlug={band.slug} />}
       <BookingCta />
     </Page>
   )

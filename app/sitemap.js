@@ -3,6 +3,10 @@
 
 import { bandsList } from '@/lib/bands'
 import { getMusicians } from '@/lib/musicians'
+import { getPublicShows } from '@/lib/public/shows'
+import { showPath } from '@/lib/public/show-presentation.mjs'
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 const SITE_URL = 'https://echoplay.live'
 
@@ -39,7 +43,15 @@ export default async function sitemap() {
     console.warn('[sitemap] musicians fetch failed:', err?.message)
   }
 
-  return [...staticRoutes, ...bandRoutes, ...musicianRoutes].map((route) => ({
+  const events = await getPublicShows()
+  const eventRoutes = events.ok
+    ? events.shows.map((show) => ({
+        url: `${SITE_URL}${showPath(show)}`,
+        priority: 0.8,
+        changeFrequency: 'daily',
+      }))
+    : []
+  return [...staticRoutes, ...bandRoutes, ...musicianRoutes, ...eventRoutes].map((route) => ({
     ...route,
   }))
 }

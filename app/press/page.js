@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Page, Intro } from '@/components/SiteParts'
 import { bandsList } from '@/lib/bands'
 import { FAQ_PRESS } from '@/lib/faqs'
+import TrackedLink from '@/components/TrackedLink'
 export default function PressPage() {
   return (
     <Page>
@@ -30,10 +31,32 @@ export default function PressPage() {
               <h2>{b.name}</h2>
               <p>{b.tagline}</p>
               <div className="inline-links">
-                <a href={`/api/press/${b.slug}`} download>
+                <TrackedLink
+                  href={`/api/press/${b.slug}`}
+                  event="Press download"
+                  band={b.slug}
+                  download
+                >
                   Download band kit · PDF ↓
-                </a>
+                </TrackedLink>
+                <TrackedLink
+                  href={`/api/press/${b.slug}/bio`}
+                  event="Bio download"
+                  band={b.slug}
+                  download
+                >
+                  Band bio · TXT ↓
+                </TrackedLink>
+                <TrackedLink
+                  href={`/api/press/${b.slug}/photo`}
+                  event="Photo download"
+                  band={b.slug}
+                  download
+                >
+                  Press photo · JPG ↓
+                </TrackedLink>
                 <Link href={`/bands/${b.slug}`}>View band ↗</Link>
+                <Link href={`/bands/${b.slug}#booking`}>Booking essentials ↗</Link>
               </div>
               <a className="text-link" href={`mailto:${b.bookingEmail}`}>
                 {b.bookingEmail}
@@ -43,9 +66,28 @@ export default function PressPage() {
         </div>
       </section>
       <section className="shell section-bottom">
+        <div className="production-request">
+          <div>
+            <p className="eyebrow">Planning the room</p>
+            <h2>Let’s get the details right.</h2>
+          </div>
+          <div>
+            <p>
+              For the current stage plot, input list, band logo files, additional photographs, and
+              photographer credits, contact the band’s booking team. Include your event, intended
+              use, and deadline.
+            </p>
+            <Link className="text-link" href="/contact">
+              Request your production & press materials ↗
+            </Link>
+          </div>
+        </div>
+      </section>
+      <section className="shell section-bottom">
         <h2 className="section-title">The Echo Play Live identity.</h2>
         <p className="text-body" style={{ marginBottom: 30 }}>
-          The official seal, in black and white. Keep its proportions and leave clear space around it.
+          The official seal, in black and white. Keep its proportions and leave clear space around
+          it.
         </p>
         <div className="two-columns">
           {[
@@ -82,7 +124,12 @@ export default function PressPage() {
             </article>
           ))}
         </div>
-        <a className="text-link" href="/brand/epl-logo-master.svg" download style={{ marginTop: 24 }}>
+        <a
+          className="text-link"
+          href="/brand/epl-logo-master.svg"
+          download
+          style={{ marginTop: 24 }}
+        >
           Download original vector artwork · SVG ↓
         </a>
       </section>

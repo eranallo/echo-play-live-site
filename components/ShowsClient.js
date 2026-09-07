@@ -3,19 +3,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Nav from './Nav'
 import Footer from './Footer'
-const zone = 'America/Chicago'
-const dateParts = (value) => {
-  const date = new Date(`${value}T12:00:00Z`)
-  return {
-    day: date.getUTCDate(),
-    month: new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: zone }).format(date),
-    detail: new Intl.DateTimeFormat('en-US', {
-      weekday: 'short',
-      year: 'numeric',
-      timeZone: zone,
-    }).format(date),
-  }
-}
+import ShowRow from './ShowRow'
+import FanSignup from './FanSignup'
 export default function ShowsClient({
   publicBands = [],
   shows = [],
@@ -59,55 +48,7 @@ export default function ShowsClient({
               ? 'Show listings are temporarily unavailable'
               : `${filtered.length} upcoming ${filtered.length === 1 ? 'show' : 'shows'} · Times shown in Central Time`}
           </p>
-          {!unavailable &&
-            filtered.map((show) => {
-              const date = dateParts(show.date)
-              return (
-                <article className="show-row" key={show.id}>
-                  <time className="show-date" dateTime={show.date}>
-                    <span>{date.month}</span>
-                    <strong>{date.day}</strong>
-                    <span>{date.detail}</span>
-                  </time>
-                  <div className="show-info">
-                    <h2>
-                      {show.bands.map((b, i) => (
-                        <span key={b.slug || b.name}>
-                          {i > 0 ? ' + ' : ''}
-                          {b.slug ? <Link href={`/bands/${b.slug}`}>{b.name}</Link> : b.name}
-                        </span>
-                      ))}
-                      {show.state === 'canceled' && <span className="show-canceled">Canceled</span>}
-                    </h2>
-                    <p>{show.venue.name}</p>
-                    <p className="show-note">
-                      {show.startTime
-                        ? new Intl.DateTimeFormat('en-US', {
-                            hour: 'numeric',
-                            minute: '2-digit',
-                            timeZone: zone,
-                          }).format(new Date(show.startTime))
-                        : 'Time to be announced'}
-                      {show.ticket?.priceLabel ? ` · ${show.ticket.priceLabel}` : ''}
-                    </p>
-                  </div>
-                  {show.state === 'canceled' ? (
-                    <span className="muted">Canceled</span>
-                  ) : show.ticket ? (
-                    <a
-                      className="button"
-                      href={show.ticket.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {show.ticket.label || 'Get tickets'} ↗
-                    </a>
-                  ) : (
-                    <span className="muted">{show.ticketNote || 'Ticket details soon'}</span>
-                  )}
-                </article>
-              )
-            })}
+          {!unavailable && filtered.map((show) => <ShowRow key={show.id} show={show} />)}
           {(unavailable || filtered.length === 0) && (
             <div className="empty-state">
               <h2>
@@ -133,18 +74,8 @@ export default function ShowsClient({
               )}
             </div>
           )}
-          <div className="follow-bands">
-            <h2>Keep your favorites close.</h2>
-            <p>Follow the bands on Bandsintown for their show updates.</p>
-            <div className="inline-links">
-              {publicBands.map((b) => (
-                <a key={b.slug} href={b.bandsintown} target="_blank" rel="noopener noreferrer">
-                  {b.name} ↗
-                </a>
-              ))}
-            </div>
-          </div>
         </section>
+        <FanSignup bandSlug={filter === 'all' ? '' : filter} key={filter} />
       </main>
       <Footer />
     </>

@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+import { newsletterForm, validNewsletterForm } from './lib/public/newsletter-config.mjs'
 
 const CSP = [
   "default-src 'self'",
@@ -12,7 +13,7 @@ const CSP = [
   "frame-ancestors 'none'",
   "object-src 'none'",
   "base-uri 'self'",
-  "form-action 'self'",
+  `form-action 'self'${validNewsletterForm(newsletterForm) ? ` ${new URL(newsletterForm.action).origin}` : ''}`,
   'upgrade-insecure-requests',
 ].join('; ')
 
@@ -32,6 +33,9 @@ const SECURITY_HEADERS = [
 ]
 
 const nextConfig = {
+  outputFileTracingIncludes: {
+    '/api/press/[slug]/photo': ['./public/bands/*/hero.jpg'],
+  },
   async redirects() {
     return [{ source: '/book', destination: '/contact', permanent: true }]
   },

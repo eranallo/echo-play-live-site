@@ -1,4 +1,5 @@
 import { Page, Intro } from '@/components/SiteParts'
+import { newsletterForm, validNewsletterForm } from '@/lib/public/newsletter-config.mjs'
 export const metadata = {
   title: 'Privacy',
   alternates: { canonical: '/privacy' },
@@ -18,6 +19,19 @@ export default function PrivacyPage() {
           Airtable, which supports our booking workflow. Sending an inquiry does not confirm a
           booking.
         </p>
+        {validNewsletterForm(newsletterForm) && (
+          <>
+            <h2 className="section-title" style={{ marginTop: 45 }}>
+              Email updates
+            </h2>
+            <p>
+              When you choose to subscribe, your email address and any band preferences or city you
+              provide go to Mailchimp to manage Echo Play Live updates. Follow the confirmation
+              steps shown by Mailchimp. You can unsubscribe using the link in our emails. Sending a
+              booking inquiry does not subscribe you to the mailing list.
+            </p>
+          </>
+        )}
         <h2 className="section-title" style={{ marginTop: 45 }}>
           Website services
         </h2>
