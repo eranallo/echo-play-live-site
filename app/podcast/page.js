@@ -9,9 +9,9 @@ export default async function PodcastPage() {
         eyebrow="The Echo Play Podcast"
         title={
           <>
-            Off stage.
+            Let’s talk
             <br />
-            On the record.
+            about band life.
           </>
         }
       >
@@ -46,7 +46,7 @@ export default async function PodcastPage() {
         </div>
       </section>
       <section className="shell section-bottom">
-        <h2 className="section-title">The conversations.</h2>
+        <h2 className="section-title">Listen to the episodes</h2>
         <div className="content-stack">
           {episodes.map((ep, i) => (
             <article key={ep.buzzsproutId || ep.title} className="content-panel">

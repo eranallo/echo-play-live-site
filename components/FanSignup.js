@@ -16,13 +16,15 @@ export default function FanSignup({ bandSlug = '', compact = false }) {
     >
       <div className="fan-signup-inner">
         <div>
-          <p className="eyebrow">The next night starts here</p>
+          <p className="eyebrow">Show updates</p>
           <h2>
-            {selected ? `Keep ${selected.shortName} close.` : 'Good nights. Worth knowing about.'}
+            {selected
+              ? `Get ${selected.shortName} updates.`
+              : 'We’ll let you know when we’re playing.'}
           </h2>
           <p>
             {enabled
-              ? 'Show announcements and news from the bands you love. Choose your favorites and stay in the loop.'
+              ? 'Choose the bands you want to hear from, and we’ll email you show announcements and news.'
               : 'Follow your favorites on Bandsintown for their next show announcement.'}
           </p>
         </div>

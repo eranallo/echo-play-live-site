@@ -41,7 +41,7 @@ export default async function EventPage({ params }) {
         <Link className="text-link" href="/shows" prefetch={false}>
           ← All shows
         </Link>
-        <p className="eyebrow">{canceled ? 'Canceled show' : 'Make a night of it'}</p>
+        <p className="eyebrow">{canceled ? 'Canceled show' : 'Upcoming show'}</p>
         <h1>{show.bands.map((band) => band.name).join(' + ')}</h1>
         <p className="event-venue">{show.venue.name}</p>
         <div className="event-facts">

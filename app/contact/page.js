@@ -8,19 +8,18 @@ export default async function ContactPage({ searchParams }) {
   return (
     <Page>
       <Intro
-        eyebrow="Let’s make a night of it"
+        eyebrow="Booking inquiries"
         title={
           <>
-            A great show
-            <br />
-            starts here.
+            Let’s book
+            <br />a show.
           </>
         }
       >
         <p>
-          Have a date in mind? A room to fill? A crowd to bring together?
+          Have a date in mind? Tell us about your event.
           <br />
-          Tell us what you’re planning. We’ll take it from there.
+          We’ll check availability and work through the details with you.
         </p>
       </Intro>
       <section className="shell booking-layout">
@@ -29,13 +28,10 @@ export default async function ContactPage({ searchParams }) {
           bands={bandsList.map((b) => ({ name: b.name, slug: b.slug, email: b.bookingEmail }))}
         />
         <aside className="booking-aside">
-          <h2>
-            The right band.
-            <br />A real conversation.
-          </h2>
+          <h2>Not sure which band?</h2>
           <p>
-            Venues, festivals, private parties, corporate events. Start with your idea and we’ll
-            work through fit, availability, and the details with you.
+            Tell us about your audience and the music you want to hear. We can help you choose a
+            band for your venue, festival, private party or corporate event.
           </p>
           <p>Prefer email? Reach the band directly.</p>
           {bandsList.map((b) => (
@@ -47,7 +43,7 @@ export default async function ContactPage({ searchParams }) {
         </aside>
       </section>
       <section className="shell section-bottom">
-        <h2 className="section-title">A few helpful answers.</h2>
+        <h2 className="section-title">Common booking questions</h2>
         <div className="faq-list">
           {FAQ_CONTACT.map((f) => (
             <details key={f.q}>

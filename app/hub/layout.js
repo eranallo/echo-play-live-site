@@ -3,13 +3,14 @@
 const SITE_URL = 'https://echoplay.live'
 
 export const metadata = {
-  title: 'Echo Play Live',
-  description: 'Tribute and cover band management in DFW. Book a band for your event.',
+  title: 'Official links',
+  description:
+    'Find a show, meet our bands or get in touch about booking. All our official links in one place.',
   robots: { index: false, follow: true },
   alternates: { canonical: '/' },
   openGraph: {
-    title: 'Echo Play Live',
-    description: 'Tribute and cover band management in DFW.',
+    title: 'Echo Play Live · Official links',
+    description: 'Find a show, meet our bands or get in touch about booking.',
     url: `${SITE_URL}/hub`,
   },
 }

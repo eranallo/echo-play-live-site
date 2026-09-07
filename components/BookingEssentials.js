@@ -5,19 +5,19 @@ import { kitPdfPath } from '@/lib/press/kit-content.mjs'
 const formats = {
   'so-long-goodnight': [
     'The Warped Tour era',
-    '2000s emo, pop punk, and post-hardcore. A full-band show built for the sing-along crowd.',
+    '2000s emo, pop punk and post-hardcore. Come out and sing with us.',
   ],
   'the-dick-beldings': [
     'Your 90s playlist, live',
-    '90s rock, alternative, and grunge from a Fort Worth band with deep roots in these songs.',
+    '90s alternative and grunge from a Fort Worth band that has been playing together for more than a decade.',
   ],
   jambi: [
     'A TOOL tribute experience',
-    'A dedicated live tribute to TOOL, from the intricate rhythms to the atmosphere of the show.',
+    'TOOL’s music takes work. We put in the rehearsal time to get the rhythms, dynamics and feel right.',
   ],
   elite: [
     'A Deftones tribute experience',
-    'A dedicated live tribute to Deftones, carrying the catalog’s heavy and atmospheric sides.',
+    'A Fort Worth Deftones tribute playing the heavy riffs and quieter songs since 2017.',
   ],
 }
 
@@ -32,7 +32,7 @@ export default function BookingEssentials({ band, compact = false }) {
       <div className="section-heading-row">
         <div>
           <p className="eyebrow">For venues & event planners</p>
-          <h2 className="section-title">Bring {band.shortName || band.name} to your room.</h2>
+          <h2 className="section-title">Book {band.name}.</h2>
         </div>
       </div>
       <div className="booking-facts-grid">
@@ -45,29 +45,29 @@ export default function BookingEssentials({ band, compact = false }) {
           <span>02 / The set</span>
           <h3>
             {band.slug === 'so-long-goodnight'
-              ? 'Built for a full night.'
-              : 'The right set for your event.'}
+              ? 'Planning a full night?'
+              : 'How long should we play?'}
           </h3>
           <p>
             {band.slug === 'so-long-goodnight'
-              ? 'A 3+ hour show is part of the SLGN experience. Discuss your schedule, set length, and breaks with the booking team.'
-              : 'Tell us your performance window. We’ll discuss set length, breaks, and the format that fits your event.'}
+              ? 'Tell us your schedule and the music you have in mind. We’ll discuss the set length and breaks with you.'
+              : 'Let us know your schedule. We’ll work through the set length, breaks and any music you have in mind.'}
           </p>
         </article>
         <article>
           <span>03 / The location</span>
           <h3>Fort Worth & beyond.</h3>
           <p>
-            Based in the DFW scene. Share your venue and city so we can work through travel and
-            event requirements.
+            We’re based in DFW and consider shows outside the area, too. Send us your venue and city
+            so we can discuss travel.
           </p>
         </article>
         <article>
           <span>04 / The production</span>
-          <h3>Details, worked out together.</h3>
+          <h3>Let’s talk production.</h3>
           <p>
-            Sound, lighting, stage space, and production needs are discussed for each event. Ask for
-            the current stage plot and input list.
+            Let us know what sound and lighting your venue provides. We’ll work through the rest
+            with you. Ask us for the current stage plot and input list.
           </p>
         </article>
       </div>

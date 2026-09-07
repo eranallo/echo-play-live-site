@@ -5,7 +5,7 @@ export const metadata = {
   alternates: { canonical: '/press' },
   openGraph: {
     title: 'Echo Play Live · Band Kits & Press',
-    description: 'Meet the bands and find everything you need for your next show.',
+    description: 'Download band kits, photos, logos and bios for your next show.',
     url: 'https://echoplay.live/press',
   },
 }

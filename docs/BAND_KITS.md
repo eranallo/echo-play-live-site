@@ -19,7 +19,7 @@ The generator embeds the supplied Gotham font in full because its embedding flag
 
 The PDF endpoint serves a reviewed static artifact instead of generating one at request time. Next.js output tracing explicitly includes those PDFs and the selected local full-size photos. Missing/unknown bands return 404; a missing artifact fails with 503.
 
-## Verification for this edition
+## Original kit-overhaul verification
 
 - Existing 34 tests and production build pass; four kit pages are statically generated.
 - All 12 PDF pages were rendered and visually inspected. Independent PDF reading confirms three Letter pages per band, embedded Gotham, extractable text and 8–9 real URL links each.
@@ -28,3 +28,7 @@ The PDF endpoint serves a reviewed static artifact instead of generating one at 
 - QR targets and visual placement are checked; a physical QR scan is not claimed. No business form, subscription or operational record was submitted by these checks.
 
 Detailed source hashes, rendered review files and release evidence are retained in the shared workspace's `docs/web/BAND_KIT_OVERHAUL_2026-09-07.md` and dated evidence folder.
+
+## September 7 voice revision
+
+Revision `20260907-copy1` replaces the wording in all four kits following Evan's request to match his sent-email voice. HTML, downloadable bios and PDFs share the updated editorial source. All 12 revised PDF pages were rendered and visually inspected; the four QR codes were independently decoded from the rendered third pages and open the correct online kits. The expanded 41-test suite and production build pass. See `VOICE_AND_COPY.md` for the voice guide and owned QR/link-page maintenance, and the shared workspace's `docs/web/COPY_AND_QR_RELEASE_2026-09-07.md` for the current release evidence.

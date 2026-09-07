@@ -27,7 +27,7 @@ export default function ShareShow({ title, path, showId }) {
   return (
     <div className="share-show">
       <button type="button" className="text-link" onClick={share}>
-        Share this night ↗
+        Share this show ↗
       </button>
       <span className="form-note" role="status">
         {status}

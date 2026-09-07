@@ -8,16 +8,15 @@ export default function AboutPage() {
         eyebrow="Echo Play Live · Est. 2023"
         title={
           <>
-            Music brought
+            Hi, we’re
             <br />
-            us together.
+            Echo Play Live.
           </>
         }
       >
         <p>
-          We’re a live-music house in Fort Worth, Texas.
-          <br />
-          Four bands. A community of musicians. One love for the show.
+          We’re based in Fort Worth, Texas, and manage four tribute and cover bands. We’re musicians
+          ourselves, and we handle the business side so our bands can focus on playing.
         </p>
       </Intro>
       <section className="shell section-bottom">
@@ -32,20 +31,18 @@ export default function AboutPage() {
         </div>
       </section>
       <section className="shell section-bottom band-description">
-        <h2>
-          For the songs.
-          <br />
-          For the people.
-        </h2>
+        <h2>How we got here.</h2>
         <div className="text-body">
           <p>
-            Founded in 2023 by Evan Ranallo, Echo Play Live brings together So Long Goodnight, The
-            Dick Beldings, Jambi, and Elite. Each band has its own sound and its own identity. What
-            connects them is a shared care for the music and the people in the room.
+            Evan Ranallo started Echo Play Live in 2023. Our roster includes So Long Goodnight, The
+            Dick Beldings, Jambi and Elite. Each band has its own history and plays music its
+            members love, from 90s alternative and 2000s emo to TOOL and Deftones.
           </p>
           <p>
-            From 90s rock and the Warped Tour era to the worlds of TOOL and Deftones, we build shows
-            around music that means something to us. And to you.
+            We know how much goes into a show before anyone takes the stage. We care about being
+            prepared, communicating with the venue and working with the production team. We want
+            people to have a great time, and we want the people putting it together to enjoy working
+            with us.
           </p>
           <Link className="text-link" href="/musicians">
             Meet the musicians →
@@ -55,16 +52,16 @@ export default function AboutPage() {
       <section className="shell section-bottom three-columns">
         {[
           [
-            'The craft.',
-            'Preparation, care, and a love for the songs. Every rehearsal is part of the show.',
+            'The music',
+            'We put in the rehearsal time because these songs matter to us. We want to play them well.',
           ],
           [
-            'The community.',
-            'Friends on stage. Familiar faces in the crowd. Music gives us a reason to come together.',
+            'The people',
+            'We appreciate the fans who come out and the venues and crews who make it possible. We’re glad to be part of this scene.',
           ],
           [
-            'The moment.',
-            'The first chord you recognize. The chorus everyone knows. That feeling, live again.',
+            'The work',
+            'From booking through load-out, we work through the details with you. Clear communication makes a difference.',
           ],
         ].map(([title, copy]) => (
           <article className="content-panel" key={title}>
@@ -75,7 +72,7 @@ export default function AboutPage() {
       </section>
       <section className="shell section-bottom">
         <div className="content-panel">
-          <p className="eyebrow">The conversation continues</p>
+          <p className="eyebrow">More from Evan & Aaron</p>
           <h2>Echo Play Podcast.</h2>
           <p>Evan Ranallo and Aaron Allen talk cover bands, tributes, and the DFW music scene.</p>
           <Link className="text-link" href="/podcast">

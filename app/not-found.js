@@ -13,7 +13,7 @@ export default function NotFound() {
           </>
         }
       >
-        <p>This page isn’t available. There’s still a great night to find.</p>
+        <p>We couldn’t find this page. Use the links below to find a band or an upcoming show.</p>
       </Intro>
       <div className="shell section-bottom button-row">
         <Link className="button" href="/bands">

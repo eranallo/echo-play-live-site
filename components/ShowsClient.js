@@ -21,12 +21,12 @@ export default function ShowsClient({
         <section className="shell page-intro">
           <p className="eyebrow">Upcoming shows</p>
           <h1>
-            Your next
+            Come see
             <br />
-            great night.
+            us play.
           </h1>
           <div className="intro-copy">
-            <p>Find the band. Pick the date. Be part of it.</p>
+            <p>Here’s where we’re playing next. We’d love to see you out.</p>
           </div>
         </section>
         <section className="shell section-bottom">
@@ -51,13 +51,11 @@ export default function ShowsClient({
           {!unavailable && filtered.map((show) => <ShowRow key={show.id} show={show} />)}
           {(unavailable || filtered.length === 0) && (
             <div className="empty-state">
-              <h2>
-                {unavailable ? 'The calendar is taking a breather.' : 'More nights are on the way.'}
-              </h2>
+              <h2>{unavailable ? 'We couldn’t load the shows.' : 'No shows announced yet.'}</h2>
               <p>
                 {unavailable
-                  ? 'We couldn’t load our show listings right now. Check the bands’ official show pages below, or try again shortly.'
-                  : 'There are no announced dates here just yet. Follow your favorite band for the next announcement.'}
+                  ? 'Please try again in a moment. You can also find show updates through each band’s page.'
+                  : 'We’ll add dates here as they’re announced. You can sign up below for updates.'}
               </p>
               {unavailable ? (
                 <a className="button" href="/shows">

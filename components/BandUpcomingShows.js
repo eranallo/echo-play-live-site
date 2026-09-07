@@ -11,8 +11,8 @@ export default async function BandUpcomingShows({ slug, name }) {
     <section id="shows" className="section shell band-upcoming">
       <div className="section-heading-row">
         <div>
-          <p className="eyebrow">Your next night with {name}</p>
-          <h2 className="section-title">Be there.</h2>
+          <p className="eyebrow">See {name} live</p>
+          <h2 className="section-title">Upcoming shows</h2>
         </div>
         <Link className="text-link" href={`/shows?band=${slug}`} prefetch={false}>
           All announced dates ↗
@@ -22,7 +22,7 @@ export default async function BandUpcomingShows({ slug, name }) {
         shows.map((show) => <ShowRow key={show.id} show={show} />)
       ) : (
         <div className="quiet-state">
-          <h3>{result.ok ? 'More nights are on the way.' : 'Show dates are taking a moment.'}</h3>
+          <h3>{result.ok ? 'No shows announced yet.' : 'We couldn’t load the shows.'}</h3>
           <p>
             {result.ok
               ? 'New dates will appear here as they’re announced. Follow the band for the next one.'

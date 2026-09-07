@@ -3,7 +3,7 @@ import { bandsList } from '@/lib/bands'
 export const metadata = {
   title: 'The Bands',
   description:
-    'Meet So Long Goodnight, The Dick Beldings, Jambi and Elite. Four distinct live music experiences from Echo Play Live.',
+    'Meet So Long Goodnight, The Dick Beldings, Jambi and Elite. Tribute and cover bands based in Dallas-Fort Worth.',
   alternates: { canonical: '/bands' },
 }
 export default function BandsPage() {
@@ -13,16 +13,16 @@ export default function BandsPage() {
         eyebrow="The Echo Play Live roster"
         title={
           <>
-            Find your
+            Meet the
             <br />
-            frequency.
+            bands.
           </>
         }
       >
         <p>
-          Emo anthems. 90s favorites. The worlds of TOOL and Deftones.
+          Here’s our lineup: 90s alternative, 2000s emo and pop punk,
           <br />
-          Explore the band that feels like you.
+          plus tributes to TOOL and Deftones.
         </p>
       </Intro>
       <section className="shell section-bottom">

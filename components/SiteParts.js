@@ -28,13 +28,13 @@ export function BookingCta() {
       <div className="shell">
         <p className="eyebrow">For venues, festivals & private events</p>
         <h2>
-          Your crowd.
-          <br />
-          Our kind of night.
+          Let’s book
+          <br />a show.
         </h2>
         <p>
-          Tell us the date, the room, and what you have in mind.
-          <br className="desktop-break" /> We’ll help you find the band that fits.
+          Send us the date, venue and what you’re planning.
+          <br className="desktop-break" /> We’ll check availability and help you find the right
+          band.
         </p>
         <Link className="button" href="/contact">
           Let’s talk booking <span aria-hidden="true">↗</span>
@@ -48,7 +48,11 @@ export function BandCard({ band, index = 0 }) {
     <Link className={`band-card band-${band.slug}`} href={`/bands/${band.slug}`}>
       <Image
         src={band.heroPhoto}
-        alt={`${band.name} performing live`}
+        alt={
+          band.slug === 'the-dick-beldings'
+            ? 'The Dick Beldings stage setup'
+            : `${band.name} performing live`
+        }
         fill
         sizes="(max-width: 620px) 92vw, 46vw"
         style={{ objectFit: 'cover', objectPosition: band.heroObjectPosition || 'center' }}

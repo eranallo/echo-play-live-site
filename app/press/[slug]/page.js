@@ -101,7 +101,7 @@ export default async function BandKitPage({ params }) {
       <section id="overview" className="shell section-bottom kit-overview">
         <div>
           <p className="eyebrow">{kit.label}</p>
-          <h2 className="section-title">Know the night.</h2>
+          <h2 className="section-title">About the band</h2>
         </div>
         <div>
           <p className="kit-bio">{kit.bio}</p>
@@ -156,8 +156,8 @@ export default async function BandKitPage({ params }) {
       </section>
       <section id="materials" className="kit-materials section-bottom">
         <div className="shell">
-          <p className="eyebrow">Ready for your next announcement</p>
-          <h2 className="section-title">The materials you need.</h2>
+          <p className="eyebrow">Photos, logos & bios</p>
+          <h2 className="section-title">Download press materials</h2>
           <div className="kit-download-grid">
             {[
               ['Band kit', 'Three-page PDF', kitPdfPath(slug), 'Press download'],
@@ -179,7 +179,7 @@ export default async function BandKitPage({ params }) {
       </section>
       <section id="planning" className="shell section-bottom">
         <p className="eyebrow">Booking & production</p>
-        <h2 className="section-title">Bring the night to your room.</h2>
+        <h2 className="section-title">Let’s talk about your event.</h2>
         <div className="kit-planning-grid">
           {planningDetails.map(([title, body], i) => (
             <article key={title}>
@@ -195,7 +195,7 @@ export default async function BandKitPage({ params }) {
         </div>
         <div className="kit-booking-bar">
           <div>
-            <p className="eyebrow">Let’s talk about your event</p>
+            <p className="eyebrow">Get in touch</p>
             <a href={`mailto:${kit.bookingEmail}`}>{kit.bookingEmail}</a>
             <p>Ask for the current stage plot and input list.</p>
           </div>
@@ -205,6 +205,9 @@ export default async function BandKitPage({ params }) {
         </div>
       </section>
       <section className="shell section-bottom kit-return-links">
+        <Link className="text-link" href={`/${slug}`}>
+          Band links & QR code ↗
+        </Link>
         <Link className="text-link" href={`/bands/${slug}`}>
           Visit the band page ↗
         </Link>

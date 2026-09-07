@@ -17,7 +17,7 @@ export default async function MusiciansPage() {
           </>
         }
       >
-        <p>The players, personalities, and stories behind Echo Play Live.</p>
+        <p>Get to know the people playing in our bands.</p>
       </Intro>
       <section className="shell section-bottom">
         {musicians.length ? (
@@ -50,8 +50,7 @@ export default async function MusiciansPage() {
           <div className="empty-state">
             <h2>Get to know the bands.</h2>
             <p>
-              Individual profiles aren’t available right now. Explore the bands and the music that
-              brings us together.
+              We couldn’t load the individual profiles. You can still visit the band pages below.
             </p>
             <Link className="button" href="/bands">
               Meet the bands →

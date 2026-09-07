@@ -11,16 +11,15 @@ export default function PressPage() {
         eyebrow="For promoters, venues & media"
         title={
           <>
-            Everything for
-            <br />
-            the next show.
+            Band kits
+            <br />& press.
           </>
         }
       >
         <p>
-          Explore the bands. Find your sound. Plan your next show.
+          Need a bio, photo or logo for an upcoming show?
           <br />
-          The essentials, all in one place.
+          You can download them here, along with each band’s kit.
         </p>
       </Intro>
       <section className="shell section-bottom">
@@ -70,8 +69,8 @@ export default function PressPage() {
       <section className="shell section-bottom">
         <div className="production-request">
           <div>
-            <p className="eyebrow">Planning the room</p>
-            <h2>Let’s get the details right.</h2>
+            <p className="eyebrow">Production & press requests</p>
+            <h2>Need something else?</h2>
           </div>
           <div>
             <p>
@@ -86,7 +85,7 @@ export default function PressPage() {
         </div>
       </section>
       <section className="shell section-bottom">
-        <h2 className="section-title">The Echo Play Live identity.</h2>
+        <h2 className="section-title">Echo Play Live logos</h2>
         <p className="text-body" style={{ marginBottom: 30 }}>
           The official seal, in black and white. Keep its proportions and leave clear space around
           it.

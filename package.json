@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node --test tests/public-shows/*.test.mjs tests/inquiry/*.test.mjs",
+    "test": "node --test tests/public-shows/*.test.mjs tests/inquiry/*.test.mjs tests/copy/*.test.mjs",
     "check:routes": "node tests/inquiry/route-audit.mjs"
   },
   "dependencies": {

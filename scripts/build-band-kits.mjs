@@ -213,7 +213,7 @@ for (const kit of bandKits) {
   // 02: Short bio, tangible photography, and a clear musical identity.
   const p2 = base(2)
   txt(p2, 'THE SHOW', M, 89, 9, bold, accent)
-  txt(p2, 'Know the night.', M, 113, 36, bold)
+  txt(p2, 'About the band', M, 113, 36, bold)
   paragraph(p2, kit.bio, M, 175, CW, 11.5, 17, ink, regular, 300)
   const photoTop = 316,
     photoHeight = 184
@@ -250,11 +250,11 @@ for (const kit of bandKits) {
   // 03: Event planning information with actual contact/link annotations.
   const p3 = base(3)
   txt(p3, 'FOR VENUES & EVENT PLANNERS', M, 89, 9, bold, accent)
-  txt(p3, 'Bring the night', M, 113, 37, bold)
-  txt(p3, 'to your room.', M, 156, 37, bold)
+  txt(p3, "Let's talk about", M, 113, 37, bold)
+  txt(p3, 'your event.', M, 156, 37, bold)
   paragraph(
     p3,
-    'Start with your idea. We will work through the show and the details with you.',
+    "Tell us what you're planning. We'll check availability and work through the details with you.",
     M,
     218,
     470,

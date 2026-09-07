@@ -54,12 +54,12 @@ export default function BookingForm({ bands, initialBand = '' }) {
         <div className="success-mark" aria-hidden="true">
           ✓
         </div>
-        <h2>You’re on our radar.</h2>
+        <h2>Thanks for reaching out!</h2>
         <p>
-          Your inquiry has been saved. We’ll review the details and follow up at{' '}
+          We’ve received your inquiry. We’ll review the details and follow up at{' '}
           <strong>{form.email}</strong>.
         </p>
-        <p>This is an inquiry, not a confirmed booking.</p>
+        <p>Your booking still needs to be confirmed.</p>
         <Link className="button" href="/bands">
           Explore the bands →
         </Link>
@@ -149,7 +149,7 @@ export default function BookingForm({ bands, initialBand = '' }) {
             maxLength={2000}
             value={form.message}
             onChange={update}
-            placeholder="The room, the crowd, the kind of night you’re planning…"
+            placeholder="Where is the event, who’s coming, and what music do you have in mind?"
           />
         </div>
       </div>

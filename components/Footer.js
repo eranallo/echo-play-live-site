@@ -10,9 +10,9 @@ export default function Footer() {
             <BrandLogo size={112} />
           </Link>
           <p>
-            Good music. Great people.
+            Thanks for supporting live music.
             <br />
-            Nights that stay with you.
+            Come say hi at a show.
           </p>
           <span className="muted">Fort Worth, Texas · Est. 2023</span>
         </div>
@@ -30,10 +30,11 @@ export default function Footer() {
           <Link href="/about">Our story</Link>
           <Link href="/musicians">Meet the musicians</Link>
           <Link href="/podcast">Echo Play Podcast</Link>
+          <Link href="/hub">Quick links & QR codes</Link>
           <Link href="/shows#stay-in-loop">Stay in the loop</Link>
         </div>
         <div>
-          <h2>Let’s make a night of it.</h2>
+          <h2>Let’s work together.</h2>
           <Link href="/contact">Booking inquiries ↗</Link>
           <Link href="/press">Press & band kits</Link>
           <Link href="/privacy">Privacy</Link>

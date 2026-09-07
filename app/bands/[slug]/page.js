@@ -45,7 +45,11 @@ export default async function BandPage({ params }) {
       <section className="band-detail-hero">
         <Image
           src={band.heroPhoto}
-          alt={`${band.name} live on stage`}
+          alt={
+            band.slug === 'the-dick-beldings'
+              ? 'The Dick Beldings stage setup'
+              : `${band.name} live on stage`
+          }
           fill
           priority
           sizes="100vw"
@@ -79,7 +83,7 @@ export default async function BandPage({ params }) {
       <nav className="band-subnav" aria-label={`${band.name} page sections`}>
         <div className="shell">
           {!band.hidden && <a href="#shows">Upcoming shows</a>}
-          <a href="#experience">The experience</a>
+          <a href="#experience">About the band</a>
           <a href="#music">The music</a>
           <Link href="/musicians">The musicians</Link>
           {!band.hidden && <a href="#booking">Booking essentials</a>}
@@ -91,7 +95,7 @@ export default async function BandPage({ params }) {
           fallback={
             <section id="shows" className="section shell" aria-busy="true">
               <p className="eyebrow">Upcoming shows</p>
-              <h2 className="section-title">Finding your next night.</h2>
+              <h2 className="section-title">Loading upcoming shows…</h2>
             </section>
           }
         >
@@ -100,7 +104,7 @@ export default async function BandPage({ params }) {
       )}
       <section id="experience" className="section shell band-description">
         <div>
-          <p className="eyebrow">A night with {band.name}</p>
+          <p className="eyebrow">About {band.name}</p>
           <h2>
             {typeof band.experienceHeadline === 'object' ? (
               <>
@@ -122,7 +126,11 @@ export default async function BandPage({ params }) {
               <div className="photo-tile" key={src}>
                 <Image
                   src={src}
-                  alt={`${band.name} live performance, photo ${i + 1}`}
+                  alt={
+                    band.slug === 'the-dick-beldings'
+                      ? 'The Dick Beldings band portrait'
+                      : `${band.name} live performance, photo ${i + 1}`
+                  }
                   fill
                   sizes="(max-width: 760px) 45vw, 30vw"
                   style={{ objectFit: 'cover' }}

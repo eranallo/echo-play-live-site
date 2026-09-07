@@ -5,28 +5,32 @@
 // page instead.
 
 import { getBand, bandsList } from '@/lib/bands'
+import { getLinkHub } from '@/lib/public/link-hubs.mjs'
 
 const SITE_URL = 'https://echoplay.live'
 
 export async function generateStaticParams() {
-  return bandsList.map(b => ({ slug: b.slug }))
+  return bandsList.map((b) => ({ slug: b.slug }))
 }
 
 export async function generateMetadata({ params }) {
   const { slug } = await params
   const band = getBand(slug)
-  if (!band) return { title: 'Not found' }
+  const hub = getLinkHub(slug)
+  if (!band || !hub) return { title: 'Not found' }
 
   return {
-    title: band.name,
-    description: band.tagline || band.description?.slice(0, 160) || `${band.name} on Echo Play Live`,
+    title: `${band.name} · Official links`,
+    description: hub.intro,
     robots: { index: false, follow: true },
     alternates: { canonical: `/bands/${slug}` },
     openGraph: {
-      title: `${band.name} | Echo Play Live`,
-      description: band.tagline || `${band.name} on Echo Play Live`,
+      title: `${band.name} · Official links`,
+      description: hub.intro,
       url: `${SITE_URL}/${slug}`,
-      images: band.heroPhoto ? [{ url: band.heroPhoto, width: 1200, height: 630, alt: band.name }] : undefined,
+      images: band.heroPhoto
+        ? [{ url: band.heroPhoto, width: 1200, height: 630, alt: band.name }]
+        : undefined,
     },
   }
 }

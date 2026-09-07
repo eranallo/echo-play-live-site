@@ -8,17 +8,16 @@ export default function HomePage() {
       <section className="home-intro shell">
         <p className="eyebrow">
           <span className="live-dot" />
-          Live music. Fort Worth & beyond.
+          Tribute & cover bands · Fort Worth, Texas
         </p>
         <h1>
-          Some nights
+          Come out
           <br />
-          stay with you.
+          and see us.
         </h1>
         <p className="hero-description">
-          The songs you know. The feeling you came for.
-          <br />
-          Tribute and cover bands, brought to life.
+          We’re Echo Play Live. We manage four tribute and cover bands in DFW, playing everything
+          from 90s rock to TOOL and Deftones.
         </p>
         <div className="button-row">
           <Link className="button" href="/shows">
@@ -40,11 +39,11 @@ export default function HomePage() {
         />
         <div className="hero-stage-shade" />
         <div className="stage-caption">
-          <span className="eyebrow">This is what it feels like.</span>
+          <span className="eyebrow">From the stage</span>
           <p>
-            All together.
+            Thanks for
             <br />
-            All the way in.
+            singing with us.
           </p>
           <Link className="glass-link" href="/bands/so-long-goodnight">
             So Long Goodnight <span aria-hidden="true">↗</span>
@@ -55,13 +54,13 @@ export default function HomePage() {
       <section className="section shell" id="bands">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">Four bands. Four worlds.</p>
-            <h2>Find your frequency.</h2>
+            <p className="eyebrow">Meet the bands</p>
+            <h2>What do you want to hear?</h2>
           </div>
           <p>
-            From the first chord to the last encore.
+            90s alternative, 2000s emo and pop punk,
             <br />
-            There’s a night here with your name on it.
+            or a night of TOOL or Deftones. Here’s our lineup.
           </p>
         </div>
         <div className="band-grid">
@@ -72,16 +71,16 @@ export default function HomePage() {
       </section>
       <section className="fan-feature shell">
         <div>
-          <p className="eyebrow">Be there for the next one</p>
+          <p className="eyebrow">Upcoming shows</p>
           <h2>
-            Less scrolling.
+            Pick a show.
             <br />
-            More singing.
+            Bring your friends.
           </h2>
           <p>
-            Find your band. Make your plans. Bring your people.
+            See where we’re playing next.
             <br />
-            Your next great night starts here.
+            We’d love to have you out.
           </p>
           <Link className="button" href="/shows">
             Explore upcoming shows <span aria-hidden="true">↗</span>
@@ -99,15 +98,15 @@ export default function HomePage() {
         </div>
       </section>
       <section className="story-strip shell">
-        <p className="eyebrow">The people behind the noise</p>
+        <p className="eyebrow">About Echo Play Live</p>
         <h2>
-          Built on music.
+          We’re musicians, too.
           <br />
-          <span className="muted">Held together by people.</span>
+          <span className="muted">We care about the whole show.</span>
         </h2>
         <p>
-          A Fort Worth home for musicians who care about the songs,
-          <br className="desktop-break" /> the show, and everyone in the room.
+          We handle booking and coordination for our bands. Our goal is to put on a great show and
+          make things easier for the venues, crews and people we work with.
         </p>
         <Link className="text-link" href="/about">
           Get to know Echo Play Live <span aria-hidden="true">→</span>

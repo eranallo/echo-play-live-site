@@ -11,7 +11,7 @@ export default function BandExperienceDetails({ band }) {
   const [open, setOpen] = useState(false)
   return (
     <div className="band-listen">
-      <h3>The music behind the night.</h3>
+      <h3>See what we play.</h3>
       <p className="muted">
         Explore {band.tributeMode ? 'the albums and songs' : 'the song library'} and request a
         favorite.
