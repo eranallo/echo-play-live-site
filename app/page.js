@@ -1,4 +1,8 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
+import HomeUpcomingShows from '@/components/HomeUpcomingShows'
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 import Image from 'next/image'
 import { Page, BandCard, BookingCta } from '@/components/SiteParts'
 import { bandsList } from '@/lib/bands'
@@ -69,34 +73,9 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-      <section className="fan-feature shell">
-        <div>
-          <p className="eyebrow">Upcoming shows</p>
-          <h2>
-            Pick a show.
-            <br />
-            Bring your friends.
-          </h2>
-          <p>
-            See where we’re playing next.
-            <br />
-            We’d love to have you out.
-          </p>
-          <Link className="button" href="/shows">
-            Explore upcoming shows <span aria-hidden="true">↗</span>
-          </Link>
-        </div>
-        <div className="fan-image">
-          <Image
-            src="/bands/jambi/hero.jpg"
-            alt="Jambi performing beneath a large illuminated stage backdrop"
-            fill
-            sizes="(max-width: 760px) 90vw, 45vw"
-            style={{ objectFit: 'cover' }}
-          />
-          <span>Jambi · A TOOL Experience</span>
-        </div>
-      </section>
+      <Suspense fallback={<section className="shell section-bottom" aria-busy="true"><p className="eyebrow">Upcoming shows</p><p>Checking the latest dates…</p></section>}>
+        <HomeUpcomingShows />
+      </Suspense>
       <section className="story-strip shell">
         <p className="eyebrow">About Echo Play Live</p>
         <h2>

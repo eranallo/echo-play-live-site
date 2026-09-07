@@ -27,6 +27,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
+    images: [podcast.artworkUrl],
     title: `${podcast.title} | Echo Play Live`,
     description: podcast.description,
   },

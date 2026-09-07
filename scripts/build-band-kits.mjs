@@ -16,6 +16,7 @@ import {
 } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit'
 import QRCode from 'qrcode'
+import { getPerformance, performanceUrl } from '../lib/public/performances.mjs'
 import { bandKits, KIT_EDITION, planningDetails } from '../lib/press/kit-content.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -245,6 +246,8 @@ for (const kit of bandKits) {
     regular,
     729,
   )
+  const performance = getPerformance(kit.slug)
+  if (performance) link(p2, `Watch ${performance.title} live`, performanceUrl(performance), M, 673, 10)
   link(p2, 'Explore the music online', `https://echoplay.live/bands/${kit.slug}#music`, M, 694, 9)
 
   // 03: Event planning information with actual contact/link annotations.

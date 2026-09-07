@@ -2,6 +2,7 @@
 import Script from 'next/script'
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
+import { track } from '@/lib/track'
 const metaRaw = (process.env.NEXT_PUBLIC_META_PIXEL_ID || '').trim()
 const tikRaw = (process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID || '').trim()
 const meta = /^\d+$/.test(metaRaw) ? metaRaw : ''
@@ -18,13 +19,13 @@ export default function VendorTags() {
     const ticket = (e) => {
       const a = e.target?.closest?.('a')
       if (!a) return
-      const href = a.getAttribute('href') || ''
-      if (!/ticket|bandsintown|eventbrite|prekindle/i.test(href)) return
+      if (a.getAttribute('data-epl-event') !== 'Ticket click') return
       const data = { page_path: window.location.pathname }
       if (meta && window.fbq) window.fbq('trackCustom', 'TicketClick', data)
       if (tiktok && window.ttq?.track) window.ttq.track('ClickButton', data)
     }
     const saved = () => {
+      track('Booking inquiry saved')
       const data = { content_name: 'Booking Inquiry', page_path: window.location.pathname }
       if (meta && window.fbq) window.fbq('track', 'Lead', data)
       if (tiktok && window.ttq?.track) window.ttq.track('SubmitForm', data)

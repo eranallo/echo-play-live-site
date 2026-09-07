@@ -1,10 +1,11 @@
 'use client'
-import { track } from '@vercel/analytics'
+import { track } from '@/lib/track'
 
 export default function TrackedLink({ event, band, showId, children, ...props }) {
   return (
     <a
       {...props}
+      data-epl-event={event}
       onClick={() => {
         // Never include form values, subscriber details, or external URL query strings.
         try {

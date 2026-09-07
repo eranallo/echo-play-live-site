@@ -10,6 +10,9 @@ export default function BookingForm({ bands, initialBand = '' }) {
     date: '',
     venue: '',
     message: '',
+    attendance: '',
+    budget: '',
+    production: '',
     website: '',
   })
   const [state, setState] = useState('idle')
@@ -18,7 +21,7 @@ export default function BookingForm({ bands, initialBand = '' }) {
   const statusRef = useRef(null)
   const update = (e) => setForm({ ...form, [e.target.name]: e.target.value })
   const contact = bands.find((b) => b.name === form.band)?.email || 'eranallo@echoplay.live'
-  const emailLink = `mailto:${contact}?subject=${encodeURIComponent('Booking inquiry' + (form.band ? ' · ' + form.band : ''))}&body=${encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\nBand: ${form.band}\nEvent: ${form.eventType}\nDate: ${form.date}\nVenue: ${form.venue}\n\n${form.message}`)}`
+  const emailLink = `mailto:${contact}?subject=${encodeURIComponent('Booking inquiry' + (form.band ? ' · ' + form.band : ''))}&body=${encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\nBand: ${form.band}\nEvent: ${form.eventType}\nDate: ${form.date}\nVenue: ${form.venue}\nAudience: ${form.attendance || 'Not sure yet'}\nBudget: ${form.budget || 'Not sure yet'}\nProduction: ${form.production || 'To discuss'}\n\n${form.message}`)}`
   async function submit(e) {
     e.preventDefault()
     if (state === 'sending') return
@@ -153,6 +156,23 @@ export default function BookingForm({ bands, initialBand = '' }) {
           />
         </div>
       </div>
+      <details className="booking-extra">
+        <summary>A few more details (optional)</summary>
+        <div className="form-grid">
+          <div className="field">
+            <label htmlFor="attendance">Expected audience size</label>
+            <input id="attendance" name="attendance" type="number" inputMode="numeric" min="1" max="1000000" step="1" placeholder="Leave blank if you’re not sure" value={form.attendance} onChange={update} />
+          </div>
+          <div className="field">
+            <label htmlFor="budget">Budget for the band</label>
+            <input id="budget" name="budget" maxLength={80} placeholder="A range is fine, or leave blank" value={form.budget} onChange={update} />
+          </div>
+          <div className="field field-wide">
+            <label htmlFor="production">Sound, lighting & stage</label>
+            <textarea id="production" name="production" maxLength={400} placeholder="What does the venue provide, and what would you need from us? It’s okay if you’re still figuring this out." value={form.production} onChange={update} />
+          </div>
+        </div>
+      </details>
       <p className="form-note">
         * Required. Your details are used to respond to this inquiry.{' '}
         <Link href="/privacy">Privacy details</Link>.

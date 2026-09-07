@@ -1,11 +1,9 @@
 import './globals.css'
 import './design.css'
 import localFont from 'next/font/local'
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
+import SiteMeasurement from '@/components/SiteMeasurement'
 
-import { bands, bandsList } from '@/lib/bands'
-import VendorTags from '@/components/VendorTags'
+import { bandsList } from '@/lib/bands'
 
 const SITE_URL = 'https://echoplay.live'
 const gotham = localFont({
@@ -24,20 +22,6 @@ export const metadata = {
   },
   description:
     'DFW tribute and cover band management. Home of So Long Goodnight, The Dick Beldings, Jambi, and Elite. Live, full-band performances. Book a band for your venue, festival, or event.',
-  keywords: [
-    'Echo Play Live',
-    'DFW band management',
-    'tribute bands DFW',
-    'cover bands Fort Worth',
-    'Fort Worth music',
-    'Dallas tribute bands',
-    'So Long Goodnight',
-    'The Dick Beldings',
-    'Jambi TOOL tribute',
-    'Elite Deftones tribute',
-    'book a band DFW',
-    'venue booking Texas',
-  ],
   authors: [{ name: 'Echo Play Live' }],
   creator: 'Echo Play Live',
   alternates: {
@@ -51,12 +35,14 @@ export const metadata = {
     locale: 'en_US',
     url: SITE_URL,
     siteName: 'Echo Play Live',
+    images: [{ url: '/opengraph-image.png', width: 1200, height: 630, alt: 'Echo Play Live' }],
     title: 'Echo Play Live | Tribute & Cover Band Management · DFW',
     description:
       'DFW tribute and cover band management. Live, full-band performances. Book a band for your venue, festival, or event.',
   },
   twitter: {
     card: 'summary_large_image',
+    images: ['/opengraph-image.png'],
     title: 'Echo Play Live | Tribute & Cover Band Management · DFW',
     description:
       'DFW tribute and cover band management. Live, full-band performances. Book a band for your venue, festival, or event.',
@@ -77,7 +63,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
     {
-      '@type': 'LocalBusiness',
+      '@type': 'Organization',
       '@id': `${SITE_URL}/#organization`,
       name: 'Echo Play Live',
       alternateName: 'EPL',
@@ -108,8 +94,8 @@ const jsonLd = {
       description: band.description,
       foundingLocation: { '@type': 'Place', name: 'Fort Worth, TX' },
       genre: band.genre,
-      image: band.heroPhoto ? [band.heroPhoto] : undefined,
-      sameAs: [band.social?.facebook, band.social?.instagram, band.social?.bandsintown].filter(
+      image: [`${SITE_URL}/social/${band.slug}.png`],
+      sameAs: [band.social?.facebook, band.social?.instagram, band.social?.bandsintown, band.social?.youtube].filter(
         Boolean,
       ),
       email: band.bookingEmail,
@@ -123,7 +109,7 @@ export default function RootLayout({ children }) {
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
         />
       </head>
       <body>
@@ -131,9 +117,7 @@ export default function RootLayout({ children }) {
           Skip to content
         </a>
         {children}
-        <Analytics />
-        <SpeedInsights />
-        <VendorTags />
+        <SiteMeasurement />
       </body>
     </html>
   )

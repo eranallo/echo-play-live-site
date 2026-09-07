@@ -93,3 +93,21 @@ test('form choices map to existing Airtable options without creating schema', as
   assert.equal(fields['Inquiry Source'], 'Jambi QR landing')
   assert.equal(fields['Inquiry Kind'], 'EPL Booking')
 })
+
+test('optional booking details reach their existing fields and retain the original message', async () => {
+  let fields
+  const result = await saveInquiry({ ...valid, attendance: '250', budget: '$2,000–$3,000', production: 'House sound available.' }, {
+    bands, token: 'fixture', url: 'https://example.invalid',
+    fetchImpl: async (_, request) => {
+      fields = JSON.parse(request.body).fields
+      return { ok: true, json: async () => ({ id: 'rec00000000000002' }) }
+    },
+  })
+  assert.equal(result.status, 200)
+  assert.equal(fields['Expected Attendance'], 250)
+  assert.equal(fields.Budget, '$2,000–$3,000')
+  assert.equal(fields['Special Requests'], 'Fixture only\n\nSound, lighting & stage: House sound available.')
+  for (const attendance of ['0', '-2', '1.5', '1000001', '250 guests'])
+    assert.ok(validateInquiry({ ...valid, attendance }, bands).error)
+  assert.ok(!validateInquiry(valid, bands).error)
+})

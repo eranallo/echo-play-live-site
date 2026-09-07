@@ -1,3 +1,4 @@
+import { pageMetadata } from '@/lib/public/seo.mjs'
 // Phase 34 — Per-band QR landing metadata.
 //
 // noindex: these pages duplicate /bands/[slug] content. They exist for QR
@@ -19,20 +20,7 @@ export async function generateMetadata({ params }) {
   const hub = getLinkHub(slug)
   if (!band || !hub) return { title: 'Not found' }
 
-  return {
-    title: `${band.name} · Official links`,
-    description: hub.intro,
-    robots: { index: false, follow: true },
-    alternates: { canonical: `/bands/${slug}` },
-    openGraph: {
-      title: `${band.name} · Official links`,
-      description: hub.intro,
-      url: `${SITE_URL}/${slug}`,
-      images: band.heroPhoto
-        ? [{ url: band.heroPhoto, width: 1200, height: 630, alt: band.name }]
-        : undefined,
-    },
-  }
+  return pageMetadata({ title: `${band.name} · Official Links`, description: hub.intro, path: `/${slug}`, canonical: `/bands/${slug}`, image: `/social/${slug}.png`, imageAlt: band.name, noindex: true })
 }
 
 export default function BandLandingLayout({ children }) {

@@ -9,23 +9,15 @@ import BandHeaderVideo from '@/components/BandHeaderVideo'
 import BandUpcomingShows from '@/components/BandUpcomingShows'
 import BookingEssentials from '@/components/BookingEssentials'
 import FanSignup from '@/components/FanSignup'
+import PerformanceVideo from '@/components/PerformanceVideo'
+import { getPerformance } from '@/lib/public/performances.mjs'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
-export async function generateMetadata({ params }) {
-  const { slug } = await params
-  const band = getBand(slug)
-  if (!band) return { title: 'Band not found', robots: { index: false } }
-  return {
-    title: band.name,
-    description: band.description,
-    alternates: { canonical: `/bands/${slug}` },
-    robots: band.hidden ? { index: false, follow: false } : undefined,
-  }
-}
 export default async function BandPage({ params }) {
   const { slug } = await params
   const band = getBand(slug)
   if (!band) notFound()
+  const performance = getPerformance(slug)
   const photos = (
     band.galleryPhotos?.length ? band.galleryPhotos : [band.featurePhoto, band.crowdPhoto]
   )
@@ -83,6 +75,7 @@ export default async function BandPage({ params }) {
       <nav className="band-subnav" aria-label={`${band.name} page sections`}>
         <div className="shell">
           {!band.hidden && <a href="#shows">Upcoming shows</a>}
+          {performance && <a href="#watch">Watch live</a>}
           <a href="#experience">About the band</a>
           <a href="#music">The music</a>
           <Link href="/musicians">The musicians</Link>
@@ -119,6 +112,7 @@ export default async function BandPage({ params }) {
         </div>
         <p>{band.description}</p>
       </section>
+      {performance && <PerformanceVideo performance={performance} slug={slug} />}
       {photos.length > 0 && (
         <section className="shell section-bottom">
           <div className="photo-grid">

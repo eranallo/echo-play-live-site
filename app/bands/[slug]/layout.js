@@ -1,3 +1,4 @@
+import { pageMetadata, bandSearchCopy } from '@/lib/public/seo.mjs'
 // Dynamic per-band metadata + BreadcrumbList JSON-LD.
 
 import { getBand, bandsList, allBandsList } from '@/lib/bands'
@@ -12,39 +13,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const { slug } = await params
   const band = getBand(slug)
-  if (!band) return {}
-
-  const url = `${SITE_URL}/bands/${band.slug}`
-  const title = band.name
-  const description = band.description.length > 200
-    ? band.description.slice(0, 197) + '...'
-    : band.description
-
-  return {
-    title,
-    description,
-    alternates: { canonical: `/bands/${slug}` },
-    keywords: [
-      band.name,
-      band.shortName,
-      ...band.genre,
-      'DFW tribute band',
-      'Fort Worth live music',
-      'book ' + band.name,
-    ],
-    openGraph: {
-      type: 'profile',
-      title: `${band.name} | Echo Play Live`,
-      description,
-      url,
-      images: band.heroPhoto ? [{ url: band.heroPhoto, width: 1200, height: 630, alt: `${band.name} live` }] : undefined,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${band.name} | Echo Play Live`,
-      description,
-    },
-  }
+  if (!band) return { title: 'Band not found', robots: { index: false } }
+  const copy = bandSearchCopy[slug] || { title: band.name, description: band.description }
+  return pageMetadata({ ...copy, path: `/bands/${slug}`, image: band.hidden ? '/opengraph-image.png' : `/social/${slug}.png`, imageAlt: band.name, noindex: Boolean(band.hidden) })
 }
 
 export default async function BandLayout({ children, params }) {

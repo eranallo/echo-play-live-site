@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { publicBandPresentation } from '@/lib/public/bands-presentation'
 import { newsletterForm, validNewsletterForm } from '@/lib/public/newsletter-config.mjs'
 import TrackedLink from './TrackedLink'
+import { track } from '@/lib/track'
 
 export default function FanSignup({ bandSlug = '', compact = false }) {
   const id = useId()
@@ -30,6 +31,7 @@ export default function FanSignup({ bandSlug = '', compact = false }) {
         </div>
         {enabled ? (
           <form
+            onSubmit={() => track('Newsletter form submitted', { band: bandSlug })}
             action={newsletterForm.action}
             method="post"
             target="_blank"

@@ -1,3 +1,4 @@
+import { pageMetadata } from '@/lib/public/seo.mjs'
 // Per-musician metadata + static-param generation.
 //
 // Phase 10A foundation. OG images per musician land in Phase 10D.
@@ -13,7 +14,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const { slug } = await params
   const m = await getMusician(slug)
-  if (!m) return { title: 'Musician not found' }
+  if (!m) return { title: 'Musician not found', robots: { index: false } }
 
   const url = `${SITE_URL}/musicians/${m.slug}`
   const bandsLine = m.bands.map(b => b.name).join(', ')
@@ -22,32 +23,7 @@ export async function generateMetadata({ params }) {
   const description = m.bioShort
     || (parts ? `${m.name} — ${parts}. Echo Play Live roster.` : `${m.name} — Echo Play Live roster.`)
 
-  return {
-    title: m.name,
-    description,
-    alternates: { canonical: `/musicians/${m.slug}` },
-    keywords: [
-      m.name,
-      ...m.instruments,
-      ...m.bands.map(b => b.name),
-      'Echo Play Live',
-      'DFW musician',
-    ],
-    openGraph: {
-      type: 'profile',
-      title: `${m.name} | Echo Play Live`,
-      description,
-      url,
-      images: m.photo?.url
-        ? [{ url: m.photo.url, alt: `${m.name} — Echo Play Live` }]
-        : undefined,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${m.name} | Echo Play Live`,
-      description,
-    },
-  }
+  return pageMetadata({ title: m.name, description: description.length > 170 ? description.slice(0, 167).trimEnd() + '…' : description, path: `/musicians/${m.slug}`, image: `/musicians/${m.slug}/opengraph-image`, imageAlt: `${m.name} · Echo Play Live`, type: 'profile' })
 }
 
 export default function MusicianLayout({ children }) {

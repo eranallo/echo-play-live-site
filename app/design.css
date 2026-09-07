@@ -2431,3 +2431,28 @@ img {
     transition: none;
   }
 }
+
+/* Performance video: local poster first; YouTube connects only after a visitor plays. */
+.performance-player { position: relative; aspect-ratio: 16 / 9; min-height: 200px; overflow: hidden; border-radius: 18px; background: #101011; }
+.performance-player iframe, .performance-play { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.performance-play { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; color: #fff; cursor: pointer; background: #101011; }
+.performance-shade { position: absolute; inset: 0; background: rgba(0,0,0,.4); }
+.performance-play-icon { z-index: 1; display: grid; place-items: center; width: 76px; height: 76px; border-radius: 50%; border: 1px solid rgba(255,255,255,.65); background: rgba(0,0,0,.4); font-size: 23px; padding-left: 4px; }
+.performance-play-label { position: relative; font-weight: 600; font-size: 16px; }
+.performance-play:focus-visible { outline: 3px solid white; outline-offset: -6px; }
+.performance-caption { display: flex; gap: 20px; justify-content: space-between; align-items: start; padding-top: 20px; }
+.performance-caption h3 { font-size: 20px; letter-spacing: -.02em; }
+.performance-caption p { margin-top: 7px; color: var(--muted, #67676d); font-size: 14px; }
+.performance-caption button { background: none; border: 0; cursor: pointer; white-space: nowrap; }
+.booking-extra { margin: 26px 0; border-block: 1px solid #d8d8dc; padding: 20px 0; }
+.booking-extra summary { cursor: pointer; font-weight: 600; }
+.booking-extra .form-grid { margin-top: 22px; }
+@media (max-width: 600px) { .performance-caption { flex-direction: column; } .performance-play-icon { width: 58px; height: 58px; font-size: 18px; } }
+
+.measurement-choice { position:fixed; z-index:100; left:24px; right:24px; bottom:24px; margin:auto; max-width:960px; padding:24px; display:flex; align-items:center; gap:24px; border:1px solid #dedede; border-radius:20px; background:#fff; color:#171717; box-shadow:0 12px 48px #0002; }
+.measurement-choice strong { font-size:17px; }
+.measurement-choice p { font-size:14px; line-height:1.5; margin:8px 0 0; }
+.measurement-choice a { text-decoration:underline; }
+.measurement-choice .button-row { flex-shrink:0; gap:10px; margin:0; }
+.measurement-choice .button { min-height:44px; font-size:13px; padding:12px 16px; }
+@media (max-width:760px) { .measurement-choice { left:12px; right:12px; bottom:12px; padding:20px; display:block; } .measurement-choice .button-row { margin-top:16px; } }

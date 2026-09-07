@@ -1,10 +1,8 @@
+import { pageMetadata } from '@/lib/public/seo.mjs'
 import { Page, Intro } from '@/components/SiteParts'
 import { newsletterForm, validNewsletterForm } from '@/lib/public/newsletter-config.mjs'
-export const metadata = {
-  title: 'Privacy',
-  alternates: { canonical: '/privacy' },
-  description: 'How Echo Play Live uses booking inquiries and website information.',
-}
+import MeasurementChoices from '@/components/MeasurementChoices'
+export const metadata = pageMetadata({"title": "Privacy", "description": "How Echo Play Live handles booking inquiries, fan email signup, video playback and website measurement.", "path": "/privacy"})
 export default function PrivacyPage() {
   return (
     <Page>
@@ -37,10 +35,14 @@ export default function PrivacyPage() {
         </h2>
         <p>
           This website is hosted by Vercel and uses Vercel Analytics and Speed Insights to
-          understand visits and website performance. When configured, Meta and TikTok measurement
-          tools help measure page visits, ticket-link clicks, and saved booking inquiries.
-          Booking-form contents are not included in the measurement events we send.
+          understand visits and website performance without analytics cookies. If you allow optional cookies,
+          configured Google Analytics, Meta and TikTok tools help measure visits, ticket-link clicks,
+          press downloads and saved booking inquiries. These tools may store cookies or device identifiers.
+          Booking-form contents are not included in the measurement events we send. A ticket click does not
+          tell us whether you bought a ticket, and a newsletter submission does not confirm a subscription.
         </p>
+        <p>Learn <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">how Google uses information from sites that use its services</a>.</p>
+        <MeasurementChoices />
         <h2 className="section-title" style={{ marginTop: 45 }}>
           Other websites
         </h2>
@@ -59,6 +61,8 @@ export default function PrivacyPage() {
           </a>
           .
         </p>
+        <h2 className="section-title" style={{ marginTop: 45 }}>Performance videos</h2>
+        <p>Our performance players connect to YouTube only after you press play. YouTube handles playback and may collect information under Google’s privacy policy.</p>
       </section>
     </Page>
   )

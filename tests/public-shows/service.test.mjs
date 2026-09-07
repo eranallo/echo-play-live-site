@@ -113,6 +113,31 @@ function serviceOptions(fetchImpl, logger) {
   }
 }
 
+test('public venue facts and valid door times survive while private fields and withdrawn shows do not', async () => {
+  const record = clone(fixture.sourceRecords[0])
+  record.fields[SHOW_FIELD_IDS.doorsTime] = '2026-08-29T23:00:00.000Z'
+  const venueRecords = clone(fixture.venueRecords)
+  Object.assign(venueRecords[0].fields, {
+    fldwFdn1PdJfIVt8G: '123 Fixture Street, Dallas, TX 75201',
+    fldN11XAkovT17ouy: 'All Ages',
+    fldPRIVATECANARY: 'PRIVATE_CONTACT_NEVER_PUBLIC',
+  })
+  const read = async () => {
+    const fake = makeFixtureFetch({ sourcePages: [[record]], firstOffset: null, venueRecords })
+    return getPublicShows(serviceOptions(fake.fetchImpl, makeLogger().logger))
+  }
+  let result = await read()
+  assert.equal(result.shows[0].venue.address, '123 Fixture Street, Dallas, TX 75201')
+  assert.equal(result.shows[0].venue.ageRestriction, 'All Ages')
+  assert.equal(result.shows[0].doorsTime, '2026-08-29T23:00:00.000Z')
+  assert.ok(!JSON.stringify(result).includes('PRIVATE_CONTACT'))
+  record.fields[SHOW_FIELD_IDS.doorsTime] = '2026-08-30T01:00:00.000Z'
+  result = await read()
+  assert.equal(result.shows[0].doorsTime, undefined, 'doors after the set must not be presented')
+  record.fields[SHOW_FIELD_IDS.publish] = false
+  assert.deepEqual((await read()).shows, [])
+})
+
 test('service follows all pages, includes the later-page Jambi case, and requests only field IDs', async () => {
   const fake = makeFixtureFetch()
   const logs = makeLogger()

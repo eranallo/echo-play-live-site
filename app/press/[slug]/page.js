@@ -1,9 +1,12 @@
+import { pageMetadata } from '@/lib/public/seo.mjs'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Page } from '@/components/SiteParts'
 import TrackedLink from '@/components/TrackedLink'
 import CopyBandBio from '@/components/CopyBandBio'
+import PerformanceVideo from '@/components/PerformanceVideo'
+import { getPerformance } from '@/lib/public/performances.mjs'
 import {
   bandKits,
   getBandKit,
@@ -21,23 +24,14 @@ export async function generateMetadata({ params }) {
   const { slug } = await params
   const kit = getBandKit(slug)
   if (!kit) return { title: 'Band kit not found' }
-  return {
-    title: `${kit.name} · Band Kit`,
-    description: kit.intro,
-    alternates: { canonical: `/press/${slug}` },
-    openGraph: {
-      title: `${kit.name} · Echo Play Live Band Kit`,
-      description: kit.intro,
-      url: `/press/${slug}`,
-      images: [{ url: kitAssetPath(slug, 'cover.jpg'), alt: kit.name }],
-    },
-  }
+  return pageMetadata({ title: `${kit.name} · Band Kit`, description: kit.intro, path: `/press/${slug}`, image: `/social/${slug}.png`, imageAlt: kit.name })
 }
 
 export default async function BandKitPage({ params }) {
   const { slug } = await params
   const kit = getBandKit(slug)
   if (!kit) notFound()
+  const performance = getPerformance(slug)
   return (
     <Page>
       <section className="kit-hero" style={{ '--kit-accent': kit.color }}>
@@ -94,7 +88,8 @@ export default async function BandKitPage({ params }) {
       </section>
       <nav className="shell kit-jump-links" aria-label="Band kit sections">
         <a href="#overview">The show</a>
-        <a href="#sound">The sound</a>
+        {performance && <a href="#watch">Watch live</a>}
+          <a href="#sound">The sound</a>
         <a href="#materials">Press materials</a>
         <a href="#planning">Booking</a>
       </nav>
@@ -137,6 +132,7 @@ export default async function BandKitPage({ params }) {
           ))}
         </div>
       </section>
+      {performance && <PerformanceVideo performance={performance} slug={slug} />}
       <section id="sound" className="shell section-bottom kit-overview">
         <div>
           <p className="eyebrow">The sound</p>

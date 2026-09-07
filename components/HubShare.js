@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { track } from '@vercel/analytics'
+import { track } from '@/lib/track'
 
 export default function HubShare({ name, slug, path }) {
   const [status, setStatus] = useState('')

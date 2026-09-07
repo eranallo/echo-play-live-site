@@ -1,30 +1,9 @@
+import { pageMetadata } from '@/lib/public/seo.mjs'
 // Static metadata for the /musicians roster index page.
 
 const SITE_URL = 'https://echoplay.live'
 
-export const metadata = {
-  title: 'Roster',
-  description:
-    'The musicians of Echo Play Live. Meet the members of So Long Goodnight, The Dick Beldings, Jambi, and Elite.',
-  alternates: { canonical: '/musicians' },
-  keywords: [
-    'Echo Play Live roster',
-    'DFW musicians',
-    'Fort Worth band members',
-    'tribute band lineup',
-  ],
-  openGraph: {
-    type: 'website',
-    title: 'Roster | Echo Play Live',
-    description: "The musicians behind Echo Play Live's bands.",
-    url: `${SITE_URL}/musicians`,
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Roster | Echo Play Live',
-    description: "The musicians behind Echo Play Live's bands.",
-  },
-}
+export const metadata = pageMetadata({"title": "Meet the Musicians", "description": "Meet the musicians behind So Long Goodnight, The Dick Beldings, Jambi and Elite. Explore their backgrounds and the bands they play with.", "path": "/musicians"})
 
 export default function MusiciansLayout({ children }) {
   return children

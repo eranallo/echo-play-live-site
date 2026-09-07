@@ -1,3 +1,4 @@
+import { pageMetadata } from '@/lib/public/seo.mjs'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Page } from '@/components/SiteParts'
@@ -15,11 +16,8 @@ export async function generateMetadata({ params }) {
   const { id } = await params
   const { show } = await getPublicShow(id)
   if (!show) return { title: 'Show unavailable', robots: { index: false, follow: false } }
-  return {
-    title: showTitle(show),
-    description: `${showDate(show)} · ${showTime(show)}. See the lineup and ticket details.`,
-    alternates: { canonical: showPath(show) },
-  }
+  const date = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${show.date}T12:00:00Z`))
+  return pageMetadata({ title: `${show.state === 'canceled' ? 'Canceled: ' : ''}${showTitle(show)} · ${date}`, description: `${show.state === 'canceled' ? 'This show has been canceled. ' : ''}${showDate(show)} · ${showTime(show)}. See the lineup, venue and ticket details.`, path: showPath(show), image: `/social/${show.bands[0].slug}.png`, imageAlt: show.bands.map(band => band.name).join(' + ') })
 }
 
 export default async function EventPage({ params }) {
@@ -53,6 +51,7 @@ export default async function EventPage({ params }) {
             <span>Start time</span>
             <strong>{showTime(show)}</strong>
           </div>
+          {show.doorsTime && <div><span>Doors</span><strong>{showTime({ ...show, startTime: show.doorsTime })}</strong></div>}
           <div>
             <span>Tickets</span>
             <strong>
@@ -112,13 +111,15 @@ export default async function EventPage({ params }) {
         <div className="content-panel">
           <p className="eyebrow">Before you go</p>
           <h2>Plan your night.</h2>
+          {show.venue.address && <p>{show.venue.address}</p>}
+          {show.venue.ageRestriction && <p>Venue age policy: {show.venue.ageRestriction}</p>}
           <p>
-            Check the venue and ticket page for doors, age requirements, parking, and accessibility
+            Check the venue and ticket page for the latest entry requirements, parking, and accessibility
             information.
           </p>
           <a
             className="text-link"
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(show.venue.name)}`}
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([show.venue.name, show.venue.address].filter(Boolean).join(', '))}`}
             target="_blank"
             rel="noopener noreferrer"
           >
