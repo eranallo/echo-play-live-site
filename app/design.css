@@ -660,6 +660,35 @@ img {
   inset: 0;
   background:
     linear-gradient(0deg, #000c, transparent 80%), linear-gradient(90deg, #0007, transparent);
+  pointer-events: none;
+}
+.band-header-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.band-header-motion {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #ffffff50;
+  border-radius: 999px;
+  background: #0009;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
+.band-header-motion:hover {
+  background: #000c;
 }
 .band-detail-hero .shell {
   position: relative;
@@ -729,13 +758,6 @@ img {
   aspect-ratio: 4/5;
   overflow: hidden;
   border-radius: 20px;
-}
-.watch-film {
-  width: 100%;
-  border-radius: 22px;
-  background: #111;
-  aspect-ratio: 16/9;
-  object-fit: contain;
 }
 .band-listen {
   padding: 35px;
