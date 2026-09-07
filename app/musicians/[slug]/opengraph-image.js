@@ -2,6 +2,7 @@ import { ImageResponse } from 'next/og'
 import { getMusician } from '@/lib/musicians'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
+import { sharePortrait } from '@/lib/public/share-portrait.mjs'
 
 export const runtime = 'nodejs'
 export const alt = 'Echo Play Live musician'
@@ -18,11 +19,12 @@ export default async function OpengraphImage({ params }) {
   ])
   const name = member?.name || 'Echo Play Live'
   const logoSrc = `data:image/png;base64,${logo.toString('base64')}`
-  return new ImageResponse(
+  const portrait = await sharePortrait(member?.photo)
+  const render = (photoSrc) => new ImageResponse(
     <div style={{ width: '100%', height: '100%', display: 'flex', background: '#000', color: '#fff', fontFamily: 'Gotham', fontWeight: 700 }}>
       <div style={{ width: 440, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#111' }}>
-        {member?.photo?.url ? (
-          <img src={member.photo.url} width={440} height={630} style={{ objectFit: 'cover', objectPosition: 'center 25%' }} alt="" />
+        {photoSrc ? (
+          <img src={photoSrc} width={440} height={630} style={{ objectFit: 'cover', objectPosition: 'center 25%' }} alt="" />
         ) : (
           <img src={logoSrc} width={280} height={280} alt="" />
         )}
@@ -42,4 +44,12 @@ export default async function OpengraphImage({ params }) {
     </div>,
     { ...size, fonts: [{ name: 'Gotham', data: font.buffer.slice(font.byteOffset, font.byteOffset + font.byteLength), weight: 700, style: 'normal' }] },
   )
+  try {
+    const image = render(portrait)
+    return new Response(await image.arrayBuffer(), { headers: image.headers })
+  } catch {
+    // An expired or unsupported portrait must not break a profile's share card.
+    const fallback = render(null)
+    return new Response(await fallback.arrayBuffer(), { headers: fallback.headers })
+  }
 }
