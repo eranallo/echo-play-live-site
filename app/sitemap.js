@@ -51,7 +51,17 @@ export default async function sitemap() {
         changeFrequency: 'daily',
       }))
     : []
-  return [...staticRoutes, ...bandRoutes, ...musicianRoutes, ...eventRoutes].map((route) => ({
+  return [
+    ...staticRoutes,
+    ...bandRoutes,
+    ...bandsList.map((b) => ({
+      url: `${SITE_URL}/press/${b.slug}`,
+      priority: 0.65,
+      changeFrequency: 'monthly',
+    })),
+    ...musicianRoutes,
+    ...eventRoutes,
+  ].map((route) => ({
     ...route,
   }))
 }

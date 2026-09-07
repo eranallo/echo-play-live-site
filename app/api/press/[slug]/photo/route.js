@@ -10,7 +10,14 @@ export async function GET(request, { params }) {
   if (!band) return new Response('Band not found', { status: 404 })
   try {
     // Fixed curated assets only; this endpoint never accepts a user-supplied URL/path.
-    const src = band.heroPhoto
+    const src =
+      slug === 'the-dick-beldings'
+        ? band.crowdPhoto
+        : slug === 'jambi'
+          ? '/bands/jambi/gallery/photo-2.jpg'
+          : slug === 'elite'
+            ? '/bands/elite/gallery/photo-1.jpg'
+            : band.heroPhoto
     let bytes
     if (src.startsWith('/bands/')) bytes = await readFile(path.join(process.cwd(), 'public', src))
     else {

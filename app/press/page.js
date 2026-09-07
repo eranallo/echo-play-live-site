@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Page, Intro } from '@/components/SiteParts'
-import { bandsList } from '@/lib/bands'
+import { bandKits, kitPdfPath, kitAssetPath } from '@/lib/press/kit-content.mjs'
 import { FAQ_PRESS } from '@/lib/faqs'
 import TrackedLink from '@/components/TrackedLink'
 export default function PressPage() {
@@ -18,49 +18,51 @@ export default function PressPage() {
         }
       >
         <p>
-          Meet the bands, download a one-sheet, and get in touch.
+          Explore the bands. Find your sound. Plan your next show.
           <br />
           The essentials, all in one place.
         </p>
       </Intro>
       <section className="shell section-bottom">
-        <div className="two-columns">
-          {bandsList.map((b) => (
-            <article className="content-panel" key={b.slug}>
-              <p className="eyebrow">{b.genre[0]}</p>
-              <h2>{b.name}</h2>
-              <p>{b.tagline}</p>
-              <div className="inline-links">
-                <TrackedLink
-                  href={`/api/press/${b.slug}`}
-                  event="Press download"
-                  band={b.slug}
-                  download
-                >
-                  Download band kit · PDF ↓
-                </TrackedLink>
-                <TrackedLink
-                  href={`/api/press/${b.slug}/bio`}
-                  event="Bio download"
-                  band={b.slug}
-                  download
-                >
-                  Band bio · TXT ↓
-                </TrackedLink>
-                <TrackedLink
-                  href={`/api/press/${b.slug}/photo`}
-                  event="Photo download"
-                  band={b.slug}
-                  download
-                >
-                  Press photo · JPG ↓
-                </TrackedLink>
-                <Link href={`/bands/${b.slug}`}>View band ↗</Link>
-                <Link href={`/bands/${b.slug}#booking`}>Booking essentials ↗</Link>
+        <div className="press-kit-grid">
+          {bandKits.map((kit) => (
+            <article className="press-kit-card" key={kit.slug}>
+              <Link
+                href={`/press/${kit.slug}`}
+                className="press-kit-image"
+                aria-label={`Explore ${kit.name} band kit`}
+              >
+                <Image
+                  src={kitAssetPath(kit.slug, 'cover.jpg')}
+                  alt={
+                    kit.slug === 'the-dick-beldings'
+                      ? 'The Dick Beldings band portrait'
+                      : `${kit.name} live on stage`
+                  }
+                  fill
+                  sizes="(max-width: 700px) 100vw, 50vw"
+                  style={{ objectFit: 'cover', objectPosition: kit.coverPosition }}
+                />
+              </Link>
+              <div className="press-kit-copy">
+                <p className="eyebrow">{kit.label}</p>
+                <h2>{kit.name}</h2>
+                <p>{kit.intro}</p>
+                <div className="kit-actions">
+                  <Link className="button" href={`/press/${kit.slug}`}>
+                    View band kit ↗
+                  </Link>
+                  <TrackedLink
+                    className="text-link"
+                    href={kitPdfPath(kit.slug)}
+                    event="Press download"
+                    band={kit.slug}
+                    download
+                  >
+                    3-page PDF ↓
+                  </TrackedLink>
+                </div>
               </div>
-              <a className="text-link" href={`mailto:${b.bookingEmail}`}>
-                {b.bookingEmail}
-              </a>
             </article>
           ))}
         </div>
@@ -73,9 +75,9 @@ export default function PressPage() {
           </div>
           <div>
             <p>
-              For the current stage plot, input list, band logo files, additional photographs, and
-              photographer credits, contact the band’s booking team. Include your event, intended
-              use, and deadline.
+              For the current stage plot, input list, additional photographs, and photographer
+              credits, contact the band’s booking team. Include your event, intended use, and
+              deadline.
             </p>
             <Link className="text-link" href="/contact">
               Request your production & press materials ↗

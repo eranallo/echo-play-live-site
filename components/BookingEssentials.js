@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import TrackedLink from './TrackedLink'
+import { kitPdfPath } from '@/lib/press/kit-content.mjs'
 
 const formats = {
   'so-long-goodnight': [
@@ -76,13 +77,16 @@ export default function BookingEssentials({ band, compact = false }) {
         </Link>
         <TrackedLink
           className="text-link"
-          href={`/api/press/${band.slug}`}
+          href={kitPdfPath(band.slug)}
           event="Press download"
           band={band.slug}
           download
         >
           Download band kit ↓
         </TrackedLink>
+        <Link className="text-link" href={`/press/${band.slug}`}>
+          Explore the full band kit ↗
+        </Link>
         <a
           className="text-link"
           href={`mailto:${band.bookingEmail}?subject=${encodeURIComponent(`${band.name} — production information request`)}`}

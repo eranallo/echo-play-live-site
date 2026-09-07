@@ -34,7 +34,12 @@ const SECURITY_HEADERS = [
 
 const nextConfig = {
   outputFileTracingIncludes: {
-    '/api/press/[slug]/photo': ['./public/bands/*/hero.jpg'],
+    '/api/press/[slug]': ['./public/press/kits/*.pdf'],
+    '/api/press/[slug]/photo': [
+      './public/bands/*/hero.jpg',
+      './public/bands/jambi/gallery/photo-2.jpg',
+      './public/bands/elite/gallery/photo-1.jpg',
+    ],
   },
   async redirects() {
     return [{ source: '/book', destination: '/contact', permanent: true }]
