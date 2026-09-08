@@ -17,7 +17,7 @@ export async function generateMetadata({ params }) {
   const { show } = await getPublicShow(id)
   if (!show) return { title: 'Show unavailable', robots: { index: false, follow: false } }
   const date = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${show.date}T12:00:00Z`))
-  return pageMetadata({ title: `${show.state === 'canceled' ? 'Canceled: ' : ''}${showTitle(show)} · ${date}`, description: `${show.state === 'canceled' ? 'This show has been canceled. ' : ''}${showDate(show)} · ${showTime(show)}. See the lineup, venue and ticket details.`, path: showPath(show), image: `/social/${show.bands[0].slug}.png`, imageAlt: show.bands.map(band => band.name).join(' + ') })
+  return pageMetadata({ title: `${show.state === 'canceled' ? 'Canceled: ' : ''}${showTitle(show)} · ${date}`, description: `${show.state === 'canceled' ? 'This show has been canceled. ' : ''}${showDate(show)} · ${showTime(show)}. See the lineup and venue details.`, path: showPath(show), image: `/social/${show.bands[0].slug}.png`, imageAlt: show.bands.map(band => band.name).join(' + ') })
 }
 
 export default async function EventPage({ params }) {
@@ -75,9 +75,9 @@ export default async function EventPage({ params }) {
               >
                 Get tickets ↗
               </TrackedLink>
-            ) : (
+            ) : show.ticketNote ? (
               <p className="muted">{show.ticketNote}</p>
-            )}
+            ) : null}
             <TrackedLink
               className="button button-outline"
               href={`${showPath(show)}/calendar`}
@@ -109,7 +109,7 @@ export default async function EventPage({ params }) {
           {show.venue.address && <p>{show.venue.address}</p>}
           {show.venue.ageRestriction && <p>Venue age policy: {show.venue.ageRestriction}</p>}
           <p>
-            Check the venue and ticket page for the latest entry requirements, parking, and accessibility
+            Check with the venue for the latest entry requirements, parking, and accessibility
             information.
           </p>
           <a

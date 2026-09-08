@@ -19,7 +19,7 @@ function ShowLink({ hub, loading = false }) {
       <div>
         <span className="hub-kicker">Come see us play</span>
         <h2>Upcoming shows</h2>
-        <p>{loading ? 'Checking the latest dates…' : 'See announced dates and ticket details.'}</p>
+        <p>{loading ? 'Checking the latest dates…' : 'See announced dates and show information.'}</p>
       </div>
       <span aria-hidden="true">↗</span>
     </TrackedLink>
