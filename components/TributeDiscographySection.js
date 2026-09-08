@@ -1,13 +1,7 @@
 'use client'
 
-// Phase 20: Tribute band discography view.
-//
-// Replaces the album-art catalog grid on /bands/elite and /bands/jambi.
-// Renders the tributed artist's full discography (Spotify) as a vertical
-// stack of albums. Each album shows its cover, name, year, and full track
-// list. Tracks the band performs are highlighted in band color and link
-// to Spotify on click. Tracks the band doesn't perform are dimmed; click
-// opens the SongRequestModal with the song pre-filled.
+// Companion album library for Elite and Jambi. Repertoire tracks link to
+// Spotify; other tracks open the shared request page with a prefilled search.
 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -125,8 +119,8 @@ export default function TributeDiscographySection({ band }) {
             }}
           >
             Tap any album to see its tracks. Songs from our repertoire are highlighted. Click any of them to
-            open in Spotify. See one we don't play that you want to hear? Tap "Request" to send it
-            to the request chart.
+            open in Spotify. See something missing from our catalog? Tap "Request" to find it
+            and add your vote.
           </p>
         </div>
 
@@ -154,7 +148,7 @@ export default function TributeDiscographySection({ band }) {
 // Phase 48: collapsible album cards. Each album is now a single clickable
 // header row (thumbnail + name + meta + badge + chevron). The track list is
 // hidden by default and revealed on click. This keeps the discography page
-// short while still surfacing the "X in set" badge so fans can spot albums
+// short while still surfacing the "X in catalog" badge so fans can spot albums
 // with songs they recognize from the band's set.
 function AlbumBlock({ album, accent, band, onRequest }) {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -328,7 +322,7 @@ function TrackRow({ track, accent, onRequest }) {
   const isClickable = isPerformed ? Boolean(track.spotifyUrl) : true
 
   // For performed tracks, the entire row is a link to Spotify.
-  // For unplayed tracks, the entire row is a button that opens the modal.
+  // For other tracks, the row opens a prefilled request search.
   const sharedStyle = {
     display: 'grid',
     gridTemplateColumns: '32px minmax(0, 1fr) auto auto',
@@ -386,7 +380,7 @@ function TrackRow({ track, accent, onRequest }) {
           <span style={trackNumberStyle}>{track.trackNumber}</span>
           <span style={titleStyle}>{track.title}</span>
           <span
-            aria-label="Currently in our set"
+            aria-label="In our song catalog"
             style={{
               fontFamily: 'var(--ff-label)',
               fontSize: '9px',
