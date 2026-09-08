@@ -162,7 +162,7 @@ export default function SongsSection({ band, defaultExpanded = false }) {
               }}
             >
               <strong style={{ color: 'var(--c-text)', fontWeight: 600 }}>{songs.length}</strong>{' '}
-              live songs across{' '}
+              songs in the catalog across{' '}
               <strong style={{ color: 'var(--c-text)', fontWeight: 600 }}>{uniqueArtists}</strong>{' '}
               artists
             </div>

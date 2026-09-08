@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { track } from '@/lib/track'
 import { performanceUrl } from '@/lib/public/performances.mjs'
 
-export default function PerformanceVideo({ performance, slug }) {
+export default function PerformanceVideo({ performance, slug, sectionId = 'watch' }) {
   const [playing, setPlaying] = useState(false)
   const playButton = useRef(null)
   const hasPlayed = useRef(false)
@@ -18,7 +18,7 @@ export default function PerformanceVideo({ performance, slug }) {
     try { track('Performance player opened', { band: slug, video: performance.videoId }) } catch {}
   }
   return (
-    <section id="watch" className="shell section-bottom performance-section">
+    <section id={sectionId} className="shell section-bottom performance-section">
       <div className="section-heading-row">
         <div>
           <p className="eyebrow">From the stage</p>

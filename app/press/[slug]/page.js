@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { Page } from '@/components/SiteParts'
 import TrackedLink from '@/components/TrackedLink'
 import CopyBandBio from '@/components/CopyBandBio'
+import FanReviews from '@/components/FanReviews'
 import PerformanceVideo from '@/components/PerformanceVideo'
 import { getPerformance } from '@/lib/public/performances.mjs'
 import {
@@ -156,6 +157,7 @@ export default async function BandKitPage({ params }) {
           <h2 className="section-title">Download press materials</h2>
           <div className="kit-download-grid">
             {[
+              ['Press pack', 'PDF, three photos, logo & bio · ZIP', `/press/packs/${slug}.zip`, 'Press pack download'],
               ['Band kit', 'Three-page PDF', kitPdfPath(slug), 'Press download'],
               ['Band logo', 'Transparent PNG', kitAssetPath(slug, 'logo.png'), 'Logo download'],
               ['Press photo', 'Full-size JPG', `/api/press/${slug}/photo`, 'Photo download'],
@@ -173,6 +175,7 @@ export default async function BandKitPage({ params }) {
           </p>
         </div>
       </section>
+      <FanReviews band={slug} />
       <section id="planning" className="shell section-bottom">
         <p className="eyebrow">Booking & production</p>
         <h2 className="section-title">Let’s talk about your event.</h2>

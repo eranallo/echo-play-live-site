@@ -1,12 +1,12 @@
 'use client'
 import Link from 'next/link'
 import { useRef, useState } from 'react'
-export default function BookingForm({ bands, initialBand = '' }) {
+export default function BookingForm({ bands, initialBand = '', initialEvent = '' }) {
   const [form, setForm] = useState({
     name: '',
     email: '',
     band: initialBand,
-    eventType: '',
+    eventType: initialEvent,
     date: '',
     venue: '',
     message: '',
@@ -63,6 +63,14 @@ export default function BookingForm({ bands, initialBand = '' }) {
           <strong>{form.email}</strong>.
         </p>
         <p>Your booking still needs to be confirmed.</p>
+        {receipt?.reference && <div className="booking-receipt">
+          <p>Reference: <strong>{receipt.reference}</strong></p>
+          <button className="text-link" type="button" onClick={() => {
+            const text = `Echo Play Live — Booking inquiry received\nReference: ${receipt.reference}\nReceived: ${receipt.receivedAt}\n\nName: ${form.name}\nEmail: ${form.email}\nBand: ${form.band || 'Help me choose'}\nEvent: ${form.eventType}\nPreferred date: ${form.date || 'To discuss'}\nVenue: ${form.venue}\nAudience: ${form.attendance}\nBudget: ${form.budget}\nProduction: ${form.production}\n\n${form.message}\n\nYour booking still needs to be confirmed.\nQuestions or additions: ${receipt.bookingEmail}\nhttps://echoplay.live\n`
+            const url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }))
+            const link = document.createElement('a'); link.href = url; link.download = `${receipt.reference}-inquiry.txt`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)
+          }}>Save a copy of your inquiry ↓</button>
+        </div>}
         <Link className="button" href="/bands">
           Explore the bands →
         </Link>

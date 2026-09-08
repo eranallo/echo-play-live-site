@@ -1,4 +1,5 @@
 import { Page, Intro } from '@/components/SiteParts'
+import Link from 'next/link'
 import { podcast, getEpisodes } from '@/lib/podcast'
 export const revalidate = 3600
 export default async function PodcastPage() {
@@ -59,14 +60,12 @@ export default async function PodcastPage() {
                 {ep.description?.slice(0, 330)}
                 {ep.description?.length > 330 ? '…' : ''}
               </p>
-              <a
+              <Link
                 className="text-link"
-                href={ep.link || podcast.subscribe.buzzsprout}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={ep.slug ? `/podcast/${ep.slug}` : podcast.subscribe.buzzsprout}
               >
                 Listen to the episode ↗
-              </a>
+              </Link>
             </article>
           ))}
         </div>

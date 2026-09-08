@@ -39,6 +39,7 @@ export function BookingCta() {
         <Link className="button" href="/contact">
           Let’s talk booking <span aria-hidden="true">↗</span>
         </Link>
+        <div className="inline-links buyer-cta-links"><Link href="/booking/venues-festivals">Venues & festivals ↗</Link><Link href="/booking/private-corporate">Private & corporate events ↗</Link></div>
       </div>
     </section>
   )

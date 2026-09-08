@@ -2,13 +2,13 @@ import Link from 'next/link'
 import { getPublicShows } from '@/lib/public/shows'
 import ShowRow from './ShowRow'
 
-export default async function BandUpcomingShows({ slug, name }) {
+export default async function BandUpcomingShows({ slug, name, sectionId = 'shows' }) {
   const result = await getPublicShows()
   const shows = result.shows
     .filter((show) => show.bands.some((band) => band.slug === slug))
     .slice(0, 3)
   return (
-    <section id="shows" className="section shell band-upcoming">
+    <section id={sectionId} className="section shell band-upcoming">
       <div className="section-heading-row">
         <div>
           <p className="eyebrow">See {name} live</p>
