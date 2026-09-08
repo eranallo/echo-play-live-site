@@ -10,38 +10,7 @@ export async function GET(request, { params }) {
   if (!band) return new Response('Band not found', { status: 404 })
   try {
     // Fixed curated assets only; this endpoint never accepts a user-supplied URL/path.
-    const src =
-      slug === 'the-dick-beldings'
-        ? band.crowdPhoto
-        : slug === 'jambi'
-          ? '/bands/jambi/gallery/photo-2.jpg'
-          : slug === 'elite'
-            ? '/bands/elite/gallery/photo-1.jpg'
-            : band.heroPhoto
-    let bytes
-    if (src.startsWith('/bands/')) bytes = await readFile(path.join(process.cwd(), 'public', src))
-    else {
-      const response = await fetch(src, { signal: AbortSignal.timeout(10000), redirect: 'error' })
-      if (!response.ok || !/^image\/jpeg/.test(response.headers.get('content-type') || ''))
-        throw new Error('Photo unavailable')
-      if (Number(response.headers.get('content-length')) > MAX_BYTES)
-        throw new Error('Photo too large')
-      const reader = response.body.getReader()
-      const chunks = []
-      let total = 0
-      try {
-        while (true) {
-          const { value, done } = await reader.read()
-          if (done) break
-          total += value.length
-          if (total > MAX_BYTES) throw new Error('Photo too large')
-          chunks.push(Buffer.from(value))
-        }
-      } finally {
-        await reader.cancel()
-      }
-      bytes = Buffer.concat(chunks)
-    }
+    const bytes = await readFile(path.join(process.cwd(), 'public', 'press', 'bands', slug, 'cover.jpg'))
     if (bytes.length > MAX_BYTES || bytes[0] !== 0xff || bytes[1] !== 0xd8)
       throw new Error('Invalid photo')
     return new Response(bytes, {

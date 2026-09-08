@@ -222,7 +222,7 @@ for (const kit of bandKits) {
   imageCover(p2, stage, M + 268, photoTop, 256, photoHeight, 0.4)
   txt(
     p2,
-    kit.slug === 'the-dick-beldings' ? 'BAND PORTRAIT / STAGE SETUP' : 'ON STAGE / IN THE MOMENT',
+    `PHOTOS: ${kit.photoCredit.toUpperCase()}`,
     M,
     510,
     7.5,

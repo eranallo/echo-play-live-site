@@ -34,7 +34,7 @@ for (const kit of bandKits) {
   const entries = []
   for (const [source, name] of [[`press/kits/${kit.slug}.pdf`, 'band-kit.pdf'], ...['logo.png', 'cover.jpg', 'detail.jpg', 'stage.jpg'].map(file => [`press/bands/${kit.slug}/${file}`, file])]) entries.push([`${kit.slug}/${name}`, await readFile(new URL(source, publicRoot))])
   entries.push([`${kit.slug}/bio.txt`, Buffer.from(`${kit.name}\n${kit.label}\n\n${kit.bio}\n\nBooking: ${kit.bookingEmail}\nhttps://echoplay.live/press/${kit.slug}\n`)])
-  entries.push([`${kit.slug}/READ-ME.txt`, Buffer.from(`${kit.name} — Echo Play Live press materials\nSeptember 2026\n\nIncludes the band kit, biography, logo and three selected images.\nKeep logos proportional and unaltered. Contact ${kit.bookingEmail} for photographer credits, higher-resolution photos, current stage plots and input lists.\n\nCurrent materials: https://echoplay.live/press/${kit.slug}\n`)])
+  entries.push([`${kit.slug}/READ-ME.txt`, Buffer.from(`${kit.name} — Echo Play Live press materials\nSeptember 2026\n\nIncludes the band kit, biography, logo and three selected images.\nPhotos: ${kit.photoCredit}. Please include the photographer credit when using these images.\nKeep logos proportional and unaltered. Contact ${kit.bookingEmail} for higher-resolution photos, current stage plots and input lists.\n\nCurrent materials: https://echoplay.live/press/${kit.slug}\n`)])
   await writeFile(new URL(`press/packs/${kit.slug}.zip`, publicRoot), archive(entries))
   console.log(`Built ${kit.slug} press pack (${entries.length} files)`)
 }
