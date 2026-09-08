@@ -160,6 +160,8 @@ test('service follows all pages, includes the later-page Jambi case, and request
     new Set(showCalls[0].url.searchParams.getAll('fields[]')),
     new Set(SHOW_SOURCE_FIELD_IDS),
   )
+  assert.ok(showCalls[0].url.searchParams.getAll('fields[]').includes(SHOW_FIELD_IDS.reservationUrl))
+  assert.ok(!showCalls[0].url.searchParams.getAll('fields[]').includes('fld8KAW94k2KbuNC4'), 'ticket amounts must not be fetched')
   assert.equal(showCalls[0].url.searchParams.get('sort[0][field]'), SHOW_FIELD_IDS.date)
   assert.equal(
     showCalls[0].url.searchParams.get('filterByFormula'),

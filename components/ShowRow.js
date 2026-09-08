@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import TrackedLink from './TrackedLink'
+import ShowPurchaseLinks from './ShowPurchaseLinks'
 import { showPath, showTime } from '@/lib/public/show-presentation.mjs'
 
 export default function ShowRow({ show }) {
@@ -29,7 +29,6 @@ export default function ShowRow({ show }) {
         <p>{show.venue.name}</p>
         <p className="show-note">
           {showTime(show)}
-          {show.ticket?.priceLabel ? ` · ${show.ticket.priceLabel}` : ''}
         </p>
         <Link className="show-details-link" href={showPath(show)} prefetch={false}>
           Show details ↗
@@ -37,19 +36,8 @@ export default function ShowRow({ show }) {
       </div>
       {show.state === 'canceled' ? (
         <span className="muted">Canceled</span>
-      ) : show.ticket ? (
-        <TrackedLink
-          className="button"
-          href={show.ticket.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          event="Ticket click"
-          showId={show.id}
-        >
-          Get tickets ↗
-        </TrackedLink>
-      ) : show.ticketNote ? (
-        <span className="muted">{show.ticketNote}</span>
+      ) : (show.ticket || show.reservation) ? (
+        <div className="show-purchase-actions"><ShowPurchaseLinks show={show} /></div>
       ) : null}
     </article>
   )

@@ -14,6 +14,7 @@ import {
   kitAssetPath,
   kitPdfPath,
   KIT_EDITION,
+  KIT_REVISION,
   planningDetails,
 } from '@/lib/press/kit-content.mjs'
 
@@ -157,7 +158,7 @@ export default async function BandKitPage({ params }) {
           <h2 className="section-title">Download press materials</h2>
           <div className="kit-download-grid">
             {[
-              ['Press pack', 'PDF, three photos, logo & bio · ZIP', `/press/packs/${slug}.zip`, 'Press pack download'],
+              ['Press pack', 'PDF, three photos, logo & bio · ZIP', `/press/packs/${slug}.zip?v=${KIT_REVISION}`, 'Press pack download'],
               ['Band kit', 'Three-page PDF', kitPdfPath(slug), 'Press download'],
               ['Band logo', 'Transparent PNG', kitAssetPath(slug, 'logo.png'), 'Logo download'],
               ['Press photo', 'Full-size JPG', `/api/press/${slug}/photo`, 'Photo download'],
@@ -187,10 +188,6 @@ export default async function BandKitPage({ params }) {
               <p>{body}</p>
             </article>
           ))}
-        </div>
-        <div className="kit-stage-history">
-          <p className="eyebrow">Selected stages</p>
-          <p>{kit.stages.join(' · ')}</p>
         </div>
         <div className="kit-booking-bar">
           <div>

@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import TrackedLink from './TrackedLink'
+import ShowPurchaseLinks from './ShowPurchaseLinks'
 import FanSignup from './FanSignup'
 import HubShare from './HubShare'
 import BrandLogo from './BrandLogo'
@@ -60,7 +61,7 @@ async function NextShow({ hub }) {
       </TrackedLink>
       {today && <div className="hub-today-actions">
         <Link href={showPath(show)}>Show details & directions ↗</Link>
-        {show.ticket?.url && <TrackedLink event="Ticket click" band={hub.slug} showId={show.id} href={show.ticket.url} target="_blank" rel="noopener noreferrer">Tickets ↗</TrackedLink>}
+        <ShowPurchaseLinks show={show} band={hub.slug} className="button" />
         {uploadsEnabled() && <Link href={hub.slug === 'hub' ? '/upload' : `/upload?band=${hub.slug}`} prefetch={false}>Share tonight’s photos ↑</Link>}
       </div>}
       <Link className="hub-all-shows" href={showsHref(hub)} prefetch={false}>

@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { FILE_TYPES, mediaType, validateUploadSizes } from '@/lib/uploads/files.mjs'
-import { fingerprintFile, nextChunkEnd, receivedOffset } from '@/lib/uploads/transfer.mjs'
+import { checkSelectedMedia, fingerprintFile, nextChunkEnd, receivedOffset } from '@/lib/uploads/transfer.mjs'
 import { track } from '@/lib/track'
 
 const STORAGE='epl-fan-upload-v1'
@@ -67,7 +67,7 @@ export default function FanUpload({bands,initialBand=''}) {
     let activeToken=token, current=session
     try {
       if(!files.length)throw new Error('Choose your photos and videos first.')
-      const descriptors=await Promise.all(files.map(async f=>({name:f.name,size:f.size,fingerprint:await fingerprintFile(f)})))
+      const descriptors=await Promise.all(files.map(async f=>{await checkSelectedMedia(f);return {name:f.name,size:f.size,fingerprint:await fingerprintFile(f)}}))
       if(aborter.signal.aborted)throw new Error('paused')
       if(current){
         const unmatched=[...descriptors]
@@ -143,7 +143,8 @@ export default function FanUpload({bands,initialBand=''}) {
     {session && <p className="fan-upload-selected"><strong>{session.show.bands.map(b=>b.name).join(' + ')}</strong><br/>{dateLabel(session.show.date)} · {session.show.venue}<br/><small>Reference: {session.reference}</small></p>}
     <fieldset disabled={busy || saved}>
       <legend><span>02</span> Add your photos & videos</legend>
-      <label className="fan-upload-picker">{session?'Select the same original files to resume':'Choose files from your device'}<input ref={fileInput} type="file" multiple accept={Object.keys(FILE_TYPES).map(ext=>`.${ext}`).join(',')} onChange={chooseFiles}/></label>
+      <label className="fan-upload-picker">{session?'Select the same original photos or videos to resume':'Choose photos or videos from your device'}<input ref={fileInput} type="file" multiple accept={[...Object.keys(FILE_TYPES).map(ext=>`.${ext}`),...new Set(Object.values(FILE_TYPES))].join(',')} onChange={chooseFiles}/></label>
+      <p className="muted">Photos and videos only: JPG, PNG, WebP, HEIC, HEIF, AVIF, MP4, MOV, M4V and WebM.</p>
       <p className="muted">Up to 10 GB per file · 20 files · 20 GB per submission. Originals stay at their original quality.</p>
       {Boolean((session?.files || files).length) && <ul className="fan-upload-files">{(session?.files || files).map((f,i)=><li key={`${f.name}-${i}`}><span>{f.name}<small>{sizeLabel(f.size)}</small></span><span>{progress[i]>=f.size?'Uploaded':progress[i]>0?`${Math.floor(progress[i]/f.size*100)}%`:''}</span></li>)}</ul>}
     </fieldset>

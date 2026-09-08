@@ -9,6 +9,7 @@ test('measurement drops private fields and distinguishes intent from completed o
   assert.equal(publicEvent('Booking inquiry sent').name, 'generate_lead')
   assert.equal(publicEvent('Newsletter form submitted').name, 'newsletter_form_submitted')
   assert.equal(publicEvent('Purchase'), null)
+  assert.deepEqual(publicEvent('Table reservation click', { band: 'jambi', email: 'private@example.invalid', url: 'https://tables.invalid/?email=private', show: 'show_abcdefghijklmnopqrstuv' }), { name: 'table_reservation_click', fields: { band: 'jambi', show: 'show_abcdefghijklmnopqrstuv' } })
   assert.equal(withoutQuery('https://echoplay.live/contact?email=private#form'), 'https://echoplay.live/contact')
   assert.equal(withoutQuery('not-a-url'), '')
   assert.deepEqual(publicCampaign('https://echoplay.live/shows?utm_source=facebook&utm_campaign=jambi-sept26&email=private@example.com&utm_content=private@example.com'), { campaign_source: 'facebook', campaign_name: 'jambi-sept26' })

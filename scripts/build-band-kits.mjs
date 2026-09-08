@@ -48,7 +48,7 @@ for (const kit of bandKits) {
   pdf.setCreator('Echo Play Live')
   pdf.setLanguage('en-US')
   pdf.setCreationDate(new Date('2026-09-07T00:00:00Z'))
-  pdf.setModificationDate(new Date('2026-09-07T00:00:00Z'))
+  pdf.setModificationDate(new Date('2026-09-08T00:00:00Z'))
   // The supplied Gotham font prohibits subsetting. Embed it whole.
   const bold = await pdf.embedFont(await readFile(path.join(root, 'app/fonts/Gotham-Bold.ttf')), {
     subset: false,
@@ -274,8 +274,6 @@ for (const kit of bandKits) {
     txt(p3, `0${i + 1} / ${title.toUpperCase()}`, x, top + 14, 9, bold, accent)
     paragraph(p3, body, x, top + 36, 240, 10.5, 15, ink, regular, top + 96)
   })
-  txt(p3, 'SELECTED STAGES', M, 496, 8, bold, gray)
-  paragraph(p3, kit.stages.join('  /  '), M, 514, CW, 10.5, 15, ink, regular, 550)
   p3.drawRectangle({ x: M, y: H - 683, width: CW, height: 126, color: ink })
   txt(p3, 'BOOKING / ECHO PLAY LIVE', M + 20, 575, 8, bold, color('#BBBBBF'))
   link(p3, kit.bookingEmail, `mailto:${kit.bookingEmail}`, M + 20, 598, 15, white)
