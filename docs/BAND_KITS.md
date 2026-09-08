@@ -32,3 +32,7 @@ Detailed source hashes, rendered review files and release evidence are retained 
 ## September 7 voice revision
 
 Revision `20260907-copy1` replaces the wording in all four kits following Evan's request to match his sent-email voice. HTML, downloadable bios and PDFs share the updated editorial source. All 12 revised PDF pages were rendered and visually inspected; the four QR codes were independently decoded from the rendered third pages and open the correct online kits. The expanded 41-test suite and production build pass. See `VOICE_AND_COPY.md` for the voice guide and owned QR/link-page maintenance, and the shared workspace's `docs/web/COPY_AND_QR_RELEASE_2026-09-07.md` for the current release evidence.
+
+## September 8, 2026 — media refresh
+
+Revision `20260908-media` replaces the three selected photos in each public kit with photographs from the curated gallery selection. The online kits, four PDFs and four press packs share the new selection and photographer credits; downloadable JPEGs are up to 3000 pixels wide without upscaling. All 12 PDF pages were rendered and visually inspected. Photos are credited to Jules Villalobos (Elite, Jambi, So Long Goodnight) and Jeremy Morgan / HDP (The Dick Beldings). The photo endpoint now serves the fixed local cover asset for each public band and is included in Vercel file tracing. Evan approved publication of this specific photo selection and the refreshed kits on September 8, 2026.

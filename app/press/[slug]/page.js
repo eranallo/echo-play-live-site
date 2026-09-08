@@ -75,11 +75,7 @@ export default async function BandKitPage({ params }) {
           <div className="kit-hero-photo">
             <Image
               src={kitAssetPath(slug, 'cover.jpg')}
-              alt={
-                slug === 'the-dick-beldings'
-                  ? 'The Dick Beldings band portrait'
-                  : `${kit.name} live on stage`
-              }
+              alt={kit.photoAlts.cover}
               fill
               priority
               sizes="(max-width: 700px) 100vw, 50vw"
@@ -111,13 +107,7 @@ export default async function BandKitPage({ params }) {
             <div key={asset}>
               <Image
                 src={kitAssetPath(slug, `${asset}.jpg`)}
-                alt={
-                  slug === 'the-dick-beldings'
-                    ? i === 0
-                      ? 'The Dick Beldings promotional portrait at a pool table'
-                      : 'The Dick Beldings stage setup'
-                    : `${kit.name} live performance, photo ${i + 1}`
-                }
+                alt={kit.photoAlts[asset]}
                 fill
                 sizes="(max-width: 700px) 100vw, 50vw"
                 style={{ objectFit: 'cover', objectPosition: 'center 35%' }}
@@ -161,7 +151,7 @@ export default async function BandKitPage({ params }) {
               ['Press pack', 'PDF, three photos, logo & bio · ZIP', `/press/packs/${slug}.zip?v=${KIT_REVISION}`, 'Press pack download'],
               ['Band kit', 'Three-page PDF', kitPdfPath(slug), 'Press download'],
               ['Band logo', 'Transparent PNG', kitAssetPath(slug, 'logo.png'), 'Logo download'],
-              ['Press photo', 'Full-size JPG', `/api/press/${slug}/photo`, 'Photo download'],
+              ['Press photo', 'High-resolution JPG', `/api/press/${slug}/photo?v=${KIT_REVISION}`, 'Photo download'],
               ['Band bio', 'Plain text', `/api/press/${slug}/bio`, 'Bio download'],
             ].map(([title, type, href, event]) => (
               <TrackedLink key={title} href={href} event={event} band={slug} download>
@@ -171,9 +161,11 @@ export default async function BandKitPage({ params }) {
             ))}
           </div>
           <p className="form-note">
-            Keep logos proportional and unaltered. For photographer credits, additional images or a
+            Photos by {kit.photoCredit}. Please include the photographer credit when using these images.
+            Keep logos proportional and unaltered. For additional images or a
             specific format, contact <a href={`mailto:${kit.bookingEmail}`}>{kit.bookingEmail}</a>.
           </p>
+          <Link className="text-link" href={`/bands/${slug}#photos`}>See the full photo gallery ↗</Link>
         </div>
       </section>
       <FanReviews band={slug} />

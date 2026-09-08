@@ -1,0 +1,34 @@
+{
+  "elite": {
+    "photoCredit": "Jules Villalobos",
+    "photoAlts": {
+      "cover": "Elite on stage beneath white and amber lights at Granada Theatre",
+      "detail": "Elite’s vocalist at the front of the stage under white lights",
+      "stage": "A wide view of Elite’s stage and audience from the balcony"
+    }
+  },
+  "jambi": {
+    "photoCredit": "Jules Villalobos",
+    "photoAlts": {
+      "cover": "Jambi performing beneath blue and white beams at Granada Theatre",
+      "detail": "Jambi’s guitarist silhouetted against a blue spotlight",
+      "stage": "Jambi with the Granada Theatre crowd after the show"
+    }
+  },
+  "so-long-goodnight": {
+    "photoCredit": "Jules Villalobos",
+    "photoAlts": {
+      "cover": "So Long Goodnight’s bassist and guitarist playing together",
+      "detail": "So Long Goodnight’s vocalist leaning into the microphone",
+      "stage": "So Long Goodnight facing the Texas Live crowd from the stage"
+    }
+  },
+  "the-dick-beldings": {
+    "photoCredit": "Jeremy Morgan / HDP",
+    "photoAlts": {
+      "cover": "The Dick Beldings standing together in front of their colorful band banner",
+      "detail": "The Dick Beldings playing beneath blue and yellow stage lights",
+      "stage": "A black-and-white view from The Dick Beldings’ stage into the crowd"
+    }
+  }
+}

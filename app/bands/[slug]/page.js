@@ -12,6 +12,8 @@ import FanSignup from '@/components/FanSignup'
 import FanReviews from '@/components/FanReviews'
 import PerformanceVideo from '@/components/PerformanceVideo'
 import { getPerformance } from '@/lib/public/performances.mjs'
+import { getBandGallery } from '@/lib/public/gallery.mjs'
+import BandPhotoGallery from '@/components/BandPhotoGallery'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 export default async function BandPage({ params }) {
@@ -19,11 +21,7 @@ export default async function BandPage({ params }) {
   const band = getBand(slug)
   if (!band) notFound()
   const performance = getPerformance(slug)
-  const photos = (
-    band.galleryPhotos?.length ? band.galleryPhotos : [band.featurePhoto, band.crowdPhoto]
-  )
-    .filter(Boolean)
-    .slice(0, 3)
+  const gallery = getBandGallery(slug)
   const clientBand = {
     slug: band.slug,
     name: band.name,
@@ -41,7 +39,7 @@ export default async function BandPage({ params }) {
           src={band.heroPhoto}
           alt={
             band.slug === 'the-dick-beldings'
-              ? 'The Dick Beldings stage setup'
+              ? 'The Dick Beldings band portrait'
               : `${band.name} live on stage`
           }
           fill
@@ -78,6 +76,7 @@ export default async function BandPage({ params }) {
         <div className="shell">
           {!band.hidden && <a href="#shows">Upcoming shows</a>}
           {performance && <a href="#watch">Watch live</a>}
+          {gallery?.photos.length > 0 && <a href="#photos">Photos</a>}
           <a href="#experience">About the band</a>
           <a href="#music">The music</a>
           {!band.hidden && <Link href={`/requests?band=${band.slug}`}>Song requests ↗</Link>}
@@ -116,27 +115,7 @@ export default async function BandPage({ params }) {
         <p>{band.description}</p>
       </section>
       {performance && <PerformanceVideo performance={performance} slug={slug} />}
-      {photos.length > 0 && (
-        <section className="shell section-bottom">
-          <div className="photo-grid">
-            {photos.map((src, i) => (
-              <div className="photo-tile" key={src}>
-                <Image
-                  src={src}
-                  alt={
-                    band.slug === 'the-dick-beldings'
-                      ? 'The Dick Beldings band portrait'
-                      : `${band.name} live performance, photo ${i + 1}`
-                  }
-                  fill
-                  sizes="(max-width: 760px) 45vw, 30vw"
-                  style={{ objectFit: 'cover' }}
-                />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {gallery?.photos.length > 0 && <BandPhotoGallery name={band.name} slug={slug} photos={gallery.photos} />}
       <section className="shell section-bottom" id="music">
         <BandExperienceDetails band={clientBand} />
         <div className="follow-bands">

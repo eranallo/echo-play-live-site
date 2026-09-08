@@ -1,0 +1,562 @@
+{
+  "elite": {
+    "updated": "2026-09-08",
+    "photos": [
+      {
+        "id": "elite-28df60208b1f",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/28df60208b1f-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Elite on stage beneath white and amber lights at Granada Theatre",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-a85f96de40e4",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/a85f96de40e4-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Elite with the Granada Theatre crowd after the show",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-1837fd34ba4e",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/1837fd34ba4e-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Elite’s vocalist at the front of the stage under white lights",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-ab6e90c3e2e5",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/ab6e90c3e2e5-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Elite’s guitarist and vocalist under red stage lights",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-df8e334a630d",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/df8e334a630d-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "The view across the drums to Elite and the Granada Theatre audience",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-7cc5f728aa0b",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/7cc5f728aa0b-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "A wide view of Elite’s stage and audience from the balcony",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-ae44ade5fffe",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/ae44ade5fffe-1920.webp",
+        "width": 1920,
+        "height": 2879,
+        "alt": "Elite’s vocalist silhouetted against purple stage lights",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-9659eda1638e",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/9659eda1638e-1920.webp",
+        "width": 1920,
+        "height": 2880,
+        "alt": "Elite’s vocalist reaching out under green and blue lights",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-89a9fa767f51",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/89a9fa767f51-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Elite’s vocalist and drummer under amber lights",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-4e8971666b19",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/4e8971666b19-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Elite silhouetted against white lights above the crowd",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-4b9ff1a7366f",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/4b9ff1a7366f-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Elite’s guitarist at the side of the stage",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-012397bec4a6",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/012397bec4a6-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Elite performing close to fans at the front of the stage",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-086afc953310",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/086afc953310-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Elite’s band members across the stage under blue lights",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-ede9760143ed",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/ede9760143ed-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Elite performing under red lights with fans at the barrier",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-2ba95d4c16c3",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/2ba95d4c16c3-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Fans raising their hands during Elite’s Granada Theatre set",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "elite-99860384875a",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/elite/99860384875a-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "The audience singing along during Elite’s Granada Theatre set",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      }
+    ]
+  },
+  "jambi": {
+    "updated": "2026-09-08",
+    "photos": [
+      {
+        "id": "jambi-ee8198c4af5d",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/ee8198c4af5d-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Jambi performing beneath blue and white beams at Granada Theatre",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-459193d3642f",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/459193d3642f-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Jambi with the Granada Theatre crowd after the show",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-2a908aede32c",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/2a908aede32c-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Jambi’s guitarist silhouetted against a blue spotlight",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-54f601dcac8b",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/54f601dcac8b-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Jambi’s drummer playing under amber stage lights",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-fea5ce627a3a",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/fea5ce627a3a-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Cello and guitar on stage during Jambi’s Granada Theatre set",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-f0783dfc6de3",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/f0783dfc6de3-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Jambi’s guitarist leaning into a song under red lights",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-8a5ee321698a",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/8a5ee321698a-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Jambi’s vocalist raising an arm toward the Granada Theatre audience",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-3c2644a67a15",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/3c2644a67a15-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Fans singing along at the front of Jambi’s show",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-65e1dec6f5a7",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/65e1dec6f5a7-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Jambi’s vocalist singing into the microphone under white light",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-8fe9f14b7662",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/8fe9f14b7662-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Jambi’s bassist under red and blue stage lights",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-3990713d780d",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/3990713d780d-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Jambi and a cellist on stage beneath yellow beams",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-508bea3cfa85",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/508bea3cfa85-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "A wide view of Jambi’s stage and the Granada Theatre audience",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-5c5a21feb06e",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/5c5a21feb06e-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Fans at the front barrier during Jambi’s Granada Theatre show",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-b2865bd586f3",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/b2865bd586f3-1920.webp",
+        "width": 1920,
+        "height": 2880,
+        "alt": "The Granada Theatre marquee for the Jambi and Elite show",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-d6447c8a35e2",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/d6447c8a35e2-1920.webp",
+        "width": 1920,
+        "height": 2880,
+        "alt": "A cellist playing during Jambi’s Granada Theatre set",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "jambi-431a54d5611e",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/jambi/431a54d5611e-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Jambi’s guitarist and vocalist sharing the stage under red lights",
+        "album": "Granada Theatre · July 2026",
+        "credit": "Jules Villalobos"
+      }
+    ]
+  },
+  "so-long-goodnight": {
+    "updated": "2026-09-08",
+    "photos": [
+      {
+        "id": "so-long-goodnight-846541d632e5",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/846541d632e5-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "So Long Goodnight facing the Texas Live crowd from the stage",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-191375f307a8",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/191375f307a8-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "So Long Goodnight’s bassist and guitarist playing together",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-a899ef3e1919",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/a899ef3e1919-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "So Long Goodnight’s drummer behind the red drum kit",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-94519512c4e6",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/94519512c4e6-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Fans singing along with So Long Goodnight at Texas Live",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-ef4230b06127",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/ef4230b06127-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "So Long Goodnight’s vocalist leaning into the microphone",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-963176764422",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/963176764422-1920.webp",
+        "width": 1920,
+        "height": 1305,
+        "alt": "So Long Goodnight’s guitarists playing at the front of the stage",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-86943275fd67",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/86943275fd67-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Black-and-white view across the stage to So Long Goodnight’s audience",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-241394ae9348",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/241394ae9348-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "So Long Goodnight’s vocalist raising an arm to the crowd",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-df1f71c4453c",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/df1f71c4453c-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "So Long Goodnight sharing the microphone with fans at the barrier",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-c6e5831a6d65",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/c6e5831a6d65-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "So Long Goodnight’s guitarist and bassist during the Texas Live set",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-ab7c0277ba50",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/ab7c0277ba50-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "So Long Goodnight’s guitarist in a wide stance under red lights",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-7cc5317fb8e9",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/7cc5317fb8e9-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "A low-angle view of So Long Goodnight’s guitarist on stage",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-48cc5011bf0b",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/48cc5011bf0b-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Fans raising their hands during So Long Goodnight’s set",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-335e709ebb8d",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/335e709ebb8d-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Fans singing at the barrier during So Long Goodnight’s Texas Live show",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-a1686b6a0765",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/a1686b6a0765-1920.webp",
+        "width": 1920,
+        "height": 1407,
+        "alt": "So Long Goodnight’s banner at the Texas Live stage",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      },
+      {
+        "id": "so-long-goodnight-bcfe452eed8d",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/so-long-goodnight/bcfe452eed8d-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "So Long Goodnight signing a shirt after the Texas Live show",
+        "album": "Texas Live · April 2026",
+        "credit": "Jules Villalobos"
+      }
+    ]
+  },
+  "the-dick-beldings": {
+    "updated": "2026-09-08",
+    "photos": [
+      {
+        "id": "the-dick-beldings-e1e166a82170",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/the-dick-beldings/e1e166a82170-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "The Dick Beldings playing beneath blue and yellow stage lights",
+        "album": "On stage · 2024",
+        "credit": "Jeremy Morgan / HDP"
+      },
+      {
+        "id": "the-dick-beldings-748b2286ddf7",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/the-dick-beldings/748b2286ddf7-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "The Dick Beldings standing together in front of their colorful band banner",
+        "album": "Band portraits · 2024",
+        "credit": "Jeremy Morgan / HDP"
+      },
+      {
+        "id": "the-dick-beldings-b62192d5dfa4",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/the-dick-beldings/b62192d5dfa4-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "Hair flying during The Dick Beldings’ set under blue stage lights",
+        "album": "On stage · 2024",
+        "credit": "Jeremy Morgan / HDP"
+      },
+      {
+        "id": "the-dick-beldings-22d5f89bdcca",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/the-dick-beldings/22d5f89bdcca-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "A black-and-white view from The Dick Beldings’ stage into the crowd",
+        "album": "On stage · 2024",
+        "credit": "Jeremy Morgan / HDP"
+      },
+      {
+        "id": "the-dick-beldings-503705aa4569",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/the-dick-beldings/503705aa4569-1920.webp",
+        "width": 1500,
+        "height": 1000,
+        "alt": "A wide-angle black-and-white shot from behind The Dick Beldings’ drum kit",
+        "album": "On stage · 2024",
+        "credit": "Jeremy Morgan / HDP"
+      },
+      {
+        "id": "the-dick-beldings-dac1ccf15845",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/the-dick-beldings/dac1ccf15845-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "The Dick Beldings’ singer leaning toward the crowd at the front of the stage",
+        "album": "On stage · 2024",
+        "credit": "Jeremy Morgan / HDP"
+      },
+      {
+        "id": "the-dick-beldings-377981c87abb",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/the-dick-beldings/377981c87abb-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "The Dick Beldings performing in front of their tiger banner, photographed in black and white",
+        "album": "On stage · 2024",
+        "credit": "Jeremy Morgan / HDP"
+      },
+      {
+        "id": "the-dick-beldings-56c9352bdeec",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/the-dick-beldings/56c9352bdeec-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "A crowd gathered in front of The Dick Beldings’ brightly lit stage",
+        "album": "On stage · 2024",
+        "credit": "Jeremy Morgan / HDP"
+      },
+      {
+        "id": "the-dick-beldings-8c2e0a05d2e1",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/the-dick-beldings/8c2e0a05d2e1-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "The Dick Beldings leaning over the camera against a blue sky",
+        "album": "Band portraits · 2024",
+        "credit": "Jeremy Morgan / HDP"
+      },
+      {
+        "id": "the-dick-beldings-7d6065b5dc18",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/the-dick-beldings/7d6065b5dc18-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "The Dick Beldings sharing a laugh in a close wide-angle group portrait",
+        "album": "Band portraits · 2024",
+        "credit": "Jeremy Morgan / HDP"
+      },
+      {
+        "id": "the-dick-beldings-8672c0ea4f28",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/the-dick-beldings/8672c0ea4f28-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "A black-and-white outdoor portrait of The Dick Beldings",
+        "album": "Band portraits · 2024",
+        "credit": "Jeremy Morgan / HDP"
+      },
+      {
+        "id": "the-dick-beldings-53d8384371ea",
+        "src": "https://wkqcpwrvrb9fa0hy.public.blob.vercel-storage.com/website-media/20260908/the-dick-beldings/53d8384371ea-1920.webp",
+        "width": 1920,
+        "height": 1280,
+        "alt": "The Dick Beldings lined up together on a tree-lined walkway",
+        "album": "Band portraits · 2024",
+        "credit": "Jeremy Morgan / HDP"
+      }
+    ]
+  }
+}

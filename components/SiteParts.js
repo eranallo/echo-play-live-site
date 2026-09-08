@@ -51,7 +51,7 @@ export function BandCard({ band, index = 0 }) {
         src={band.heroPhoto}
         alt={
           band.slug === 'the-dick-beldings'
-            ? 'The Dick Beldings stage setup'
+            ? 'The Dick Beldings band portrait'
             : `${band.name} performing live`
         }
         fill

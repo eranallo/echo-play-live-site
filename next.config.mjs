@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 import { newsletterForm, validNewsletterForm } from './lib/public/newsletter-config.mjs'
+import { KIT_REVISION } from './lib/press/kit-content.mjs'
 
 const CSP = [
   "default-src 'self'",
@@ -36,15 +37,17 @@ const nextConfig = {
   outputFileTracingIncludes: {
     '/api/press/[slug]': ['./public/press/kits/*.pdf'],
     '/api/press/[slug]/photo': [
-      './public/bands/*/hero.jpg',
-      './public/bands/jambi/gallery/photo-2.jpg',
-      './public/bands/elite/gallery/photo-1.jpg',
+      './public/press/bands/*/cover.jpg',
     ],
   },
   async redirects() {
     return [{ source: '/book', destination: '/contact', permanent: true }]
   },
   images: {
+    localPatterns: [
+      { pathname: '/**', search: '' },
+      { pathname: '/press/bands/**', search: `?v=${KIT_REVISION}` },
+    ],
     remotePatterns: [
       {
         protocol: 'https',
