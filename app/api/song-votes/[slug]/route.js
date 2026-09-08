@@ -2,6 +2,7 @@ import { getSongChoicesForBand } from '@/lib/songs'
 import { bandsList } from '@/lib/bands'
 import { rateLimit } from '@/lib/ratelimit'
 import { handleSongVote } from '@/lib/song-votes.mjs'
+import { getRequestTrack } from '@/lib/spotify-request-search'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -25,7 +26,11 @@ export async function POST(request,{params}) {
     body=JSON.parse(raw)
     if(!body || typeof body!=='object' || Array.isArray(body)) return reply({error:'Invalid vote.'},400)
   } catch {return reply({error:'Invalid vote.'},400)}
-  const result=await handleSongVote({band:slug,action:body.action,visitor:body.visitor,song:body.song},{catalog:await getSongChoicesForBand(slug)})
+  if(body.action==='add') {
+    const additions=rateLimit(request,{scope:'song-additions',capacity:12,refillMs:30000})
+    if(!additions.ok) return reply({error:'Please try adding that song again shortly.'},429)
+  }
+  const result=await handleSongVote({band:slug,action:body.action,visitor:body.visitor,song:body.song,spotifyId:body.spotifyId},{catalog:await getSongChoicesForBand(slug),resolveTrack:getRequestTrack})
   if(result.status===503) console.info('[song-votes]',{event:'unavailable',band:slug})
   return reply(result.body,result.status)
 }

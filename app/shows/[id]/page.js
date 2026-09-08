@@ -52,15 +52,10 @@ export default async function EventPage({ params }) {
             <strong>{showTime(show)}</strong>
           </div>
           {show.doorsTime && <div><span>Doors</span><strong>{showTime({ ...show, startTime: show.doorsTime })}</strong></div>}
-          <div>
-            <span>Tickets</span>
-            <strong>
-              {canceled
-                ? 'Canceled'
-                : show.ticket?.priceLabel ||
-                  (show.ticket ? 'See ticket page' : 'Details coming soon')}
-            </strong>
-          </div>
+          {!canceled && (show.ticket || show.ticketNote) && <div>
+            <span>{show.ticket ? 'Tickets' : 'Admission'}</span>
+            <strong>{show.ticket?.priceLabel || show.ticketNote || 'See ticket page'}</strong>
+          </div>}
         </div>
         {canceled ? (
           <div className="quiet-state">

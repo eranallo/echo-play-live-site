@@ -52,7 +52,7 @@ async function NextShow({ hub }) {
           <p>
             {hub.slug === 'hub'
               ? show.bands.map((band) => band.name).join(' + ')
-              : 'Show information & ticket details'}
+              : 'Show information'}
           </p>
           {today && <p>{showTime(show)}</p>}
         </div>

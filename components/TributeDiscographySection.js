@@ -10,7 +10,7 @@
 // opens the SongRequestModal with the song pre-filled.
 
 import { useEffect, useMemo, useState } from 'react'
-import SongRequestModal from './SongRequestModal'
+import { useRouter } from 'next/navigation'
 
 function fmtDuration(ms) {
   if (!ms || typeof ms !== 'number') return ''
@@ -24,7 +24,7 @@ export default function TributeDiscographySection({ band }) {
   const [data, setData] = useState(null) // { artist, albums, performedCount, totalCount }
   const [loaded, setLoaded] = useState(false)
   const [error, setError] = useState(null)
-  const [requestFor, setRequestFor] = useState(null) // track object pre-filled into modal
+  const router=useRouter()
 
   // Load discography once on mount.
   useEffect(() => {
@@ -111,7 +111,7 @@ export default function TributeDiscographySection({ band }) {
             >
               <strong style={{ color: accent, fontWeight: 600 }}>{data.performedCount}</strong> of{' '}
               <strong style={{ color: 'var(--c-text)', fontWeight: 600 }}>{data.totalCount}</strong>{' '}
-              tracks currently in {band.shortName}'s set
+              tracks in {band.shortName}'s catalog
             </div>
           </div>
           <p
@@ -124,9 +124,9 @@ export default function TributeDiscographySection({ band }) {
               maxWidth: '640px',
             }}
           >
-            Tap any album to see its tracks. Songs we perform are highlighted. Click any of them to
+            Tap any album to see its tracks. Songs from our repertoire are highlighted. Click any of them to
             open in Spotify. See one we don't play that you want to hear? Tap "Request" to send it
-            to the band.
+            to the request chart.
           </p>
         </div>
 
@@ -140,26 +140,13 @@ export default function TributeDiscographySection({ band }) {
               album={album}
               accent={accent}
               band={band}
-              onRequest={(track) =>
-                setRequestFor({
-                  songTitle: track.title,
-                  originalArtist: data.artist.name,
-                  album: album.name,
-                  spotifyTrackId: track.id,
-                  spotifyTrackUrl: track.spotifyUrl,
-                })
-              }
+              onRequest={track=>router.push(`/requests?band=${band.slug}&q=${encodeURIComponent(`${track.title} ${data.artist.name}`)}`)}
             />
           ))}
         </div>
       </div>
 
-      <SongRequestModal
-        open={Boolean(requestFor)}
-        onClose={() => setRequestFor(null)}
-        band={band}
-        prefill={requestFor}
-      />
+
     </section>
   )
 }
@@ -266,7 +253,7 @@ function AlbumBlock({ album, accent, band, onRequest }) {
               whiteSpace: 'nowrap',
             }}
           >
-            {performedInAlbum} in set
+            {performedInAlbum} in catalog
           </div>
         ) : (
           <span aria-hidden="true" />

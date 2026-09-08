@@ -39,7 +39,7 @@ export default function SongRequestModal({open,onClose,band,prefill=null}) {
       <button type="button" className="suggestion-close" onClick={()=>close.current?.()} aria-label="Close song suggestion">×</button>
       <p className="eyebrow">{band.name || band.shortName}</p>
       <h2 id={`${id}-title`}>{status==='success'?'Thanks for the suggestion!':'What should we learn?'}</h2>
-      {status==='success'?<div role="status"><p>Your suggestion is saved for the band to review. It won’t appear on the voting chart until it’s part of the catalog.</p><button className="button" type="button" onClick={()=>close.current?.()}>Done</button></div>:<>
+      {status==='success'?<div role="status"><p>Your suggestion is saved for the band to review. It stays private and doesn’t add a vote to the chart.</p><button className="button" type="button" onClick={()=>close.current?.()}>Done</button></div>:<>
         <p>Have something in mind that we don’t play yet? Let us know. Name and email are optional.</p>
         <form onSubmit={submit}>
           <fieldset disabled={status==='sending'}>
@@ -50,7 +50,7 @@ export default function SongRequestModal({open,onClose,band,prefill=null}) {
             <label>Anything else? (optional)<textarea name="message" maxLength={1000}/></label>
             <div className="hp-field" aria-hidden="true"><label>Leave blank<input name="company" tabIndex={-1} autoComplete="off" /></label></div>
           </fieldset>
-          <p className="form-note">* Required. Suggestions are kept privately in Airtable for review. This doesn’t subscribe you to email updates. <Link href="/privacy">Privacy details</Link>.</p>
+          <p className="form-note">* Required. This note goes privately to the band for review. It doesn’t add a public vote or subscribe you to emails. <Link href="/privacy">Privacy details</Link>.</p>
           {error && <p role="alert" className="form-error">{error}</p>}
           <button className="button" type="submit" disabled={status==='sending'}>{status==='sending'?'Saving…':'Send song suggestion ↗'}</button>
         </form>
