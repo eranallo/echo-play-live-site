@@ -44,6 +44,7 @@ const request = await fetch(base + '/api/inquiry', {
     name: 'Fixture',
     email: 'fixture@example.com',
     message: 'Local test only',
+    requestId: 'a03e22d1-43a0-4ac5-8cc8-2b405aa6d801',
   }),
 })
 assert.equal(request.status, 503)

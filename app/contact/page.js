@@ -2,10 +2,12 @@ import { Page, Intro } from '@/components/SiteParts'
 import BookingForm from '@/components/BookingForm'
 import { bandsList } from '@/lib/bands'
 import { FAQ_CONTACT } from '@/lib/faqs'
+import { BOOKING_EMAIL } from '@/lib/public/booking.mjs'
+import Link from 'next/link'
 export default async function ContactPage({ searchParams }) {
   const query = await searchParams
   const selected = bandsList.find((b) => b.slug === query?.band)?.name || ''
-  const selectedEvent = ['Bar / Venue Show', 'Festival', 'Private Event', 'Corporate Event'].includes(query?.event) ? query.event : ''
+  const selectedEvent = ['Bar / Venue Show', 'Festival', 'Private Event', 'Corporate Event', 'Other'].includes(query?.event) ? query.event : ''
   return (
     <Page>
       <Intro
@@ -27,7 +29,8 @@ export default async function ContactPage({ searchParams }) {
         <BookingForm
           initialBand={selected}
           initialEvent={selectedEvent}
-          bands={bandsList.map((b) => ({ name: b.name, slug: b.slug, email: b.bookingEmail }))}
+          inquirySource={query?.source === 'band-chooser' ? 'Band chooser' : 'Contact page'}
+          bands={bandsList.map((b) => ({ name: b.name, slug: b.slug }))}
         />
         <aside className="booking-aside">
           <h2>Not sure which band?</h2>
@@ -35,13 +38,12 @@ export default async function ContactPage({ searchParams }) {
             Tell us about your audience and the music you want to hear. We can help you choose a
             band for your venue, festival, private party or corporate event.
           </p>
-          <p>Prefer email? Reach the band directly.</p>
-          {bandsList.map((b) => (
-            <div className="direct-contact" key={b.slug}>
-              <strong>{b.name}</strong>
-              <a href={`mailto:${b.bookingEmail}`}>{b.bookingEmail} ↗</a>
-            </div>
-          ))}
+          <p><Link className="text-link" href="/bands#find-band">Find your band ↗</Link></p>
+          <p>Prefer email? Get in touch with Evan.</p>
+          <div className="direct-contact">
+            <strong>Booking for all four bands</strong>
+            <a href={`mailto:${BOOKING_EMAIL}`}>{BOOKING_EMAIL} ↗</a>
+          </div>
         </aside>
       </section>
       <section className="shell section-bottom">

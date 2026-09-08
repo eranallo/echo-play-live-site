@@ -79,6 +79,7 @@ export default async function BandPage({ params }) {
           {performance && <a href="#watch">Watch live</a>}
           <a href="#experience">About the band</a>
           <a href="#music">The music</a>
+          {!band.hidden && <Link href={`/requests?band=${band.slug}`}>Song requests ↗</Link>}
           <Link href="/musicians">The musicians</Link>
           {!band.hidden && <a href="#booking">Booking essentials</a>}
           <Link href={`/press/${band.slug}`}>Band kit ↗</Link>

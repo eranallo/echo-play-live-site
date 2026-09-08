@@ -1,7 +1,8 @@
 'use client'
 import Link from 'next/link'
 import { useRef, useState } from 'react'
-export default function BookingForm({ bands, initialBand = '', initialEvent = '' }) {
+import { BOOKING_EMAIL } from '@/lib/public/booking.mjs'
+export default function BookingForm({ bands, initialBand = '', initialEvent = '', inquirySource = 'Contact page' }) {
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -19,8 +20,12 @@ export default function BookingForm({ bands, initialBand = '', initialEvent = ''
   const [error, setError] = useState('')
   const [receipt, setReceipt] = useState(null)
   const statusRef = useRef(null)
-  const update = (e) => setForm({ ...form, [e.target.name]: e.target.value })
-  const contact = bands.find((b) => b.name === form.band)?.email || 'eranallo@echoplay.live'
+  const submissionId = useRef(null)
+  const update = (e) => {
+    submissionId.current = null
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
+  const contact = BOOKING_EMAIL
   const emailLink = `mailto:${contact}?subject=${encodeURIComponent('Booking inquiry' + (form.band ? ' · ' + form.band : ''))}&body=${encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\nBand: ${form.band}\nEvent: ${form.eventType}\nDate: ${form.date}\nVenue: ${form.venue}\nAudience: ${form.attendance || 'Not sure yet'}\nBudget: ${form.budget || 'Not sure yet'}\nProduction: ${form.production || 'To discuss'}\n\n${form.message}`)}`
   async function submit(e) {
     e.preventDefault()
@@ -28,24 +33,25 @@ export default function BookingForm({ bands, initialBand = '', initialEvent = ''
     setState('sending')
     setError('')
     try {
+      submissionId.current ||= crypto.randomUUID()
       const response = await fetch('/api/inquiry', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, inquirySource, requestId:submissionId.current }),
         signal: AbortSignal.timeout(15000),
       })
       const data = await response.json()
       if (!response.ok || data.success !== true)
-        throw new Error(data.error || 'We couldn’t save your inquiry. Please try again.')
+        throw new Error(data.error || 'We couldn’t send your inquiry. Please try again.')
       setReceipt(data)
       setState('success')
       requestAnimationFrame(() => statusRef.current?.focus())
-      window.dispatchEvent(new CustomEvent('epl:inquiry-saved'))
+      window.dispatchEvent(new CustomEvent('epl:inquiry-sent'))
     } catch (err) {
       setState('error')
       setError(
         err.name === 'TimeoutError'
-          ? 'We couldn’t confirm delivery. Please email us before sending again to avoid a duplicate inquiry.'
+          ? 'We couldn’t confirm delivery. Your details are still here. Try again or email Evan below.'
           : err.message || 'We couldn’t confirm delivery. Your details are still here.',
       )
       requestAnimationFrame(() => statusRef.current?.focus())
@@ -59,14 +65,14 @@ export default function BookingForm({ bands, initialBand = '', initialEvent = ''
         </div>
         <h2>Thanks for reaching out!</h2>
         <p>
-          We’ve received your inquiry. We’ll review the details and follow up at{' '}
+          Your inquiry has been sent to Evan. He’ll review the details and follow up at{' '}
           <strong>{form.email}</strong>.
         </p>
         <p>Your booking still needs to be confirmed.</p>
         {receipt?.reference && <div className="booking-receipt">
           <p>Reference: <strong>{receipt.reference}</strong></p>
           <button className="text-link" type="button" onClick={() => {
-            const text = `Echo Play Live — Booking inquiry received\nReference: ${receipt.reference}\nReceived: ${receipt.receivedAt}\n\nName: ${form.name}\nEmail: ${form.email}\nBand: ${form.band || 'Help me choose'}\nEvent: ${form.eventType}\nPreferred date: ${form.date || 'To discuss'}\nVenue: ${form.venue}\nAudience: ${form.attendance}\nBudget: ${form.budget}\nProduction: ${form.production}\n\n${form.message}\n\nYour booking still needs to be confirmed.\nQuestions or additions: ${receipt.bookingEmail}\nhttps://echoplay.live\n`
+            const text = `Echo Play Live — Booking inquiry sent\nReference: ${receipt.reference}\nSent: ${receipt.receivedAt}\n\nName: ${form.name}\nEmail: ${form.email}\nBand: ${form.band || 'Help me choose'}\nEvent: ${form.eventType}\nPreferred date: ${form.date || 'To discuss'}\nVenue: ${form.venue}\nAudience: ${form.attendance}\nBudget: ${form.budget}\nProduction: ${form.production}\n\n${form.message}\n\nYour booking still needs to be confirmed.\nQuestions or additions: ${receipt.bookingEmail}\nhttps://echoplay.live\n`
             const url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }))
             const link = document.createElement('a'); link.href = url; link.download = `${receipt.reference}-inquiry.txt`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)
           }}>Save a copy of your inquiry ↓</button>
@@ -78,7 +84,7 @@ export default function BookingForm({ bands, initialBand = '', initialEvent = ''
           <p>
             Need to add something?{' '}
             <a className="text-link" href={`mailto:${receipt.bookingEmail}`}>
-              Email the booking team
+              Email Evan
             </a>
           </p>
         )}
@@ -86,6 +92,7 @@ export default function BookingForm({ bands, initialBand = '', initialEvent = ''
     )
   return (
     <form className="booking-form" onSubmit={submit} aria-label="Booking inquiry">
+      <fieldset disabled={state === 'sending'} style={{ border:0, padding:0, margin:0, minWidth:0 }}>
       <div className="hp-field" aria-hidden="true">
         <label htmlFor="website">Website</label>
         <input
@@ -182,9 +189,11 @@ export default function BookingForm({ bands, initialBand = '', initialEvent = ''
         </div>
       </details>
       <p className="form-note">
-        * Required. Your details are used to respond to this inquiry.{' '}
+        * Required. Your inquiry goes directly to Evan at{' '}
+        <a href={`mailto:${BOOKING_EMAIL}`}>{BOOKING_EMAIL}</a>.{' '}
         <Link href="/privacy">Privacy details</Link>.
       </p>
+      </fieldset>
       {error && (
         <div className="form-error" ref={statusRef} role="alert" tabIndex={-1}>
           {error}
