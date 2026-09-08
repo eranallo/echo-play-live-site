@@ -6,7 +6,7 @@ import { publicShowToEventJsonLd } from '../../lib/public/shows-contract.mjs'
 
 test('measurement drops private fields and distinguishes intent from completed outcomes', () => {
   assert.deepEqual(publicEvent('Ticket click', { band: 'elite', email: 'private@example.invalid', message: 'private', show: 'recPrivateRecord1', url: 'https://example.invalid/?email=private' }), { name: 'ticket_click', fields: { band: 'elite' } })
-  assert.equal(publicEvent('Booking inquiry saved').name, 'generate_lead')
+  assert.equal(publicEvent('Booking inquiry sent').name, 'generate_lead')
   assert.equal(publicEvent('Newsletter form submitted').name, 'newsletter_form_submitted')
   assert.equal(publicEvent('Purchase'), null)
   assert.equal(withoutQuery('https://echoplay.live/contact?email=private#form'), 'https://echoplay.live/contact')

@@ -25,16 +25,16 @@ export default function VendorTags() {
       if (tiktok && window.ttq?.track) window.ttq.track('ClickButton', data)
     }
     const saved = () => {
-      track('Booking inquiry saved')
+      track('Booking inquiry sent')
       const data = { content_name: 'Booking Inquiry', page_path: window.location.pathname }
       if (meta && window.fbq) window.fbq('track', 'Lead', data)
       if (tiktok && window.ttq?.track) window.ttq.track('SubmitForm', data)
     }
     document.addEventListener('click', ticket)
-    window.addEventListener('epl:inquiry-saved', saved)
+    window.addEventListener('epl:inquiry-sent', saved)
     return () => {
       document.removeEventListener('click', ticket)
-      window.removeEventListener('epl:inquiry-saved', saved)
+      window.removeEventListener('epl:inquiry-sent', saved)
     }
   }, [])
   if (!meta && !tiktok) return null

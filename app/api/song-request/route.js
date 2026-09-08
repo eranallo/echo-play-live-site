@@ -28,7 +28,7 @@ const F = {
 }
 
 function jsonErr(message, status = 400) {
-  return NextResponse.json({ ok: false, error: message }, { status })
+  return NextResponse.json({ ok: false, error: message }, { status, headers:{'Cache-Control':'no-store'} })
 }
 
 function escapeFormulaLiteral(s) {
@@ -45,6 +45,13 @@ function genericUnavailable() {
 }
 
 export async function POST(request) {
+  try {
+    const origin=new URL(request.headers.get('origin'))
+    if(!['http:','https:'].includes(origin.protocol) || origin.host!==request.headers.get('host')) return jsonErr('Please send your suggestion from this website.',403)
+  } catch {return jsonErr('Please send your suggestion from this website.',403)}
+  if(process.env.VERCEL_ENV!=='production') return genericUnavailable()
+  if(!request.headers.get('content-type')?.startsWith('application/json')) return jsonErr('Expected a song suggestion.',415)
+  if(Number(request.headers.get('content-length'))>6000) return jsonErr('Please shorten your suggestion.',413)
   const limited = rateLimit(request, {
     capacity: 10,
     refillMs: 60_000,
@@ -71,7 +78,14 @@ export async function POST(request) {
 
   let body
   try {
-    body = await request.json()
+    const raw=await request.text()
+    if(raw.length>6000) return jsonErr('Please shorten your suggestion.',413)
+    body=JSON.parse(raw)
+    if(!body || typeof body!=='object' || Array.isArray(body))return jsonErr('Invalid suggestion.')
+    for(const [field,max] of Object.entries({bandSlug:80,songTitle:200,originalArtist:200,album:200,spotifyTrackId:80,spotifyTrackUrl:300,requesterName:80,requesterEmail:120,message:1000,company:200})) {
+      if(body[field]!=null && (typeof body[field]!=='string' || body[field].length>max)) return jsonErr('Please check your suggestion details.')
+    }
+    if(body.requesterEmail && !/^[^\s<>@,;]+@[^\s<>@,;]+\.[^\s<>@,;]+$/.test(body.requesterEmail.trim())) return jsonErr('Please check your email address.')
   } catch {
     return jsonErr('Invalid JSON body')
   }
@@ -79,7 +93,7 @@ export async function POST(request) {
   const songTitle = (body.songTitle || '').toString().trim()
   const bandSlug = (body.bandSlug || '').toString().trim()
   if (!songTitle) return jsonErr('songTitle is required')
-  if (!bandSlug || !bands[bandSlug]) return jsonErr('Invalid bandSlug')
+  if (!bandSlug || !bands[bandSlug] || bands[bandSlug].hidden) return jsonErr('Invalid bandSlug')
 
   const band = bands[bandSlug]
   const originalArtist = (body.originalArtist || '').toString().trim()
@@ -90,7 +104,7 @@ export async function POST(request) {
   const requesterEmail = (body.requesterEmail || '').toString().trim().slice(0, 120)
   const message = (body.message || '').toString().trim().slice(0, 1000)
 
-  if (body.company) return NextResponse.json({ ok: true, deduped: false })
+  if (body.company) return jsonErr('Please check your suggestion details.')
 
   const url = tableUrl(SONG_REQUESTS_TABLE_ID) +
     `?filterByFormula=` +
@@ -105,14 +119,15 @@ export async function POST(request) {
   try {
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
-      cache: 'no-store',
+      cache: 'no-store', signal:AbortSignal.timeout(10000),
     })
+    if (!res.ok) return genericUnavailable()
     if (res.ok) {
       const data = await res.json()
       existing = data?.records?.[0] || null
     }
   } catch {
-    existing = null
+    return genericUnavailable()
   }
 
   if (existing) {
@@ -134,7 +149,7 @@ export async function POST(request) {
       const patchRes = await fetch(
         `${tableUrl(SONG_REQUESTS_TABLE_ID)}/${existing.id}`,
         {
-          method: 'PATCH',
+          method: 'PATCH', signal:AbortSignal.timeout(10000),
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -149,11 +164,13 @@ export async function POST(request) {
       )
       if (!patchRes.ok) {
         console.warn('[song-request] dedupe patch failed:', patchRes.status)
+        return genericUnavailable()
       } else {
         return NextResponse.json({ ok: true, deduped: true })
       }
     } catch (err) {
-      console.warn('[song-request] dedupe patch threw:', err?.message)
+      console.warn('[song-request] dedupe patch failed')
+      return genericUnavailable()
     }
   }
 
@@ -175,7 +192,7 @@ export async function POST(request) {
     const createRes = await fetch(
       tableUrl(SONG_REQUESTS_TABLE_ID),
       {
-        method: 'POST',
+        method: 'POST', signal:AbortSignal.timeout(10000),
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -192,7 +209,7 @@ export async function POST(request) {
     }
     return NextResponse.json({ ok: true, deduped: false })
   } catch (err) {
-    console.warn('[song-request] create threw:', err?.message)
+    console.warn('[song-request] create failed')
     return genericUnavailable()
   }
 }

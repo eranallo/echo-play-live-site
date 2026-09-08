@@ -13,9 +13,9 @@ export default function PrivacyPage() {
         <h2 className="section-title">Booking inquiries</h2>
         <p>
           When you send an inquiry, we collect the name, email address, and event details you
-          provide. We use those details to review your request and respond. Inquiries are stored in
-          Airtable, which supports our booking workflow. Sending an inquiry does not confirm a
-          booking.
+          provide. Resend delivers your inquiry to eranallo@echoplay.live, and we use our Google
+          Workspace email to review it and respond. New website booking inquiries are not saved
+          in Airtable. Sending an inquiry does not confirm a booking or subscribe you to email updates.
         </p>
         {validNewsletterForm(newsletterForm) && (
           <>
@@ -40,7 +40,7 @@ export default function PrivacyPage() {
           This website is hosted by Vercel and uses Vercel Analytics and Speed Insights to
           understand visits and website performance without analytics cookies. If you allow optional cookies,
           configured Google Analytics, Meta and TikTok tools help measure visits, ticket-link clicks,
-          press downloads and saved booking inquiries. These tools may store cookies or device identifiers.
+          press downloads and booking inquiries accepted by our email service. These tools may store cookies or device identifiers.
           Booking-form contents are not included in the measurement events we send. A ticket click does not
           tell us whether you bought a ticket, and a newsletter submission does not confirm a subscription.
         </p>
@@ -64,6 +64,9 @@ export default function PrivacyPage() {
           </a>
           .
         </p>
+        <h2 className="section-title" style={{ marginTop: 45 }}>Song votes and suggestions</h2>
+        <p>Song voting uses a random identifier saved in your browser to remember up to three choices per band. We store a hashed version with your picks in private website storage. The public chart shows song titles and aggregate vote counts, never names, email addresses or browser identifiers. Voting does not subscribe you to email updates. Clearing browser storage removes your ability to change earlier picks from that browser.</p>
+        <p>New-song suggestions are separate and are kept in Airtable for the band to review. If you choose to provide a name, email or note, those details stay out of the public chart. Contact Evan to ask about removing information you submitted.</p>
         <h2 className="section-title" style={{ marginTop: 45 }}>Performance videos</h2>
         <p>Our performance players connect to YouTube only after you press play. YouTube handles playback and may collect information under Google’s privacy policy.</p>
       </section>

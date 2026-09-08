@@ -1,12 +1,11 @@
 // Phase 33 — Booking form for QR landing pages.
 //
-// POSTs to /api/inquiry (existing endpoint with rate limit + validation from
-// Phase 38). Passes inquirySource so the lead is tagged in Airtable INQUIRIES
-// with the QR-landing channel.
+// Uses the shared email endpoint and includes the QR source in Evan's email.
 
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { BOOKING_EMAIL } from '@/lib/public/booking.mjs'
 
 const FIELD_STYLE = {
   width: '100%',
@@ -23,10 +22,11 @@ const FIELD_STYLE = {
 export default function BookingForm({
   bandName,
   bandSlug,
-  bookingEmail,
   primaryColor = '#D4A017',
   inquirySource,
 }) {
+  const bookingEmail = BOOKING_EMAIL
+  const submissionId = useRef(null)
   const [state, setState] = useState({
     name: '',
     email: '',
@@ -39,22 +39,28 @@ export default function BookingForm({
   const [errMsg, setErrMsg] = useState('')
 
   function set(field, value) {
+    if (status === 'submitting') return
+    submissionId.current = null
     setState((s) => ({ ...s, [field]: value }))
   }
 
   async function submit(e) {
     e.preventDefault()
+    if (status === 'submitting') return
     setStatus('submitting')
     setErrMsg('')
     try {
+      submissionId.current ||= crypto.randomUUID()
       const res = await fetch('/api/inquiry', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...state,
+          requestId: submissionId.current,
           band: bandName || '',
           inquirySource: inquirySource || (bandSlug ? `qr-landing:${bandSlug}` : 'qr-landing:hub'),
         }),
+        signal: AbortSignal.timeout(15000),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
@@ -63,7 +69,7 @@ export default function BookingForm({
       const data = await res.json()
       if (data.success !== true) throw new Error('We could not confirm delivery.')
       setStatus('sent')
-      window.dispatchEvent(new CustomEvent('epl:inquiry-saved'))
+      window.dispatchEvent(new CustomEvent('epl:inquiry-sent'))
     } catch (err) {
       setStatus('error')
       setErrMsg(err.message || 'Something went wrong. Please try again.')
@@ -91,7 +97,7 @@ export default function BookingForm({
             margin: 0,
           }}
         >
-          We will be in touch within 24 hours.
+          Your inquiry has been sent to Evan. He’ll follow up by email.
           {bookingEmail ? (
             <>
               <br />

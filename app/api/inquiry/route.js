@@ -1,7 +1,7 @@
 import { bandsList } from '@/lib/bands'
 import { rateLimit } from '@/lib/ratelimit'
-import { TABLES, tableUrl } from '@/lib/airtable'
-import { saveInquiry } from '@/lib/inquiry-service.mjs'
+import { sendInquiry } from '@/lib/inquiry-service.mjs'
+import { reserveBookingSend } from '@/lib/booking-quota.mjs'
 export async function POST(request) {
   const headers = { 'Cache-Control': 'no-store' }
   const origin = request.headers.get('origin')
@@ -37,10 +37,12 @@ export async function POST(request) {
   } catch {
     return Response.json({ error: 'Please send a valid inquiry.' }, { status: 400, headers })
   }
-  const result = await saveInquiry(body, {
+  const result = await sendInquiry(body, {
     bands: bandsList,
-    token: process.env.AIRTABLE_API_TOKEN || process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN,
-    url: tableUrl(TABLES.INQUIRIES),
+    apiKey: process.env.VERCEL_ENV === 'production' ? process.env.RESEND_API_KEY : undefined,
+    from: process.env.BOOKING_EMAIL_FROM,
+    reserve: reserveBookingSend,
+    log: (event) => console.info('[booking-email]', event),
   })
   return Response.json(result.body, { status: result.status, headers })
 }

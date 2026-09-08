@@ -1,6 +1,7 @@
 import { pageMetadata } from '@/lib/public/seo.mjs'
 import { Page, Intro, BandCard, BookingCta } from '@/components/SiteParts'
 import { bandsList } from '@/lib/bands'
+import BandChooser from '@/components/BandChooser'
 export const metadata = pageMetadata({"title": "Tribute & Cover Bands in Dallas–Fort Worth", "description": "Explore Echo Play Live’s four bands: 90s rock, 2000s emo and pop punk, TOOL and Deftones. Find your next show or book a band.", "path": "/bands"})
 export default function BandsPage() {
   return (
@@ -28,6 +29,7 @@ export default function BandsPage() {
           ))}
         </div>
       </section>
+      <BandChooser />
       <BookingCta />
     </Page>
   )
