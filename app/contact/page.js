@@ -5,6 +5,7 @@ import { FAQ_CONTACT } from '@/lib/faqs'
 export default async function ContactPage({ searchParams }) {
   const query = await searchParams
   const selected = bandsList.find((b) => b.slug === query?.band)?.name || ''
+  const selectedEvent = ['Bar / Venue Show', 'Festival', 'Private Event', 'Corporate Event'].includes(query?.event) ? query.event : ''
   return (
     <Page>
       <Intro
@@ -25,6 +26,7 @@ export default async function ContactPage({ searchParams }) {
       <section className="shell booking-layout">
         <BookingForm
           initialBand={selected}
+          initialEvent={selectedEvent}
           bands={bandsList.map((b) => ({ name: b.name, slug: b.slug, email: b.bookingEmail }))}
         />
         <aside className="booking-aside">

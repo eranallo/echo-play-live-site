@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { FILE_TYPES, mediaType, validateUploadSizes } from '@/lib/uploads/files.mjs'
 import { fingerprintFile, nextChunkEnd, receivedOffset } from '@/lib/uploads/transfer.mjs'
+import { track } from '@/lib/track'
 
 const STORAGE='epl-fan-upload-v1'
 const sizeLabel=n=>n>=1e9?`${(n/1e9).toFixed(2)} GB`:`${(n/1e6).toFixed(1)} MB`
@@ -72,10 +73,12 @@ export default function FanUpload({bands,initialBand=''}) {
         const unmatched=[...descriptors]
         if(current.files.length!==descriptors.length || current.files.some(expected=>{const i=unmatched.findIndex(f=>f.fingerprint===expected.fingerprint);if(i<0)return true;unmatched.splice(i,1);return false})) throw new Error('Please select the same original files for this submission. You can start a new submission to choose different files.')
         current=await api(activeToken,{action:'resume'})
+        track('Upload resumed', { band: band || initialBand })
       } else {
         if(!activeToken){activeToken=Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,'0')).join('');setToken(activeToken);try{localStorage.setItem(STORAGE,activeToken)}catch{}}
         setPhase('Preparing your submission…')
         current=await api(activeToken,{action:'start',show,files:descriptors,...details})
+        track('Upload started', { band: band || initialBand })
       }
       setSession(current);setSaved(false)
       if(current.complete){try{localStorage.removeItem(STORAGE)}catch{};return}
@@ -121,8 +124,9 @@ export default function FanUpload({bands,initialBand=''}) {
       }
       setPhase('Checking delivery…')
       const completed=await api(activeToken,{action:'complete'})
+      if(completed.complete)track('Upload completed', { band: band || initialBand })
       setSession(completed);try{localStorage.removeItem(STORAGE)}catch{}
-    } catch(e) {setMessage(e.message==='paused'?'Upload paused. Choose Resume upload when you’re ready.':/^(network|transfer_failed|invalid_upload_position)$/.test(e.message)?'Your connection was interrupted. Choose Resume upload when you’re ready.':e.message)} finally {setBusy(false);setPhase('');controller.current=null}
+    } catch(e) {track(e.message==='paused'?'Upload paused':'Upload interrupted', { band: band || initialBand });setMessage(e.message==='paused'?'Upload paused. Choose Resume upload when you’re ready.':/^(network|transfer_failed|invalid_upload_position)$/.test(e.message)?'Your connection was interrupted. Choose Resume upload when you’re ready.':e.message)} finally {setBusy(false);setPhase('');controller.current=null}
   }
   const available=shows.filter(s=>!band || s.bands.some(b=>b.slug===band))
   const total=(session?.files || files).reduce((n,f)=>n+f.size,0), received=progress.reduce((n,p)=>n+p,0)

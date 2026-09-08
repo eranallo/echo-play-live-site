@@ -1,9 +1,11 @@
 'use client'
 import { useState } from 'react'
 import { track } from '@/lib/track'
+import { qrPlacements, qrAsset } from '@/lib/public/qr-placements.mjs'
 
 export default function HubShare({ name, slug, path }) {
   const [status, setStatus] = useState('')
+  const [placement, setPlacement] = useState('standard')
   const url = `https://echoplay.live${path}`
   async function share(copyOnly = false) {
     setStatus('')
@@ -41,22 +43,23 @@ export default function HubShare({ name, slug, path }) {
         <p role="status" className="hub-status">
           {status}
         </p>
+        <label>Where will you use this code?<select value={placement} onChange={e => setPlacement(e.target.value)}>{qrPlacements.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
         <img
-          src={`/qr/${slug}.svg`}
+          src={qrAsset(slug, placement, 'svg')}
           alt={`QR code for ${name} links`}
           width="160"
           height="160"
           loading="lazy"
         />
         <div className="hub-share-actions">
-          <a href={`/qr/${slug}.png`} download={`${slug}-qr.png`}>
+          <a href={qrAsset(slug, placement, 'png')} download={`${slug}-${placement}-qr.png`} onClick={() => track('QR download', { band: slug === 'hub' ? 'echo-play-live' : slug, placement })}>
             Download PNG ↓
           </a>
-          <a href={`/qr/${slug}.svg`} download={`${slug}-qr.svg`}>
+          <a href={qrAsset(slug, placement, 'svg')} download={`${slug}-${placement}-qr.svg`} onClick={() => track('QR download', { band: slug === 'hub' ? 'echo-play-live' : slug, placement })}>
             Download SVG ↓
           </a>
         </div>
-        <p>This code opens this page. Keep using it as show dates and links change.</p>
+        <p>Every version opens this page and keeps working as dates and links change. Choose a placement to help us see where visitors find us.</p>
       </div>
     </details>
   )

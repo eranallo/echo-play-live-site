@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { Suspense } from 'react'
 import HomeUpcomingShows from '@/components/HomeUpcomingShows'
+import FanReviews from '@/components/FanReviews'
+import LatestRecap from '@/components/LatestRecap'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 import Image from 'next/image'
@@ -91,6 +93,8 @@ export default function HomePage() {
           Get to know Echo Play Live <span aria-hidden="true">→</span>
         </Link>
       </section>
+      <FanReviews />
+      <Suspense fallback={null}><LatestRecap /></Suspense>
       <BookingCta />
     </Page>
   )

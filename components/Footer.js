@@ -37,6 +37,8 @@ export default function Footer() {
           <h2>Let’s work together.</h2>
           <Link href="/contact">Booking inquiries ↗</Link>
           <Link href="/press">Press & band kits</Link>
+          <Link href="/booking/venues-festivals">Venues & festivals</Link>
+          <Link href="/booking/private-corporate">Private & corporate events</Link>
           <Link href="/privacy">Privacy</Link>
         </div>
       </div>

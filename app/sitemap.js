@@ -5,12 +5,15 @@ import { bandsList } from '@/lib/bands'
 import { getMusicians } from '@/lib/musicians'
 import { getPublicShows } from '@/lib/public/shows'
 import { showPath } from '@/lib/public/show-presentation.mjs'
+import { getPublishedRecaps } from '@/lib/public/published-recaps'
+import { getEpisodes } from '@/lib/podcast'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 const SITE_URL = 'https://echoplay.live'
 
 export default async function sitemap() {
+  const [recapResult, episodes] = await Promise.all([getPublishedRecaps(), getEpisodes()])
   const staticRoutes = [
     { url: SITE_URL, priority: 1.0, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/bands`, priority: 0.9, changeFrequency: 'monthly' },
@@ -20,6 +23,8 @@ export default async function sitemap() {
     { url: `${SITE_URL}/podcast`, priority: 0.7, changeFrequency: 'weekly' },
     { url: `${SITE_URL}/press`, priority: 0.7, changeFrequency: 'monthly' },
     { url: `${SITE_URL}/contact`, priority: 0.8, changeFrequency: 'monthly' },
+    { url: `${SITE_URL}/booking/venues-festivals`, priority: 0.8, changeFrequency: 'monthly' },
+    { url: `${SITE_URL}/booking/private-corporate`, priority: 0.8, changeFrequency: 'monthly' },
     { url: `${SITE_URL}/about`, priority: 0.6, changeFrequency: 'monthly' },
   ]
 
@@ -61,6 +66,8 @@ export default async function sitemap() {
     })),
     ...musicianRoutes,
     ...eventRoutes,
+    ...recapResult.recaps.map(recap => ({ url: `${SITE_URL}/recaps/${recap.slug}`, priority: 0.6, changeFrequency: 'monthly' })),
+    ...episodes.filter(ep => ep.slug).map(ep => ({ url: `${SITE_URL}/podcast/${ep.slug}`, priority: 0.5, changeFrequency: 'monthly' })),
   ].map((route) => ({
     ...route,
   }))

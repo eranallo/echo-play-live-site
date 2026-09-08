@@ -9,6 +9,7 @@ import BandHeaderVideo from '@/components/BandHeaderVideo'
 import BandUpcomingShows from '@/components/BandUpcomingShows'
 import BookingEssentials from '@/components/BookingEssentials'
 import FanSignup from '@/components/FanSignup'
+import FanReviews from '@/components/FanReviews'
 import PerformanceVideo from '@/components/PerformanceVideo'
 import { getPerformance } from '@/lib/public/performances.mjs'
 export const dynamic = 'force-dynamic'
@@ -156,6 +157,7 @@ export default async function BandPage({ params }) {
           </div>
         </div>
       </section>
+      <FanReviews band={slug} />
       {!band.hidden && <BookingEssentials band={band} />}
       {!band.hidden && <FanSignup bandSlug={band.slug} />}
       <BookingCta />

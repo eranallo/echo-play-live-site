@@ -5,9 +5,11 @@ import TrackedLink from './TrackedLink'
 import FanSignup from './FanSignup'
 import HubShare from './HubShare'
 import BrandLogo from './BrandLogo'
+import LatestRecap from './LatestRecap'
 import { linkHubs, nextHubShow } from '@/lib/public/link-hubs.mjs'
 import { getPublicShows } from '@/lib/public/shows'
-import { showPath } from '@/lib/public/show-presentation.mjs'
+import { showPath, showTime } from '@/lib/public/show-presentation.mjs'
+import { chicagoDate } from '@/lib/public/shows-contract.mjs'
 import { uploadsEnabled } from '@/lib/uploads/service.mjs'
 
 const showsHref = (hub) => (hub.slug === 'hub' ? '/shows' : `/shows?band=${hub.slug}`)
@@ -27,6 +29,7 @@ async function NextShow({ hub }) {
   const result = await getPublicShows()
   const show = result.ok ? nextHubShow(result.shows, hub.slug) : null
   if (!show) return <ShowLink hub={hub} />
+  const today = show.date === chicagoDate(new Date())
   const date = new Intl.DateTimeFormat('en-US', {
     weekday: 'short',
     month: 'short',
@@ -44,16 +47,22 @@ async function NextShow({ hub }) {
         showId={show.id}
       >
         <div>
-          <span className="hub-kicker">Next show · {date}</span>
+          <span className="hub-kicker">{today ? 'Today' : 'Next show'} · {date}</span>
           <h2>{show.venue.name}</h2>
           <p>
             {hub.slug === 'hub'
               ? show.bands.map((band) => band.name).join(' + ')
               : 'Show information & ticket details'}
           </p>
+          {today && <p>{showTime(show)}</p>}
         </div>
         <span aria-hidden="true">↗</span>
       </TrackedLink>
+      {today && <div className="hub-today-actions">
+        <Link href={showPath(show)}>Show details & directions ↗</Link>
+        {show.ticket?.url && <TrackedLink event="Ticket click" band={hub.slug} showId={show.id} href={show.ticket.url} target="_blank" rel="noopener noreferrer">Tickets ↗</TrackedLink>}
+        {uploadsEnabled() && <Link href={hub.slug === 'hub' ? '/upload' : `/upload?band=${hub.slug}`} prefetch={false}>Share tonight’s photos ↑</Link>}
+      </div>}
       <Link className="hub-all-shows" href={showsHref(hub)} prefetch={false}>
         All upcoming shows →
       </Link>
@@ -123,6 +132,7 @@ export default function LinkHub({ hub }) {
           </section>
         )}
         <nav aria-label={`${hub.name} links`} className="hub-links">
+          <Suspense fallback={null}><LatestRecap band={company ? undefined : hub.slug} compact /></Suspense>
           {uploadsEnabled() && <Link className="hub-link" href={company?'/upload':`/upload?band=${hub.slug}`} prefetch={false}><span><strong>Share your photos & videos</strong><small>Got a good shot from a show? Send it to us.</small></span><span aria-hidden="true">↑</span></Link>}
           {hub.links.map(([label, detail, href]) => (
             <TrackedLink
