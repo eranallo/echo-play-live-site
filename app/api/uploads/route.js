@@ -20,6 +20,7 @@ const errors={
   session_busy:[409,'This submission is still being prepared. Wait a few minutes, then try again.'],
   upload_quota:[429,'We’ve reached the upload limit for now. Please try again later.'],
   delivery_incomplete:[409,'We haven’t received every file yet. Please resume the upload.'],
+  media_rejected:[415,'One or more files were not supported photos or videos. Please start a new submission with the original photo or video files.'],
   restart_limit:[409,'We couldn’t restart this file again. Please contact us with your submission reference.'],
 }
 export async function POST(request) {

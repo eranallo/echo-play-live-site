@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Page } from '@/components/SiteParts'
 import ShareShow from '@/components/ShareShow'
 import TrackedLink from '@/components/TrackedLink'
+import ShowPurchaseLinks from '@/components/ShowPurchaseLinks'
 import FanSignup from '@/components/FanSignup'
 import { getPublicShow } from '@/lib/public/show-detail'
 import { showPath, showTitle, showDate, showTime } from '@/lib/public/show-presentation.mjs'
@@ -52,10 +53,6 @@ export default async function EventPage({ params }) {
             <strong>{showTime(show)}</strong>
           </div>
           {show.doorsTime && <div><span>Doors</span><strong>{showTime({ ...show, startTime: show.doorsTime })}</strong></div>}
-          {!canceled && (show.ticket || show.ticketNote) && <div>
-            <span>{show.ticket ? 'Tickets' : 'Admission'}</span>
-            <strong>{show.ticket?.priceLabel || show.ticketNote || 'See ticket page'}</strong>
-          </div>}
         </div>
         {canceled ? (
           <div className="quiet-state">
@@ -64,20 +61,7 @@ export default async function EventPage({ params }) {
           </div>
         ) : (
           <div className="button-row event-actions">
-            {show.ticket ? (
-              <TrackedLink
-                className="button"
-                href={show.ticket.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                event="Ticket click"
-                showId={show.id}
-              >
-                Get tickets ↗
-              </TrackedLink>
-            ) : show.ticketNote ? (
-              <p className="muted">{show.ticketNote}</p>
-            ) : null}
+            <ShowPurchaseLinks show={show} />
             <TrackedLink
               className="button button-outline"
               href={`${showPath(show)}/calendar`}

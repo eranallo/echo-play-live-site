@@ -31,7 +31,7 @@ export default function PrivacyPage() {
           </>
         )}
         <h2 className="section-title" style={{ marginTop: 45 }}>Show photos & videos</h2>
-        <p>When you upload photos or videos, the files go to a private show folder in Google Drive that our team and the band can access. We keep a submission record in Airtable, including any name, email or credit you provide and your permission choices. We use Vercel to securely track upload progress and limit misuse. A recovery code saved in your browser lets you resume an interrupted submission for up to three days.</p>
+        <p>When you upload photos or videos, the files go to a private show folder in Google Drive that our team and the band can access. We keep a submission record in Airtable, including any name, email or credit you provide and your permission choices. Resend emails Evan a notification with those details and a link to the private submission folder. We use Vercel to securely track upload progress, notification delivery and limit misuse. A recovery code saved in your browser lets you resume an interrupted submission for up to three days.</p>
         <p>Permission to repost is optional and separate from sending us a file. Uploading does not subscribe you to email updates, and your file names, contact details and upload links are not included in the measurement events we send. Contact us below about a submission or a change to your permission.</p>
         <h2 className="section-title" style={{ marginTop: 45 }}>
           Website services

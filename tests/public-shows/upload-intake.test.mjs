@@ -2,8 +2,8 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { hasMediaSignature, validateSubmission } from '../../lib/uploads/files.mjs'
 import { loadUploadShows, uploadShowId, driveFolderId, saveUploadReceipt } from '../../lib/uploads/source.mjs'
-import { receivedOffset, nextChunkEnd } from '../../lib/uploads/transfer.mjs'
-import { validSessionUrl, verifiedFile, filePosition } from '../../lib/uploads/google.mjs'
+import { receivedOffset, nextChunkEnd, checkSelectedMedia } from '../../lib/uploads/transfer.mjs'
+import { validSessionUrl, verifiedFile, filePosition, trashRejectedMedia } from '../../lib/uploads/google.mjs'
 import { SHOW_FIELD_IDS as F, VENUE_FIELD_IDS as V } from '../../lib/public/shows-contract.mjs'
 const rid='rec00000000000001', bid='rec00000000000002', vid='rec00000000000003'
 const folder='sample_private_folder_001'
@@ -16,10 +16,33 @@ test('intake separates required authority from optional repost and drops caller 
   assert.throws(()=>validateSubmission({...body,authority:false}))
 })
 test('intake rejects executable extensions, path traversal, malformed identity and unbounded metadata',()=>{
-  for(const name of ['page.html','payload.constructor','../video.mov','video\\test.mp4','x\n.mp4']) assert.throws(()=>validateSubmission({...body,files:[{...file,name}]}))
+  for(const name of ['page.html','payload.constructor','../video.mov','video\\test.mp4','x\n.mp4','document.pdf','archive.zip','music.mp3','audio.m4a','vector.svg','script.js','app.exe','video.mp4.exe']) assert.throws(()=>validateSubmission({...body,files:[{...file,name}]}))
   assert.throws(()=>validateSubmission({...body,show:rid}))
   assert.throws(()=>validateSubmission({...body,name:'n'.repeat(81)}))
   assert.throws(()=>validateSubmission({...body,email:'wrong'}))
+})
+test('local preflight rejects renamed documents before any transfer',async()=>{
+  await assert.rejects(checkSelectedMedia(new File(['<html>not a photo</html>'],'photo.jpg',{type:'image/jpeg'})),/original photos or videos/)
+  await assert.rejects(checkSelectedMedia(new File(['%PDF'],'file.pdf',{type:'image/png'})),/original photos or videos/)
+  await checkSelectedMedia(new File([Uint8Array.from([137,80,78,71,13,10,26,10])],'photo.png'))
+})
+test('media container checks reject audio-only ISO brands and arbitrary EBML documents',()=>{
+  const encode=value=>new TextEncoder().encode(value)
+  assert.equal(hasMediaSignature(encode('\0\0\0\x18ftypM4A \0\0\0\0isommp42'),'video/mp4'),false)
+  assert.equal(hasMediaSignature(encode('\0\0\0\x18ftypavif\0\0\0\0isomavif'),'video/mp4'),false)
+  assert.equal(hasMediaSignature(Uint8Array.from([0x1a,0x45,0xdf,0xa3]),'video/webm'),false)
+  assert.equal(hasMediaSignature(encode('\0\0\0\x18ftypisom\0\0\0\0isommp42'),'video/mp4'),true)
+})
+test('rejected-file cleanup can trash only the matching upload and is recoverable on retry',async()=>{
+  const session={id:'submission',folderId:'destination'},f={...file,id:'file-id',mimeType:'video/quicktime'}
+  const metadata={...f,parents:['destination'],appProperties:{eplSubmission:'submission',fingerprint:f.fingerprint}}
+  let writes=0
+  const request=async(path,options)=>{writes++;assert.deepEqual(JSON.parse(options.body),{trashed:true});return Response.json({trashed:true})}
+  await trashRejectedMedia(f,session,{metadata:async()=>metadata,request})
+  await trashRejectedMedia(f,session,{metadata:async()=>({...metadata,trashed:true}),request})
+  assert.equal(writes,1)
+  await assert.rejects(trashRejectedMedia(f,session,{metadata:async()=>({...metadata,parents:['unrelated-folder']}),request}),/delivery_mismatch/)
+  assert.equal(writes,1)
 })
 test('media signatures reject renamed HTML and distinguish image and video containers',()=>{
   const png=Uint8Array.from([137,80,78,71,13,10,26,10])

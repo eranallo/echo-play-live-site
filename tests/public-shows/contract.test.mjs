@@ -11,6 +11,7 @@ import {
   publicShowToEventJsonLd,
   validDateOnly,
 } from '../../lib/public/shows-contract.mjs'
+import { showPurchaseLinks } from '../../lib/public/show-presentation.mjs'
 
 const fixture = JSON.parse(
   await readFile(new URL('../fixtures/public-shows.json', import.meta.url), 'utf8'),
@@ -123,6 +124,7 @@ test('only allowlisted public fields survive and canceled shows suppress tickets
   const canceled = built.shows.find((show) => show.state === 'canceled')
   assert.ok(canceled)
   assert.equal(canceled.ticket, null)
+  assert.equal(canceled.reservation, null)
   assert.equal(canceled.ticketNote, null)
 
   const missingTicket = built.shows.find((show) => show.date === '2026-10-02')
@@ -140,6 +142,7 @@ test('only allowlisted public fields survive and canceled shows suppress tickets
         'startTime',
         'state',
         'ticket',
+        'reservation',
         'ticketNote',
         'timeZone',
         'venue',
@@ -255,9 +258,9 @@ test('public band and venue identity must be complete, approved, and non-placeho
   assert.equal(partialResult.shows.length, 0)
 })
 
-test('ticket URLs require HTTPS and price never implies free admission', () => {
+test('ticket URLs require HTTPS and ticket amounts never enter public output', () => {
   const rows = [
-    { url: 'http://tickets.invalid/insecure', price: 20, note: '$20' },
+    { url: 'http://tickets.invalid/insecure', price: 20, note: null },
     { url: '', price: 0, note: null },
     { url: 'https://tickets.invalid/secure', price: 18.5, note: null },
   ].map((item, index) => {
@@ -265,7 +268,7 @@ test('ticket URLs require HTTPS and price never implies free admission', () => {
     record.id = `rec4000000000000${index + 1}`
     delete record.fields[SHOW_FIELD_IDS.calendarEventId]
     record.fields[SHOW_FIELD_IDS.ticketUrl] = item.url
-    record.fields[SHOW_FIELD_IDS.ticketPrice] = item.price
+    record.fields.fld8KAW94k2KbuNC4 = item.price
     return { item, record }
   })
   const prepared = prepareShowRows(
@@ -291,7 +294,8 @@ test('ticket URLs require HTTPS and price never implies free admission', () => {
     assert.equal(show.ticketNote, item.note)
   }
   assert.equal(built.shows.filter((show) => show.ticket).length, 1)
-  assert.equal(built.shows.find((show) => show.ticket)?.ticket.priceLabel, '$18.50')
+  assert.equal(built.shows.find((show) => show.ticket)?.ticket.priceLabel, null)
+  assert.equal(JSON.stringify(built.shows).includes('$'), false)
   assert.equal(JSON.stringify(built.shows).includes('Free'), false)
 })
 
@@ -318,6 +322,54 @@ test('same-day ordering is timed first, then chronological, then untimed', () =>
   )
 })
 
+test('ticket and table-reservation links display independently with no pricing claims', () => {
+  for (const [ticket, reservation, labels] of [
+    [null, null, []],
+    ['https://tickets.invalid/show', null, ['Buy Tickets']],
+    [null, 'https://tables.invalid/show', ['Table Reservation']],
+    ['https://tickets.invalid/show', 'https://tables.invalid/show', ['Buy Tickets', 'Table Reservation']],
+  ]) {
+    const record = clone(fixture.sourceRecords[0])
+    record.fields[SHOW_FIELD_IDS.ticketUrl] = ticket
+    record.fields[SHOW_FIELD_IDS.reservationUrl] = reservation
+    record.fields.fld8KAW94k2KbuNC4 = 15
+    const show = buildPublicShows({ rows: prepareShowRows([record], '2026-08-28').rows, ...hydratedMaps(), approvedBands: fixture.approvedBands }).shows[0]
+    const links = showPurchaseLinks(show)
+    assert.deepEqual(links.map(link => link.label), labels)
+    assert.deepEqual(links.map(link => link.url), [ticket, reservation].filter(Boolean))
+    assert.equal(show.ticketNote, null)
+    assert.equal(JSON.stringify(show).includes('$'), false)
+    assert.deepEqual(publicShowToEventJsonLd(show).offers, ticket ? { '@type': 'Offer', url: ticket } : undefined, 'table reservations are not ticket offers')
+    assert.deepEqual(showPurchaseLinks({ ...show, state: 'canceled' }), [])
+    record.fields[SHOW_FIELD_IDS.status] = 'Cancelled'
+    const canceled = buildPublicShows({ rows: prepareShowRows([record], '2026-08-28').rows, ...hydratedMaps(), approvedBands: fixture.approvedBands }).shows[0]
+    assert.equal(canceled.ticket, null)
+    assert.equal(canceled.reservation, null)
+  }
+})
+
+test('unsafe reservation links are omitted without hiding a valid ticket link', () => {
+  for (const url of ['http://tables.invalid', 'javascript:alert(1)', 'https://user:password@tables.invalid', 'not-a-url', '']) {
+    const record = clone(fixture.sourceRecords[0])
+    record.fields[SHOW_FIELD_IDS.ticketUrl] = 'https://tickets.invalid/show'
+    record.fields[SHOW_FIELD_IDS.reservationUrl] = url
+    const show = buildPublicShows({ rows: prepareShowRows([record], '2026-08-28').rows, ...hydratedMaps(), approvedBands: fixture.approvedBands }).shows[0]
+    assert.equal(show.reservation, null)
+    assert.deepEqual(showPurchaseLinks(show).map(link => link.label), ['Buy Tickets'])
+  }
+})
+
+test('grouped shows combine matching links and ignore different internal ticket amounts', () => {
+  const records = clone(fixture.sourceRecords.slice(5, 7))
+  records[0].fields[SHOW_FIELD_IDS.reservationUrl] = 'https://tables.invalid/shared'
+  records[0].fields.fld8KAW94k2KbuNC4 = 15
+  records[1].fields.fld8KAW94k2KbuNC4 = 20
+  const built = buildPublicShows({ rows: prepareShowRows(records, '2026-08-28').rows, ...hydratedMaps(), approvedBands: fixture.approvedBands })
+  assert.equal(built.shows.length, 1)
+  assert.equal(built.shows[0].reservation.url, 'https://tables.invalid/shared')
+  assert.deepEqual(showPurchaseLinks(built.shows[0]).map(link => link.label), ['Buy Tickets', 'Table Reservation'])
+})
+
 test('conflicting headliner, time, ticket, date, or venue facts block a shared event', () => {
   const mutations = [
     (rows) => {
@@ -329,6 +381,10 @@ test('conflicting headliner, time, ticket, date, or venue facts block a shared e
     },
     (rows) => {
       rows[0].fields[SHOW_FIELD_IDS.ticketUrl] = 'https://tickets.invalid/conflict'
+    },
+    (rows) => {
+      rows[0].fields[SHOW_FIELD_IDS.reservationUrl] = 'https://tables.invalid/one'
+      rows[1].fields[SHOW_FIELD_IDS.reservationUrl] = 'https://tables.invalid/two'
     },
     (rows) => {
       rows[1].fields[SHOW_FIELD_IDS.date] = '2026-10-04'
