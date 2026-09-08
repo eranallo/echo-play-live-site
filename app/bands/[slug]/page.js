@@ -29,6 +29,7 @@ export default async function BandPage({ params }) {
     name: band.name,
     shortName: band.shortName,
     color: band.color,
+    hidden: Boolean(band.hidden),
     tributeMode: band.tributeMode || false,
     tributeArtistName: band.tributeArtistName || '',
     social: band.social,

@@ -11,7 +11,7 @@
 // each song with Spotify album art before this component receives it.
 
 import { useEffect, useMemo, useState } from 'react'
-import SongRequestModal from './SongRequestModal'
+import Link from 'next/link'
 
 export default function SongsSection({ band, defaultExpanded = false }) {
   const [songs, setSongs] = useState([])
@@ -28,7 +28,6 @@ export default function SongsSection({ band, defaultExpanded = false }) {
   const [revealedId, setRevealedId] = useState(null)
 
   // Phase 20.1: song request modal toggle for non-tribute bands.
-  const [requestOpen, setRequestOpen] = useState(false)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -131,7 +130,7 @@ export default function SongsSection({ band, defaultExpanded = false }) {
         {/* Section header */}
         <div style={{ marginBottom: 'var(--s-6)' }}>
           <div className="section-label" style={{ color: accent, marginBottom: 'var(--s-3)' }}>
-            Songs We Play
+            Past & present
           </div>
           <div
             style={{
@@ -164,7 +163,7 @@ export default function SongsSection({ band, defaultExpanded = false }) {
               <strong style={{ color: 'var(--c-text)', fontWeight: 600 }}>{songs.length}</strong>{' '}
               songs in the catalog across{' '}
               <strong style={{ color: 'var(--c-text)', fontWeight: 600 }}>{uniqueArtists}</strong>{' '}
-              artists
+              {uniqueArtists === 1 ? 'artist' : 'artists'}
             </div>
           </div>
         </div>
@@ -217,7 +216,7 @@ export default function SongsSection({ band, defaultExpanded = false }) {
               >
                 Show all {songs.length} songs
               </button>
-              <RequestButton accent={accent} onClick={() => setRequestOpen(true)} />
+              <RequestButton accent={accent} href={`/requests?band=${band.slug}`} />
             </div>
           </>
         )}
@@ -341,7 +340,7 @@ export default function SongsSection({ band, defaultExpanded = false }) {
                 flexWrap: 'wrap',
               }}
             >
-              <RequestButton accent={accent} onClick={() => setRequestOpen(true)} />
+              <RequestButton accent={accent} href={`/requests?band=${band.slug}`} />
               <button
                 type="button"
                 onClick={() => {
@@ -418,17 +417,15 @@ export default function SongsSection({ band, defaultExpanded = false }) {
         }
       `}</style>
 
-      <SongRequestModal open={requestOpen} onClose={() => setRequestOpen(false)} band={band} />
     </section>
   )
 }
 
 // Small reusable button — used in both collapsed and expanded states.
-function RequestButton({ accent, onClick }) {
+function RequestButton({ accent, href }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
+    <Link
+      href={href}
       style={{
         fontFamily: 'var(--ff-label)',
         fontSize: '12px',
@@ -452,8 +449,8 @@ function RequestButton({ accent, onClick }) {
         e.currentTarget.style.color = 'var(--c-text)'
       }}
     >
-      Request a song
-    </button>
+      Help choose what’s next
+    </Link>
   )
 }
 

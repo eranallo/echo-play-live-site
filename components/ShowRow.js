@@ -48,9 +48,9 @@ export default function ShowRow({ show }) {
         >
           Get tickets ↗
         </TrackedLink>
-      ) : (
-        <span className="muted">{show.ticketNote || 'Ticket details soon'}</span>
-      )}
+      ) : show.ticketNote ? (
+        <span className="muted">{show.ticketNote}</span>
+      ) : null}
     </article>
   )
 }

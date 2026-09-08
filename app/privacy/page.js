@@ -65,8 +65,8 @@ export default function PrivacyPage() {
           .
         </p>
         <h2 className="section-title" style={{ marginTop: 45 }}>Song votes and suggestions</h2>
-        <p>Song voting uses a random identifier saved in your browser to remember up to three choices per band. We store a hashed version with your picks in private website storage. The public chart shows song titles and aggregate vote counts, never names, email addresses or browser identifiers. Voting does not subscribe you to email updates. Clearing browser storage removes your ability to change earlier picks from that browser.</p>
-        <p>New-song suggestions are separate and are kept in Airtable for the band to review. If you choose to provide a name, email or note, those details stay out of the public chart. Contact Evan to ask about removing information you submitted.</p>
+        <p>Song voting uses a random identifier saved in your browser to remember up to three choices per band. We store a hashed version with your picks in private website storage. Adding a song from search puts its title, artist, Spotify link and available artwork on the public request chart. The chart shows aggregate votes, never names, email addresses or browser identifiers. Songs to learn and repertoire requests have separate charts. Voting does not subscribe you to email updates. Clearing browser storage removes your ability to change earlier picks from that browser.</p>
+        <p>The “Can’t find it?” form sends a separate private suggestion to Airtable for the band to review. These notes and historical private suggestions are not published on the chart. If you choose to provide a name, email or note, those details stay out of the public chart. Contact Evan to ask about removing information you submitted.</p>
         <h2 className="section-title" style={{ marginTop: 45 }}>Performance videos</h2>
         <p>Our performance players connect to YouTube only after you press play. YouTube handles playback and may collect information under Google’s privacy policy.</p>
       </section>

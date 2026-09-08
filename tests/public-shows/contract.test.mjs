@@ -128,7 +128,7 @@ test('only allowlisted public fields survive and canceled shows suppress tickets
   const missingTicket = built.shows.find((show) => show.date === '2026-10-02')
   assert.equal(missingTicket.startTime, null)
   assert.equal(missingTicket.ticket, null)
-  assert.equal(missingTicket.ticketNote, 'Ticket details coming soon')
+  assert.equal(missingTicket.ticketNote, null)
 
   for (const show of built.shows) {
     assert.deepEqual(
@@ -257,8 +257,8 @@ test('public band and venue identity must be complete, approved, and non-placeho
 
 test('ticket URLs require HTTPS and price never implies free admission', () => {
   const rows = [
-    { url: 'http://tickets.invalid/insecure', price: 20, note: '$20 · Ticket details coming soon' },
-    { url: '', price: 0, note: 'Ticket details coming soon' },
+    { url: 'http://tickets.invalid/insecure', price: 20, note: '$20' },
+    { url: '', price: 0, note: null },
     { url: 'https://tickets.invalid/secure', price: 18.5, note: null },
   ].map((item, index) => {
     const record = clone(fixture.sourceRecords[0])
