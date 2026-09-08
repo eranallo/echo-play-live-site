@@ -56,10 +56,11 @@ export default function SongVotes({band,initialQuery=''}) {
       <button type="button" aria-pressed={view==='learn'} onClick={()=>{setView('learn');setQuery('');setPage(0)}}>Songs to learn <span>{songs.filter(s=>s.kind==='learn').length}</span></button>
       <button type="button" aria-pressed={view==='catalog'} onClick={()=>{setView('catalog');setQuery('');setPage(0)}}>Bring it back <span>{songs.filter(s=>s.kind==='catalog').length}</span></button>
     </div>
-    {view==='learn' && <SongFinder initialQuery={initialQuery} busy={Boolean(busy)} full={picks.length>=3} onAdd={spotifyId=>update('add',undefined,spotifyId)} onSuggest={()=>setSuggesting(true)} />}
+    {view==='learn' && <SongFinder initialQuery={initialQuery} busy={Boolean(busy) || !board} full={picks.length>=3} onAdd={spotifyId=>update('add',undefined,spotifyId)} onSuggest={()=>setSuggesting(true)} />}
     {view==='catalog' && <div className="request-catalog-intro"><h3>An old favorite deserves another night.</h3><p>These songs are in our repertoire, past or present. A vote here asks us to bring one back or keep it in rotation. It doesn’t mean it’s retired—or on tonight’s setlist.</p><Link className="text-link" href={`/bands/${band.slug}#music`}>Browse the artwork and listen on Spotify ↗</Link></div>}
     <div className="vote-status" role="status">{busy==='status'?'Checking the latest votes…':notice}</div>
     {error && <p role="alert" className="form-error">{error}</p>}
+    {error && !board && <button type="button" className="button button-outline" disabled={Boolean(busy)} onClick={()=>update()}>Try loading the chart again ↻</button>}
     {board && <>
       <div className="request-picks-strip"><h3>Your picks <span>{picks.length}/{board.maxVotes}</span></h3>
         {picks.length?<ul>{picks.map(song=><li key={song.id}><span>{song.title}<small>{song.kind==='learn'?'Learn it':'Bring it back'}</small></span><button type="button" disabled={Boolean(busy)} onClick={()=>update('remove',song.id)} aria-label={`Remove your vote for ${song.title}`}>×</button></li>)}</ul>:<p>Your three picks can include new songs and old favorites.</p>}
