@@ -8,6 +8,7 @@ import BrandLogo from './BrandLogo'
 import { linkHubs, nextHubShow } from '@/lib/public/link-hubs.mjs'
 import { getPublicShows } from '@/lib/public/shows'
 import { showPath } from '@/lib/public/show-presentation.mjs'
+import { uploadsEnabled } from '@/lib/uploads/service.mjs'
 
 const showsHref = (hub) => (hub.slug === 'hub' ? '/shows' : `/shows?band=${hub.slug}`)
 function ShowLink({ hub, loading = false }) {
@@ -122,6 +123,7 @@ export default function LinkHub({ hub }) {
           </section>
         )}
         <nav aria-label={`${hub.name} links`} className="hub-links">
+          {uploadsEnabled() && <Link className="hub-link" href={company?'/upload':`/upload?band=${hub.slug}`} prefetch={false}><span><strong>Share your photos & videos</strong><small>Got a good shot from a show? Send it to us.</small></span><span aria-hidden="true">↑</span></Link>}
           {hub.links.map(([label, detail, href]) => (
             <TrackedLink
               key={href}

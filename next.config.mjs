@@ -8,7 +8,7 @@ const CSP = [
   "font-src 'self' https://fonts.gstatic.com data:",
   "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com https://*.vercel-storage.com https://*.airtableusercontent.com https://dl.airtable.com https://www.buzzsprout.com https://i.scdn.co https://mosaic.scdn.co https://www.facebook.com https://analytics.tiktok.com https://*.tiktok.com",
   "media-src 'self' blob: https://*.public.blob.vercel-storage.com https://*.vercel-storage.com https://*.airtableusercontent.com",
-  "connect-src 'self' https://va.vercel-scripts.com https://vitals.vercel-insights.com https://api.spotify.com https://api.airtable.com https://accounts.spotify.com https://rest.bandsintown.com https://www.facebook.com https://graph.facebook.com https://analytics.tiktok.com https://*.tiktok.com https://www.google-analytics.com https://region1.google-analytics.com",
+  "connect-src 'self' https://www.googleapis.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://api.spotify.com https://api.airtable.com https://accounts.spotify.com https://rest.bandsintown.com https://www.facebook.com https://graph.facebook.com https://analytics.tiktok.com https://*.tiktok.com https://www.google-analytics.com https://region1.google-analytics.com",
   "frame-src 'self' https://widget.bandsintown.com https://open.spotify.com https://www.youtube-nocookie.com",
   "frame-ancestors 'none'",
   "object-src 'none'",
