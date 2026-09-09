@@ -1,8 +1,8 @@
-/* Public design: neutral surfaces, generous type, real performance photography. */
+/* Public layout; app/brand.css supplies the selected After Hours color roles. */
 :root {
-  --ff-display: var(--font-gotham), 'Arial Black', sans-serif;
-  --ff-body: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-  --ff-label: var(--ff-display);
+  --ff-display: var(--font-cabinet), 'Arial', sans-serif;
+  --ff-body: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  --ff-label: var(--ff-body);
   --c-bg: #f5f5f7;
   --c-text: #000;
   --c-text-muted: #626267;
@@ -274,7 +274,7 @@ img {
   font-size: clamp(60px, 7.3vw, 102px);
   font-weight: 650;
   line-height: 0.99;
-  letter-spacing: -0.065em;
+  letter-spacing: -0.02em;
 }
 .hero-description {
   font-size: 21px;
@@ -315,7 +315,7 @@ img {
   font-size: clamp(44px, 5.5vw, 76px);
   line-height: 1.03;
   font-weight: 600;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.02em;
   margin-bottom: 30px;
 }
 .glass-link {
@@ -357,7 +357,7 @@ img {
 .story-strip h2 {
   font-size: clamp(40px, 4.4vw, 60px);
   font-weight: 600;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.02em;
   line-height: 1.08;
 }
 .section-heading .eyebrow {
@@ -423,7 +423,7 @@ img {
 .band-card h3 {
   font-size: clamp(28px, 3vw, 42px);
   font-weight: 600;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
   line-height: 1.12;
 }
 .band-card p {
@@ -498,7 +498,7 @@ img {
 .booking-banner h2 {
   font-size: clamp(48px, 6vw, 80px);
   font-weight: 600;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.02em;
   line-height: 1.04;
 }
 .booking-banner p:not(.eyebrow) {
@@ -563,7 +563,7 @@ img {
 .page-intro h1 {
   font-size: clamp(52px, 7vw, 94px);
   line-height: 1.01;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.02em;
   font-weight: 600;
 }
 .intro-copy {
@@ -581,7 +581,7 @@ img {
 }
 .content-panel h2 {
   font-size: 28px;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   line-height: 1.2;
 }
 .content-panel p {
@@ -613,7 +613,7 @@ img {
 .section-title {
   font-size: 40px;
   line-height: 1.15;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
   font-weight: 600;
   margin-bottom: 28px;
 }
@@ -626,7 +626,7 @@ img {
 }
 .empty-state h2 {
   font-size: 30px;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   margin-bottom: 15px;
 }
 .empty-state p {
@@ -705,7 +705,7 @@ img {
 .band-detail-hero h1 {
   font-size: clamp(60px, 8.5vw, 118px);
   line-height: 0.98;
-  letter-spacing: -0.065em;
+  letter-spacing: -0.02em;
   font-weight: 600;
   max-width: 960px;
 }
@@ -740,7 +740,7 @@ img {
 .band-description h2 {
   font-size: 52px;
   font-weight: 600;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.02em;
   line-height: 1.08;
 }
 .band-description p {
@@ -795,7 +795,7 @@ img {
 .quiet-state h3,
 .quiet-state h2 {
   font-size: 24px;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
   margin-bottom: 12px;
 }
 .quiet-state p {
@@ -832,7 +832,7 @@ img {
 }
 .booking-facts-grid h3 {
   font-size: 23px;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
   line-height: 1.2;
   margin: 20px 0 14px;
 }
@@ -863,7 +863,7 @@ img {
 .production-request h2 {
   font-size: 36px;
   line-height: 1.1;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.02em;
 }
 .production-request p:not(.eyebrow) {
   line-height: 1.8;
@@ -880,7 +880,7 @@ img {
 .event-intro h1 {
   font-size: clamp(48px, 7vw, 100px);
   line-height: 1;
-  letter-spacing: -0.065em;
+  letter-spacing: -0.02em;
   max-width: 1050px;
 }
 .event-venue {
@@ -924,7 +924,7 @@ img {
 .fan-signup h2 {
   font-size: clamp(30px, 4vw, 48px);
   line-height: 1.06;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.02em;
   max-width: 480px;
 }
 .fan-signup .eyebrow {
@@ -1028,7 +1028,7 @@ img {
 }
 .event-more h2 {
   font-size: 30px;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
   margin-bottom: 20px;
 }
 .share-show {
@@ -1096,7 +1096,7 @@ img {
 .band-listen h3 {
   font-size: 26px;
   margin-bottom: 15px;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 .filter-bar {
   display: flex;
@@ -1159,13 +1159,13 @@ img {
 .show-date strong {
   font-size: 43px;
   font-weight: 600;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.02em;
   line-height: 1.2;
 }
 .show-info h2 {
   font-size: 25px;
   font-weight: 600;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 .show-info p {
   font-size: 16px;
@@ -1191,7 +1191,7 @@ img {
 }
 .follow-bands h2 {
   font-size: 30px;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   margin-bottom: 12px;
 }
 .follow-bands p {
@@ -1273,7 +1273,7 @@ img {
 }
 .booking-aside h2 {
   font-size: 30px;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
   font-weight: 600;
   line-height: 1.15;
   margin: 8px 0 18px;
@@ -1315,7 +1315,7 @@ img {
 .booking-success h2 {
   font-size: 35px;
   font-weight: 600;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   line-height: 1.15;
 }
 .booking-success p {
@@ -1425,7 +1425,7 @@ img {
   }
   .mobile-navigation a {
     font-size: 22px;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.02em;
     font-weight: 500;
     padding: 12px 0;
   }
@@ -1828,7 +1828,7 @@ img {
 .kit-hero-copy h2 {
   font-size: clamp(28px, 3.2vw, 46px);
   line-height: 1.13;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   max-width: 580px;
 }
 .kit-hero-copy > p:not(.eyebrow) {
@@ -1956,7 +1956,7 @@ img {
 .kit-download-grid span {
   font-size: 22px;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 .kit-download-grid small {
   font-size: 13px;
@@ -1993,7 +1993,7 @@ img {
 .kit-booking-bar a:not(.button) {
   font-size: clamp(20px, 2.5vw, 34px);
   font-weight: 650;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   overflow-wrap: anywhere;
 }
 .kit-booking-bar p:last-child {
@@ -2198,7 +2198,7 @@ img {
 .hub-next-show h2 {
   font-size: 24px;
   line-height: 1.15;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   margin: 8px 0;
   color: #141416;
 }
@@ -2443,12 +2443,12 @@ img {
 .review-grid, .buyer-band-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
 .review-grid-single { grid-template-columns:1fr; }
 .review-card { margin:0; border:1px solid #dedee2; border-radius:20px; padding:36px; background:#f7f7f8; }
-.review-card blockquote { margin:0 0 28px; font-size:clamp(22px,2.3vw,32px); letter-spacing:-.035em; line-height:1.35; max-width:34ch; }
+.review-card blockquote { margin:0 0 28px; font-size:clamp(22px,2.3vw,32px); letter-spacing: -0.02em; line-height:1.35; max-width:34ch; }
 .review-card figcaption { display:grid; gap:8px; font-size:13px; line-height:1.5; }
 .review-card figcaption span { color:#65656a; }
 .review-card a { display:inline-flex; align-items:center; min-height:44px; text-decoration:underline; text-underline-offset:4px; }
 .buyer-band-card { padding:32px; border:1px solid #dedee2; border-radius:20px; }
-.buyer-band-card h3 { font-size:27px; letter-spacing:-.035em; margin-bottom:16px; }
+.buyer-band-card h3 { font-size:27px; letter-spacing: -0.02em; margin-bottom:16px; }
 .buyer-band-card > p:not(.eyebrow), .buyer-close > p { color:#65656a; line-height:1.7; max-width:60ch; }
 .hub-share select { width:100%; padding:14px; margin:10px 0 22px; border-radius:10px; background:#202025; color:#fff; border:1px solid #505058; font:inherit; }
 .hub-today-actions { display:flex; flex-wrap:wrap; gap:6px 18px; padding:16px 6px 0; }
@@ -2456,7 +2456,7 @@ img {
 .buyer-band-card .inline-links { margin-top:24px; font-size:14px; }
 .buyer-cta-links { margin-top:28px; font-size:14px; }
 .signup-thanks { align-self:center; border-top:1px solid #d8d8df; padding:28px 0; }
-.signup-thanks h3 { font-size:28px; letter-spacing:-.03em; margin-bottom:18px; }
+.signup-thanks h3 { font-size:28px; letter-spacing: -0.02em; margin-bottom:18px; }
 .signup-thanks a { display:inline-flex; min-height:44px; align-items:center; margin-top:12px; }
 .booking-receipt { border-block:1px solid #d8d8df; margin:24px 0; padding:12px 0 20px; }
 .booking-receipt button { border:0; background:transparent; cursor:pointer; min-height:44px; }
@@ -2465,7 +2465,7 @@ img {
 .episode-body { max-width:850px; }
 .recap-feature { background:#111114; color:#f5f5f7; padding:clamp(28px,6vw,70px); border-radius:24px; }
 .recap-feature .eyebrow { color:#bbbcc3; }
-.recap-feature h2 { font-size:clamp(32px,5vw,60px); max-width:16ch; letter-spacing:-.045em; margin:20px 0; }
+.recap-feature h2 { font-size:clamp(32px,5vw,60px); max-width:16ch; letter-spacing: -0.02em; margin:20px 0; }
 .recap-feature > p:not(.eyebrow), .recap-upload p { line-height:1.7; margin-bottom:24px; max-width:60ch; }
 .episode-notes p { color:#55555c; font-size:18px; line-height:1.8; margin-bottom:24px; white-space:pre-line; overflow-wrap:anywhere; }
 @media(max-width:700px) { .review-grid, .buyer-band-grid { grid-template-columns:1fr; } .review-card, .buyer-band-card { padding:26px; } }
@@ -2496,7 +2496,7 @@ img {
 /* A small, optional guide using the public roster. */
 .band-chooser { scroll-margin-top:110px; }
 .chooser-intro { border-top:1px solid #dedee2; padding-top:64px; margin-bottom:36px; }
-.chooser-intro h2 { font-size:clamp(36px,5vw,64px); letter-spacing:-.045em; margin:14px 0 20px; }
+.chooser-intro h2 { font-size:clamp(36px,5vw,64px); letter-spacing: -0.02em; margin:14px 0 20px; }
 .chooser-intro > p:not(.eyebrow) { color:#65656a; max-width:50ch; line-height:1.7; }
 .chooser-layout { display:grid; grid-template-columns:minmax(240px,1fr) minmax(0,1.6fr); gap:clamp(28px,5vw,72px); }
 .chooser-questions { display:grid; align-content:start; gap:26px; }
@@ -2511,7 +2511,7 @@ img {
 .chooser-result-count { font-weight:600; margin-bottom:20px; }
 .chooser-cards { display:grid; gap:16px; }
 .chooser-card { border:1px solid #dedee2; border-radius:18px; padding:26px; }
-.chooser-card h3 { font-size:24px; letter-spacing:-.03em; margin-bottom:12px; }
+.chooser-card h3 { font-size:24px; letter-spacing: -0.02em; margin-bottom:12px; }
 .chooser-card > p, .chooser-note { font-size:15px; line-height:1.7; color:#5d5d64; }
 .chooser-card .inline-links { margin-top:16px; gap:8px 24px; font-size:14px; }
 .chooser-card a, .chooser-note a { display:inline-flex; min-height:44px; align-items:center; text-decoration:underline; text-underline-offset:4px; }
@@ -2524,7 +2524,7 @@ img {
 .vote-band-nav a { min-height:48px; display:inline-flex; align-items:center; border:1px solid #c9c9cf; padding:12px 22px; border-radius:999px; font-size:14px; }
 .vote-band-nav a[aria-current] { background:#171717; color:white; border-color:#171717; }
 .vote-heading { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:24px; }
-.vote-heading h2 { font-size:clamp(30px,4vw,48px); letter-spacing:-.035em; margin:14px 0 24px; max-width:20ch; }
+.vote-heading h2 { font-size:clamp(30px,4vw,48px); letter-spacing: -0.02em; margin:14px 0 24px; max-width:20ch; }
 .vote-intro { max-width:75ch; color:#5b5b62; line-height:1.8; }
 .vote-status { min-height:44px; padding:12px 0; font-size:14px; }
 .vote-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(28px,5vw,80px); margin-top:24px; }
@@ -2557,7 +2557,7 @@ img {
 .song-suggestion-dialog::backdrop { background:#0009; }
 .suggestion-dialog-body { padding:clamp(24px,5vw,40px); position:relative; }
 .suggestion-close { position:absolute; top:12px; right:14px; min-width:44px; min-height:44px; background:none; border:0; color:#171717; font-size:30px; cursor:pointer; }
-.song-suggestion-dialog h2 { font-size:30px; line-height:1.15; letter-spacing:-.035em; margin:18px 0; padding-right:20px; }
+.song-suggestion-dialog h2 { font-size:30px; line-height:1.15; letter-spacing: -0.02em; margin:18px 0; padding-right:20px; }
 .song-suggestion-dialog p { font-size:14px; line-height:1.7; margin:16px 0; }
 .song-suggestion-dialog fieldset { border:0; padding:0; margin:24px 0; display:grid; gap:18px; }
 .song-suggestion-dialog label { font-size:14px; font-weight:500; }
@@ -2574,7 +2574,7 @@ img {
 .request-view-switch span { font-size:12px; color:#61616b; }
 .song-finder { padding:clamp(24px,4vw,40px); border:1px solid #dedee5; border-radius:24px; background:white; }
 .song-finder-heading { display:flex; justify-content:space-between; gap:24px; }
-.song-finder h3 { font-size:clamp(25px,3vw,36px); letter-spacing:-.035em; margin:10px 0 14px; }
+.song-finder h3 { font-size:clamp(25px,3vw,36px); letter-spacing: -0.02em; margin:10px 0 14px; }
 .song-finder-mark { color:var(--request-accent); font-size:44px; line-height:1.2; }
 .song-finder > p, .request-catalog-intro p { color:#60606a; line-height:1.7; max-width:75ch; }
 .song-finder-form { display:flex; gap:12px; margin:24px 0 12px; }
@@ -2597,7 +2597,7 @@ img {
 .request-picks-strip button { font:inherit; font-size:24px; width:44px; min-height:44px; border:0; border-radius:8px; background:transparent; cursor:pointer; }
 .request-results-layout { display:grid; grid-template-columns:minmax(210px,.72fr) minmax(0,1.9fr); gap:clamp(28px,5vw,64px); margin-top:36px; align-items:start; }
 .request-chart { background:#fff; border:1px solid #e0e0e6; padding:24px; border-radius:20px; }
-.request-chart h3 { font-size:26px; letter-spacing:-.03em; margin-top:14px; }
+.request-chart h3 { font-size:26px; letter-spacing: -0.02em; margin-top:14px; }
 .request-chart .vote-total { margin:10px 0 24px; font-size:12px; }
 .request-chart .vote-empty { padding:8px 0 22px; font-size:14px; }
 .request-refresh { background:none; border:0; cursor:pointer; min-height:44px; padding:0; font-size:13px; }

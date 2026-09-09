@@ -1,0 +1,125 @@
+/* Cabinet Grotesk + DM Sans / After Hours, selected September 9, 2026.
+   Color and type roles only; page composition remains in design.css. */
+:root {
+  color-scheme: dark;
+  --night: #11191d;
+  --warm-white: #f5f0e8;
+  --amber: #efc47c;
+  --slate: #202c32;
+  --stone: #b6b9b8;
+  --paper: var(--night);
+  --ink: var(--warm-white);
+  --muted: var(--stone);
+  --line: #344044;
+  --control-border: #7b878c;
+  --brand-accent: var(--amber);
+  --brand-hover: #f5d49e;
+  --c-bg: var(--night);
+  --c-surface: var(--slate);
+  --c-surface-2: #25333a;
+  --c-surface-3: #2c3d45;
+  --c-text: var(--warm-white);
+  --c-text-muted: var(--stone);
+  --c-text-dim: var(--stone);
+  --c-text-faint: var(--stone);
+  --c-border: var(--line);
+  --c-border-subtle: var(--line);
+  --c-border-strong: var(--control-border);
+  --c-epl: var(--amber);
+  --c-epl-soft: rgba(239,196,124,.1);
+  --c-epl-line: rgba(239,196,124,.45);
+}
+body { background:var(--paper); color:var(--ink); }
+h1,h2,h3,h4 { font-family:var(--ff-display); font-weight:600; font-synthesis:none; }
+.eyebrow,.button,.desktop-links a,.mobile-navigation a { font-family:var(--ff-body); font-weight:600; }
+.home-intro h1 { font-weight:600; letter-spacing:-.03em; word-spacing:.09em; }
+.public-page :is(h2,h3,h4),.link-hub :is(h1,h2,h3,h4),.stage-caption p:not(.eyebrow) { word-spacing:.08em; }
+.stage-caption p:not(.eyebrow) { font-family:var(--ff-display); }
+:is(a,button,input,select,textarea,summary):focus-visible { outline-color:var(--amber); }
+::selection { background:var(--amber); color:var(--night); }
+.skip-link { background:var(--amber); color:var(--night); border-color:var(--amber); }
+.site-header { background:rgba(17,25,29,.92); border-bottom-color:var(--line); }
+.desktop-links a,.eyebrow,.hero-description { color:var(--stone); }
+.desktop-links a:hover,.desktop-links a[aria-current],.menu-toggle { color:var(--warm-white); }
+.mobile-navigation { background:var(--night); border-color:var(--line); }
+.mobile-navigation a { color:var(--warm-white); border-color:var(--line); }
+.button,.booking-banner .button,.fan-signup-form .button { background:var(--amber); color:var(--night); }
+.button:hover,.booking-banner .button:hover,.fan-signup-form .button:hover { background:var(--brand-hover); color:var(--night); }
+.button-light { background:var(--warm-white); color:var(--night); }
+.button-outline,.booking-banner .button-outline { background:transparent; color:var(--warm-white); }
+.button-outline:hover,.booking-banner .button-outline:hover { background:var(--slate); color:var(--warm-white); }
+.hero-stage,.band-card,.band-detail-hero,.performance-player,.performance-play { background:var(--night); color:var(--warm-white); }
+.stage-caption .eyebrow,.band-detail-hero .eyebrow,.band-detail-hero p:not(.eyebrow),.band-card p { color:var(--warm-white); }
+.booking-banner,.fan-signup-inner,.recap-feature { background:var(--slate); color:var(--warm-white); }
+.booking-banner .eyebrow,.booking-banner p:not(.eyebrow),.fan-signup .eyebrow,.fan-signup p:not(.eyebrow),.recap-feature .eyebrow { color:var(--stone); }
+.fan-signup-form>input { background:var(--night); border-color:var(--control-border); color:var(--warm-white); }
+.fan-signup-form>input::placeholder { color:var(--stone); }
+.fan-band-choices input,.chooser-music input { accent-color:var(--amber); }
+.site-footer { background:var(--night); color:var(--stone); border-top:1px solid var(--line); }
+.footer-top :is(h2,.wordmark) { color:var(--warm-white); }
+.footer-bottom { border-color:var(--line); }
+.content-panel,.empty-state,.band-listen,.quiet-state,.band-subnav,.show-row,.booking-form,.press-kit-card,.review-card,.measurement-choice,.chooser-card { background:var(--slate); border-color:var(--line); color:var(--warm-white); }
+.text-body,.show-info p,.field label,.form-note,.review-card figcaption span,.buyer-band-card>p:not(.eyebrow),.buyer-close>p,.episode-notes p,.chooser-intro>p:not(.eyebrow),.chooser-card>p,.chooser-note { color:var(--stone); }
+.show-date,.buyer-band-card,.signup-thanks,.booking-receipt,.booking-extra,.chooser-intro { border-color:var(--line); }
+.filter-chip,.vote-band-nav a { color:var(--warm-white); border-color:var(--control-border); }
+.filter-chip[aria-pressed='true'],.vote-band-nav a[aria-current] { background:var(--amber); color:var(--night); border-color:var(--amber); }
+.field :is(input,select,textarea),.copy-bio textarea { background:var(--night); border-color:var(--control-border); color:var(--warm-white); }
+.field :is(input,select,textarea):focus { border-color:var(--amber); }
+.field :is(input,textarea)::placeholder { color:var(--stone); opacity:1; }
+.chooser-music span { border-color:var(--control-border); }
+.chooser-music input:checked+span { background:var(--slate); border-color:var(--amber); }
+.chooser-music input:focus-visible+span { outline-color:var(--amber); }
+.chooser-note a { color:var(--warm-white); }
+/* Dark music and QR surfaces retain their structure and band-specific artwork. */
+.music-library,.qr-page,.link-hub {
+  --c-bg:var(--night); --c-surface:var(--slate); --c-text:var(--warm-white);
+  --c-text-muted:var(--stone); --c-text-dim:var(--stone); --c-border:var(--line);
+  background:var(--night); color:var(--warm-white);
+}
+.library-mode button { color:var(--warm-white); border-color:var(--control-border); }
+.library-mode button[aria-pressed=true] { background:var(--amber); color:var(--night); }
+.hub-cover::after { background:linear-gradient(180deg,#11191d10,var(--night) 100%); }
+.hub-home,.hub-all-shows,.hub-social a { color:var(--warm-white); }
+.hub-label,.hub-link small,.hub-roster-band small,.hub-share-content p,.hub-footer>a,.hub-footer p { color:var(--stone); }
+.hub-next-show,.hub-link,.hub-roster-band,.hub-share-actions>*,.hub-share select { background:var(--slate); color:var(--warm-white); border-color:var(--line); }
+.hub-next-show h2 { color:var(--warm-white); }
+.hub-kicker,.hub-next-show p { color:var(--stone); }
+.hub-link:hover { background:var(--c-surface-3); border-color:var(--control-border); }
+.hub-share input { background:var(--night); border-color:var(--control-border); color:var(--warm-white); }
+.hub-share select,.hub-share-actions>* { border-color:var(--control-border); }
+.hub-signup,.hub-share,.hub-footer,.hub-signup .fan-signup-inner { border-color:var(--line); }
+.link-hub :is(a,button,input,summary):focus-visible { outline-color:var(--amber); }
+/* Online band kits; official downloadable band logos retain their own colors. */
+.kit-hero { background:var(--night); color:var(--warm-white); }
+.kit-hero-copy>.eyebrow,.kit-hero-copy>p:not(.eyebrow),.kit-edition,.kit-planning-grid span { color:var(--stone); }
+.kit-materials { background:var(--slate); }
+.kit-jump-links,.kit-sound-list li,.kit-download-grid a,.kit-planning-grid article,.kit-booking-bar { border-color:var(--line); }
+/* Song requests and voting. */
+.vote-intro,.vote-total,.vote-board small,.vote-empty,.song-finder>p,.request-catalog-intro p,.request-picks-strip>p,.request-picks-strip h3>span,.request-browse-heading>span,.request-song-count,.song-finder .song-finder-note { color:var(--stone); }
+.vote-bar-track,.request-view-switch { background:var(--c-surface-3); }
+.vote-picks,.vote-picks li,.vote-catalog li,.request-picks-strip { border-color:var(--line); }
+.vote-picks button,.vote-catalog li button,.request-vote-button,.request-pagination button { background:var(--night); color:var(--warm-white); border-color:var(--control-border); }
+.vote-catalog li button[aria-pressed=true],.request-vote-button[aria-pressed=true] { background:var(--amber); color:var(--night); border-color:var(--amber); }
+.vote-catalog>input,.song-suggestion-dialog input,.song-suggestion-dialog textarea,.song-finder-form input,.request-filter { background:var(--night); color:var(--warm-white); border-color:var(--control-border); }
+.song-suggestion-dialog,.song-finder,.request-catalog-intro,.request-picks-strip li,.request-chart,.request-song-card { background:var(--slate); color:var(--warm-white); border-color:var(--line); }
+.suggestion-close { color:var(--warm-white); }
+.request-view-switch button,.request-view-switch span { color:var(--stone); }
+.request-view-switch button[aria-pressed=true] { background:var(--amber); color:var(--night); }
+.request-view-switch button[aria-pressed=true] span { color:var(--night); }
+.request-song-cover { background:var(--c-surface-3); color:var(--stone); }
+.request-no-results { color:var(--stone); border-color:var(--control-border); }
+.request-no-results h4 { color:var(--warm-white); }
+/* Media upload controls; scoped specificity also covers the route stylesheet. */
+.fan-upload-shell .fan-upload-panel  { background:var(--slate); color:var(--warm-white); border-color:var(--line); }
+.fan-upload-shell .fan-upload-panel :is(select,input:not([type=checkbox]):not([type=file])) { background:var(--night); color:var(--warm-white); border-color:var(--control-border); }
+.fan-upload-shell .fan-upload-panel :is(input,select,button):focus-visible { outline-color:var(--amber); }
+.fan-upload-shell .fan-upload-panel :is(.muted,label>small,.fan-upload-note,.fan-upload-consent small,.fan-upload-files small),.fan-upload-shell .fan-upload-panel legend>span { color:var(--stone); }
+.fan-upload-shell .fan-upload-panel legend>span { font-family:var(--ff-body); }
+.fan-upload-shell .fan-upload-panel :is(.fan-upload-picker,.fan-upload-recovery,.fan-upload-selected) { background:var(--night); border-color:var(--control-border); }
+.fan-upload-shell .fan-upload-picker input::file-selector-button { background:var(--amber); color:var(--night); }
+.fan-upload-shell .fan-upload-consent input,.fan-upload-shell .fan-upload-progress progress { accent-color:var(--amber); }
+.fan-upload-shell .fan-upload-files li { border-color:var(--line); }
+.fan-upload-shell .fan-upload-panel .fan-upload-message { background:#442d1a; color:#f5d49e; }
+.fan-upload-shell .fan-upload-files li>span:last-child { color:#a9ddbe; }
+@media(max-width:365px) { .home-intro h1 { font-size:46px; line-height:49.5px; } }
+@media print { :root { color-scheme:light; } }
