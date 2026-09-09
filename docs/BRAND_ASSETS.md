@@ -20,7 +20,7 @@ Online kits, QR hubs, forms, voting, uploads and social previews use the same ro
 
 The company seal stays white or black with its original geometry. Amber is a website action color, not a recolored seal. Individual band logos and photographs retain their original colors. This records the selected website treatment; Marketing owns any broader company brand-kit adoption.
 
-**Release status:** Implemented and verified locally on `codex/after-hours-branding`; publication of this branding version remains pending.
+**Release approval:** Evan approved publication on September 9, 2026 after reviewing the completed local version on `codex/after-hours-branding`.
 
 ## Supplied source identity — September 7, 2026 (preserved history)
 
