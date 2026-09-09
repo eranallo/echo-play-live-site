@@ -13,9 +13,9 @@
    ───────────────────────────────────────────────────────────────────── */
 :root {
   /* ── Fonts ──────────────────────────────────────────── */
-  --ff-display: var(--font-gotham), 'Arial Black', sans-serif;
-  --ff-body: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-  --ff-label: var(--ff-display);
+  --ff-display: var(--font-cabinet), 'Arial', sans-serif;
+  --ff-body: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  --ff-label: var(--ff-body);
 
   /* ── Colors: surfaces ───────────────────────────────── */
   --c-bg: #080808;
@@ -34,7 +34,8 @@
   --c-text-dim: rgba(255, 255, 255, 0.45);
   --c-text-faint: rgba(255, 255, 255, 0.25);
 
-  /* Company identity: black and white; band colors remain independent. */
+  /* Historical defaults; app/brand.css defines the selected After Hours roles.
+     Individual band colors remain independent. */
   --c-epl: #ffffff;
   --c-epl-soft: rgba(255, 255, 255, 0.08);
   --c-epl-line: rgba(255, 255, 255, 0.4);

@@ -1,4 +1,4 @@
-export default function BrandLogo({ variant = 'black', size = 72, className = '' }) {
+export default function BrandLogo({ variant = 'white', size = 72, className = '' }) {
   return (
     <img
       className={`brand-logo ${className}`.trim()}

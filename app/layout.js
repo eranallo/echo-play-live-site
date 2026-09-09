@@ -1,15 +1,23 @@
 import './globals.css'
 import './design.css'
+import './brand.css'
 import localFont from 'next/font/local'
 import SiteMeasurement from '@/components/SiteMeasurement'
 
 import { bandsList } from '@/lib/bands'
 
 const SITE_URL = 'https://echoplay.live'
-const gotham = localFont({
-  src: './fonts/Gotham-Bold.ttf',
-  variable: '--font-gotham',
-  weight: '700',
+const cabinet = localFont({
+  src: './fonts/CabinetGrotesk-Variable.woff2',
+  variable: '--font-cabinet',
+  weight: '100 900',
+  style: 'normal',
+  display: 'swap',
+})
+const dmSans = localFont({
+  src: './fonts/DMSans-Variable.woff2',
+  variable: '--font-dm-sans',
+  weight: '100 1000',
   style: 'normal',
   display: 'swap',
 })
@@ -105,7 +113,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={gotham.variable}>
+    <html lang="en" className={`${cabinet.variable} ${dmSans.variable}`}>
       <head>
         <script
           type="application/ld+json"

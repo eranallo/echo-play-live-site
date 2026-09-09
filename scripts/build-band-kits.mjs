@@ -3,7 +3,6 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
   PDFDocument,
-  StandardFonts,
   PDFName,
   PDFString,
   PDFArray,
@@ -31,10 +30,11 @@ const color = (hex) =>
       .match(/../g)
       .map((x) => parseInt(x, 16) / 255),
   )
-const ink = color('#111113'),
-  paper = color('#F5F3EF'),
-  gray = color('#656468'),
-  white = rgb(1, 1, 1)
+const ink = color('#11191D'),
+  paper = color('#F5F0E8'),
+  gray = color('#545E63'),
+  white = color('#F5F0E8'),
+  amber = color('#EFC47C')
 const ascii = (value) =>
   value.replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/[–—]/g, '-').replace(/…/g, '...')
 
@@ -48,13 +48,16 @@ for (const kit of bandKits) {
   pdf.setCreator('Echo Play Live')
   pdf.setLanguage('en-US')
   pdf.setCreationDate(new Date('2026-09-07T00:00:00Z'))
-  pdf.setModificationDate(new Date('2026-09-08T00:00:00Z'))
-  // The supplied Gotham font prohibits subsetting. Embed it whole.
-  const bold = await pdf.embedFont(await readFile(path.join(root, 'app/fonts/Gotham-Bold.ttf')), {
+  pdf.setModificationDate(new Date('2026-09-09T00:00:00Z'))
+  // Static faces keep PDF rendering consistent with the selected website families.
+  const bold = await pdf.embedFont(await readFile(path.join(root, 'app/fonts/CabinetGrotesk-Bold.ttf')), {
     subset: false,
+    // Keep searchable/copyable text intact: this renderer mis-maps Cabinet's ft ligature.
+    features: { liga: false, clig: false },
   })
-  const regular = await pdf.embedFont(StandardFonts.Helvetica)
-  const accent = color(kit.color)
+  const regular = await pdf.embedFont(await readFile(path.join(root, 'app/fonts/DMSans-Regular.ttf')), { subset: false })
+  // Amber marks dark surfaces; deep slate provides readable accents on paper.
+  const accent = color('#202C32')
   const assets = path.join(root, 'public/press/bands', kit.slug)
   const [logo, cover, detail, stage, sealWhite, sealBlack, qr] = await Promise.all([
     pdf.embedPng(await readFile(path.join(assets, 'logo.png'))),
@@ -160,7 +163,7 @@ for (const kit of bandKits) {
     const label = number === 1 ? 'BAND KIT / 2026' : kit.name.toUpperCase()
     const labelW = bold.widthOfTextAtSize(label, 8)
     txt(page, label, W - M - labelW, 35, 8, bold, fill)
-    line(page, M, 747, CW, dark ? color('#37373A') : color('#D3D0CD'))
+    line(page, M, 747, CW, dark ? color('#344044') : color('#D3D0CD'))
     link(
       page,
       'echoplay.live',
@@ -168,7 +171,7 @@ for (const kit of bandKits) {
       M,
       761,
       8,
-      dark ? color('#BBBBBF') : gray,
+      dark ? color('#B6B9B8') : gray,
     )
     txt(
       page,
@@ -177,7 +180,7 @@ for (const kit of bandKits) {
       761,
       8,
       regular,
-      dark ? color('#BBBBBF') : gray,
+      dark ? color('#B6B9B8') : gray,
     )
     return page
   }
@@ -195,7 +198,7 @@ for (const kit of bandKits) {
       325,
       10.5,
       16,
-      color('#BBBBBF'),
+      color('#B6B9B8'),
       regular,
       250,
     )
@@ -206,10 +209,10 @@ for (const kit of bandKits) {
   let headSize = 32
   while (kit.headline.some((s) => bold.widthOfTextAtSize(ascii(s), headSize) > CW)) headSize--
   kit.headline.forEach((s, i) => txt(p1, s, M, 278 + i * 39, headSize, bold, white))
-  line(p1, M, 370, 64, accent)
+  line(p1, M, 370, 64, amber)
   imageCover(p1, cover, 0, 390, W, 275, kit.slug === 'elite' ? 0.28 : 0.5)
   txt(p1, kit.label.toUpperCase(), M, 686, 9, bold, white)
-  paragraph(p1, kit.intro, M, 709, CW, 10.3, 14, color('#BBBBBF'), regular, 741)
+  paragraph(p1, kit.intro, M, 709, CW, 10.3, 14, color('#B6B9B8'), regular, 741)
 
   // 02: Short bio, tangible photography, and a clear musical identity.
   const p2 = base(2)
@@ -275,7 +278,7 @@ for (const kit of bandKits) {
     paragraph(p3, body, x, top + 36, 240, 10.5, 15, ink, regular, top + 96)
   })
   p3.drawRectangle({ x: M, y: H - 683, width: CW, height: 126, color: ink })
-  txt(p3, 'BOOKING / ECHO PLAY LIVE', M + 20, 575, 8, bold, color('#BBBBBF'))
+  txt(p3, 'BOOKING / ECHO PLAY LIVE', M + 20, 575, 8, bold, amber)
   link(p3, kit.bookingEmail, `mailto:${kit.bookingEmail}`, M + 20, 598, 15, white)
   link(
     p3,
