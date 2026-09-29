@@ -109,23 +109,33 @@
 .portal-main .fan-signup-form { margin-top:18px; }
 .portal-main .fan-signup-form>input { font-size:16px; }
 .portal-main>.fan-signup { padding:0; border-color:var(--slate); }
-.portal-main .show-row { grid-template-columns:58px minmax(0,1fr); gap:15px; margin-bottom:0; border:0; border-bottom:1px solid var(--line); border-radius:0; padding:20px 0; }
+.portal-main .show-row {
+  grid-template-columns:62px minmax(0,1fr) auto;
+  gap:12px 20px;
+  margin:0; border:0; border-bottom:1px solid var(--line); border-radius:0;
+  padding:16px;
+  align-items:center;
+}
+.portal-main .show-date { padding-right:16px; }
+.portal-main .show-info { display:grid; gap:4px; }
+.portal-main .show-info h2 { margin:0; font-size:22px; line-height:1.25; }
+.portal-main .show-info p { margin:0; font-size:14px; line-height:1.55; }
+.portal-main .show-info .show-details-link { justify-self:start; min-height:32px; display:inline-flex; align-items:center; }
+.portal-main .show-purchase-actions { grid-column:auto; flex-direction:column; align-items:stretch; justify-self:end; }
 .portal-main .show-row:last-child { border-bottom:0; }
-.portal-main .show-purchase-actions { grid-column:2; flex-direction:row; flex-wrap:wrap; align-items:flex-start; }
-.portal-main .show-info h2 { font-size:23px; }
-.portal-main .show-info p { font-size:13px; }
 .portal-main .shows-count { margin:0; padding-bottom:10px; font-size:12px; }
 .portal-filter-sidebar .filter-bar { display:grid; gap:5px; margin:0; }
 .portal-filter-sidebar .filter-chip { justify-content:flex-start; text-align:left; width:100%; font-size:12px; }
 .portal-main .empty-state,.portal-main .quiet-state { padding:22px; margin:0; border-radius:2px; }
 .portal-main .empty-state h2 { font-size:24px; }
-.portal-main .press-kit-grid { grid-template-columns:1fr; gap:16px; }
-.portal-main .press-kit-card { display:grid; grid-template-columns:200px minmax(0,1fr); }
-.portal-main .press-kit-image { width:100%; min-width:0; aspect-ratio:auto; height:auto; min-height:220px; border-radius:0; }
-.portal-main .press-kit-copy { padding:18px; }
-.portal-main .press-kit-copy h2 { font-size:27px; }
-.portal-main .press-kit-copy>p:not(.eyebrow) { font-size:13px; margin-block:10px; }
-.portal-main .press-kit-copy .kit-actions { gap:12px; margin-top:14px; }
+.portal-main .press-kit-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+.portal-main .press-kit-card { display:grid; grid-template-columns:minmax(0,1fr); grid-template-rows:auto 1fr; }
+.portal-main .press-kit-image { width:100%; min-width:0; aspect-ratio:auto; height:210px; min-height:0; border-radius:0; }
+.portal-main .press-kit-copy { display:flex; flex-direction:column; align-items:flex-start; padding:18px; }
+.portal-main .press-kit-copy .eyebrow { margin:0 0 8px; font-size:10px; line-height:1.5; }
+.portal-main .press-kit-copy h2 { margin:0 0 10px; font-size:26px; line-height:1.2; }
+.portal-main .press-kit-copy>p:not(.eyebrow) { margin:0 0 18px; font-size:14px; line-height:1.6; }
+.portal-main .press-kit-copy .kit-actions { margin-top:auto; gap:12px; }
 .portal-main .production-request { grid-template-columns:1fr; padding:0; gap:16px; }
 .portal-main .production-request h2 { font-size:25px; }
 .portal-main .production-request p { font-size:14px; }
@@ -181,6 +191,14 @@
 .portal-privacy .portal-main>section { max-width:100% !important; }
 .portal-privacy .section-title { font-size:23px; }
 @media(hover:hover) and (pointer:fine) { .portal-roster-card:hover .portal-band-art img { transform:scale(1.035); } }
+@media(max-width:1100px) {
+  .portal-main .show-row { grid-template-columns:56px minmax(0,1fr); gap:8px 16px; }
+  .portal-main .show-purchase-actions { grid-column:2; flex-direction:row; flex-wrap:wrap; justify-self:start; }
+  .portal-main .show-row>.muted { grid-column:2; }
+  .portal-main .press-kit-grid { grid-template-columns:minmax(0,1fr); }
+  .portal-main .press-kit-card { grid-template-columns:150px minmax(0,1fr); grid-template-rows:auto; }
+  .portal-main .press-kit-image { height:100%; min-height:200px; }
+}
 @media(max-width:900px) and (min-width:651px) {
   .portal-layout { grid-template-columns:190px minmax(0,1fr); gap:16px; }
   .portal-main .band-grid,.portal-main .press-kit-card,.portal-main .kit-hero-grid,.portal-main .two-columns,.portal-main .musician-grid { grid-template-columns:1fr; }
@@ -188,6 +206,11 @@
   .portal-main .kit-hero-photo { height:230px; min-height:0; }
 }
 @media(max-width:650px) {
+  .portal-main .show-row { padding:16px 10px; grid-template-columns:48px minmax(0,1fr); gap:8px 14px; }
+  .portal-main .show-date { padding-right:12px; }
+  .portal-main .show-info h2 { font-size:21px; }
+  .portal-main .show-info .show-details-link { min-height:44px; }
+  .portal-main .press-kit-copy { padding:16px; }
   .portal-layout { display:flex; flex-direction:column; gap:22px; }
   .portal-main,.portal-sidebar { width:100%; }
   .portal-sidebar { order:1; }
