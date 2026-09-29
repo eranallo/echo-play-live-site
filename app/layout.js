@@ -118,7 +118,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" data-theme="scene-after-hours" className={`${cabinet.variable} ${dmSans.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" data-theme="scene-after-hours" className={`${cabinet.variable} ${dmSans.variable}`}>
       <head>
         <script
           type="application/ld+json"

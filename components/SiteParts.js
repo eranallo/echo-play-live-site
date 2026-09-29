@@ -69,7 +69,7 @@ export function BandCard({ band, index = 0 }) {
       <div className="portal-band-art">
         <Image src={band.heroPhoto}
           alt={band.slug === 'the-dick-beldings' ? 'The Dick Beldings band portrait' : `${band.name} performing live`}
-          fill sizes="(max-width: 650px) 90vw, 360px"
+          fill sizes="(max-width: 900px) 90vw, 480px"
           style={{ objectFit: 'cover', objectPosition: band.heroObjectPosition || 'center' }} />
         <span className="portal-card-index">0{index + 1}</span>
       </div>
