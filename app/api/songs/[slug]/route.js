@@ -5,19 +5,18 @@
 // (The band page is a client component, so we can't fetch at render time
 // without round-tripping through here.)
 //
-// Cache: 1h server-side (matches the songs.js revalidate window). Songs
-// changes in Airtable propagate within an hour; force a fresh fetch by
-// redeploying or wiping Vercel's data cache.
+// Healthy catalogs are edge-cached for 60 seconds. Empty responses must
+// not be cached because the data source also returns [] on temporary errors.
+// Airtable fetches and Spotify enrichment keep their own explicit caches.
 
 import { NextResponse } from 'next/server'
 import { getSongsForBand } from '@/lib/songs'
 import { bands } from '@/lib/bands'
 
 export const runtime = 'nodejs'
-// Phase 20.2 hotfix: dropped from 1h → 60s so a transient empty cache state
-// (from a failed cold-start fetch, etc.) heals within a minute instead of
-// dragging the catalog offline for an hour.
-export const revalidate = 60
+// Evaluate the response policy on each origin request instead of letting
+// the full-route cache retain an empty response. Explicit data caches remain.
+export const revalidate = 0
 
 export async function GET(request, { params }) {
   const { slug } = await params
@@ -29,10 +28,11 @@ export async function GET(request, { params }) {
     { slug: slug, count: songs.length, songs },
     {
       headers: {
-        // Edge cache: 60s fresh, 24h stale-while-revalidate. Bad cached
-        // states (e.g., a network blip caching empty) age out within a
-        // minute, while a healthy response stays fast for repeat visitors.
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=86400',
+        // Keep a healthy catalog fast; let an empty response recover on
+        // the next request instead of serving it as stale for another day.
+        'Cache-Control': songs.length
+          ? 'public, s-maxage=60, stale-while-revalidate=86400'
+          : 'no-store',
       },
     }
   )
