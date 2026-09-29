@@ -20,7 +20,7 @@ export default async function RecapPage({ params }) {
   if (!result.ok) throw new Error('Show recap temporarily unavailable')
   const recap = result.recaps.find(item => item.slug === slug)
   if (!recap) notFound()
-  return <Page>
+  return <Page section="recap">
     <Intro eyebrow={`${recap.venue} · ${recap.city} · July 10, 2026`} title={recap.title}><p>{recap.intro}</p></Intro>
     {recap.bands.map(band => <PerformanceVideo key={band} performance={getPerformance(band)} slug={band} sectionId={`watch-${band}`} />)}
     <section className="shell section-bottom recap-upload"><h2 className="section-title">Were you there?</h2><p>We’d love to see your photos and videos. Pick the July 10 show when you upload. Sharing your files keeps them private; letting us repost them is your choice.</p><Link className="button" href="/upload">Share your photos & videos ↑</Link></section>

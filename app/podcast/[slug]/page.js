@@ -15,7 +15,7 @@ export default async function EpisodePage({ params }) {
   const episodes = await getEpisodes()
   const episode = episodes.find(ep => ep.slug === slug)
   if (!episode) notFound()
-  return <Page>
+  return <Page section="podcast">
     <Intro eyebrow={`Echo Play Podcast${episode.number ? ` · Episode ${episode.number}` : ''}`} title={episode.title}>
       <p>{formatEpisodeDate(episode.date)}{episode.duration ? ` · ${episode.duration}` : ''}</p>
     </Intro>

@@ -1,23 +1,42 @@
 import Link from 'next/link'
+import { Children } from 'react'
+import PortalSidebar from './PortalSidebar'
 import Image from 'next/image'
 import Nav from './Nav'
 import Footer from './Footer'
-export function Page({ children, className = '' }) {
+export function Page({ children, className = '', section = 'bands', band, sidebar }) {
+  const home = className.split(' ').includes('scene-home')
+  const content = Children.toArray(children)
+  const introIndex = content.findIndex(child => child.type === Intro)
+  const intro = !home && introIndex >= 0 ? content.splice(introIndex, 1)[0] : null
   return (
     <>
       <Nav />
-      <main id="main-content" tabIndex={-1} className={`public-page ${className}`}>
-        {children}
+      <main id="main-content" tabIndex={-1} className={`public-page ${home ? '' : `portal-page portal-${section}`} ${className}`}>
+        {home ? children : <>
+          {intro}
+          <div className="portal-layout shell">
+            {sidebar === undefined ? <PortalSidebar section={section} band={band} /> : sidebar}
+            <div className="portal-main">{content}</div>
+          </div>
+        </>}
       </main>
       <Footer />
     </>
   )
 }
+function compactTitle(node) {
+  return Children.toArray(node).map(child => {
+    if (typeof child === 'string' || typeof child === 'number') return String(child)
+    if (child.type === 'br') return ' '
+    return compactTitle(child.props?.children)
+  }).join('')
+}
 export function Intro({ eyebrow, title, children }) {
   return (
     <section className="shell page-intro">
       <p className="eyebrow">{eyebrow}</p>
-      <h1>{title}</h1>
+      <h1>{compactTitle(title)}</h1>
       {children && <div className="intro-copy">{children}</div>}
     </section>
   )
@@ -28,7 +47,7 @@ export function BookingCta() {
       <div className="shell">
         <p className="eyebrow">For venues, festivals & private events</p>
         <h2>
-          Let’s book
+          Let’s book{' '}
           <br />a show.
         </h2>
         <p>
@@ -46,33 +65,18 @@ export function BookingCta() {
 }
 export function BandCard({ band, index = 0 }) {
   return (
-    <Link className={`band-card band-${band.slug}`} href={`/bands/${band.slug}`}>
-      <Image
-        src={band.heroPhoto}
-        alt={
-          band.slug === 'the-dick-beldings'
-            ? 'The Dick Beldings band portrait'
-            : `${band.name} performing live`
-        }
-        fill
-        sizes="(max-width: 620px) 92vw, 46vw"
-        style={{ objectFit: 'cover', objectPosition: band.heroObjectPosition || 'center' }}
-      />
-      <div className="band-card-shade" />
-      <div className="band-card-top">
-        <span>
-          {band.tributeArtistName ? `${band.tributeArtistName} tribute` : band.genre?.[0]}
-        </span>
-        <span className="card-number">0{index + 1}</span>
+    <Link className={`band-card portal-roster-card band-${band.slug}`} href={`/bands/${band.slug}`}>
+      <div className="portal-band-art">
+        <Image src={band.heroPhoto}
+          alt={band.slug === 'the-dick-beldings' ? 'The Dick Beldings band portrait' : `${band.name} performing live`}
+          fill sizes="(max-width: 650px) 90vw, 360px"
+          style={{ objectFit: 'cover', objectPosition: band.heroObjectPosition || 'center' }} />
+        <span className="portal-card-index">0{index + 1}</span>
       </div>
-      <div className="band-card-bottom">
-        <div>
-          <h3>{band.name}</h3>
-          <p>{band.tagline}</p>
-        </div>
-        <span className="round-arrow" aria-hidden="true">
-          ↗
-        </span>
+      <div className="portal-band-copy">
+        <p className="eyebrow">{band.tributeArtistName ? `${band.tributeArtistName} tribute` : band.genre?.slice(0, 2).join(' / ')}</p>
+        <h2>{band.name}</h2><p>{band.tagline}</p>
+        <span className="text-link">Visit artist profile →</span>
       </div>
     </Link>
   )

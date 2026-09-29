@@ -1,4 +1,5 @@
 import { Page, Intro } from '@/components/SiteParts'
+import { PortalBox } from '@/components/PortalSidebar'
 import BookingForm from '@/components/BookingForm'
 import { bandsList } from '@/lib/bands'
 import { FAQ_CONTACT } from '@/lib/faqs'
@@ -9,7 +10,19 @@ export default async function ContactPage({ searchParams }) {
   const selected = bandsList.find((b) => b.slug === query?.band)?.name || ''
   const selectedEvent = ['Bar / Venue Show', 'Festival', 'Private Event', 'Corporate Event', 'Other'].includes(query?.event) ? query.event : ''
   return (
-    <Page>
+    <Page section="booking" sidebar={<aside className="portal-sidebar"><PortalBox title="Booking desk">
+          <h2>Not sure which band?</h2>
+          <p>
+            Tell us about your audience and the music you want to hear. We can help you choose a
+            band for your venue, festival, private party or corporate event.
+          </p>
+          <p><Link className="text-link" href="/bands#find-band">Find your band ↗</Link></p>
+          <p>Prefer email? Get in touch with Evan.</p>
+          <div className="direct-contact">
+            <strong>Booking for all four bands</strong>
+            <a href={`mailto:${BOOKING_EMAIL}`}>{BOOKING_EMAIL} ↗</a>
+          </div>
+        </PortalBox></aside>}>
       <Intro
         eyebrow="Booking inquiries"
         title={
@@ -26,25 +39,14 @@ export default async function ContactPage({ searchParams }) {
         </p>
       </Intro>
       <section className="shell booking-layout">
+        <div className="scene-section-bar portal-module-heading"><h2>Your event</h2></div>
         <BookingForm
           initialBand={selected}
           initialEvent={selectedEvent}
           inquirySource={query?.source === 'band-chooser' ? 'Band chooser' : 'Contact page'}
           bands={bandsList.map((b) => ({ name: b.name, slug: b.slug }))}
         />
-        <aside className="booking-aside">
-          <h2>Not sure which band?</h2>
-          <p>
-            Tell us about your audience and the music you want to hear. We can help you choose a
-            band for your venue, festival, private party or corporate event.
-          </p>
-          <p><Link className="text-link" href="/bands#find-band">Find your band ↗</Link></p>
-          <p>Prefer email? Get in touch with Evan.</p>
-          <div className="direct-contact">
-            <strong>Booking for all four bands</strong>
-            <a href={`mailto:${BOOKING_EMAIL}`}>{BOOKING_EMAIL} ↗</a>
-          </div>
-        </aside>
+
       </section>
       <section className="shell section-bottom">
         <h2 className="section-title">Common booking questions</h2>

@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { Page, Intro, BookingCta } from '@/components/SiteParts'
 export default function AboutPage() {
   return (
-    <Page>
+    <Page section="about">
       <Intro
         eyebrow="Echo Play Live · Est. 2023"
         title={
@@ -20,7 +20,8 @@ export default function AboutPage() {
         </p>
       </Intro>
       <section className="shell section-bottom">
-        <div className="fan-image" style={{ minHeight: 520 }}>
+        <div className="scene-section-bar portal-module-heading"><h2>From the stage</h2></div>
+        <div className="fan-image" style={{ minHeight: 280 }}>
           <Image
             src="/bands/so-long-goodnight/feature.jpg"
             alt="So Long Goodnight sharing a live music moment with the audience"

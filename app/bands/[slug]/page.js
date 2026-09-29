@@ -33,7 +33,7 @@ export default async function BandPage({ params }) {
     social: band.social,
   }
   return (
-    <Page>
+    <Page section="artist" band={band}>
       <section className="band-detail-hero">
         <Image
           src={band.heroPhoto}

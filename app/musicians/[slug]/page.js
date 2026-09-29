@@ -9,7 +9,7 @@ export default async function MusicianPage({ params }) {
   const m = await getMusician(slug)
   if (!m) notFound()
   return (
-    <Page>
+    <Page section="musicians">
       <Intro eyebrow={m.instruments.join(' · ')} title={m.name}>
         <div className="inline-links">
           {m.bands.map((b) => (

@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Page, Intro } from '@/components/SiteParts'
 export default function NotFound() {
   return (
-    <Page>
+    <Page section="help">
       <Intro
         eyebrow="404 · Page not found"
         title={

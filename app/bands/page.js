@@ -5,7 +5,7 @@ import BandChooser from '@/components/BandChooser'
 export const metadata = pageMetadata({"title": "Tribute & Cover Bands in Dallas–Fort Worth", "description": "Explore Echo Play Live’s four bands: 90s rock, 2000s emo and pop punk, TOOL and Deftones. Find your next show or book a band.", "path": "/bands"})
 export default function BandsPage() {
   return (
-    <Page>
+    <Page section="bands">
       <Intro
         eyebrow="The Echo Play Live roster"
         title={
@@ -23,6 +23,7 @@ export default function BandsPage() {
         </p>
       </Intro>
       <section className="shell section-bottom">
+        <div className="scene-section-bar portal-module-heading"><h2>The roster</h2><span>{bandsList.length} bands</span></div>
         <div className="band-grid">
           {bandsList.map((band, index) => (
             <BandCard key={band.slug} band={band} index={index} />
