@@ -1,13 +1,23 @@
 'use client'
-import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Page, Intro } from './SiteParts'
 import { PortalBox } from './PortalSidebar'
 import ShowRow from './ShowRow'
 import FanSignup from './FanSignup'
 
-export default function ShowsClient({ publicBands = [], shows = [], state = 'ready', initialFilter = 'all' }) {
-  const [filter, setFilter] = useState(initialFilter)
+export default function ShowsClient({ publicBands = [], shows = [], state = 'ready' }) {
+  const searchParams = useSearchParams()
+  const requestedBand = searchParams.get('band')
+  const filter = publicBands.some(band => band.slug === requestedBand) ? requestedBand : 'all'
+  function setFilter(slug) {
+    if (slug === filter) return
+    const url = new URL(window.location.href)
+    if (slug === 'all') url.searchParams.delete('band')
+    else url.searchParams.set('band', slug)
+    // Keep filtering instant while making refresh, shared links and Back/Forward agree.
+    window.history.pushState(null, '', `${url.pathname}${url.search}${url.hash}`)
+  }
   const filtered = shows.filter(show => filter === 'all' || show.bands.some(band => band.slug === filter))
   const unavailable = state === 'unavailable'
   return <Page section="shows" sidebar={

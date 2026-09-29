@@ -4,9 +4,8 @@ import { publicBandPresentation } from '@/lib/public/bands-presentation'
 import { getPublicShows } from '@/lib/public/shows'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
-export default async function ShowsPage({ searchParams }) {
-  const [result, query] = await Promise.all([getPublicShows(), searchParams])
-  const filter = publicBandPresentation.some((b) => b.slug === query?.band) ? query.band : 'all'
+export default async function ShowsPage() {
+  const result = await getPublicShows()
   return (
     <>
       {result.ok && (
@@ -23,7 +22,6 @@ export default async function ShowsPage({ searchParams }) {
         publicBands={publicBandPresentation}
         state={result.ok ? 'ready' : 'unavailable'}
         shows={result.shows}
-        initialFilter={filter}
       />
     </>
   )

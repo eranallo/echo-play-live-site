@@ -15,7 +15,7 @@
 .portal-box>.scene-section-bar h2 { color:var(--night); font-size:12px; letter-spacing:.045em; }
 .portal-box-body { padding:15px; }
 .portal-box-body h3,.portal-box-body>h2 { font:700 23px/1.15 var(--ff-display); margin-bottom:10px; }
-.portal-box-body p { font-size:13px; line-height:1.7; color:var(--muted); margin-bottom:14px; }
+.portal-box-body p { font-size:14px; line-height:1.7; color:var(--muted); margin-bottom:14px; }
 .portal-box-body .text-link { display:block; font-size:12px; overflow-wrap:anywhere; }
 .portal-sidebar-button { width:100%; margin:3px 0 14px; }
 .portal-directory { margin:-8px 0; }
@@ -59,7 +59,7 @@
 .portal-band-copy { padding:15px; }
 .portal-main .portal-roster-card .eyebrow { color:var(--muted); font-size:10px; margin:0 0 7px; }
 .portal-main .portal-roster-card h2 { font-size:25px; line-height:1.12; color:var(--night); }
-.portal-main .portal-roster-card p:not(.eyebrow) { color:var(--muted); font-size:13px; margin:9px 0 13px; }
+.portal-main .portal-roster-card p:not(.eyebrow) { color:var(--muted); font-size:14px; margin:9px 0 13px; }
 .portal-main .portal-roster-card .text-link { color:var(--slate); font-size:12px; }
 .portal-main .chooser-intro { margin:-18px -18px 18px; padding:12px 16px; border-bottom:1px solid var(--line); background:var(--surface); }
 .portal-main .chooser-intro .eyebrow { margin:0 0 4px; }
@@ -232,3 +232,17 @@
 .portal-main .kit-booking-bar a:not(.button) { font-size:23px; }
 
 .portal-main .event-intro>.eyebrow { margin-top:24px; }
+
+/* The larger desktop frame keeps the familiar column proportions. */
+@media(min-width:1100px) {
+  .portal-layout { grid-template-columns:245px minmax(0,1fr); gap:24px; }
+  .portal-band-art { height:220px; }
+  .portal-main .portal-roster-card h2 { font-size:28px; }
+  .scene-feature { height:310px; }
+  .scene-live-image { height:185px; }
+}
+
+/* Global scroll padding already clears the sticky header; do not count it twice. */
+.public-page :is(.band-upcoming,.booking-essentials,.fan-signup,.band-chooser,#overview,#sound,#materials,#planning) {
+  scroll-margin-top:0;
+}

@@ -30,7 +30,7 @@ export default function HomePage() {
           {featured.map((band, index) => <Link className="scene-feature" key={band.slug} href={`/bands/${band.slug}`}>
             <Image src={band.slug === 'so-long-goodnight' ? '/bands/so-long-goodnight/feature.jpg' : '/press/bands/the-dick-beldings/cover.jpg'}
               alt={`${band.name} ${index === 0 ? 'performing live' : 'band portrait'}`}
-              fill priority sizes="(max-width: 600px) 95vw, (max-width: 1080px) 48vw, 520px" style={{objectFit:'cover', objectPosition:index===0?'center 48%':'center 35%'}} />
+              fill priority sizes="(max-width: 650px) 95vw, (max-width: 1280px) 50vw, 640px" style={{objectFit:'cover', objectPosition:index===0?'center 48%':'center 35%'}} />
             <span className="scene-feature-tag">{band.genre?.[0]}</span>
             <div className="scene-feature-caption"><h3>{band.name} <span aria-hidden="true">↗</span></h3><p>{band.tagline}</p></div>
           </Link>)}
@@ -65,7 +65,7 @@ export default function HomePage() {
             <div className="scene-section-bar"><h2 id="live-heading">From the stage</h2><span>Live performances</span></div>
             <div className="scene-live-grid">
               {Object.entries(performances).map(([slug, performance]) => <Link className="scene-live-card" href={`/bands/${slug}#watch`} key={slug}>
-                <div className="scene-live-image"><Image src={performance.poster} alt={`${performance.band} performing at Granada Theater`} fill sizes="(max-width: 600px) 90vw, 350px" style={{objectFit:'cover'}} /><span className="scene-play" aria-hidden="true">▶</span></div>
+                <div className="scene-live-image"><Image src={performance.poster} alt={`${performance.band} performing at Granada Theater`} fill sizes="(max-width: 360px) 90vw, (max-width: 650px) 45vw, (max-width: 900px) 32vw, 470px" style={{objectFit:'cover'}} /><span className="scene-play" aria-hidden="true">▶</span></div>
                 <div><h3>{performance.band} — “{performance.title}”</h3><p>{performance.venue}</p><span>Watch the full performance →</span></div>
               </Link>)}
             </div>
