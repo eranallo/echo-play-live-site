@@ -121,7 +121,6 @@ export default function BandPhotoGallery({ name, slug, photos }) {
         </button>
         <Link className="text-link" href={`/press/${slug}#materials`}>Need photos for a show? Band kit ↗</Link>
       </div>
-      <p className={styles.photographer}>Photos by {[...new Set(photos.map(item => item.credit).filter(Boolean))].join(' · ')}</p>
 
       <dialog
         ref={dialog}
@@ -161,7 +160,6 @@ export default function BandPhotoGallery({ name, slug, photos }) {
               <button type="button" onClick={() => move(-1)} aria-label="Previous photo">←</button>
               <div aria-live="polite" aria-atomic="true">
                 <p>{active + 1} / {filtered.length} · {photo.album}</p>
-                {photo.credit && <p className={styles.credit}>Photo: {photo.credit}</p>}
               </div>
               <button type="button" onClick={() => move(1)} aria-label="Next photo">→</button>
             </div>

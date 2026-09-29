@@ -138,7 +138,7 @@ export default async function BandKitPage({ params }) {
           </ul>
           <p className="form-note">{kit.soundNote}</p>
           <Link className="text-link" href={`/bands/${slug}#music`}>
-            Explore the music ↗
+            {kit.catalogLinkLabel || 'Explore the music'} ↗
           </Link>
         </div>
       </section>
@@ -161,7 +161,6 @@ export default async function BandKitPage({ params }) {
             ))}
           </div>
           <p className="form-note">
-            Photos by {kit.photoCredit}. Please include the photographer credit when using these images.
             Keep logos proportional and unaltered. For additional images or a
             specific format, contact <a href={`mailto:${kit.bookingEmail}`}>{kit.bookingEmail}</a>.
           </p>

@@ -36,3 +36,31 @@ Revision `20260907-copy1` replaces the wording in all four kits following Evan's
 ## September 8, 2026 — media refresh
 
 Revision `20260908-media` replaces the three selected photos in each public kit with photographs from the curated gallery selection. The online kits, four PDFs and four press packs share the new selection and photographer credits; downloadable JPEGs are up to 3000 pixels wide without upscaling. All 12 PDF pages were rendered and visually inspected. Photos are credited to Jules Villalobos (Elite, Jambi, So Long Goodnight) and Jeremy Morgan / HDP (The Dick Beldings). The photo endpoint now serves the fixed local cover asset for each public band and is included in Vercel file tracing. Evan approved publication of this specific photo selection and the refreshed kits on September 8, 2026.
+
+## September 14, 2026 — So Long Goodnight booking-copy review
+
+Evan requested a venue/talent-buyer focus, beginning with So Long Goodnight as the review model before adapting the other bands. The cover, tagline, artist introduction, photographs and booking-planning copy remain as reviewed. The bio now explains the band's growth, musical identity, performance and booking coordination. Thursday and the Atticus-shirt line are removed; the linked band-page summary receives the same factual corrections.
+
+**Owner-confirmed source, September 14:** Evan explicitly confirmed that SLGN formed in 2022 and described its progression from selling out local breweries to performing for 2,000 people at Hurricane Alley. The bio uses those facts without adding growth percentages, attendance guarantees, dates, rankings or venue endorsements. Rehearsal/accuracy/transition language follows the existing reviewed musician profiles and Evan's requested performance emphasis.
+
+Revision `20260914-slgn-booking` updates the shared online/PDF/bio source, the So Long Goodnight PDF and its ZIP press pack. Page two includes a fully clickable **View the song catalog** button linking to `/bands/so-long-goodnight#music`, plus a note describing album artwork and Spotify links. Page-three email, booking, press-material and social links are visibly underlined. The other three PDFs and press packs are unchanged in this review.
+
+The builders now accept public band slugs for focused review: `node scripts/build-band-kits.mjs so-long-goodnight` and `node scripts/build-press-packs.mjs so-long-goodnight`. Omitting arguments retains the existing all-band behavior; unknown slugs are rejected. The selected PDF uses Cabinet Grotesk and DM Sans with the existing After Hours colors. Its modification date is September 14; the edition remains September 2026.
+
+Verification: all three pages rendered and visually inspected; independent PDF inspection confirms three Letter pages and nine URI annotations, including the intended catalog/booking/email destinations. Rendered cover, photos/credit area and QR are pixel-identical to the prior kit. The ZIP's PDF exactly matches the reviewed artifact and its text biography matches the updated source. Read-only live-page verification confirms the music anchor and catalog control exist. This review does not certify a physical QR scan or every external social destination.
+
+Review status: prepared locally for Evan; not published. The 107 existing tests pass. Full build outcome is recorded with the exported review evidence.
+
+### Matching-kit continuation — September 14
+
+After Evan accepted the SLGN revision as “much better,” the earlier request to match the format across the other bands was completed locally. Revision `20260914-booking-kits` extends the buyer-focused copy, catalog button and visible link styling to The Dick Beldings, Jambi and Elite. Their covers, photos, credit blocks and QR artwork are unchanged; the accepted SLGN PDF remains byte-identical to its review copy. Existing Granada performance links remain in Jambi and Elite's kits, with spacing adjusted above the catalog button.
+
+The Dick Beldings' decade-plus Fort Worth history, Jambi's rehearsal and performance history, and Elite's 2017 start and stage history come from the existing public band-kit source. Granada footage is separately recorded in `lib/public/performances.mjs`. No new founding year, growth figure, audience count, endorsement or booking guarantee was added for those three acts. Their online-kit feature copy and packaged bios match the PDF direction; the fan-facing band descriptions remain distinct.
+
+All nine newly rendered pages were visually reviewed. Independent checks confirm three Letter pages per kit, nine links for The Dick Beldings, ten for Jambi and eleven for Elite, correct non-overlapping catalog/booking/video annotations, matching ZIP contents and generated online-kit copy, and identical rendered covers/photos/QR regions. All 107 existing tests and the production build pass. These matching drafts are ready for review; no website deployment or external send occurred.
+
+## September 14, 2026 — visible photo-credit removal
+
+At Evan's request, revision `20260914-credit-free` removes displayed photo attribution from all four PDF kits, their online pages, the press hub and shared press FAQ, plus the READ-ME instructions in all four ZIP press packs. This supersedes the visible-credit presentation described in earlier release entries. The accepted booking-copy revisions are included. Photos, layout, catalog/booking/video links and QR artwork are preserved. The public kit export now selects only photo alt text from the editorial photo record.
+
+All 12 final PDF pages were rendered and visually inspected. The only rendered differences from the preceding booking-copy drafts are the removed page-two credit lines. All 39 PDF URI links remain unchanged, and the PDFs inside the four press packs exactly match the standalone files. All 107 tests and the production build pass. Local HTTP checks cover 17 pages, four media responses and eight PDF/ZIP downloads; 109 generated page, data and browser-script files contain no photo attribution. These checks do not test third-party link availability. Prepared locally for review; not deployed.

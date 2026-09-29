@@ -24,3 +24,11 @@ Drive is the original media library. The existing public Vercel Blob store serve
 ## Release status
 
 Evan approved publication of the reviewed 60-photo selection and refreshed band kits on September 8, 2026. The release includes 180 optimized public image variants and preserves the original Drive files and permissions. GitHub and Vercel retain the exact code/deployment history; the private workspace release record holds validation and source provenance.
+
+## September 14, 2026 — visible photo-credit removal
+
+Evan requested removal of displayed photo credits throughout the site and PDFs. The gallery footer and fullscreen attribution lines are removed. The public gallery accessor now explicitly selects image/display fields so photographer names are absent from rendered page data and `/api/media` responses. Alt text, album labels, image counts, crops and gallery controls are preserved.
+
+All four galleries and fullscreen views were visually checked at desktop (1440 × 1000) and phone (390 × 844) sizes. Images loaded, expansion produced the expected 16/12/16/16 counts, keyboard navigation and close worked, and no horizontal overflow or browser errors were found. The local preview uses no production credentials, so it cannot verify Airtable show availability.
+
+Original image metadata, source attribution records and the separate private fan-upload credit field/records are retained. The site does not display these credits. Dated release notes above remain historical records. This update is prepared locally, not published.

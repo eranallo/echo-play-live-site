@@ -74,8 +74,8 @@ export default function PressPage() {
           </div>
           <div>
             <p>
-              For the current stage plot, input list, additional photographs, and photographer
-              credits, contact the band’s booking team. Include your event, intended use, and
+              For the current stage plot, input list or additional photographs, contact the band’s
+              booking team. Include your event, intended use, and
               deadline.
             </p>
             <Link className="text-link" href="/contact">

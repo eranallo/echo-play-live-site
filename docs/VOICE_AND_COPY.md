@@ -31,3 +31,7 @@ Generate print-ready 1200px PNG and scalable SVG codes with `node scripts/build-
 Public company social links use Evan's September 7 owner-supplied Facebook/LinkedIn addresses and the already verified Instagram profile. No social profile or third-party Linktree account is changed by this website release. Existing external Linktree URLs remain separate until their owner replaces them with these owned URLs.
 
 New hub click/share analytics include public band/show identifiers only. Form values, email content and private source-system identifiers are not analytics parameters. Existing signup/inquiry providers and consent rules are retained.
+
+## September 14 — band-kit buyer focus
+
+Evan asked to review So Long Goodnight first, then use the accepted direction for the other kits. Keep the approved cover personality, but write the EPK body for venue owners and talent buyers evaluating musical fit, performance quality and booking support. Lead with concrete, owner-confirmed experience where available. Describe the musicianship and coordination behind the show in plain language; avoid fan-only in-jokes, exaggerated promises, rankings and guarantees of ticket sales. Make clickable catalog and booking actions explicit. The 2022 founding date and Hurricane Alley milestone in SLGN's revised bio were confirmed directly by Evan on September 14, 2026.
