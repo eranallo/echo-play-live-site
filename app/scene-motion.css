@@ -1,0 +1,42 @@
+/* Small, responsive interactions; no animation library or hidden content. */
+:root { --scene-ease:cubic-bezier(.2,.7,.2,1); }
+.site-header .button,.public-page .button,.link-hub .hub-link {
+  transition:background-color 160ms ease,color 160ms ease,border-color 160ms ease,box-shadow 180ms ease,transform 180ms var(--scene-ease);
+}
+.scene-tabs a,.scene-roster>a,.scene-community>a,.filter-chip,.vote-band-nav a,.request-vote-button {
+  transition:background-color 160ms ease,color 160ms ease,border-color 160ms ease,box-shadow 160ms ease;
+}
+.scene-feature>img,.scene-live-image>img,.band-card>img {
+  transition:transform 450ms var(--scene-ease);
+}
+.scene-play,.scene-feature-caption h3>span,.round-arrow {
+  transition:transform 200ms var(--scene-ease),background-color 160ms ease;
+}
+.press-kit-card,.hub-roster-band {
+  transition:border-color 180ms ease,box-shadow 180ms ease,transform 220ms var(--scene-ease);
+}
+.field :is(input,select,textarea) { transition:border-color 160ms ease,box-shadow 160ms ease; }
+.field :is(input,select,textarea):focus-visible { box-shadow:0 0 0 3px color-mix(in srgb,var(--slate) 12%,transparent); }
+.scene-tabs a:active,.filter-chip:active,.request-vote-button:active { box-shadow:inset 0 2px 4px #11191d26; }
+.site-header .button:active,.public-page .button:active,.link-hub .hub-link:active { transform:translateY(1px); }
+@media(hover:hover) and (pointer:fine) {
+  .site-header .button:hover,.public-page .button:hover {
+    transform:translateY(-2px); box-shadow:0 3px 0 #11191d26;
+  }
+  .scene-feature:hover>img,.scene-live-card:hover .scene-live-image>img,.band-card:hover>img { transform:scale(1.035); }
+  .scene-live-card:hover .scene-play { transform:scale(1.08); }
+  .scene-feature:hover .scene-feature-caption h3>span { transform:translate(2px,-2px); }
+  .press-kit-card:hover,.hub-roster-band:hover { transform:translateY(-2px); border-color:var(--control-border); box-shadow:0 4px 12px #11191d0d; }
+}
+@media(hover:none),(pointer:coarse) {
+  .scene-feature:hover>img,.band-card:hover>img { transform:none; }
+  .site-header .button:hover,.public-page .button:hover { transform:none; }
+  .field :is(input,select,textarea),.song-finder-form input,.request-filter,.hub-share input { font-size:16px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .scene-feature>img,.scene-live-image>img,.band-card>img,
+  .scene-play,.scene-feature-caption h3>span,.round-arrow,
+  .site-header .button,.public-page .button,.hub-link,.press-kit-card,.hub-roster-band {
+    transition:none !important; transform:none !important;
+  }
+}

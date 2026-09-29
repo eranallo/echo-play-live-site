@@ -1,0 +1,200 @@
+/* Echo Play Live brand applied to the music-portal study.
+   Palette and Cabinet Grotesk confirmed by Evan's Canva screenshots, 2026-09-29.
+   DM Sans is the existing approved web companion; both font files are local. */
+:root {
+  color-scheme:light;
+  --night:#11191d;
+  --warm-white:#f5f0e8;
+  --amber:#efc47c;
+  --slate:#202c32;
+  --stone:#b6b9b8;
+  --ff-display:var(--font-cabinet),Arial,sans-serif;
+  --ff-body:var(--font-dm-sans),Arial,sans-serif;
+  --ff-label:var(--ff-body);
+  --paper:var(--warm-white);
+  --ink:var(--night);
+  --muted:color-mix(in srgb,var(--slate) 76%,var(--stone));
+  --line:color-mix(in srgb,var(--stone) 70%,var(--warm-white));
+  --control-border:color-mix(in srgb,var(--slate) 50%,var(--stone));
+  --surface:color-mix(in srgb,var(--warm-white) 86%,var(--stone));
+  --site-header-height:115px;
+  --surface-soft:color-mix(in srgb,var(--warm-white) 96%,var(--stone));
+  --brand-accent:var(--slate);
+  --brand-hover:var(--night);
+  --c-bg:var(--warm-white); --c-text:var(--night);
+  --c-text-muted:var(--muted); --c-text-dim:var(--muted); --c-text-faint:var(--muted);
+  --c-surface:var(--surface); --c-surface-2:var(--surface); --c-surface-3:var(--line);
+  --c-border:var(--line); --c-border-subtle:var(--line); --c-border-strong:var(--control-border);
+  --c-epl:var(--slate); --c-epl-soft:var(--surface); --c-epl-line:var(--control-border);
+}
+body { background:linear-gradient(180deg,var(--slate),var(--night) 780px) fixed; font-family:var(--ff-body); }
+h1,h2,h3,h4 { font-family:var(--ff-display); font-weight:700; font-synthesis:none; letter-spacing:-.025em; }
+.public-page { background:var(--paper); border-color:var(--line); }
+::selection { background:var(--amber); color:var(--night); }
+:is(a,button,input,select,textarea,summary):focus-visible { outline-color:var(--slate); }
+.skip-link { background:var(--amber); color:var(--night); }
+.eyebrow,.scene-welcome p:not(.eyebrow),.scene-about p,.scene-booking-note p { color:var(--muted); }
+.scene-welcome h1 { font-size:38px; letter-spacing:-.025em; }
+.scene-welcome .eyebrow { font-size:10px; letter-spacing:.11em; }
+.text-link { color:var(--slate); text-decoration:underline; text-underline-offset:3px; text-decoration-color:var(--stone); }
+.text-link:hover { color:var(--night); text-decoration-color:var(--night); }
+.button,.booking-banner .button,.fan-signup-form>.button {
+  color:var(--night); background:var(--amber); border-color:color-mix(in srgb,var(--amber) 75%,var(--slate));
+  box-shadow:inset 0 1px color-mix(in srgb,var(--warm-white) 45%,transparent);
+  font-family:var(--ff-body); font-weight:700;
+}
+.button:hover,.booking-banner .button:hover,.fan-signup-form>.button:hover { background:color-mix(in srgb,var(--amber) 75%,var(--warm-white)); color:var(--night); }
+.button-outline { color:var(--night); background:transparent; border-color:var(--control-border); box-shadow:none; }
+.button-outline:hover { background:var(--surface); color:var(--night); }
+.button-light { color:var(--night); background:var(--warm-white); border-color:var(--warm-white); }
+/* Own identity in the masthead; the seal stays in its original monochrome. */
+.site-header { background:var(--night); border-color:var(--night); box-shadow:inset 0 3px var(--amber); }
+.wordmark,.wordmark:hover { color:var(--warm-white); }
+.scene-wordmark { font:700 25px/1 var(--ff-display); letter-spacing:-.025em; }
+.site-header :is(a,button):focus-visible { outline-color:var(--amber); }
+.scene-tabs { background:var(--surface); border-top-color:var(--night); scrollbar-color:var(--stone) var(--surface); }
+.scene-tabs a { color:var(--slate); border-color:var(--line); font-family:var(--ff-body); }
+.scene-tabs a:hover { background:var(--warm-white); color:var(--night); }
+.scene-tabs a[aria-current] { background:var(--slate); color:var(--warm-white); box-shadow:inset 0 3px var(--amber); }
+.scene-tabs a:focus-visible { outline-color:var(--slate); }
+.scene-tabs a[aria-current]:focus-visible { outline-color:var(--amber); }
+/* The album-sleeve palette sits inside the same compact portal layout. */
+.scene-section-bar { background:var(--slate); border-color:var(--slate); }
+.scene-section-bar h2 { color:var(--warm-white); letter-spacing:.07em; }
+.scene-section-bar>a { color:var(--amber); }
+.scene-section-bar>a:hover { color:var(--warm-white); text-decoration:underline; }
+.scene-section-bar>span { color:var(--stone); }
+.scene-panel { background:var(--warm-white); border-color:var(--line); }
+.scene-feature { background:var(--night); border-color:var(--line); }
+.scene-feature::after { background:linear-gradient(transparent 30%,#11191d99 70%,#11191df5); }
+.scene-feature-tag { background:var(--amber); color:var(--night); border-color:var(--amber); letter-spacing:.07em; }
+.scene-feature-caption h3 { color:var(--warm-white); font-size:29px; }
+.scene-feature-caption p { color:var(--warm-white); }
+.scene-roster>a,.scene-community>a { color:var(--slate); border-color:var(--line); }
+.scene-roster img { border-color:var(--line); }
+.scene-roster small,.scene-community small { color:var(--muted); }
+.scene-action-icon { color:var(--slate); }
+.scene-live-card { border-color:var(--line); background:var(--surface-soft); }
+.scene-live-image { background:var(--night); }
+.scene-play { color:var(--night); background:var(--amber); border-color:var(--amber); }
+.scene-live-card h3,.scene-live-card:hover h3 { color:var(--night); }
+.scene-live-card p { color:var(--muted); }
+.scene-live-card>div>span:not(.scene-play) { color:var(--slate); text-decoration:underline; text-underline-offset:3px; text-decoration-color:var(--stone); }
+.scene-main-column .home-upcoming .section-heading-row { background:var(--slate); border-color:var(--slate); color:var(--warm-white); }
+.scene-main-column .home-upcoming .section-title { color:var(--warm-white); }
+.scene-main-column .home-upcoming .text-link { color:var(--slate); text-decoration-color:currentColor; }
+.scene-main-column .home-upcoming .section-heading-row .text-link { color:var(--amber); }
+.scene-main-column .quiet-state { background:var(--surface-soft); }
+/* Carry the brand through the destinations linked from the homepage. */
+.content-panel,.empty-state,.quiet-state,.booking-form,.press-kit-card,.review-card,.measurement-choice,.chooser-card,.band-listen { background:var(--surface-soft); color:var(--ink); border-color:var(--line); }
+.show-row { background:var(--warm-white); }
+.show-info p,.form-note,.field label { color:var(--muted); }
+.show-date strong,.show-date>span:first-child,.show-details-link { color:var(--slate); }
+.filter-chip,.vote-band-nav a { background:var(--surface); color:var(--slate); border-color:var(--line); }
+.filter-chip[aria-pressed=true],.vote-band-nav a[aria-current] { background:var(--slate); color:var(--warm-white); border-color:var(--slate); }
+.band-subnav { background:var(--surface); border-color:var(--line); }
+.band-subnav a { color:var(--slate); border-color:var(--line); }
+.band-subnav a:hover { background:var(--warm-white); color:var(--night); }
+.band-detail-hero,.performance-player { background:var(--night); }
+.band-detail-hero :is(h1,.eyebrow),.band-detail-hero p:not(.eyebrow),.band-card p,.band-card-bottom,.band-card-top { color:var(--warm-white); }
+.band-detail-hero .glass-link,.kit-hero .glass-link { background:#11191de0; color:var(--warm-white); }
+.band-detail-hero .glass-link:hover,.kit-hero .glass-link:hover { background:var(--slate); }
+.performance-player { border-color:var(--control-border); }
+.music-library { --c-bg:var(--night); --c-text:var(--warm-white); --c-text-muted:var(--stone); --c-text-dim:var(--stone); --c-border:var(--slate); --c-epl:var(--amber); }
+.library-mode button { color:var(--warm-white); border-color:var(--stone); }
+.library-mode button[aria-pressed=true] { background:var(--amber); color:var(--night); }
+.booking-banner,.fan-signup-inner,.recap-feature { background:var(--slate); color:var(--warm-white); border-color:var(--slate); }
+.booking-banner :is(h2,.eyebrow),.fan-signup h2,.recap-feature h2 { color:var(--warm-white); }
+.booking-banner p:not(.eyebrow),.fan-signup .eyebrow,.fan-signup p:not(.eyebrow),.recap-feature .eyebrow { color:var(--stone); }
+.booking-banner .buyer-cta-links a,.fan-signup a,.recap-feature .text-link { color:var(--amber); }
+.fan-signup-form>input,.field :is(input,select,textarea),.copy-bio textarea { background:var(--warm-white); color:var(--night); border-color:var(--control-border); }
+.fan-signup :is(a,button,input):focus-visible,.booking-banner a:focus-visible { outline-color:var(--amber); }
+.fan-band-choices input { accent-color:var(--amber); }
+.site-footer { background:var(--night); color:var(--stone); border-top:3px solid var(--amber); }
+.footer-top h2 { color:var(--warm-white); }
+.footer-top a,.footer-top .muted,.footer-bottom { color:var(--stone); }
+.footer-top a:hover { color:var(--amber); }
+.footer-bottom { border-color:var(--slate); }
+.site-footer a:focus-visible { outline-color:var(--amber); }
+.kit-hero { background:var(--night); color:var(--warm-white); }
+.kit-hero .text-link,.kit-hero-copy>a:not(.button) { color:var(--amber); }
+.kit-jump-links a { color:var(--slate); }
+.kit-materials { background:var(--surface); }
+.request-view-switch { background:var(--surface); }
+.request-view-switch button[aria-pressed=true] { background:var(--slate); color:var(--warm-white); }
+.request-view-switch button[aria-pressed=true] span { color:var(--warm-white); }
+.request-vote-button { color:var(--slate); border-color:var(--control-border); background:var(--warm-white); }
+.request-vote-button[aria-pressed=true] { background:var(--amber); color:var(--night); }
+.song-finder,.request-catalog-intro,.request-chart,.request-song-card,.request-picks-strip li { border-color:var(--line); }
+.link-hub { --c-bg:var(--warm-white); --c-text:var(--night); --c-text-muted:var(--muted); --c-border:var(--line); background:var(--warm-white); color:var(--night); }
+.hub-cover::after { background:linear-gradient(180deg,#11191d33,var(--warm-white)); }
+.hub-home,.hub-all-shows,.hub-social a,.hub-footer>a { color:var(--slate); }
+.hub-logo,.hub-roster-band>div { background:var(--night); border-color:var(--slate); }
+.hub-label,.hub-link small,.hub-roster-band small,.hub-share-content p,.hub-footer p,.hub-kicker,.hub-next-show p { color:var(--muted); }
+.hub-next-show,.hub-link,.hub-roster-band,.hub-share-actions>*,.hub-share select { background:var(--surface-soft); color:var(--slate); border-color:var(--line); }
+.hub-next-show h2 { color:var(--night); }
+.hub-link:hover { background:var(--surface); border-color:var(--stone); }
+.hub-share input { background:var(--warm-white); color:var(--night); border-color:var(--control-border); }
+.hub-signup,.hub-share,.hub-footer { border-color:var(--line); }
+.fan-upload-shell .fan-upload-picker input::file-selector-button { background:var(--amber); color:var(--night); }
+::-webkit-scrollbar-thumb { background:var(--stone); }
+::-webkit-scrollbar-track { background:var(--surface); }
+@media(max-width:650px) {
+  .scene-wordmark { font-size:22px; }
+  .scene-welcome h1 { font-size:34px; }
+  .scene-feature-caption h3 { font-size:27px; }
+  .scene-roster strong,.scene-community strong { font-size:14px; }
+}
+@media(max-width:360px) { .scene-wordmark { font-size:19px; } }
+@media print { body { background:var(--warm-white); } }
+/* Keep discovery controls in the company palette alongside band artwork. */
+.song-finder-mark { color:var(--slate); }
+.song-finder,.request-catalog-intro,.request-chart,.request-song-card,.request-picks-strip li,.song-suggestion-dialog { background:var(--surface-soft); color:var(--night); }
+.song-finder-form input,.request-filter,.song-suggestion-dialog input,.song-suggestion-dialog textarea { background:var(--warm-white); color:var(--night); border-color:var(--control-border); }
+.vote-intro,.vote-total,.vote-board small,.vote-empty,.song-finder>p,.request-catalog-intro p,.request-picks-strip>p,.request-picks-strip h3>span,.request-browse-heading>span,.request-song-count,.song-finder .song-finder-note { color:var(--muted); }
+.request-song-cover,.vote-bar-track { background:var(--line); color:var(--slate); }
+.request-no-results,.request-pagination button { color:var(--slate); border-color:var(--control-border); }
+.field :is(input,select,textarea):focus { border-color:var(--slate); }
+.chooser-music input:focus-visible+span { outline-color:var(--slate); }
+
+/* Approved homepage refinements: stronger contrast and quieter supporting panels. */
+.scene-home .scene-welcome>.button {
+  color:var(--warm-white); background:var(--slate); border-color:var(--night);
+  box-shadow:inset 0 1px #ffffff18,0 2px 0 var(--night);
+}
+.scene-home .scene-welcome>.button span { color:var(--amber); }
+.scene-home .scene-welcome>.button:hover { background:var(--night); }
+.scene-home .scene-panel { background:#FCFAF6; }
+.scene-home .scene-sidebar .scene-section-bar,
+.scene-home .scene-about .scene-section-bar {
+  background:var(--surface); border-color:var(--line); box-shadow:inset 3px 0 var(--slate);
+}
+.scene-home .scene-sidebar .scene-section-bar h2,
+.scene-home .scene-about .scene-section-bar h2 { color:var(--night); }
+.scene-home .scene-sidebar .scene-section-bar>span,
+.scene-home .scene-about .scene-section-bar>span { color:var(--muted); }
+.scene-home .scene-live-card { background:transparent; border:0; }
+.scene-home .scene-live-card>div:last-child { padding:12px 2px 2px; }
+.scene-home .scene-section-bar h2 { font-size:12px; letter-spacing:.05em; }
+.scene-home .scene-section-bar>a { font-size:12px; min-height:24px; display:inline-flex; align-items:center; }
+.scene-home .scene-roster small,.scene-home .scene-live-card p,
+.scene-home .scene-community small { font-size:12px; line-height:1.5; }
+.scene-home .scene-live-card>div>span:not(.scene-play),
+.scene-home .scene-main-column .home-upcoming .text-link { font-size:12px; }
+.scene-home .scene-roster>a:hover,.scene-home .scene-community>a:hover { background:var(--surface); }
+
+/* One primary navigation: portal tabs below the identity and booking action. */
+/* Clip sideways overflow without creating a body scroll container that breaks sticky navigation. */
+html,body { overflow-x:clip; }
+html { scroll-padding-top:calc(var(--site-header-height) + 32px); }
+.scene-tabs { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); overflow:visible; }
+.scene-tabs a { justify-content:center; padding-inline:10px; min-width:0; }
+.scene-tabs a:last-child { border-right:0; }
+.nav-actions .button { min-height:44px; }
+.band-subnav { top:var(--site-header-height); }
+@media(max-width:650px) {
+  :root { --site-header-height:153px; }
+  .scene-tabs { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .scene-tabs a:nth-child(3n) { border-right:0; }
+  .scene-tabs a:nth-child(n+4) { border-top:1px solid var(--line); }
+}
