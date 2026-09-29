@@ -15,11 +15,12 @@ export default async function EpisodePage({ params }) {
   const episodes = await getEpisodes()
   const episode = episodes.find(ep => ep.slug === slug)
   if (!episode) notFound()
-  return <Page>
+  return <Page section="podcast">
     <Intro eyebrow={`Echo Play Podcast${episode.number ? ` · Episode ${episode.number}` : ''}`} title={episode.title}>
       <p>{formatEpisodeDate(episode.date)}{episode.duration ? ` · ${episode.duration}` : ''}</p>
     </Intro>
     <section className="shell section-bottom episode-body">
+      <div className="scene-section-bar portal-module-heading"><h2>Listen to the episode</h2></div>
       <PodcastPlayer id={episode.buzzsproutId} title={episode.title} />
       <h2 className="section-title">In this episode</h2>
       <div className="episode-notes">{episode.description.split(/\n\s*\n/).filter(Boolean).map((paragraph, i) => <p key={i}>{paragraph}</p>)}</div>

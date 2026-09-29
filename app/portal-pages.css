@@ -1,0 +1,234 @@
+/* Interior pages use the same framed modules and directory composition as home. */
+.portal-layout { display:grid; grid-template-columns:230px minmax(0,1fr); gap:22px; padding-block:0 28px; align-items:start; }
+.portal-page:not(:has(>.page-intro)) .portal-layout { padding-top:24px; }
+.portal-main,.portal-sidebar { min-width:0; }
+.portal-main { display:grid; grid-template-columns:minmax(0,1fr); gap:22px; align-content:start; }
+.portal-main>* { min-width:0; }
+.portal-sidebar { display:grid; gap:20px; }
+.portal-page>.page-intro { padding-block:25px; }
+.portal-page .page-intro h1 { font-size:38px; line-height:1.12; letter-spacing:-.025em; margin-top:6px; }
+.portal-page .page-intro .eyebrow { margin-bottom:0; font-size:10px; }
+.portal-page .intro-copy { font-size:14px; line-height:1.65; margin-top:10px; max-width:750px; }
+
+.portal-box { background:#fcfaf6; border:1px solid var(--line); }
+.portal-box>.scene-section-bar { background:var(--surface); border-color:var(--line); border-top:0; box-shadow:inset 3px 0 var(--slate); }
+.portal-box>.scene-section-bar h2 { color:var(--night); font-size:12px; letter-spacing:.045em; }
+.portal-box-body { padding:15px; }
+.portal-box-body h3,.portal-box-body>h2 { font:700 23px/1.15 var(--ff-display); margin-bottom:10px; }
+.portal-box-body p { font-size:13px; line-height:1.7; color:var(--muted); margin-bottom:14px; }
+.portal-box-body .text-link { display:block; font-size:12px; overflow-wrap:anywhere; }
+.portal-sidebar-button { width:100%; margin:3px 0 14px; }
+.portal-directory { margin:-8px 0; }
+.portal-directory>a { display:flex; align-items:center; gap:9px; min-height:64px; padding:10px 0; border-bottom:1px solid var(--line); font-size:12px; font-weight:700; }
+.portal-directory>a:last-child { border:0; }
+.portal-directory img { width:40px; height:40px; object-fit:cover; border:1px solid var(--line); flex:none; }
+.portal-directory>a>span:nth-child(2) { flex:1; }
+.portal-directory>a:hover>span:nth-child(2),.portal-link-list a:hover { text-decoration:underline; }
+.portal-link-list>a { display:flex; justify-content:space-between; align-items:center; gap:8px; min-height:44px; font-size:13px; border-bottom:1px solid var(--line); }
+.portal-link-list>a:last-child { border:0; }
+.portal-main>.shell { width:100%; max-width:100%; margin:0; }
+.portal-main>.section,.portal-main>.section-bottom,.portal-main>.fan-upload-shell { padding:18px; background:#fcfaf6; border:1px solid var(--line); }
+.portal-main>.band-subnav,.portal-main>.kit-jump-links,.portal-main>.vote-band-nav { width:100%; margin:0; }
+.portal-main .section-title { font-size:25px; line-height:1.25; }
+.portal-main .text-body,.portal-main .text-body p { font-size:15px; line-height:1.75; }
+.portal-main .text-body p+p { margin-top:14px; }
+.portal-main .section-heading-row,.portal-module-heading,
+.portal-main>.section-bottom>.section-title:first-child,
+.portal-main>.section-bottom>.eyebrow:first-child {
+  margin:-18px -18px 18px; padding:10px 13px; background:var(--slate); color:var(--warm-white); border:0; min-height:37px;
+}
+.portal-module-heading h2,.portal-main .section-heading-row .section-title,
+.portal-main>.section-bottom>.section-title:first-child {
+  font:700 12px/1.5 var(--ff-label); text-transform:uppercase; letter-spacing:.05em; color:var(--warm-white);
+}
+.portal-module-heading>span { font-size:11px; color:var(--stone); }
+.portal-main .section-heading-row { gap:10px; align-items:center; }
+.portal-main .section-heading-row .eyebrow { display:none; }
+.portal-main .section-heading-row .text-link { color:var(--amber); font-size:12px; }
+.portal-main .section-heading-row>p { color:var(--stone); font-size:12px; }
+.portal-main>.section-bottom>.eyebrow:first-child { font:700 12px/1.5 var(--ff-label); }
+.portal-main .button-row { margin-top:16px; }
+.portal-main .content-panel { padding:18px; background:var(--surface-soft); border-radius:2px; }
+.portal-main .content-panel h2 { font-size:23px; }
+.portal-main .content-panel p { font-size:14px; line-height:1.7; }
+.portal-main .band-grid { gap:16px; }
+.portal-main .portal-roster-card { display:block; min-height:0; background:var(--warm-white); border:1px solid var(--line); border-radius:2px; color:var(--ink); overflow:hidden; }
+.portal-band-art { height:188px; position:relative; overflow:hidden; background:var(--night); }
+.portal-band-art img { transition:transform 400ms var(--scene-ease); }
+.portal-card-index { position:absolute; top:10px; left:10px; background:var(--amber); color:var(--night); padding:3px 7px; font:700 11px/1.4 var(--ff-label); }
+.portal-band-copy { padding:15px; }
+.portal-main .portal-roster-card .eyebrow { color:var(--muted); font-size:10px; margin:0 0 7px; }
+.portal-main .portal-roster-card h2 { font-size:25px; line-height:1.12; color:var(--night); }
+.portal-main .portal-roster-card p:not(.eyebrow) { color:var(--muted); font-size:13px; margin:9px 0 13px; }
+.portal-main .portal-roster-card .text-link { color:var(--slate); font-size:12px; }
+.portal-main .chooser-intro { margin:-18px -18px 18px; padding:12px 16px; border-bottom:1px solid var(--line); background:var(--surface); }
+.portal-main .chooser-intro .eyebrow { margin:0 0 4px; }
+.portal-main .chooser-intro h2 { font-size:25px; }
+.portal-main .chooser-intro p:not(.eyebrow) { font-size:13px; }
+.portal-main .chooser-layout { grid-template-columns:1fr; gap:20px; }
+.portal-main .chooser-music { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.portal-main .chooser-card { padding:15px; }
+.portal-main .booking-banner { padding:22px; border:1px solid var(--slate); }
+.portal-main .booking-banner>.shell { width:100%; display:block; }
+.portal-main .booking-banner h2 { font-size:29px; line-height:1.15; }
+.portal-main .booking-banner h2 br { display:none; }
+.portal-main .booking-banner h2 br::after { content:' '; }
+.portal-main .booking-banner p:not(.eyebrow) { font-size:14px; margin:12px 0 18px; max-width:100%; }
+.portal-main .booking-banner .eyebrow { margin-bottom:9px; }
+.portal-main .buyer-cta-links { margin-top:17px; }
+.portal-main .band-detail-hero { height:310px; min-height:310px; border:1px solid var(--line); }
+.portal-main .band-detail-hero>.shell { width:100%; padding:25px; }
+.portal-main .band-detail-hero h1 { font-size:37px; }
+.portal-main .band-detail-hero p:not(.eyebrow) { font-size:15px; margin-block:10px 18px; }
+.portal-main .band-subnav>.shell { width:100%; flex-wrap:wrap; overflow:visible; }
+.portal-main .band-subnav a { padding:10px 12px; font-size:11px; flex:1 0 auto; border-bottom:1px solid var(--line); justify-content:center; }
+.portal-main .band-description { display:block; }
+.portal-main .band-description>div:first-child:not(.text-body),.portal-main .band-description>h2:first-child { margin-bottom:15px; }
+.portal-main .band-description h2 { font-size:25px; line-height:1.2; }
+.portal-main .band-description>p { font-size:15px; line-height:1.75; }
+.portal-main .band-description .eyebrow { margin-bottom:8px; }
+.portal-main #experience>div:first-child,.portal-main .kit-overview>div:first-child { margin:-18px -18px 17px; padding:12px 15px; background:var(--surface); border-bottom:1px solid var(--line); }
+.portal-main .performance-player { width:100%; min-width:0; min-height:0; border-radius:2px; }
+.portal-main .performance-caption h3 { font-size:18px; }
+.portal-main .performance-caption p { font-size:12px; }
+.portal-main #photos>div:first-child { margin:-18px -18px 18px; padding:11px 14px; background:var(--slate); color:var(--warm-white); }
+.portal-main #photos>div:first-child .eyebrow { display:none; }
+.portal-main #photos>div:first-child h2 { font:700 12px/1.5 var(--ff-label); text-transform:uppercase; letter-spacing:.05em; color:var(--warm-white); }
+.portal-main #photos>div:first-child p { color:var(--stone); font-size:12px; }
+.portal-main .band-listen { border:0; padding:0; background:transparent; }
+.portal-main .band-listen h2 { font-size:26px; }
+.portal-main .follow-bands { padding-top:20px; margin-top:20px; }
+.portal-main .follow-bands h2 { font-size:22px; }
+.portal-main .booking-facts-grid { grid-template-columns:1fr 1fr; gap:15px; }
+.portal-main .booking-facts-grid article { padding:16px; }
+.portal-main .booking-facts-grid h3 { font-size:21px; }
+.portal-main .booking-resource-row { gap:15px; }
+.portal-main .review-grid { grid-template-columns:1fr; }
+.portal-main .fan-signup-inner { display:block; padding:20px; border-radius:2px; }
+.portal-main .fan-signup-inner h2 { font-size:26px; }
+.portal-main .fan-signup-form { margin-top:18px; }
+.portal-main .fan-signup-form>input { font-size:16px; }
+.portal-main>.fan-signup { padding:0; border-color:var(--slate); }
+.portal-main .show-row { grid-template-columns:58px minmax(0,1fr); gap:15px; margin-bottom:0; border:0; border-bottom:1px solid var(--line); border-radius:0; padding:20px 0; }
+.portal-main .show-row:last-child { border-bottom:0; }
+.portal-main .show-purchase-actions { grid-column:2; flex-direction:row; flex-wrap:wrap; align-items:flex-start; }
+.portal-main .show-info h2 { font-size:23px; }
+.portal-main .show-info p { font-size:13px; }
+.portal-main .shows-count { margin:0; padding-bottom:10px; font-size:12px; }
+.portal-filter-sidebar .filter-bar { display:grid; gap:5px; margin:0; }
+.portal-filter-sidebar .filter-chip { justify-content:flex-start; text-align:left; width:100%; font-size:12px; }
+.portal-main .empty-state,.portal-main .quiet-state { padding:22px; margin:0; border-radius:2px; }
+.portal-main .empty-state h2 { font-size:24px; }
+.portal-main .press-kit-grid { grid-template-columns:1fr; gap:16px; }
+.portal-main .press-kit-card { display:grid; grid-template-columns:200px minmax(0,1fr); }
+.portal-main .press-kit-image { width:100%; min-width:0; aspect-ratio:auto; height:auto; min-height:220px; border-radius:0; }
+.portal-main .press-kit-copy { padding:18px; }
+.portal-main .press-kit-copy h2 { font-size:27px; }
+.portal-main .press-kit-copy>p:not(.eyebrow) { font-size:13px; margin-block:10px; }
+.portal-main .press-kit-copy .kit-actions { gap:12px; margin-top:14px; }
+.portal-main .production-request { grid-template-columns:1fr; padding:0; gap:16px; }
+.portal-main .production-request h2 { font-size:25px; }
+.portal-main .production-request p { font-size:14px; }
+.portal-main .kit-hero { padding:0; border:1px solid var(--line); }
+.portal-main .kit-hero-grid { width:100%; grid-template-columns:1fr 1fr; gap:0; }
+.portal-main .kit-hero-copy { padding:24px; }
+.portal-main .kit-hero-copy>.text-link { font-size:12px; margin-bottom:22px; }
+.portal-main .kit-hero-copy h2 { font-size:26px; line-height:1.15; }
+.portal-main .kit-hero-copy>p:not(.eyebrow) { font-size:14px; }
+.portal-main .kit-band-logo { height:80px; margin:14px 0; }
+.portal-main .kit-hero-photo { min-height:300px; height:auto; border-radius:0; }
+.portal-main .kit-jump-links { padding:0; gap:0; border:1px solid var(--line); background:var(--surface); display:flex; flex-wrap:wrap; }
+.portal-main .kit-jump-links a { padding:12px; font-size:12px; min-height:44px; border-right:1px solid var(--line); }
+.portal-main .kit-overview { grid-template-columns:1fr; gap:0; }
+.portal-main .kit-overview .eyebrow { margin-bottom:5px; }
+.portal-main .kit-bio { font-size:15px; line-height:1.75; }
+.portal-main .kit-photo-pair { gap:12px; }
+.portal-main .kit-photo-pair>div { min-height:0; height:180px; border-radius:2px; }
+.portal-main .kit-feature-grid,.portal-main .kit-planning-grid { grid-template-columns:1fr; gap:15px; }
+.portal-main .kit-feature-grid article,.portal-main .kit-planning-grid article { padding:15px; border:1px solid var(--line); border-radius:2px; background:var(--surface-soft); }
+.portal-main .kit-feature-grid h3,.portal-main .kit-planning-grid h3 { font-size:21px; }
+.portal-main .kit-materials>.shell { width:100%; }
+.portal-main .kit-download-grid { grid-template-columns:1fr 1fr; gap:15px; }
+.portal-main .booking-layout { display:block; padding:18px; background:#fcfaf6; border:1px solid var(--line); }
+.portal-main .booking-form { padding:0; border:0; background:transparent; }
+.portal-main .booking-form .button { margin-top:10px; }
+.portal-main .faq-list summary { font-size:15px; padding-block:17px; }
+.portal-main .faq-list p { font-size:14px; }
+.portal-main .three-columns { grid-template-columns:1fr; gap:14px; }
+.portal-main .two-columns,.portal-main .buyer-band-grid,.portal-main .musician-grid { grid-template-columns:1fr 1fr; gap:16px; }
+.portal-main .fan-image,.portal-main .photo-tile { border-radius:2px; }
+.portal-main .event-intro { padding:22px; background:#fcfaf6; border:1px solid var(--line); }
+.portal-main .event-intro h1 { font-size:36px; line-height:1.15; }
+.portal-main .event-venue { font-size:22px; margin-block:15px; }
+.portal-main .event-facts { gap:18px; margin-block:22px; flex-wrap:wrap; }
+.portal-main .event-facts strong { font-size:19px; }
+.portal-main .event-more { display:grid; grid-template-columns:1fr; gap:16px; }
+.portal-main .vote-band-nav { display:flex; flex-wrap:wrap; gap:0; padding:0; background:var(--surface); border:1px solid var(--line); }
+.portal-main .vote-band-nav a { flex:1; text-align:center; padding:13px 10px; margin:0; font-size:12px; border:0; border-right:1px solid var(--line); border-radius:0; }
+.portal-main .vote-board { padding:18px; border:1px solid var(--line); background:#fcfaf6; }
+.portal-main .song-finder { padding:16px; }
+.portal-main .song-finder h2 { font-size:25px; }
+.portal-main .request-catalog-intro { padding:16px; }
+.portal-main .request-catalog-intro h2 { font-size:23px; }
+.portal-main .request-song-grid { grid-template-columns:1fr; }
+.portal-main .request-song-card { padding:14px; border-radius:2px; }
+.portal-main .request-view-switch { flex-wrap:wrap; }
+.portal-main .request-view-switch button { font-size:12px; }
+.portal-main .request-chart { padding:15px; }
+.portal-main .episode-body h2 { margin-top:24px; }
+.portal-main .episode-notes p { font-size:15px; line-height:1.75; }
+.portal-main .content-stack { gap:16px; }
+.portal-privacy .portal-main>section { max-width:100% !important; }
+.portal-privacy .section-title { font-size:23px; }
+@media(hover:hover) and (pointer:fine) { .portal-roster-card:hover .portal-band-art img { transform:scale(1.035); } }
+@media(max-width:900px) and (min-width:651px) {
+  .portal-layout { grid-template-columns:190px minmax(0,1fr); gap:16px; }
+  .portal-main .band-grid,.portal-main .press-kit-card,.portal-main .kit-hero-grid,.portal-main .two-columns,.portal-main .musician-grid { grid-template-columns:1fr; }
+  .portal-main .press-kit-image { height:210px; }
+  .portal-main .kit-hero-photo { height:230px; min-height:0; }
+}
+@media(max-width:650px) {
+  .portal-layout { display:flex; flex-direction:column; gap:22px; }
+  .portal-main,.portal-sidebar { width:100%; }
+  .portal-sidebar { order:1; }
+  .portal-filter-sidebar { order:0; }
+  .portal-filter-sidebar>.portal-box:not(:first-child) { display:none; }
+  .portal-filter-sidebar .filter-bar { grid-template-columns:1fr 1fr; }
+  .portal-page>.page-intro { padding-block:22px; }
+  .portal-page .page-intro h1 { font-size:33px; }
+  .portal-main .band-grid,.portal-main .press-kit-card,.portal-main .kit-hero-grid,.portal-main .two-columns,.portal-main .musician-grid,.portal-main .buyer-band-grid { grid-template-columns:1fr; }
+  .portal-main .press-kit-image { height:200px; min-height:0; }
+  .portal-main .kit-hero-photo { height:220px; min-height:0; }
+  .portal-main .section-heading-row { flex-wrap:wrap; }
+  .portal-main .section-heading-row .text-link { min-height:24px; }
+  .portal-main .band-detail-hero>.shell { padding:20px; }
+  .portal-main .band-detail-hero h1 { font-size:34px; }
+  .portal-main .booking-facts-grid,.portal-main .kit-download-grid { grid-template-columns:1fr; }
+  .portal-main .kit-photo-pair>div { height:150px; }
+  .portal-main .event-intro h1 { font-size:31px; }
+  .portal-main .event-facts { display:grid; grid-template-columns:1fr; gap:15px; }
+  .portal-main .vote-band-nav a { flex:1 0 50%; }
+  .portal-main .chooser-music { grid-template-columns:1fr; }
+}
+@media(prefers-reduced-motion:reduce) { .portal-band-art img { transition:none; transform:none !important; } }
+
+.portal-musicians .portal-main .three-columns { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.portal-musicians .musician-card .photo-tile { height:220px; aspect-ratio:auto; }
+.musician-profile-body { display:grid; gap:20px; align-items:start; }
+.musician-profile-body.has-photo { grid-template-columns:minmax(0,220px) minmax(0,1fr); }
+.musician-profile-body>.photo-tile { width:100%; max-width:340px; height:300px; aspect-ratio:auto; }
+@media(max-width:900px) { .musician-profile-body.has-photo { grid-template-columns:1fr; } }
+.link-hub .hub-section-bar { margin:0; background:var(--slate); border-color:var(--slate); padding:10px 12px; }
+.link-hub .hub-section-bar h2 { margin:0; color:var(--warm-white); font:700 12px/1.5 var(--ff-label); text-transform:uppercase; letter-spacing:.045em; }
+.link-hub .hub-roster>.hub-section-bar { display:flex; grid-template-columns:none; margin-bottom:12px; }
+.link-hub .hub-show-slot { border:1px solid var(--line); }
+.link-hub .hub-show-slot .hub-next-show { border:0; }
+@media(max-width:650px) { .portal-musicians .portal-main .three-columns { grid-template-columns:1fr; } }
+
+.portal-main .kit-download-grid { margin-block:18px; }
+.portal-main .kit-download-grid a { padding:15px; border:1px solid var(--line); background:var(--surface-soft); }
+.portal-main .kit-download-grid span { font-size:19px; }
+.portal-main .kit-booking-bar { flex-wrap:wrap; margin-top:22px; padding-top:22px; gap:18px; }
+.portal-main .kit-booking-bar a:not(.button) { font-size:23px; }
+
+.portal-main .event-intro>.eyebrow { margin-top:24px; }

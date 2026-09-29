@@ -9,7 +9,7 @@ export default async function MusicianPage({ params }) {
   const m = await getMusician(slug)
   if (!m) notFound()
   return (
-    <Page>
+    <Page section="musicians">
       <Intro eyebrow={m.instruments.join(' · ')} title={m.name}>
         <div className="inline-links">
           {m.bands.map((b) => (
@@ -19,7 +19,9 @@ export default async function MusicianPage({ params }) {
           ))}
         </div>
       </Intro>
-      <section className="shell section-bottom band-description">
+      <section className="shell section-bottom musician-profile">
+        <div className="scene-section-bar portal-module-heading"><h2>Biography</h2></div>
+        <div className={`musician-profile-body ${m.photo?.url ? 'has-photo' : ''}`}>
         {m.photo?.url && (
           <div className="photo-tile">
             <Image
@@ -42,6 +44,7 @@ export default async function MusicianPage({ params }) {
           <Link className="text-link" href="/musicians">
             ← All musicians
           </Link>
+        </div>
         </div>
       </section>
       {m.interview?.length > 0 && (

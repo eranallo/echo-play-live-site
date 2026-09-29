@@ -16,7 +16,7 @@ export default async function BuyerPage({ params }) {
   const { audience } = await params
   const page = bookingPages[audience]
   if (!page) notFound()
-  return <Page>
+  return <Page section="booking">
     <Intro eyebrow={page.eyebrow} title={page.headline}><p>{page.intro}</p></Intro>
     <section className="shell section-bottom">
       <div className="button-row">{page.eventTypes.map(([label, type]) => <Link key={type} href={`/contact?event=${encodeURIComponent(type)}`} className="button">Plan a {label.toLowerCase()} ↗</Link>)}</div>

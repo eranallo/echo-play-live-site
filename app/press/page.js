@@ -6,7 +6,7 @@ import { FAQ_PRESS } from '@/lib/faqs'
 import TrackedLink from '@/components/TrackedLink'
 export default function PressPage() {
   return (
-    <Page>
+    <Page section="press">
       <Intro
         eyebrow="For promoters, venues & media"
         title={
@@ -23,6 +23,7 @@ export default function PressPage() {
         </p>
       </Intro>
       <section className="shell section-bottom">
+        <div className="scene-section-bar portal-module-heading"><h2>Band kits</h2><span>For venues & media</span></div>
         <div className="press-kit-grid">
           {bandKits.map((kit) => (
             <article className="press-kit-card" key={kit.slug}>
@@ -101,7 +102,7 @@ export default function PressPage() {
                   height: 180,
                   position: 'relative',
                   background: dark ? '#000000' : '#ffffff',
-                  borderRadius: 14,
+                  borderRadius: 2,
                   marginBottom: 22,
                 }}
               >

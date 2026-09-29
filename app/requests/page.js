@@ -7,7 +7,7 @@ export const metadata=pageMetadata({title:'Song Requests',description:'Help our 
 export default async function SongRequestsPage({searchParams}) {
   const query=await searchParams
   const band=publicBandPresentation.find(b=>b.slug===query?.band) || publicBandPresentation[0]
-  return <Page className="song-requests-page">
+  return <Page section="requests" className="song-requests-page">
     <Intro eyebrow="You’ve got a say" title="What should we learn?" />
     <nav className="shell vote-band-nav" aria-label="Choose a band for song requests">
       {publicBandPresentation.map(item=><Link key={item.slug} href={`/requests?band=${item.slug}`} aria-current={band.slug===item.slug?'page':undefined}>{item.shortName}</Link>)}

@@ -104,13 +104,14 @@ export default function LinkHub({ hub }) {
           <p className="hub-intro">{hub.intro}</p>
         </header>
         <section aria-label="Upcoming shows" className="hub-show-slot">
+          <div className="scene-section-bar hub-section-bar"><h2>Show calendar</h2></div>
           <Suspense fallback={<ShowLink hub={hub} loading />}>
             <NextShow hub={hub} />
           </Suspense>
         </section>
         {company && (
           <section className="hub-roster">
-            <h2>Our bands</h2>
+            <div className="scene-section-bar hub-section-bar"><h2>Artist directory</h2></div>
             <div>
               {linkHubs
                 .filter((item) => item.slug !== 'hub')
@@ -133,6 +134,7 @@ export default function LinkHub({ hub }) {
           </section>
         )}
         <nav aria-label={`${hub.name} links`} className="hub-links">
+          <div className="scene-section-bar hub-section-bar"><h2>Band links & fan desk</h2></div>
           <Suspense fallback={null}><LatestRecap band={company ? undefined : hub.slug} compact /></Suspense>
           {uploadsEnabled() && <Link className="hub-link" href={company?'/upload':`/upload?band=${hub.slug}`} prefetch={false}><span><strong>Share your photos & videos</strong><small>Got a good shot from a show? Send it to us.</small></span><span aria-hidden="true">↑</span></Link>}
           {hub.links.map(([label, detail, href]) => (

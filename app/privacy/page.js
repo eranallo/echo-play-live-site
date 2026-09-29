@@ -5,7 +5,7 @@ import MeasurementChoices from '@/components/MeasurementChoices'
 export const metadata = pageMetadata({"title": "Privacy", "description": "How Echo Play Live handles booking inquiries, fan email signup, video playback and website measurement.", "path": "/privacy"})
 export default function PrivacyPage() {
   return (
-    <Page>
+    <Page section="privacy">
       <Intro eyebrow="Website information" title="Your privacy.">
         <p>How information is used on echoplay.live.</p>
       </Intro>

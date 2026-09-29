@@ -35,7 +35,7 @@ export default async function BandKitPage({ params }) {
   if (!kit) notFound()
   const performance = getPerformance(slug)
   return (
-    <Page>
+    <Page section="kit" band={kit}>
       <section className="kit-hero" style={{ '--kit-accent': kit.color }}>
         <div className="shell kit-hero-grid">
           <div className="kit-hero-copy">

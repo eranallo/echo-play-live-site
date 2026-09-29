@@ -6,7 +6,7 @@ export const revalidate = 1800
 export default async function MusiciansPage() {
   const musicians = await getMusicians()
   return (
-    <Page>
+    <Page section="musicians">
       <Intro
         eyebrow="The people behind the show"
         title={
@@ -20,6 +20,7 @@ export default async function MusiciansPage() {
         <p>Get to know the people playing in our bands.</p>
       </Intro>
       <section className="shell section-bottom">
+        <div className="scene-section-bar portal-module-heading"><h2>Musician directory</h2></div>
         {musicians.length ? (
           <div className="three-columns">
             {musicians.map((m) => (

@@ -29,7 +29,7 @@ export default async function EventPage({ params }) {
   const show = result.show
   const canceled = show.state === 'canceled'
   return (
-    <Page>
+    <Page section="event">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

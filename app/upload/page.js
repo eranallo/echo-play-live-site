@@ -8,5 +8,5 @@ export default async function UploadPage({searchParams}) {
   const query=await searchParams
   const bands=publicBandPresentation.filter(b=>!b.hidden).map(({slug,name})=>({slug,name}))
   const initialBand=bands.some(b=>b.slug===query.band)?query.band:''
-  return <Page><Intro eyebrow="From your side of the stage" title="Got a good shot?"><p>We’d love to see it. Choose the show and send your photos or videos straight to the band.</p></Intro><div className="shell fan-upload-shell"><FanUpload bands={bands} initialBand={initialBand}/></div></Page>
+  return <Page section="upload"><Intro eyebrow="From your side of the stage" title="Got a good shot?"><p>We’d love to see it. Choose the show and send your photos or videos straight to the band.</p></Intro><div className="shell fan-upload-shell"><FanUpload bands={bands} initialBand={initialBand}/></div></Page>
 }

@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 
 const targets = [
-  '.scene-welcome', '.page-intro', '.scene-feature', '.scene-panel',
+  '.scene-welcome', '.page-intro', '.scene-feature', '.scene-panel', '.portal-box',
   '.band-card', '.show-row', '.press-kit-card', '.review-card',
   '.hub-link', '.hub-roster-band', '.booking-banner',
 ].join(',')

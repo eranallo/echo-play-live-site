@@ -5,7 +5,7 @@ export const revalidate = 3600
 export default async function PodcastPage() {
   const episodes = await getEpisodes()
   return (
-    <Page>
+    <Page section="podcast">
       <Intro
         eyebrow="The Echo Play Podcast"
         title={
