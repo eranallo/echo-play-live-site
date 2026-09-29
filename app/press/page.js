@@ -40,7 +40,7 @@ export default function PressPage() {
                       : `${kit.name} live on stage`
                   }
                   fill
-                  sizes="(max-width: 700px) 100vw, 50vw"
+                  sizes="(max-width: 650px) 90vw, (max-width: 900px) 65vw, (max-width: 1100px) 150px, 480px"
                   style={{ objectFit: 'cover', objectPosition: kit.coverPosition }}
                 />
               </Link>
