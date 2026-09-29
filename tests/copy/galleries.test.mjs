@@ -11,13 +11,13 @@ test('galleries expose only reviewed public bands, including hostile lookup keys
     assert.equal(result.count, gallery.photos.length)
     assert.equal(new Set(result.images.map(p => p.id)).size, result.count)
     for (const photo of result.images) {
-      assert.deepEqual(Object.keys(photo).sort(), ['album', 'alt', 'credit', 'filename', 'height', 'id', 'src', 'url', 'width'].sort())
-      assert.ok(photo.alt && photo.credit && photo.album)
+      assert.deepEqual(Object.keys(photo).sort(), ['album', 'alt', 'filename', 'height', 'id', 'src', 'url', 'width'].sort())
+      assert.ok(photo.alt && photo.album)
       assert.ok(photo.width >= 960 && photo.height > 0)
       assert.match(photo.src, new RegExp(`/website-media/20260908/${slug}/[a-f0-9]{12}-1920\\.webp$`))
       assert.equal(photo.url, photo.src)
     }
-    assert.doesNotMatch(JSON.stringify(result), /drive\.google|sourceId|sourceUrl|\/private\/|GPS/)
+    assert.doesNotMatch(JSON.stringify(result), /drive\.google|sourceId|sourceUrl|\/private\/|GPS|"credit"|Villalobos|Jeremy Morgan|HDP/)
   }
   for (const slug of ['limewyre', 'corestalgia', '../elite', '__proto__', 'constructor', 'toString', '', undefined]) {
     assert.equal(getBandGallery(slug), null)

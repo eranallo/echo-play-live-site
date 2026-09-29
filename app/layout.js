@@ -1,12 +1,16 @@
 import './globals.css'
 import './design.css'
-import './brand.css'
+import './scene.css'
+import './scene-brand.css'
+import './scene-motion.css'
 import localFont from 'next/font/local'
 import SiteMeasurement from '@/components/SiteMeasurement'
+import SiteMotion from '@/components/SiteMotion'
 
 import { bandsList } from '@/lib/bands'
 
 const SITE_URL = 'https://echoplay.live'
+
 const cabinet = localFont({
   src: './fonts/CabinetGrotesk-Variable.woff2',
   variable: '--font-cabinet',
@@ -113,7 +117,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${cabinet.variable} ${dmSans.variable}`}>
+    <html lang="en" data-theme="scene-after-hours" className={`${cabinet.variable} ${dmSans.variable}`}>
       <head>
         <script
           type="application/ld+json"
@@ -125,6 +129,7 @@ export default function RootLayout({ children }) {
           Skip to content
         </a>
         {children}
+        <SiteMotion />
         <SiteMeasurement />
       </body>
     </html>

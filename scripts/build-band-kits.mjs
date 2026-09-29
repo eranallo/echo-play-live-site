@@ -39,7 +39,11 @@ const ascii = (value) =>
   value.replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/[–—]/g, '-').replace(/…/g, '...')
 
 await mkdir(path.join(root, 'public/press/kits'), { recursive: true })
-for (const kit of bandKits) {
+const requestedSlugs = process.argv.slice(2)
+if (requestedSlugs.some(slug => !bandKits.some(kit => kit.slug === slug))) {
+  throw new Error('Unknown band requested. Use a public band slug or omit arguments for all kits.')
+}
+for (const kit of bandKits.filter(kit => !requestedSlugs.length || requestedSlugs.includes(kit.slug))) {
   const pdf = await PDFDocument.create()
   pdf.registerFontkit(fontkit)
   pdf.setTitle(`${kit.name} | Echo Play Live Band Kit`)
@@ -48,7 +52,7 @@ for (const kit of bandKits) {
   pdf.setCreator('Echo Play Live')
   pdf.setLanguage('en-US')
   pdf.setCreationDate(new Date('2026-09-07T00:00:00Z'))
-  pdf.setModificationDate(new Date('2026-09-09T00:00:00Z'))
+  pdf.setModificationDate(new Date(`${kit.modifiedDate || '2026-09-09'}T00:00:00Z`))
   // Static faces keep PDF rendering consistent with the selected website families.
   const bold = await pdf.embedFont(await readFile(path.join(root, 'app/fonts/CabinetGrotesk-Bold.ttf')), {
     subset: false,
@@ -139,13 +143,16 @@ for (const kit of bandKits) {
     })
     page.pushOperators(popGraphicsState())
   }
-  function link(page, label, url, x, top, size = 11, fill = ink) {
+  function link(page, label, url, x, top, size = 11, fill = ink, hitArea = null) {
     txt(page, label, x, top, size, bold, fill)
     const width = bold.widthOfTextAtSize(ascii(label), size)
+    if (kit.catalogLinkLabel && size >= 9 && !hitArea) {
+      page.drawRectangle({ x, y: H - top - size - 2, width, height: 0.55, color: fill })
+    }
     const annot = pdf.context.obj({
       Type: 'Annot',
       Subtype: 'Link',
-      Rect: [x, H - top - size - 4, x + width, H - top + 4],
+      Rect: hitArea || [x, H - top - size - 4, x + width, H - top + 4],
       Border: [0, 0, 0],
       A: { Type: 'Action', S: 'URI', URI: PDFString.of(url) },
     })
@@ -223,15 +230,6 @@ for (const kit of bandKits) {
     photoHeight = 184
   imageCover(p2, detail, M, photoTop, 256, photoHeight, 0.35)
   imageCover(p2, stage, M + 268, photoTop, 256, photoHeight, 0.4)
-  txt(
-    p2,
-    `PHOTOS: ${kit.photoCredit.toUpperCase()}`,
-    M,
-    510,
-    7.5,
-    bold,
-    gray,
-  )
   txt(p2, 'THE SOUND', M, 547, 9, bold, accent)
   paragraph(p2, kit.soundTitle, M, 569, 210, 20, 25, ink, bold, 635)
   let soundY = 571
@@ -250,8 +248,15 @@ for (const kit of bandKits) {
     729,
   )
   const performance = getPerformance(kit.slug)
-  if (performance) link(p2, `Watch ${performance.title} live`, performanceUrl(performance), M, 673, 10)
-  link(p2, 'Explore the music online', `https://echoplay.live/bands/${kit.slug}#music`, M, 694, 9)
+  if (performance) link(p2, `Watch ${performance.title} live`, performanceUrl(performance), M, kit.catalogLinkLabel ? 661 : 673, 10)
+  if (kit.catalogLinkLabel) {
+    paragraph(p2, kit.catalogLinkNote, M, performance ? 627 : 644, 210, 9, 13, gray, regular, performance ? 657 : 674)
+    p2.drawRectangle({ x: M, y: H - 717, width: 210, height: 36, color: ink })
+    link(p2, kit.catalogLinkLabel, `https://echoplay.live/bands/${kit.slug}#music`,
+      M + 12, 692, 11, white, [M, H - 717, M + 210, H - 681])
+  } else {
+    link(p2, 'Explore the music online', `https://echoplay.live/bands/${kit.slug}#music`, M, 694, 9)
+  }
 
   // 03: Event planning information with actual contact/link annotations.
   const p3 = base(3)

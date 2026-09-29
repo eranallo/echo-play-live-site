@@ -2,80 +2,42 @@
 import Link from 'next/link'
 import BrandLogo from '@/components/BrandLogo'
 import { usePathname } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+
 const links = [
-  ['The bands', '/bands'],
+  ['Home', '/'],
+  ['Bands', '/bands'],
   ['Shows', '/shows'],
+  ['Song requests', '/requests'],
+  ['Band kits', '/press'],
   ['Our story', '/about'],
-  ['Press', '/press'],
 ]
+
 export default function Nav() {
   const pathname = usePathname()
-  const [open, setOpen] = useState(false)
-  const button = useRef(null)
-  const nav = useRef(null)
-  useEffect(() => {
-    setOpen(false)
-  }, [pathname])
-  useEffect(() => {
-    if (!open) return
-    const key = (e) => {
-      if (e.key === 'Escape') {
-        setOpen(false)
-        button.current?.focus()
-      }
-    }
-    const outside = (e) => {
-      if (!nav.current?.contains(e.target)) setOpen(false)
-    }
-    document.addEventListener('keydown', key)
-    document.addEventListener('pointerdown', outside)
-    return () => {
-      document.removeEventListener('keydown', key)
-      document.removeEventListener('pointerdown', outside)
-    }
-  }, [open])
-  const items = links.map(([label, href]) => (
-    <Link
-      key={href}
-      href={href}
-      aria-current={pathname === href || pathname.startsWith(href + '/') ? 'page' : undefined}
-      onClick={() => setOpen(false)}
-    >
-      {label}
-    </Link>
-  ))
+
   return (
-    <header className="site-header" ref={nav}>
-      <nav className="nav-inner" aria-label="Main navigation">
+    <header className="site-header">
+      <div className="nav-inner">
         <Link className="wordmark" href="/" aria-label="Echo Play Live home">
-          <BrandLogo />
+          <BrandLogo size={44} />
+          <span className="scene-wordmark">Echo Play Live</span>
         </Link>
-        <div className="desktop-links">{items}</div>
         <div className="nav-actions">
-          <Link className="button button-small" href="/contact">
+          <Link className="button button-small" href="/contact"
+            aria-current={pathname === '/contact' ? 'page' : undefined}>
             Book a band <span aria-hidden="true">↗</span>
           </Link>
-          <button
-            ref={button}
-            className="menu-toggle"
-            type="button"
-            aria-expanded={open}
-            aria-controls="mobile-navigation"
-            aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
-            onClick={() => setOpen(!open)}
-          >
-            <span aria-hidden="true">{open ? '×' : '☰'}</span>
-          </button>
         </div>
+      </div>
+      <nav className="scene-tabs" aria-label="Main navigation">
+        {links.map(([label, href]) => (
+          <Link key={href} href={href}
+            aria-current={pathname === href ? 'page'
+              : href !== '/' && pathname?.startsWith(href + '/') ? 'location' : undefined}>
+            {label}
+          </Link>
+        ))}
       </nav>
-      {open && (
-        <nav id="mobile-navigation" className="mobile-navigation" aria-label="Mobile navigation">
-          {items}
-          <Link href="/podcast">Podcast</Link>
-          <Link href="/musicians">Meet the musicians</Link>
-        </nav>
-      )}
     </header>
   )
 }
