@@ -20,6 +20,7 @@ export default async function EpisodePage({ params }) {
       <p>{formatEpisodeDate(episode.date)}{episode.duration ? ` · ${episode.duration}` : ''}</p>
     </Intro>
     <section className="shell section-bottom episode-body">
+      <div className="scene-section-bar portal-module-heading"><h2>Listen to the episode</h2></div>
       <PodcastPlayer id={episode.buzzsproutId} title={episode.title} />
       <h2 className="section-title">In this episode</h2>
       <div className="episode-notes">{episode.description.split(/\n\s*\n/).filter(Boolean).map((paragraph, i) => <p key={i}>{paragraph}</p>)}</div>

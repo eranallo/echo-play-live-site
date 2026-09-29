@@ -111,7 +111,7 @@
 .portal-main>.fan-signup { padding:0; border-color:var(--slate); }
 .portal-main .show-row { grid-template-columns:58px minmax(0,1fr); gap:15px; margin-bottom:0; border:0; border-bottom:1px solid var(--line); border-radius:0; padding:20px 0; }
 .portal-main .show-row:last-child { border-bottom:0; }
-.portal-main .show-purchase-actions { grid-column:2; }
+.portal-main .show-purchase-actions { grid-column:2; flex-direction:row; flex-wrap:wrap; align-items:flex-start; }
 .portal-main .show-info h2 { font-size:23px; }
 .portal-main .show-info p { font-size:13px; }
 .portal-main .shows-count { margin:0; padding-bottom:10px; font-size:12px; }
@@ -214,7 +214,10 @@
 
 .portal-musicians .portal-main .three-columns { grid-template-columns:repeat(2,minmax(0,1fr)); }
 .portal-musicians .musician-card .photo-tile { height:220px; aspect-ratio:auto; }
-.portal-musicians .band-description>.photo-tile { max-width:340px; height:300px; margin-bottom:20px; }
+.musician-profile-body { display:grid; gap:20px; align-items:start; }
+.musician-profile-body.has-photo { grid-template-columns:minmax(0,220px) minmax(0,1fr); }
+.musician-profile-body>.photo-tile { width:100%; max-width:340px; height:300px; aspect-ratio:auto; }
+@media(max-width:900px) { .musician-profile-body.has-photo { grid-template-columns:1fr; } }
 .link-hub .hub-section-bar { margin:0; background:var(--slate); border-color:var(--slate); padding:10px 12px; }
 .link-hub .hub-section-bar h2 { margin:0; color:var(--warm-white); font:700 12px/1.5 var(--ff-label); text-transform:uppercase; letter-spacing:.045em; }
 .link-hub .hub-roster>.hub-section-bar { display:flex; grid-template-columns:none; margin-bottom:12px; }
@@ -227,3 +230,5 @@
 .portal-main .kit-download-grid span { font-size:19px; }
 .portal-main .kit-booking-bar { flex-wrap:wrap; margin-top:22px; padding-top:22px; gap:18px; }
 .portal-main .kit-booking-bar a:not(.button) { font-size:23px; }
+
+.portal-main .event-intro>.eyebrow { margin-top:24px; }
